@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import clsx from 'clsx';
 
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -7,7 +7,6 @@ type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const Button = (props: Props) => {
-
     const {
         variant = 'primary',
         loading,
@@ -21,14 +20,14 @@ const Button = (props: Props) => {
             disabled={disabled || loading}
             {...rest}
             className={clsx(
-                'rounded-[10px] flex font-semibold w-full text-[18px] leading-[19.8px] items-center justify-center',
+                'flex w-full items-center justify-center rounded-[10px] text-[18px] font-semibold leading-[19.8px]',
                 className,
                 {
-                    'bg-white text-[#FF2525] px-[118px] py-[30px] max-w-[351px] max-h-[80px] active:opacity-70':  
+                    'max-h-[80px] max-w-[351px] bg-white px-[118px] py-[30px] text-[#FF2525] active:opacity-70':
                         variant === 'primary',
-                    'bg-[#DD1919] text-white px-[120px] py-[26px] max-w-[353px] max-h-[72px] active:bg-[#F45A5A]':
+                    'max-h-[72px] max-w-[353px] bg-[#DD1919] px-[120px] py-[26px] text-white active:bg-[#F45A5A]':
                         variant === 'secondary',
-                    'bg-inherit border border-[#D21F1F] text-[#D21F1F] px-[120px] py-[26px] max-w-[353px] max-h-[70px]':
+                    'max-h-[70px] max-w-[353px] border border-[#D21F1F] bg-inherit px-[120px] py-[26px] text-[#D21F1F]':
                         variant === 'ghost',
                 }
             )}
@@ -36,7 +35,7 @@ const Button = (props: Props) => {
         >
             емеля
         </button>
-    )
-}
+    );
+};
 
 export default Button;
