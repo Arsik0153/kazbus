@@ -5,6 +5,8 @@ import React, { useState } from 'react';
 import FullPageSelector from '@/components/fullpageselector';
 import ArrowRightIcon from '../../public/assets/arrow-right-icon';
 import RadioInput from '@/components/radio-input';
+import Input from '@/components/input';
+import Testd from '@/components/test';
 
 
 export default function Home() {
@@ -29,7 +31,19 @@ export default function Home() {
                     value={value}
                     onChange={setValue}
                 />
+                <Input
+                    // label='ewfwefwefwef'
+                    placeholder='ФИО пассажира'
+                    />
+                {/* <Testd
+                    name='gender'
+                    items={items}
+                    value={value}
+                    onChange={setValue}
+                    /> */}
             </div>
+
+
 
 
         </main>
