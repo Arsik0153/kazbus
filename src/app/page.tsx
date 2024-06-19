@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 
 import FullPageSelector from '@/components/fullpageselector';
-import ArrowRightIcon from '../../public/assets/arrow-right-icon';
+import ArrowRightIcon from '../../public/assets/arrow-left-icon';
 import Counter from '@/components/counter';
 import Trip from '@/components/trip';
 export default function Home() {
