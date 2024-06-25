@@ -33,7 +33,6 @@ const Button = (props: Props) => {
             )}
             style={disabled ? { opacity: 0.5 } : {}}
         >
-            емеля
         </button>
     );
 };

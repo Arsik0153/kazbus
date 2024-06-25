@@ -9,4 +9,4 @@ const Plus = () => {
     )
 }
 
-export default Plus
+export default Plus;
