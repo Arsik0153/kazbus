@@ -4,9 +4,8 @@ import React, { useState } from 'react';
 
 import FullPageSelector from '@/components/fullpageselector';
 import ArrowRightIcon from '../../public/assets/arrow-right-icon';
-import RadioInput from '@/components/radio-input';
-
-
+import Counter from '@/components/counter';
+import Trip from '@/components/trip';
 export default function Home() {
     const items: { value: string, label: string }[] = [
         { value: 'udo', label: 'Удостоверение личности' },
@@ -22,16 +21,8 @@ export default function Home() {
                 icon={<ArrowRightIcon />}
                 text={'Откуда вы направляетесь?'}
             />
-            <div className="flex flex-col gap-2 ">
-                <RadioInput
-                    name='gender'
-                    items={items}
-                    value={value}
-                    onChange={setValue}
-                />
-            </div>
-
-
+            <Counter/>
+            <Trip/>
         </main>
     );
 }
