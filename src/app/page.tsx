@@ -42,39 +42,6 @@ export default function Home() {
                     onChange={setValue}
                     /> */}
             </div>
-
-
-
-
         </main>
     );
 }
-
-// // pages/index.js
-// "use Client";
-// import React, { useState } from 'react';
-// import DynamicRadioButtons from '@/components/radio-input';
-
-// const options = [
-//   { label: 'Option 1', value: 'option1' },
-//   { label: 'Option 2', value: 'option2' },
-//   { label: 'Option 3', value: 'option3' },
-// ];
-
-// const Home = () => {
-//   const [selectedOption, setSelectedOption] = useState(null);
-
-//   const handleOptionSelect = (value) => {
-//     setSelectedOption(value);
-//   };
-
-//   return (
-//     <div>
-//       <h1>Dynamic Radio Buttons Example</h1>
-//       <DynamicRadioButtons options={options} onSelect={handleOptionSelect} />
-//       <p>Selected option: {selectedOption}</p>
-//     </div>
-//   );
-// };
-
-// export default Home;
