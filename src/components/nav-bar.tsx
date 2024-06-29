@@ -6,9 +6,9 @@ import User from '../../public/assets/user';
 
 const NavBar = () => {
     return (
-        <div className="bg-white w-full rounded-t-[10px]">
+        <div className="bg-white w-full rounded-t-[10px] fixed bottom-0 z-10">
             <div className="flex items-center p-5 justify-between w-full">
-                <div className='flex items-center flex-col gap-2 '>
+                <div className='flex items-center flex-col gap-2'>
                     <Bus color='#D21F1F' />
                     <div className='font-normal text-[12px] leading-[13.2px] text-[#D21F1F]'>
                         Поиск
