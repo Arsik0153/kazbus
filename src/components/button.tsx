@@ -23,11 +23,11 @@ const Button = (props: Props) => {
                 'flex w-full items-center justify-center rounded-[10px] text-[18px] font-semibold leading-[19.8px]',
                 className,
                 {
-                    'max-h-[80px] max-w-[351px] bg-white px-[118px] py-[30px] text-[#FF2525] active:opacity-70':
+                    'max-h-[80px] w-full bg-white px-[118px] py-[30px] text-[#FF2525] active:opacity-70':
                         variant === 'primary',
-                    'max-h-[72px] max-w-[353px] bg-[#DD1919] px-[120px] py-[26px] text-white active:bg-[#F45A5A]':
+                    'max-h-[72px] w-full bg-[#DD1919] px-[120px] py-[26px] text-white active:bg-[#F45A5A]':
                         variant === 'secondary',
-                    'max-h-[70px] max-w-[353px] border border-[#D21F1F] bg-inherit px-[120px] py-[26px] text-[#D21F1F]':
+                    'max-h-[70px] w-full border border-[#D21F1F] bg-inherit px-[120px] py-[26px] text-[#D21F1F]':
                         variant === 'ghost',
                 }
             )}

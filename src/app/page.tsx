@@ -3,9 +3,12 @@
 import React, { useState } from 'react';
 
 import FullPageSelector from '@/components/fullpageselector';
-import ArrowRightIcon from '../../public/assets/arrow-left-icon';
-import Counter from '@/components/counter';
-import Trip from '@/components/trip';
+import ArrowRightIcon from '../../public/assets/arrow-right-icon';
+import RadioInput from '@/components/radio-input';
+import Input from '@/components/input';
+import Testd from '@/components/test';
+
+
 export default function Home() {
     const items: { value: string, label: string }[] = [
         { value: 'udo', label: 'Удостоверение личности' },
@@ -21,37 +24,24 @@ export default function Home() {
                 icon={<ArrowRightIcon />}
                 text={'Откуда вы направляетесь?'}
             />
-            <Counter/>
-            <Trip/>
+            <div className="flex flex-col gap-2 ">
+                <RadioInput
+                    name='gender'
+                    items={items}
+                    value={value}
+                    onChange={setValue}
+                />
+                <Input
+                    // label='ewfwefwefwef'
+                    placeholder='ФИО пассажира'
+                    />
+                {/* <Testd
+                    name='gender'
+                    items={items}
+                    value={value}
+                    onChange={setValue}
+                    /> */}
+            </div>
         </main>
     );
 }
-
-// // pages/index.js
-// "use Client";
-// import React, { useState } from 'react';
-// import DynamicRadioButtons from '@/components/radio-input';
-
-// const options = [
-//   { label: 'Option 1', value: 'option1' },
-//   { label: 'Option 2', value: 'option2' },
-//   { label: 'Option 3', value: 'option3' },
-// ];
-
-// const Home = () => {
-//   const [selectedOption, setSelectedOption] = useState(null);
-
-//   const handleOptionSelect = (value) => {
-//     setSelectedOption(value);
-//   };
-
-//   return (
-//     <div>
-//       <h1>Dynamic Radio Buttons Example</h1>
-//       <DynamicRadioButtons options={options} onSelect={handleOptionSelect} />
-//       <p>Selected option: {selectedOption}</p>
-//     </div>
-//   );
-// };
-
-// export default Home;
