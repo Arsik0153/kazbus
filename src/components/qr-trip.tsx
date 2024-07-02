@@ -35,7 +35,7 @@ type Props = {
     ticket_amount: number;
 }
 
-const Trip = ({ 
+const Trip = ({
     status,
     town_one,
     town_two,
@@ -81,6 +81,17 @@ const Trip = ({
                     <div className='pb-4'>
                         <StatusBadge status={status} />
                     </div>
+                </div>
+                <div className='flex flex-col items-center justify-center py-5'>
+                    <div>
+                        <Image
+                            src={'/assets/tickets/qr.png'}
+                            alt={''}
+                            width={210}
+                            height={210}
+                        />
+                    </div>
+                    <div className='font-normal text-[16px] leading-[17.6px] pt-5'>Место - 06</div>
                 </div>
                 <div className='flex flex-row justify-between items-center'>
                     <div className='flex flex-row gap-5'>
