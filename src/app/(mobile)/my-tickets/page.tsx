@@ -1,53 +1,58 @@
-import React from 'react'
+import React from 'react';
 import Trip from '@/components/trip';
-import Bus from '../../../../public/assets/bus';
 import Button from '@/components/button';
 
 const MyTicketsPage = () => {
     return (
-        <div className='p-5'>
-            <div className='font-semibold text-[42px] leading-[46.2px] tracking-[-3%]'>
+        <div className="h-full bg-[var(--gray)] px-5">
+            <h1 className="pt-[75px] text-[42px] font-semibold leading-[46.2px] tracking-[-3%] text-[var(--black)]">
                 Мои билеты
-            </div>
-            <div className='flex flex-col '>
-                <div className='pt-5 flex flex-col'>
-                    <Trip status='paid'
-                        town_one='Алматы'
-                        town_two='Кокшетау'
-                        departure='12:00'
-                        arrive='16:40'
-                        departure_date='8 мая'
+            </h1>
+            <div className="flex flex-col">
+                <div className="flex flex-col pt-5">
+                    <Trip
+                        status="paid"
+                        town_one="Алматы"
+                        town_two="Кокшетау"
+                        departure="12:00"
+                        arrive="16:40"
+                        departure_date="8 мая"
                         tickets={112}
                         arriving_date={'9 мая'}
                         passenger_amount={1}
-                        ticket_amount={12450} /> 
-                    <Trip status='booked'
-                        town_one='Алматы'
-                        town_two='Кокшетау'
-                        departure='12:00'
-                        arrive='16:40'
-                        departure_date='8 мая'
+                        ticket_amount={12450}
+                    />
+                    <Trip
+                        status="booked"
+                        town_one="Алматы"
+                        town_two="Кокшетау"
+                        departure="12:00"
+                        arrive="16:40"
+                        departure_date="8 мая"
                         tickets={112}
                         arriving_date={'9 мая'}
                         passenger_amount={1}
-                        ticket_amount={12450} /> 
-                    <Trip status='expired'
-                        town_one='Алматы'
-                        town_two='Кокшетау'
-                        departure='12:00'
-                        arrive='16:40'
-                        departure_date='8 мая'
+                        ticket_amount={12450}
+                    />
+                    <Trip
+                        status="expired"
+                        town_one="Алматы"
+                        town_two="Кокшетау"
+                        departure="12:00"
+                        arrive="16:40"
+                        departure_date="8 мая"
                         tickets={112}
                         arriving_date={'9 мая'}
                         passenger_amount={1}
-                        ticket_amount={12450} /> 
+                        ticket_amount={12450}
+                    />
                 </div>
-                <div className='pt-5'>
-                    <Button variant='ghost'>История покупки билетов</Button>
-                </div>
+                <Button variant="ghost" className="my-5">
+                    История покупки билетов
+                </Button>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default MyTicketsPage;

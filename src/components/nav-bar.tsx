@@ -1,37 +1,63 @@
+'use client';
 import React from 'react';
 import Bus from '../../public/assets/bus';
 import Building from '../../public/assets/building';
 import Coupon from '../../public/assets/coupon';
 import User from '../../public/assets/user';
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
+
+const getColor = (pathname: string, url: string) => {
+    return url.startsWith(pathname) ? '#D21F1F' : '#C8C8C8';
+};
 
 const NavBar = () => {
+    const pathname = usePathname();
+
     return (
-        <div className="bg-white w-full rounded-t-[10px] fixed bottom-0 z-10">
-            <div className="flex items-center p-5 justify-between w-full">
-                <div className='flex items-center flex-col gap-2'>
-                    <Bus color='#D21F1F' />
-                    <div className='font-normal text-[12px] leading-[13.2px] text-[#D21F1F]'>
+        <div className="fixed bottom-0 z-10 w-full rounded-t-[10px] bg-white">
+            <div className="flex w-full items-center justify-between p-5">
+                <Link href="/main" className="flex flex-col items-center gap-2">
+                    <Bus color={getColor('/main', pathname)} />
+                    <div
+                        className={`text-[12px] font-normal leading-[13.2px] text-[${getColor('/main', pathname)}]`}
+                    >
                         Поиск
                     </div>
-                </div>
-                <div className='flex items-center flex-col gap-2'>
-                    <Building color='#D21F1F' />
-                    <div className='font-normal text-[12px] leading-[13.2px] text-[#D21F1F]'>
+                </Link>
+                <Link
+                    href="/directions"
+                    className="flex flex-col items-center gap-2"
+                >
+                    <Building color={getColor('/directions', pathname)} />
+                    <div
+                        className={`text-[12px] font-normal leading-[13.2px] text-[${getColor('/directions', pathname)}]`}
+                    >
                         Направления
                     </div>
-                </div>
-                <div className='flex items-center flex-col gap-2'>
-                    <Coupon color='#D21F1F' />
-                    <div className='font-normal text-[12px] leading-[13.2px] text-[#D21F1F]'>
+                </Link>
+                <Link
+                    href="/my-tickets"
+                    className="flex flex-col items-center gap-2"
+                >
+                    <Coupon color={getColor('/my-tickets', pathname)} />
+                    <div
+                        className={`text-[12px] font-normal leading-[13.2px] text-[${getColor('/my-tickets', pathname)}]`}
+                    >
                         Мои билеты
                     </div>
-                </div>
-                <div className='flex items-center flex-col gap-2'>
-                    <User color='#D21F1F' />
-                    <div className='font-normal text-[12px] leading-[13.2px] text-[#D21F1F]'>
+                </Link>
+                <Link
+                    href="/profile"
+                    className="flex flex-col items-center gap-2"
+                >
+                    <User color={getColor('/profile', pathname)} />
+                    <div
+                        className={`text-[12px] font-normal leading-[13.2px] text-[${getColor('/profile', pathname)}]`}
+                    >
                         Профиль
                     </div>
-                </div>
+                </Link>
             </div>
         </div>
     );

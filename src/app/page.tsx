@@ -6,16 +6,13 @@ import FullPageSelector from '@/components/fullpageselector';
 import ArrowRightIcon from '../../public/assets/arrow-right-icon';
 import RadioInput from '@/components/radio-input';
 import Input from '@/components/input';
-import Testd from '@/components/test';
-
 
 export default function Home() {
-    const items: { value: string, label: string }[] = [
+    const items: { value: string; label: string }[] = [
         { value: 'udo', label: 'Удостоверение личности' },
         { value: 'pasport', label: 'Пасспорт' },
         { value: 'svid', label: 'Свидетельство о рождении' },
-
-    ]
+    ];
     const [value, setValue] = useState<string | null>(null);
 
     return (
@@ -24,23 +21,14 @@ export default function Home() {
                 icon={<ArrowRightIcon />}
                 text={'Откуда вы направляетесь?'}
             />
-            <div className="flex flex-col gap-2 ">
+            <div className="flex flex-col gap-2">
                 <RadioInput
-                    name='gender'
+                    name="gender"
                     items={items}
                     value={value}
                     onChange={setValue}
                 />
-                <Input
-                    // label='ewfwefwefwef'
-                    placeholder='ФИО пассажира'
-                    />
-                {/* <Testd
-                    name='gender'
-                    items={items}
-                    value={value}
-                    onChange={setValue}
-                    /> */}
+                <Input placeholder="ФИО пассажира" />
             </div>
         </main>
     );

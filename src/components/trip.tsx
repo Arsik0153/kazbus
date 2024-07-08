@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import Bus from '../../public/assets/bus';
 import RouteFill from '../../public/assets/route-fill';
 import ToiletPaper from '../../public/assets/toilet-paper';
@@ -9,15 +9,27 @@ import Image from 'next/image';
 
 const StatusBadge = ({ status }: { status?: string }) => {
     if (status === 'paid') {
-        return <div className="bg-[#7CC71C] rounded-[30px] text-[#FFFFFF] text-[14px] leading-[15.4px] font-medium py-1 px-2">Оплачен</div>;
+        return (
+            <div className="rounded-[30px] bg-[#7CC71C] px-2 py-1 text-[14px] font-medium leading-[15.4px] text-[#FFFFFF]">
+                Оплачен
+            </div>
+        );
     }
 
     if (status === 'booked') {
-        return <div className="bg-[#FF2D2D] rounded-[30px] text-[#FFFFFF] text-[14px] leading-[15.4px] font-medium py-1 px-2">Забронирован</div>;
+        return (
+            <div className="rounded-[30px] bg-[#FF2D2D] px-2 py-1 text-[14px] font-medium leading-[15.4px] text-[#FFFFFF]">
+                Забронирован
+            </div>
+        );
     }
 
     if (status === 'expired') {
-        return <div className="bg-[#AEAEAE] rounded-[30px] text-[#FFFFFF] text-[14px] leading-[15.4px] font-medium py-1 px-2">Просрочен</div>;
+        return (
+            <div className="rounded-[30px] bg-[#AEAEAE] px-2 py-1 text-[14px] font-medium leading-[15.4px] text-[#FFFFFF]">
+                Просрочен
+            </div>
+        );
     }
 
     return null;
@@ -33,9 +45,9 @@ type Props = {
     arriving_date: string;
     passenger_amount: number;
     ticket_amount: number;
-}
+};
 
-const Trip = ({ 
+const Trip = ({
     status,
     town_one,
     town_two,
@@ -45,65 +57,80 @@ const Trip = ({
     departure_date,
     arriving_date,
     passenger_amount,
-    ticket_amount
-
+    ticket_amount,
 }: {
-    status?: string,
-    town_one: string,
-    town_two: string,
-    tickets: number,
-    departure: string,
-    arrive: string,
-    departure_date: string,
-    arriving_date: string,
-    passenger_amount: number,
-    ticket_amount: number
+    status?: string;
+    town_one: string;
+    town_two: string;
+    tickets: number;
+    departure: string;
+    arrive: string;
+    departure_date: string;
+    arriving_date: string;
+    passenger_amount: number;
+    ticket_amount: number;
 }) => {
     return (
-        <div className='py-2'>
-            <div className='border border-[#D1D1D1] rounded-[10px] w-full bg-[#FFFFFF] p-5 gap-5 flex flex-col'>
-                <div className='flex flex-row items-center justify-between'>
-                    <div className='flex flex-row justify-between items-center'>
-                        <div className='flex flex-col'>
-                            <div className='flex flex-row items-center justify-between'>
-                                <div className='flex flex-row gap-2 items-center'>
-                                    <BusMini color='#E74949' />
-                                    <div className='font-semibold text-[16px] leading-[17.6px] text-[#4A4A4A]'>
+        <div className="py-2">
+            <div className="flex w-full flex-col gap-5 rounded-[10px] bg-[#FFFFFF] p-5">
+                <div className="flex flex-row items-center justify-between">
+                    <div className="flex flex-row items-center justify-between">
+                        <div className="flex flex-col">
+                            <div className="flex flex-row items-center justify-between">
+                                <div className="flex flex-row items-center gap-2">
+                                    <BusMini color="#E74949" />
+                                    <div className="text-[16px] font-semibold leading-[17.6px] text-[#4A4A4A]">
                                         {town_one} - {town_two}
                                     </div>
                                 </div>
                             </div>
-                            <div className='font-semibold text-[14px] leading-[15.4px] text-[#C7C7C7] pt-1'>
+                            <div className="pt-1 text-[14px] font-semibold leading-[15.4px] text-[#C7C7C7]">
                                 Осталось {tickets} билетов
                             </div>
                         </div>
                     </div>
-                    <div className='pb-4'>
+                    <div className="pb-4">
                         <StatusBadge status={status} />
                     </div>
                 </div>
-                <div className='flex flex-row justify-between items-center'>
-                    <div className='flex flex-row gap-5'>
-                        <div className='flex flex-col gap-1'>
-                            <div className='font-normal text-[14px] leading-[15.4px] text-[#4A4A4A]'>Отправление</div>
-                            <div className='font-medium text-[28px] leading-[30.8px] text-[#4A4A4A]'>{departure}</div>
-                            <div className='font-normal text-[16px] leading-[17.6px] text-[#C8C8C8]'>{departure_date}</div>
+                <div className="flex flex-row items-center justify-between">
+                    <div className="flex flex-row gap-5">
+                        <div className="flex flex-col gap-1">
+                            <div className="text-[14px] font-normal leading-[15.4px] text-[#4A4A4A]">
+                                Отправление
+                            </div>
+                            <div className="text-[28px] font-medium leading-[30.8px] text-[#4A4A4A]">
+                                {departure}
+                            </div>
+                            <div className="text-[16px] font-normal leading-[17.6px] text-[#C8C8C8]">
+                                {departure_date}
+                            </div>
                         </div>
-                        <div className='flex flex-col gap-1'>
-                            <div className='font-normal text-[14px] leading-[15.4px] text-[#4A4A4A]'>Прибытие</div>
-                            <div className='font-medium text-[28px] leading-[30.8px] text-[#4A4A4A]'>{arrive}</div>
-                            <div className='font-normal text-[16px] leading-[17.6px] text-[#C8C8C8]'>{arriving_date}</div>
+                        <div className="flex flex-col gap-1">
+                            <div className="text-[14px] font-normal leading-[15.4px] text-[#4A4A4A]">
+                                Прибытие
+                            </div>
+                            <div className="text-[28px] font-medium leading-[30.8px] text-[#4A4A4A]">
+                                {arrive}
+                            </div>
+                            <div className="text-[16px] font-normal leading-[17.6px] text-[#C8C8C8]">
+                                {arriving_date}
+                            </div>
                         </div>
                     </div>
-                    <div className='flex flex-col gap-2'>
-                        <div className='gap-2 flex flex-row place-content-end'>
+                    <div className="flex flex-col gap-2">
+                        <div className="flex flex-row place-content-end gap-2">
                             <ToiletPaper />
                             <HotelBed />
                             <Wifi />
                         </div>
-                        <div className='text-right'>
-                            <div className='font-normal text-[12px] leading-[13.2px] text-[#A0A0A0]'>{passenger_amount} пассажир</div>
-                            <div className='font-medium text-[24px] leading-[26.4px] text-[#4A4A4A]'>{ticket_amount}₸</div>
+                        <div className="text-right">
+                            <div className="text-[12px] font-normal leading-[13.2px] text-[#A0A0A0]">
+                                {passenger_amount} пассажир
+                            </div>
+                            <div className="text-[24px] font-medium leading-[26.4px] text-[#4A4A4A]">
+                                {ticket_amount}₸
+                            </div>
                         </div>
                     </div>
                 </div>
