@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-
 :root {
     --accent: #dd1919;
     --bg: #fff;
     --black: #4a4a4a;
+    --gray: #f8f8f8;
 }
 
 body {
