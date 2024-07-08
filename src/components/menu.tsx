@@ -1,13 +1,21 @@
-import React from 'react'
+import React from 'react';
 import MenuArrow from '../../public/assets/menu-arrow';
+import Link from 'next/link';
 
-const Menu = ({ text }: { text?: string }) => {
+const Menu = ({ text, link = '/' }: { text?: string; link?: string }) => {
     return (
-        <div className='flex flex-row items-center justify-between'>
-            <div className='font-normal text-[16px] leading-[17.6px]'>{text}</div>
-            <div><MenuArrow color='#E74949'/></div>
-        </div>
-    )
-}
+        <Link
+            href={link}
+            className="flex flex-row items-center justify-between py-4"
+        >
+            <div className="text-[16px] font-normal leading-[17.6px]">
+                {text}
+            </div>
+            <div>
+                <MenuArrow color="#E74949" />
+            </div>
+        </Link>
+    );
+};
 
 export default Menu;

@@ -27,7 +27,7 @@ const Button = (props: Props) => {
                         variant === 'primary',
                     'max-h-[72px] w-full bg-[#E74949] text-white active:bg-[#F45A5A]':
                         variant === 'secondary',
-                    'max-h-[70px] w-full border border-[#D21F1F] bg-inherit text-[#D21F1F]':
+                    'max-h-[70px] w-full border border-[#D21F1F] bg-inherit text-[#E74949]':
                         variant === 'ghost',
                 }
             )}

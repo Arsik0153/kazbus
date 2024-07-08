@@ -1,11 +1,8 @@
 import React from 'react';
-import Bus from '../../public/assets/bus';
-import RouteFill from '../../public/assets/route-fill';
 import ToiletPaper from '../../public/assets/toilet-paper';
 import HotelBed from '../../public/assets/hotel-bed';
 import Wifi from '../../public/assets/wifi';
 import BusMini from '../../public/assets/bus-mini';
-import Image from 'next/image';
 
 const StatusBadge = ({ status }: { status?: string }) => {
     if (status === 'paid') {
@@ -33,18 +30,6 @@ const StatusBadge = ({ status }: { status?: string }) => {
     }
 
     return null;
-};
-
-type Props = {
-    town_one: string;
-    town_two: string;
-    tickets: number;
-    departure: string;
-    arrive: string;
-    departure_date: string;
-    arriving_date: string;
-    passenger_amount: number;
-    ticket_amount: number;
 };
 
 const Trip = ({
