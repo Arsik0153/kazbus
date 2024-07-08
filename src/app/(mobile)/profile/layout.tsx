@@ -1,8 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter_Tight } from 'next/font/google';
-import './globals.css';
-
-const interTight = Inter_Tight({ subsets: ['latin', 'cyrillic'] });
+import NavBar from '@/components/nav-bar';
 
 export const metadata: Metadata = {
     title: 'Create Next App',
@@ -16,8 +13,11 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={interTight.className}>
+            <body>
+                <div className='relative text-[#4A4A4A]'>
                     {children}
+                    <NavBar />
+                </div>
             </body>
         </html>
     );

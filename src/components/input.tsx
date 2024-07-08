@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import React, { forwardRef } from 'react';
+import Calendar from '../../public/assets/calendar';
 
 type Props = React.HTMLProps<HTMLInputElement> & {
     label?: string;
@@ -29,7 +30,7 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
                     )}
                 />
                 
-                
+
                 {iconRight && (
                     <>
                         {iconRight}
