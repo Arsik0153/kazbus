@@ -1,33 +1,42 @@
-import React from 'react'
+import React from 'react';
 import Image from 'next/image';
 import Menu from '@/components/menu';
+import Topbar from '@/components/topbar';
 
 const FAQPage = () => {
     return (
-        <div className='p-5'>
-            <div className='flex items-center justify-center flex-col rounded-[10px] bg-[#F2F2F2]'>
-                <div className='font-semibold tracking-[-3%] text-center leading-[24px] text-[20px] text-[#E74949] pt-5 px-5'>
-                    Мануал по использованию приложения и решения проблем
-                </div>
+        <>
+            <Topbar backHref="/profile/authorized">FAQ</Topbar>
+            <div className="mb-4 mt-8 px-5">
+                <div className="flex flex-col items-center justify-center rounded-[10px] bg-[#F2F2F2]">
+                    <div className="px-5 pt-5 text-center text-[20px] font-semibold leading-[24px] tracking-[-3%] text-[#E74949]">
+                        Мануал по использованию приложения и решения проблем
+                    </div>
                     <Image
                         src={'/assets/faq/book.png'}
                         width={352}
-                        height={154} alt={''}
-                        className='pt-5' />
+                        height={154}
+                        alt={''}
+                        className="pt-5"
+                    />
+                </div>
+                <div className="mt-[20px] flex flex-col">
+                    <Menu
+                        link="/profile/authorized/faq/return-policy"
+                        text="Условия возврата средств"
+                    />
+                    <div className="color-[#E9E9E9] h-1 w-full border-b"></div>
+                    <Menu text="Как приобрести билет?" />
+                    <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
+                    <Menu text="Как изменить данные пассажира?" />
+                    <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
+                    <Menu text="Проблема с оплатой" />
+                    <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
+                    <Menu text="Правила поведения в автобусе" />
+                </div>
             </div>
-            <div className='flex flex-col gap-3 pt-[20px]'>
-                <Menu text='Условия возврата средств' />
-                <div className='border-b h-1 color-[#E9E9E9] w-full'></div>
-                <Menu text='Как приобрести билет?' />
-                <div className='border-t h-1 color-[#E9E9E9] w-full'></div>
-                <Menu text='Как изменить данные пассажира?' />
-                <div className='border-t h-1 color-[#E9E9E9] w-full'></div>
-                <Menu text='Проблема с оплатой' />
-                <div className='border-t h-1 color-[#E9E9E9] w-full'></div>
-                <Menu text='Правила поведения в автобусе' />
-            </div>
-        </div>
-    )
-}
+        </>
+    );
+};
 
 export default FAQPage;
