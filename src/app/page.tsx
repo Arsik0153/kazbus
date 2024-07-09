@@ -16,20 +16,20 @@ export default function Home() {
     const [value, setValue] = useState<string | null>(null);
 
     return (
-        <main className="flex min-h-screen flex-col items-center bg-sky-500/100 p-10">
+        <main className="flex min-h-screen w-full flex-col items-center p-10">
             <FullPageSelector
                 icon={<ArrowRightIcon />}
                 text={'Откуда вы направляетесь?'}
             />
-            <div className="flex flex-col gap-2">
+            <div className="mb-10 flex flex-col gap-10">
                 <RadioInput
                     name="gender"
                     items={items}
                     value={value}
                     onChange={setValue}
                 />
-                <Input placeholder="ФИО пассажира" />
             </div>
+            <Input id="email" label="Фио пассажира" type="email" />
         </main>
     );
 }

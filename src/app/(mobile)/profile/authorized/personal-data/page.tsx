@@ -4,6 +4,7 @@ import Radio from '@/components/radio-input';
 import Input from '@/components/input';
 import Button from '@/components/button';
 import Topbar from '@/components/topbar';
+import Calendar from '../../../../../../public/assets/calendar';
 
 const PersonalDataPage = () => {
     const [selectedValue, setSelectedValue] = useState(null);
@@ -44,9 +45,13 @@ const PersonalDataPage = () => {
                     </div>
                 </div>
                 <div className="flex flex-col gap-2 pt-7">
-                    <Input placeholder="Номер документа или ИИН" />
-                    <Input placeholder="Дата рождения" />
-                    <Input placeholder="Номер телефона" />
+                    <Input label="Номер документа или ИИН" id="iin" />
+                    <Input
+                        label="Дата рождения"
+                        id="birth_date"
+                        iconLeft={<Calendar color="#E74949" />}
+                    />
+                    <Input label="Номер телефона" id="phone" />
                 </div>
                 <Button variant="ghost" className="mt-7">
                     Изменить данные
