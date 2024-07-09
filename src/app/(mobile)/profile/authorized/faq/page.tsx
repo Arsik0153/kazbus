@@ -15,7 +15,7 @@ const FAQPage = () => {
                     <Image
                         src={'/assets/faq/book.png'}
                         width={352}
-                        height={154}
+                        height={159}
                         alt={''}
                         className="pt-5"
                     />
