@@ -57,7 +57,7 @@ const Trip = ({
 }) => {
     return (
         <div className="py-2">
-            <div className="flex w-full flex-col gap-5 rounded-[10px] bg-[#FFFFFF] p-5">
+            <div className="flex w-full flex-col gap-5 rounded-[10px] border border-[#D1D1D1] bg-[#FFFFFF] p-5">
                 <div className="flex flex-row items-center justify-between">
                     <div className="flex flex-row items-center justify-between">
                         <div className="flex flex-col">
