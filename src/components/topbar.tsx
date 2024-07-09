@@ -2,13 +2,13 @@ import BackIcon from '@/assets/shared/back-icon';
 import Link from 'next/link';
 import React from 'react';
 
-type Props = {
+type Props = React.HTMLProps<HTMLDivElement> & {
     backHref?: string;
     children: React.ReactNode;
 };
 
 const Topbar = (props: Props) => {
-    const { backHref, children } = props;
+    const { backHref, children, className, ...rest } = props;
 
     return (
         <div className="relative flex w-full items-center justify-between overflow-hidden rounded-b-[10px] bg-gradient-to-b from-[#E32828] to-[#E13535] px-5 pb-[26px] pt-[65px]">
@@ -18,7 +18,10 @@ const Topbar = (props: Props) => {
                     <BackIcon color="#fff" width={17} height={22} />
                 </Link>
             )}
-            <div className="mx-auto text-xl font-medium tracking-[-3%] text-[#fff]">
+            <div
+                className={`mx-auto text-xl font-medium tracking-[-3%] text-[#fff] ${className}`}
+                {...rest}
+            >
                 {children}
             </div>
         </div>
