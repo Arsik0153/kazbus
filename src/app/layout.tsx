@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter_Tight } from 'next/font/google';
 import './globals.css';
 import Head from 'next/head';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const interTight = Inter_Tight({ subsets: ['latin', 'cyrillic'] });
 
@@ -23,7 +24,10 @@ export default function RootLayout({
                     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
                 />
             </Head>
-            <body className={interTight.className}>{children}</body>
+            <body className={interTight.className}>
+                {children}
+                <SpeedInsights />
+            </body>
         </html>
     );
 }
