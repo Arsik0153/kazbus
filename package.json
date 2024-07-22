@@ -11,6 +11,7 @@
     "format-all": "bun run format \"src/**/*.{js,jsx,ts,tsx,json,css,scss}\""
   },
   "dependencies": {
+    "@vercel/speed-insights": "^1.0.12",
     "clsx": "^2.1.1",
     "next": "14.2.3",
     "prettier-plugin-tailwindcss": "^0.6.1",
