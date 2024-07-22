@@ -19,7 +19,7 @@ const StepFive = () => {
             {/* change route!!! IMPORTANT */}
 
 
-            <div className="h-full bg-[var(--gray)] px-5">
+            <div className="h-full px-5">
                 <div className="mt-10 flex flex-col">
                     <p className="text-3xl font-medium text-[#4A4A4A]">Контактные данные</p>
                     <p className="text-sm font-medium text-[#A0A0A0] mt-2">Мы скинем ваш билет на ваш номер телефона, и на электронную почту</p>
@@ -28,7 +28,7 @@ const StepFive = () => {
                             label='+7 (___) ___ - __ - __'
                             id="UserPhone"
                             iconLeft={<Image
-                                src='/kz.png'
+                                src={'/assets/main/kz.png'}
                                 width={24}
                                 height={26}
                                 alt="KZ"

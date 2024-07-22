@@ -1,7 +1,7 @@
 import React from 'react';
 
 type InputProps = React.HTMLProps<HTMLInputElement> & {
-    label: string;
+    label: React.ReactNode;
     iconLeft?: React.ReactNode;
 };
 
@@ -18,7 +18,7 @@ const Input: React.FC<InputProps> = (props) => {
             <input
                 id={id}
                 className={`peer w-full bg-transparent pr-8 font-medium text-[var(--black)] placeholder-transparent outline-none transition-all duration-200 ${iconLeft ? 'pl-12' : 'pl-8'} ${className}`}
-                placeholder={placeholder || label}
+                placeholder={placeholder || ''}
                 {...rest}
             />
             <label
