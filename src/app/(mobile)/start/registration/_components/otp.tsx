@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import OTPInput from '@/components/OTPInput';
 import Button from '@/components/button'; // Убедитесь, что этот компонент существует и путь указан правильно
-import Topbar from '@/components/topbar';
-import OTP from '@/app/(mobile)/start/registration/_components/otp'
 import NewUser from '@/app/(mobile)/start/registration/_components/newUser';
 
 

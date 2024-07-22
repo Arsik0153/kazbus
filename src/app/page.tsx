@@ -6,6 +6,7 @@ import FullPageSelector from '@/components/fullpageselector';
 import ArrowRightIcon from '../../public/assets/arrow-right-icon';
 import RadioInput from '@/components/radio-input';
 import Input from '@/components/input';
+import Expired from '@/components/expired';
 
 export default function Home() {
     const items: { value: string; label: string }[] = [
@@ -16,7 +17,7 @@ export default function Home() {
     const [value, setValue] = useState<string | null>(null);
 
     return (
-        <main className="flex min-h-screen w-full flex-col items-center p-10">
+        <main className="flex min-h-screen w-full flex-col items-center gap-4 p-10">
             <FullPageSelector
                 icon={<ArrowRightIcon />}
                 text={'Откуда вы направляетесь?'}
@@ -30,6 +31,7 @@ export default function Home() {
                 />
             </div>
             <Input id="email" label="Фио пассажира" type="email" />
+            <Expired/>
         </main>
     );
 }
