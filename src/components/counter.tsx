@@ -3,16 +3,19 @@ import { useState } from 'react';
 import Plus from '../../public/assets/plus';
 import Minus from '../../public/assets/minus';
 
-const Counter = () => {
-    const [count, setCount] = useState(0);
+interface CounterProps {
+    value: number;
+    setValue: (value: number) => void;
+}
 
+const Counter: React.FC<CounterProps> = ({ value, setValue }) => {
     const increment = () => {
-        setCount(count + 1);
+        setValue(value + 1);
     };
 
     const decrement = () => {
-        if (count > 0) {
-            setCount(count - 1);
+        if (value > 0) {
+            setValue(value - 1);
         }
     };
 
@@ -21,19 +24,16 @@ const Counter = () => {
             rounded-[10px] max-w-[171px] max-h-[52px] justify-between h-full w-full p-3 
             ">
             <button
-                onClick={increment}
-            >
-                <Plus />
-            </button>
-            <span className="text-2xl">{count}</span>
-
-            <button
                 onClick={decrement}
-            >   
+            >
                 <Minus />
             </button>
-
-
+            <span className="text-2xl">{value}</span>
+            <button
+                onClick={increment}
+            >   
+                <Plus />
+            </button>
         </div>
     );
 };
