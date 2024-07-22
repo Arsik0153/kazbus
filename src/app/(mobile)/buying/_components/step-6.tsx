@@ -17,7 +17,7 @@ const StepFive = () => {
 
             <div className="h-full bg-[var(--gray)] px-5 gap-1">
                 <div className="flex flex-col gap-3 p-5 border border-[#D1D1D1] rounded-lg mt-4 bg-none">
-                    <Clock />
+                    <Clock color='#E74949' />
                     <div className="flex flex-col gap-1">
                         <p className="text-2xl font-semibold text-[#4A4A4A]">Ваш билет забронирован</p>
                         <p className="text-sm font-normal text-[#4A4A4A]">У вас есть 30 минут для оплаты билета</p>

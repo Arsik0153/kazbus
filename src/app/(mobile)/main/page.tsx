@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import FullPageSelector from '@/components/fullpageselector';
 import ArrowLeftIcon from '../../../../public/assets/arrow-left-icon';
 import Button from '@/components/button';
@@ -12,8 +12,14 @@ import PassengerDrawer from './_components/passenger-drawer';
 import SelectDeparture from './_components/select-departure';
 import SelectArrival from './_components/select-arrival';
 import Link from 'next/link';
+import Input from '@/components/input';
 
 const MainPage = () => {
+    const [adultPassengers, setAdultPassengers] = useState(1);
+    const [childPassengers, setChildPassengers] = useState(0);
+
+    const totalPassengers = adultPassengers + childPassengers;
+
     return (
         <Drawer.Root setBackgroundColorOnScale={false}>
             <div className="flex h-full flex-grow flex-col items-center justify-center bg-gradient-to-r from-[#E32828] to-[#E13535]">
@@ -38,19 +44,28 @@ const MainPage = () => {
                     <div className="flex w-screen flex-col gap-2 p-5">
                         <SelectDeparture />
                         <SelectArrival />
-                        <FullPageSelector
-                            icon={<Calendar color="white" />}
-                            text={'Дата отправления'}
+                        <Input
+                            label='Дата отправления'
+                            id="date"
+                            variant='ghost'
+                            iconLeft={<Calendar color="white" />}
                         />
                         <Drawer.Trigger>
-                            <FullPageSelector
-                                icon={<User color="white" />}
-                                text={'1 пассажир'}
+                            <Input
+                                label={`${totalPassengers} пассажир${totalPassengers > 1 ? 'а' : ''}`}
+                                id="passengers"
+                                variant='ghost'
+                                iconLeft={<User color="white" />}
                             />
                         </Drawer.Trigger>
-                        <PassengerDrawer />
+                        <PassengerDrawer 
+                            adultPassengers={adultPassengers}
+                            setAdultPassengers={setAdultPassengers}
+                            childPassengers={childPassengers}
+                            setChildPassengers={setChildPassengers}
+                        />
                         <Link href="/main/tickets">
-                            <Button>Начать поиск</Button>
+                            <Button className='mt-1'>Начать поиск</Button>
                         </Link>
                     </div>
                 </div>

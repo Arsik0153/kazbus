@@ -12,8 +12,8 @@ import StepSix from './_components/step-6';
 const Directions = () => {
     return (
         <>
-            {/* <StepSix /> */}
-            <StepFive />
+            <StepSix />
+            {/* <StepFive /> */}
 
         </>
 
