@@ -1,29 +1,70 @@
 import React from 'react';
+import clsx from 'clsx';
 
 type InputProps = React.HTMLProps<HTMLInputElement> & {
     label: React.ReactNode;
     iconLeft?: React.ReactNode;
+    variant?: 'primary' | 'secondary' | 'ghost';
+    loading?: boolean;
 };
 
-const Input: React.FC<InputProps> = (props) => {
-    const { id, label, iconLeft, className, placeholder, ...rest } = props;
-
+const Input: React.FC<InputProps> = ({
+    id,
+    label,
+    iconLeft,
+    className,
+    placeholder,
+    variant = 'primary', // Дефолтное значение
+    loading,
+    ...rest
+}) => {
     return (
-        <div className="relative w-full rounded-[10px] border border-solid border-[#D1D1D1] bg-white pb-[19px] pt-[35px]">
+        <div className={clsx(
+            'relative w-full rounded-[10px] border border-solid  pb-[19px] pt-[35px]',
+            {
+                'bg-[#ffffff]': variant === 'primary',
+                'bg-none': variant === 'secondary',
+                'border-[#AAAAAA] bg-[#FFFFFF29]': variant === 'ghost',
+            }
+        )}>
             {iconLeft && (
-                <div className="absolute left-4 top-1/2 origin-top-left -translate-y-1/2 transform">
+                <div className="absolute left-5 top-1/2 origin-top-left -translate-y-1/2 transform">
                     {iconLeft}
                 </div>
             )}
             <input
                 id={id}
-                className={`peer w-full bg-transparent pr-8 font-medium text-[var(--black)] placeholder-transparent outline-none transition-all duration-200 ${iconLeft ? 'pl-12' : 'pl-8'} ${className}`}
+                className={clsx(
+                    'peer w-full bg-transparent pr-8 font-medium text-[var(--black)] placeholder-transparent outline-none transition-all duration-200',
+                    {
+                        'pl-14': iconLeft,
+                        'pl-8': !iconLeft,
+                        'opacity-50': loading,
+                    },
+                    {
+                        'text-[var(--black)]': variant === 'primary',
+                        'bg-none ': variant === 'secondary',
+                        'text-white peer-focus:text-white peer-[:not(:placeholder-shown)]:text-white' : variant === 'ghost',
+                    }
+                )}
                 placeholder={placeholder || ''}
+                disabled={loading}
                 {...rest}
             />
             <label
                 htmlFor={id}
-                className={`absolute top-1/2 origin-top-left -translate-y-1/2 transform font-medium text-[var(--black)] transition-all duration-200 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-bold peer-focus:text-[#A0A0A0] peer-[:not(:placeholder-shown)]:-translate-y-6 peer-[:not(:placeholder-shown)]:scale-75 peer-[:not(:placeholder-shown)]:font-bold peer-[:not(:placeholder-shown)]:text-[#A0A0A0] ${iconLeft ? 'left-12' : 'left-8'}`}
+                className={clsx(
+                    'absolute top-1/2 origin-top-left -translate-y-1/2 transform font-medium  transition-all duration-200 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-bold peer-focus:text-[#A0A0A0] peer-[:not(:placeholder-shown)]:-translate-y-6 peer-[:not(:placeholder-shown)]:scale-75 peer-[:not(:placeholder-shown)]:font-bold peer-[:not(:placeholder-shown)]:text-[#A0A0A0]',
+                    {
+                        'left-14': iconLeft,
+                        'left-8': !iconLeft,
+                    },
+                    {
+                        'text-[var(--black)]': variant === 'primary',
+                        'bg-none ': variant === 'secondary',
+                        'text-white peer-focus:text-[rgba(255,255,255,0.8)] peer-[:not(:placeholder-shown)]:text-[rgba(255,255,255,0.8)]' : variant === 'ghost',
+                    }
+                )}
             >
                 {label}
             </label>

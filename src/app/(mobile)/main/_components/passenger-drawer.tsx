@@ -2,7 +2,14 @@ import Counter from '@/components/counter';
 import React from 'react';
 import { Drawer } from 'vaul';
 
-const PassengerDrawer = () => {
+interface PassengerDrawerProps {
+    adultPassengers: number;
+    setAdultPassengers: (value: number) => void;
+    childPassengers: number;
+    setChildPassengers: (value: number) => void;
+}
+
+const PassengerDrawer: React.FC<PassengerDrawerProps> = ({ adultPassengers, setAdultPassengers, childPassengers, setChildPassengers }) => {
     return (
         <Drawer.Portal>
             <Drawer.Overlay className="fixed inset-0 bg-black/40" />
@@ -23,7 +30,7 @@ const PassengerDrawer = () => {
                                     от 12 лет
                                 </p>
                             </div>
-                            <Counter />
+                            <Counter value={adultPassengers} setValue={setAdultPassengers} />
                         </div>
 
                         <div className="mt-6 flex justify-between">
@@ -35,7 +42,7 @@ const PassengerDrawer = () => {
                                     младше 12 лет
                                 </p>
                             </div>
-                            <Counter />
+                            <Counter value={childPassengers} setValue={setChildPassengers} />
                         </div>
                     </div>
                 </div>
