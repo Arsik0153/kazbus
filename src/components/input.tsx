@@ -4,7 +4,7 @@ import clsx from 'clsx';
 type InputProps = React.HTMLProps<HTMLInputElement> & {
     label: React.ReactNode;
     iconLeft?: React.ReactNode;
-    variant?: 'primary' | 'secondary' | 'ghost';
+    variant?: 'primary' | 'secondary' | 'ghost' | 'nonPlaceholder';
     loading?: boolean;
 };
 
@@ -25,6 +25,7 @@ const Input: React.FC<InputProps> = ({
                 'bg-[#ffffff]': variant === 'primary',
                 'bg-none': variant === 'secondary',
                 'border-[#AAAAAA] bg-[#FFFFFF29]': variant === 'ghost',
+                // 'pt-28 pb-28': variant === 'nonPlaceholder',
             }
         )}>
             {iconLeft && (
@@ -45,6 +46,8 @@ const Input: React.FC<InputProps> = ({
                         'text-[var(--black)]': variant === 'primary',
                         'bg-none ': variant === 'secondary',
                         'text-white peer-focus:text-white peer-[:not(:placeholder-shown)]:text-white' : variant === 'ghost',
+                        'text-white peer-focus:text-white peer-[:not(:placeholder-shown)]:text-white text-xl' : variant === 'nonPlaceholder',
+
                     }
                 )}
                 placeholder={placeholder || ''}
@@ -63,6 +66,7 @@ const Input: React.FC<InputProps> = ({
                         'text-[var(--black)]': variant === 'primary',
                         'bg-none ': variant === 'secondary',
                         'text-white peer-focus:text-[rgba(255,255,255,0.8)] peer-[:not(:placeholder-shown)]:text-[rgba(255,255,255,0.8)]' : variant === 'ghost',
+                        'text-white peer-focus:text-[rgba(255,255,255,0.8)] peer-[:not(:placeholder-shown)]:text-[rgba(255,255,255,0.8)] opacity-1' : variant === 'nonPlaceholder',
                     }
                 )}
             >
