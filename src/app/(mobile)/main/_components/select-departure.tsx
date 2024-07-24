@@ -7,9 +7,10 @@ import InputFromMain from '@/components/inputFromMain';
 
 const SelectDeparture = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedCity, setSelectedCity] = useState<string>(''); // Указываем тип состояния
+    const [selectedCity, setSelectedCity] = useState<string>('');
+    const [searchTerm, setSearchTerm] = useState<string>(''); // Состояние для поиска
 
-    const handleCitySelect = (cityName: string) => { // Явно указываем тип параметра
+    const handleCitySelect = (cityName: string) => {
         setSelectedCity(cityName);
         setIsOpen(false);
     };
@@ -19,26 +20,30 @@ const SelectDeparture = () => {
         setIsOpen(false);
     };
 
+    // Фильтруем города на основе поиска
+    const filteredCities = cities.filter(city =>
+        city.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(e.target.value);
+    };
+
     if (isOpen) {
         return (
             <>
-                <div className="fixed inset-0  z-30 h-full min-h-screen w-full overflow-auto bg-[var(--bg)]">
+                <div className="fixed inset-0 z-30 h-full min-h-screen w-full overflow-auto bg-[var(--bg)]">
                     <Topbar className="mx-0 w-full">
                         <InputFromMain
                             iconLeft={<ArrowLeftIcon color="white" />}
-                            label="Откуда вы отправляетесь?"
-                        />
-                        <Input
-                            // label={selectedCity || 'Откуда вы отправляетесь?'}
-                            label={'Откуда вы отправляетесь?'}
                             id="whereFrom"
-                            onClick={() => setIsOpen(true)}
-                            variant='ghost'
-                            iconLeft={<ArrowLeftIcon color="white" />}
+                            label="Откуда вы отправляетесь?"
+                            onChange={handleInputChange} // Обработчик изменения
+                            value={searchTerm} // Связывание значения
                         />
                     </Topbar>
                     <ul className="mx-5 mb-10">
-                        {cities.map((city) => (
+                        {filteredCities.map((city) => (
                             <li
                                 key={city.id}
                                 className="flex items-center justify-between border-b-[1px] border-b-[#CDCDCD] px-[10px] py-5"

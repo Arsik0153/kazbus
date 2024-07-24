@@ -3,10 +3,12 @@ import React from 'react';
 type InputProps = React.HTMLProps<HTMLInputElement> & {
     iconLeft?: React.ReactNode;
     label: string;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; // Добавлено onChange с типом
+    value?: string; // Добавлено value с типом
 };
 
 const StyledInput: React.FC<InputProps> = (props) => {
-    const { iconLeft, label, className, ...rest } = props;
+    const { iconLeft, label, className, onChange, value, ...rest } = props;
 
     return (
         <div className="relative flex max-h-[80px] w-full flex-row items-center gap-4 rounded-[10px] border border-[#AAAAAA] bg-[#FFFFFF29] px-[20px] py-[30px]">
@@ -19,6 +21,8 @@ const StyledInput: React.FC<InputProps> = (props) => {
                 type="text"
                 placeholder={label}
                 className={`flex-grow pl-10 bg-transparent text-left text-[18px] font-medium leading-[17.6px] text-white outline-none placeholder-white ${className}`}
+                onChange={onChange} // Связываем onChange
+                value={value} // Связываем value
                 {...rest}
             />
         </div>
