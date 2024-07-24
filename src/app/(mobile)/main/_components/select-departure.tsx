@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import ArrowLeftIcon from '../../../../../public/assets/arrow-left-icon';
 import { cities } from '@/static/city';
 import Input from '@/components/input';
+import InputFromMain from '@/components/inputFromMain';
 
 const SelectDeparture = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -21,17 +22,20 @@ const SelectDeparture = () => {
     if (isOpen) {
         return (
             <>
-                <div className="fixed inset-0 z-30 h-full min-h-screen w-full overflow-auto bg-[var(--bg)]">
+                <div className="fixed inset-0  z-30 h-full min-h-screen w-full overflow-auto bg-[var(--bg)]">
                     <Topbar className="mx-0 w-full">
-                        <div onClick={handleBackClick}
-                            className="flex max-h-[80px] w-full flex-row items-center gap-4 rounded-[10px] border border-[#AAAAAA] bg-[#FFFFFF29] px-[20px] py-[30px]">
-                            <div >
-                                <ArrowLeftIcon color="white" />
-                            </div>
-                            <div className="text-left text-[16px] font-medium leading-[17.6px] text-white">
-                                Откуда вы отправляетесь?
-                            </div>
-                        </div>
+                        <InputFromMain
+                            iconLeft={<ArrowLeftIcon color="white" />}
+                            label="Откуда вы отправляетесь?"
+                        />
+                        <Input
+                            // label={selectedCity || 'Откуда вы отправляетесь?'}
+                            label={'Откуда вы отправляетесь?'}
+                            id="whereFrom"
+                            onClick={() => setIsOpen(true)}
+                            variant='ghost'
+                            iconLeft={<ArrowLeftIcon color="white" />}
+                        />
                     </Topbar>
                     <ul className="mx-5 mb-10">
                         {cities.map((city) => (
