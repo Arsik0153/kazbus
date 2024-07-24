@@ -6,6 +6,7 @@ import Topbar from '@/components/topbar';
 import Image from 'next/image';
 import OTPPage from './_components/otp';
 import NewUser from '@/app/(mobile)/start/registration/_components/newUser'
+import InputPhone from '@/components/inputPhone';
 
 const Registration = () => {
     const [showOTP, setShowOTP] = useState<boolean>(false);
@@ -27,9 +28,11 @@ const Registration = () => {
                                 Введите ваш <br /> номер телефона
                             </p>
                             <div className="flex flex-col gap-2 my-3">
-                                <Input
-                                    label='+7 (___) ___ - __ - __'
-                                    id="phone"
+                                <InputPhone
+                                    id="userPhone"
+                                    label="None label here"
+                                    placeholder="+7 (___) ___ - __ - __"
+                                    mask="+7 (___) ___-__-__"
                                     iconLeft={<Image
                                         src={'/assets/main/kz.png'}
                                         width={24}
@@ -37,6 +40,7 @@ const Registration = () => {
                                         alt="KZ"
                                     />}
                                 />
+
                             </div>
                             <Button variant='secondary' onClick={handleContinue}>
                                 Продолжить
@@ -45,7 +49,7 @@ const Registration = () => {
                         </>
                     ) : (
                         <>
-                            <OTPPage /> 
+                            <OTPPage />
                             {/* Регистрация рендерится внутри OTPPage */}
 
 

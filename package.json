@@ -11,6 +11,7 @@
     "format-all": "bun run format \"src/**/*.{js,jsx,ts,tsx,json,css,scss}\""
   },
   "dependencies": {
+    "@react-input/mask": "^1.2.5",
     "@vercel/speed-insights": "^1.0.12",
     "clsx": "^2.1.1",
     "next": "14.2.3",
