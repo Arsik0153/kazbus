@@ -1,5 +1,7 @@
 import React from 'react';
 import BusMini from '../../../../public/assets/bus-mini';
+import CitySelector from '@/components/citySelector';
+import Button from '@/components/button';
 
 const Directions = () => {
     return (
@@ -8,26 +10,9 @@ const Directions = () => {
                 Популярные направления
             </h1>
             <div className="mt-3 flex flex-wrap gap-1">
-                <div className="flex w-fit items-center gap-2 rounded-full border border-[#E74949] px-5 py-[5px] text-sm font-semibold text-[#E74949]">
-                    Из Алматы
-                    <svg
-                        width="10"
-                        height="6"
-                        viewBox="0 0 10 6"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            d="M4.99993 3.78095L8.2998 0.48114L9.2426 1.42395L4.99993 5.66662L0.757324 1.42395L1.70013 0.48114L4.99993 3.78095Z"
-                            fill="#E74949"
-                        />
-                    </svg>
-                </div>
-                <div className="w-fit rounded-full border border-[#A0A0A0] px-5 py-[5px] text-sm font-semibold text-[#A0A0A0]">
-                    Самые дешевые
-                </div>
+                <CitySelector/>
+                <Button variant='choise'>Самые дешевые</Button>
             </div>
-
             <div className="mt-4 flex flex-col gap-3">
                 <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-4">
                     <div className="flex items-center gap-2">
@@ -45,7 +30,6 @@ const Directions = () => {
                         </span>
                     </div>
                 </div>
-
                 <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-4">
                     <div className="flex items-center gap-2">
                         <BusMini color="#E74949" />
@@ -62,7 +46,6 @@ const Directions = () => {
                         </span>
                     </div>
                 </div>
-
                 <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-4">
                     <div className="flex items-center gap-2">
                         <BusMini color="#E74949" />
@@ -79,7 +62,6 @@ const Directions = () => {
                         </span>
                     </div>
                 </div>
-
                 <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-4">
                     <div className="flex items-center gap-2">
                         <BusMini color="#E74949" />
@@ -96,7 +78,6 @@ const Directions = () => {
                         </span>
                     </div>
                 </div>
-
                 <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-4">
                     <div className="flex items-center gap-2">
                         <BusMini color="#E74949" />
@@ -113,7 +94,6 @@ const Directions = () => {
                         </span>
                     </div>
                 </div>
-
                 <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-4">
                     <div className="flex items-center gap-2">
                         <BusMini color="#E74949" />

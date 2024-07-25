@@ -11,7 +11,10 @@
     "format-all": "bun run format \"src/**/*.{js,jsx,ts,tsx,json,css,scss}\""
   },
   "dependencies": {
+    "@radix-ui/react-icons": "^1.3.0",
+    "@radix-ui/react-select": "^2.1.1",
     "@vercel/speed-insights": "^1.0.12",
+    "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "next": "14.2.3",
     "prettier-plugin-tailwindcss": "^0.6.1",

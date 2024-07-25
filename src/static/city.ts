@@ -6,7 +6,7 @@ export const cities = [
     { id: 5, name: 'Актау' },
     { id: 6, name: 'Атырау' },
     { id: 7, name: 'Актобе' },
-    { id: 8, name: 'Актау' },
+    // { id: 8, name: 'Актау' },
     { id: 9, name: 'Жезказган' },
     { id: 10, name: 'Жанаозен' },
     { id: 11, name: 'Караганда' },
