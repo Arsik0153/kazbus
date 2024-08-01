@@ -45,27 +45,27 @@ const MainPage = () => {
                         <SelectDeparture />
                         <SelectArrival />
                         <Input
-                            label='Дата отправления'
+                            label="Дата отправления"
                             id="date"
-                            variant='ghost'
+                            variant="ghost"
                             iconLeft={<Calendar color="white" />}
                         />
                         <Drawer.Trigger>
                             <Input
                                 label={`${totalPassengers} пассажир${totalPassengers > 1 ? 'а' : ''}`}
                                 id="passengers"
-                                variant='ghost'
+                                variant="ghost"
                                 iconLeft={<User color="white" />}
                             />
                         </Drawer.Trigger>
-                        <PassengerDrawer 
+                        <PassengerDrawer
                             adultPassengers={adultPassengers}
                             setAdultPassengers={setAdultPassengers}
                             childPassengers={childPassengers}
                             setChildPassengers={setChildPassengers}
                         />
                         <Link href="/main/tickets">
-                            <Button className='mt-1'>Начать поиск</Button>
+                            <Button className="mt-1">Начать поиск</Button>
                         </Link>
                     </div>
                 </div>
