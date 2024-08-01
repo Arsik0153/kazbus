@@ -1,9 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import FullPageSelector from '@/components/fullpageselector';
-import ArrowLeftIcon from '../../../../public/assets/arrow-left-icon';
 import Button from '@/components/button';
-import ArrowRightIcon from '../../../../public/assets/arrow-right-icon';
 import Calendar from '../../../../public/assets/calendar';
 import User from '../../../../public/assets/user';
 import Image from 'next/image';

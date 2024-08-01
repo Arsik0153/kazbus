@@ -7,6 +7,9 @@
     --bg: #fff;
     --black: #4a4a4a;
     --gray: #f8f8f8;
+
+    touch-action: pan-x pan-y;
+    height: 100%;
 }
 
 body {

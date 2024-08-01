@@ -31,7 +31,7 @@ export default function Home() {
                 />
             </div>
             <Input id="email" label="Фио пассажира" type="email" />
-            <Expired/>
+            <Expired />
         </main>
     );
 }

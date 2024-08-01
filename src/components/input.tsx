@@ -53,7 +53,7 @@ const Input: React.FC<InputProps> = ({
                             variant === 'nonPlaceholder',
                     }
                 )}
-                placeholder={placeholder || ''}
+                placeholder={placeholder || ' '}
                 disabled={loading}
                 {...rest}
             />
