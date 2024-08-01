@@ -3,7 +3,7 @@ import Menu from '@/components/menu';
 import ShieldKeyhole from '../../../../../public/assets/shield-keyhole';
 import Topbar from '@/components/topbar';
 
-const ProfilePage = () => {
+const AuthorizedProfilePage = () => {
     return (
         <>
             <Topbar>Профиль</Topbar>
@@ -59,4 +59,4 @@ const ProfilePage = () => {
     );
 };
 
-export default ProfilePage;
+export default AuthorizedProfilePage;

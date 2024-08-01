@@ -48,7 +48,7 @@ const NavBar = () => {
                     </div>
                 </Link>
                 <Link
-                    href="/profile/authorized"
+                    href="/profile"
                     className="flex flex-col items-center gap-2"
                 >
                     <User color={getColor('/profile', pathname)} />
