@@ -1,9 +1,11 @@
 import React from 'react';
 import clsx from 'clsx';
+import Spinner from './spinner';
 
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     variant?: 'primary' | 'secondary' | 'ghost';
     loading?: boolean;
+    childrent?: React.ReactNode;
 };
 
 const Button = (props: Props) => {
@@ -12,6 +14,7 @@ const Button = (props: Props) => {
         loading,
         className,
         disabled,
+        children,
         ...rest
     } = props;
 
@@ -32,7 +35,16 @@ const Button = (props: Props) => {
                 }
             )}
             style={disabled ? { opacity: 0.5 } : {}}
-        ></button>
+        >
+            {loading ? (
+                <Spinner
+                    size="md"
+                    color={variant === 'secondary' ? '#FFF' : '#dd1919'}
+                />
+            ) : (
+                children
+            )}
+        </button>
     );
 };
 

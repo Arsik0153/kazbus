@@ -1,22 +1,34 @@
 'use client'; //был заюзан Use client если что...
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Input from '@/components/input';
 import Button from '@/components/button';
 import Topbar from '@/components/topbar';
 import Image from 'next/image';
 import OTPPage from './_components/otp';
 import InputPhone from '@/components/inputPhone';
+import { useServerAction } from 'zsa-react';
+import { sendOtpAction } from './actions';
+import { sanitizePhone } from '@/utils/helper.';
 
 const Registration = () => {
     const [showOTP, setShowOTP] = useState<boolean>(false);
+    const [phone, setPhone] = useState<string>('');
+    const { execute, isPending } = useServerAction(sendOtpAction, {
+        onSuccess: (data) => {
+            console.log(data);
+            setShowOTP(true);
+        },
+        onError: (error) => {
+            console.log('Error happened', error);
+        },
+    });
 
     const handleContinue = () => {
-        setShowOTP(true);
+        execute({ phone: sanitizePhone(phone) });
     };
 
     return (
         <>
-            {/* Учти что при нажатий кнопки назад при входе в OTP она будет выбрасывать тебя на /start (начальная страница регистрации) */}
             <Topbar backHref="/start">Регистрация</Topbar>
 
             <div className="h-full px-5">
@@ -40,21 +52,22 @@ const Registration = () => {
                                             alt="KZ"
                                         />
                                     }
+                                    value={phone}
+                                    onChange={(e) => {
+                                        setPhone(e.target.value);
+                                    }}
                                 />
                             </div>
                             <Button
                                 variant="secondary"
                                 onClick={handleContinue}
+                                loading={isPending}
                             >
                                 Продолжить
                             </Button>
-                            {/* если нажал на кнопку то все это нахер стирается и рендерится <OTPPage /> */}
                         </>
                     ) : (
-                        <>
-                            <OTPPage />
-                            {/* Регистрация рендерится внутри OTPPage */}
-                        </>
+                        <OTPPage phone={phone} />
                     )}
                 </div>
             </div>

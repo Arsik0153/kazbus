@@ -1,11 +1,12 @@
 import React from 'react';
 import UnauthorizedProfilePage from './unauthorized';
 import AuthorizedProfilePage from './authorized';
+import { getSession } from '@/lib/auth';
 
-const AUTHORIZED = false;
+const ProfilePage = async () => {
+    const session = await getSession();
 
-const ProfilePage = () => {
-    if (!AUTHORIZED) {
+    if (!session) {
         return <UnauthorizedProfilePage />;
     }
     return <AuthorizedProfilePage />;

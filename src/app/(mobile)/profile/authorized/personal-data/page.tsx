@@ -1,61 +1,81 @@
 'use client';
 import React, { useState } from 'react';
-import Radio from '@/components/radio-input';
-import Input from '@/components/input';
-import Button from '@/components/button';
 import Topbar from '@/components/topbar';
+import NewUser from '../../registration/_components/new-user';
+import { editProfileSchema } from '@/data/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import Input from '@/components/input';
+import ErrorMessage from '@/components/error-message';
+import { documentTypes } from '@/static/constants';
+import Radio from '@/components/radio-input';
 import Calendar from '../../../../../../public/assets/calendar';
+import Button from '@/components/button';
 
 const PersonalDataPage = () => {
-    const [selectedValue, setSelectedValue] = useState(null);
+    const {
+        register,
+        formState: { errors },
+        handleSubmit,
+        watch,
+    } = useForm<z.output<typeof editProfileSchema>>({
+        resolver: zodResolver(editProfileSchema),
+    });
 
-    const handleChange = (value: React.SetStateAction<null>) => {
-        setSelectedValue(value);
-    };
-    const [value, setValue] = useState<string | null>(null);
+    const onSubmit = handleSubmit((data) => {
+        // execute(data);
+    });
+
+    const documentType = watch('document_type');
 
     return (
         <>
             <Topbar backHref="/profile/authorized">Мои личные данные</Topbar>
-            <div className="mb-4 mt-8 px-5">
-                <div>
-                    <div className="pb-3 text-[20px] font-medium leading-[22px] tracking-[-3%]">
+            <div className="h-full px-5">
+                <form className="mt-10" onSubmit={onSubmit}>
+                    <p className="mb-3 mt-9 text-xl font-medium text-[#4A4A4A]">
                         Тип документа
+                    </p>
+                    <div className="flex flex-col gap-2">
+                        {documentTypes.map((item) => (
+                            <Radio
+                                key={item.value}
+                                label={item.label}
+                                value={item.value}
+                                checked={documentType === item.value}
+                                {...register('document_type')}
+                            />
+                        ))}
                     </div>
-                    <div>
-                        <Radio
-                            items={[
-                                {
-                                    label: 'Удостоверение личности',
-                                    value: 'idCard',
-                                },
-                                {
-                                    label: 'Паспорт',
-                                    value: 'passport',
-                                },
-                                {
-                                    label: 'Свидетельство о рождении',
-                                    value: 'birthCertificate',
-                                },
-                            ]}
-                            value={selectedValue}
-                            onChange={setValue}
-                            name={''}
-                        />
+                    <ErrorMessage message={errors.document_type?.message} />
+                    <div className="mb-8 mt-10 flex flex-col gap-2">
+                        <div>
+                            <Input
+                                label="Номер документа или ИИН"
+                                id="iin"
+                                {...register('document_number_or_iin')}
+                            />
+                            <ErrorMessage
+                                message={errors.document_number_or_iin?.message}
+                            />
+                        </div>
+                        <div>
+                            <Input
+                                label="Дата рождения"
+                                id="birth_date"
+                                iconLeft={<Calendar color="#E74949" />}
+                                {...register('birth_date')}
+                            />
+                            <ErrorMessage
+                                message={errors.birth_date?.message}
+                            />
+                        </div>
                     </div>
-                </div>
-                <div className="flex flex-col gap-2 pt-7">
-                    <Input label="Номер документа или ИИН" id="iin" />
-                    <Input
-                        label="Дата рождения"
-                        id="birth_date"
-                        iconLeft={<Calendar color="#E74949" />}
-                    />
-                    <Input label="Номер телефона" id="phone" />
-                </div>
-                <Button variant="ghost" className="mt-7">
-                    Изменить данные
-                </Button>
+                    <Button variant="secondary" loading={false}>
+                        Закончить регистрацию
+                    </Button>
+                </form>
             </div>
         </>
     );

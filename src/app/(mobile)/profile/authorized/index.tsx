@@ -2,19 +2,25 @@ import React from 'react';
 import Menu from '@/components/menu';
 import ShieldKeyhole from '../../../../../public/assets/shield-keyhole';
 import Topbar from '@/components/topbar';
+import { getSession } from '@/lib/auth';
+import { readablePhone } from '@/utils/helper.';
 
-const AuthorizedProfilePage = () => {
+const AuthorizedProfilePage = async () => {
+    const session = await getSession();
+    if (!session) {
+        return null;
+    }
     return (
         <>
             <Topbar>Профиль</Topbar>
             <div className="flex flex-col justify-center bg-[#FFFFFF] px-5 text-[#4A4A4A]">
                 <div className="flex flex-grow flex-col items-center">
-                    <div className="mt-9">
+                    <div className="mt-9 self-start">
                         <div className="text-[32px] font-bold leading-[38.4px]">
-                            Купертино Стив Джобсович
+                            {session.user.full_name}
                         </div>
                         <div className="pt-[10px] text-[16px] font-bold leading-[17.6px] text-[#E74949]">
-                            +7 747 787 98 98
+                            {readablePhone(session.user.phone_number)}
                         </div>
                     </div>
                     <div className="mt-[50px] w-full rounded-[10px] bg-[#F9F9F9] px-4 pb-1 pt-6">

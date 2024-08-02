@@ -2,14 +2,13 @@ import React from 'react';
 import clsx from 'clsx';
 import { useMask } from '@react-input/mask';
 
-type InputProps = React.HTMLProps<HTMLInputElement> & {
+type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
     label: React.ReactNode;
     iconLeft?: React.ReactNode;
     variant?: 'primary' | 'secondary' | 'ghost';
     loading?: boolean;
     mask?: string;
     placeholder?: string;
-
 };
 
 const Input: React.FC<InputProps> = ({
@@ -29,14 +28,16 @@ const Input: React.FC<InputProps> = ({
     });
 
     return (
-        <div className={clsx(
-            'relative w-full rounded-[10px] border border-solid pb-[27px] pt-[27px]',
-            {
-                'bg-[#ffffff]': variant === 'primary',
-                'bg-none': variant === 'secondary',
-                'border-[#AAAAAA] bg-[#FFFFFF29]': variant === 'ghost',
-            }
-        )}>
+        <div
+            className={clsx(
+                'relative w-full rounded-[10px] border border-solid pb-[27px] pt-[27px]',
+                {
+                    'bg-[#ffffff]': variant === 'primary',
+                    'bg-none': variant === 'secondary',
+                    'border-[#AAAAAA] bg-[#FFFFFF29]': variant === 'ghost',
+                }
+            )}
+        >
             {iconLeft && (
                 <div className="absolute left-5 top-1/2 origin-top-left -translate-y-1/2 transform">
                     {iconLeft}
@@ -54,7 +55,7 @@ const Input: React.FC<InputProps> = ({
                     },
                     {
                         'text-[var(--black)]': variant === 'primary',
-                        'bg-none ': variant === 'secondary',
+                        'bg-none': variant === 'secondary',
                         'text-white': variant === 'ghost',
                     }
                 )}
@@ -66,7 +67,8 @@ const Input: React.FC<InputProps> = ({
     );
 };
 // how to use:
-{/* 
+{
+    /* 
     
     <InputPhone
     id="phone"
@@ -81,5 +83,6 @@ const Input: React.FC<InputProps> = ({
     />}
 /> 
 
-*/}
+*/
+}
 export default Input;

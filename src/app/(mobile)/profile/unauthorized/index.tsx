@@ -27,7 +27,7 @@ const UnauthorizedProfilePage = () => {
                 <p className="mt-4 text-center text-base font-medium text-[#4A4A4A]">
                     Зарегистрируйтесь и покупайте билеты всего за пару кликов
                 </p>
-                <Link href="/start/registration" passHref>
+                <Link href="/profile/registration" passHref>
                     <Button variant="secondary" className="mb-3 mt-16">
                         Пройти регистрацию
                     </Button>

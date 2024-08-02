@@ -1,23 +1,25 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import clsx from 'clsx';
 
-type InputProps = React.HTMLProps<HTMLInputElement> & {
+type Props = React.HTMLProps<HTMLInputElement> & {
     label: React.ReactNode;
     iconLeft?: React.ReactNode;
     variant?: 'primary' | 'secondary' | 'ghost' | 'nonPlaceholder';
     loading?: boolean;
 };
 
-const Input: React.FC<InputProps> = ({
-    id,
-    label,
-    iconLeft,
-    className,
-    placeholder,
-    variant = 'primary', // Дефолтное значение
-    loading,
-    ...rest
-}) => {
+const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
+    const {
+        id,
+        label,
+        iconLeft,
+        className,
+        placeholder,
+        variant = 'primary',
+        loading,
+        ...rest
+    } = props;
+
     return (
         <div
             className={clsx(
@@ -26,7 +28,6 @@ const Input: React.FC<InputProps> = ({
                     'bg-[#ffffff]': variant === 'primary',
                     'bg-none': variant === 'secondary',
                     'border-[#AAAAAA] bg-[#FFFFFF29]': variant === 'ghost',
-                    // 'pt-28 pb-28': variant === 'nonPlaceholder',
                 }
             )}
         >
@@ -55,6 +56,8 @@ const Input: React.FC<InputProps> = ({
                 )}
                 placeholder={placeholder || ' '}
                 disabled={loading}
+                autoComplete="off"
+                ref={ref}
                 {...rest}
             />
             <label
@@ -79,6 +82,8 @@ const Input: React.FC<InputProps> = ({
             </label>
         </div>
     );
-};
+});
+
+Input.displayName = 'Input';
 
 export default Input;
