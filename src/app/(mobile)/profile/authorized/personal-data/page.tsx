@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Topbar from '@/components/topbar';
 import NewUser from '../../registration/_components/new-user';
 import { editProfileSchema } from '@/data/schemas';
@@ -12,11 +12,32 @@ import { documentTypes } from '@/static/constants';
 import Radio from '@/components/radio-input';
 import Calendar from '../../../../../../public/assets/calendar';
 import Button from '@/components/button';
+import { useServerActionQuery } from '@/lib/server-action-hooks';
+import { getPersonalInfoAction, updatePersonalInfoAction } from './actions';
+import { dateToReadable } from '@/utils/helper.';
+import Spinner from '@/components/spinner';
+import { useServerAction } from 'zsa-react';
+import toast from 'react-hot-toast';
 
 const PersonalDataPage = () => {
+    const { data, isLoading } = useServerActionQuery(getPersonalInfoAction, {
+        input: undefined,
+        queryKey: ['personal-info'],
+    });
+
+    const { execute, isPending } = useServerAction(updatePersonalInfoAction, {
+        onSuccess: async (data) => {
+            toast.success(data.data);
+        },
+        onError: ({ err }) => {
+            toast.error(err.data);
+        },
+    });
+
     const {
         register,
         formState: { errors },
+        reset,
         handleSubmit,
         watch,
     } = useForm<z.output<typeof editProfileSchema>>({
@@ -24,14 +45,35 @@ const PersonalDataPage = () => {
     });
 
     const onSubmit = handleSubmit((data) => {
-        // execute(data);
+        execute(data);
     });
 
     const documentType = watch('document_type');
 
+    useEffect(() => {
+        if (data) {
+            const formattedDate = dateToReadable(data.birth_date);
+            reset({
+                ...data,
+                birth_date: formattedDate,
+            });
+        }
+    }, [data, reset]);
+
+    if (isLoading) {
+        return (
+            <>
+                <Topbar backHref="/profile">Мои личные данные</Topbar>
+                <div className="flex w-full justify-center py-9">
+                    <Spinner size="md" />
+                </div>
+            </>
+        );
+    }
+
     return (
         <>
-            <Topbar backHref="/profile/authorized">Мои личные данные</Topbar>
+            <Topbar backHref="/profile">Мои личные данные</Topbar>
             <div className="h-full px-5">
                 <form className="mt-10" onSubmit={onSubmit}>
                     <p className="mb-3 mt-9 text-xl font-medium text-[#4A4A4A]">
@@ -72,8 +114,8 @@ const PersonalDataPage = () => {
                             />
                         </div>
                     </div>
-                    <Button variant="secondary" loading={false}>
-                        Закончить регистрацию
+                    <Button variant="secondary" loading={isPending}>
+                        Сохранить
                     </Button>
                 </form>
             </div>

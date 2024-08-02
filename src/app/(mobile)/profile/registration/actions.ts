@@ -69,7 +69,11 @@ export const sendOtpAction = createServerAction()
 export const updatePersonalInfoAction = createServerAction()
     .input(profileSchema)
     .handler(async ({ input }) => {
-        const { user } = await getSession();
+        const session = await getSession();
+        const user = session?.user;
+        if (!user) {
+            throw 'Необходимо авторизоваться';
+        }
 
         const response = await fetch(
             `${process.env.API_URL}/accounts/profile/personal-info/`,

@@ -3,18 +3,12 @@ import { getSession } from './lib/auth';
 
 export const authedProcedure = createServerActionProcedure().handler(
     async () => {
-        try {
-            const { phone, id } = await getSession();
-            console.log('FROM PROCEDURE', phone, id);
+        const session = await getSession();
 
-            return {
-                user: {
-                    phone,
-                    id,
-                },
-            };
-        } catch {
+        if (!session) {
             throw new Error('User not authenticated');
         }
+
+        return { user: session.user };
     }
 );

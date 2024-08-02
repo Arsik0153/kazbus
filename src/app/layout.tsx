@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next';
 import { Inter_Tight } from 'next/font/google';
 import './globals.css';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import ReactQueryProvider from '@/lib/react-query';
+import { Toaster } from 'react-hot-toast';
 
 const interTight = Inter_Tight({ subsets: ['latin', 'cyrillic'] });
 
@@ -27,8 +29,11 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={interTight.className}>
-                {children}
-                <SpeedInsights />
+                <ReactQueryProvider>
+                    <Toaster />
+                    {children}
+                    <SpeedInsights />
+                </ReactQueryProvider>
             </body>
         </html>
     );
