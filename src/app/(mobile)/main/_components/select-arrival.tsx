@@ -1,15 +1,20 @@
 import Topbar from '@/components/topbar';
 import React, { useState } from 'react';
 import ArrowLeftIcon from '../../../../../public/assets/arrow-left-icon';
-import { cities } from '@/static/city';
 import ArrowRightIcon from '../../../../../public/assets/arrow-right-icon';
 import Input from '@/components/input';
 import InputFromMain from '@/components/inputFromMain';
+import { useServerActionQuery } from '@/lib/server-action-hooks';
+import { getCitiesAction } from '../actions';
 
 const SelectDeparture = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCity, setSelectedCity] = useState<string>('');
-    const [searchTerm, setSearchTerm] = useState<string>(''); // Состояние для поиска
+    const [searchTerm, setSearchTerm] = useState<string>('');
+    const { data: cities } = useServerActionQuery(getCitiesAction, {
+        input: undefined,
+        queryKey: ['cities'],
+    });
 
     const handleCitySelect = (cityName: string) => {
         setSelectedCity(cityName);
@@ -21,10 +26,10 @@ const SelectDeparture = () => {
         setIsOpen(false);
     };
 
-    // Фильтруем города на основе поиска
-    const filteredCities = cities.filter(city =>
-        city.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredCities =
+        cities?.filter((city) =>
+            city.name.toLowerCase().includes(searchTerm.toLowerCase())
+        ) || [];
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
@@ -39,8 +44,8 @@ const SelectDeparture = () => {
                             iconLeft={<ArrowLeftIcon color="white" />}
                             id="whereFrom"
                             label="Куда вы направляетесь?"
-                            onChange={handleInputChange} // Обработчик изменения
-                            value={searchTerm} // Связывание значения
+                            onChange={handleInputChange}
+                            value={searchTerm}
                         />
                     </Topbar>
                     <ul className="mx-5 mb-10">
@@ -69,7 +74,7 @@ const SelectDeparture = () => {
             label={selectedCity || 'Куда'}
             id="where"
             onClick={() => setIsOpen(true)}
-            variant='ghost'
+            variant="ghost"
             iconLeft={<ArrowRightIcon color="white" />}
         />
     );

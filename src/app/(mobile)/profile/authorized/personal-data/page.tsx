@@ -20,13 +20,17 @@ import { useServerAction } from 'zsa-react';
 import toast from 'react-hot-toast';
 
 const PersonalDataPage = () => {
-    const { data, isLoading } = useServerActionQuery(getPersonalInfoAction, {
-        input: undefined,
-        queryKey: ['personal-info'],
-    });
+    const { data, isLoading, refetch } = useServerActionQuery(
+        getPersonalInfoAction,
+        {
+            input: undefined,
+            queryKey: ['personal-info'],
+        }
+    );
 
     const { execute, isPending } = useServerAction(updatePersonalInfoAction, {
         onSuccess: async (data) => {
+            await refetch();
             toast.success(data.data);
         },
         onError: ({ err }) => {

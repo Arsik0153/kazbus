@@ -10,6 +10,7 @@ import SelectDeparture from './_components/select-departure';
 import SelectArrival from './_components/select-arrival';
 import Link from 'next/link';
 import Input from '@/components/input';
+import SelectDate from './_components/select-date';
 
 const MainPage = () => {
     const [adultPassengers, setAdultPassengers] = useState(1);
@@ -41,12 +42,7 @@ const MainPage = () => {
                     <div className="flex w-screen flex-col gap-2 p-5">
                         <SelectDeparture />
                         <SelectArrival />
-                        <Input
-                            label="Дата отправления"
-                            id="date"
-                            variant="ghost"
-                            iconLeft={<Calendar color="white" />}
-                        />
+                        <SelectDate />
                         <Drawer.Trigger>
                             <Input
                                 label={`${totalPassengers} пассажир${totalPassengers > 1 ? 'а' : ''}`}

@@ -1,0 +1,111 @@
+import { dayjsExt } from '@/lib/dayjs';
+import { useServerActionQuery } from '@/lib/server-action-hooks';
+import { Dayjs } from 'dayjs';
+import React from 'react';
+import { getDatesAction } from '../actions';
+import { AvailableDate } from '@/data/types';
+
+const generateMonths = () => {
+    const today = dayjsExt();
+    return [today, today.add(1, 'month'), today.add(2, 'month')];
+};
+
+const renderDays = (
+    month: Dayjs,
+    handleDayClick: (day: Dayjs) => void,
+    data: AvailableDate[]
+) => {
+    const today = dayjsExt();
+    const startOfMonth = month.startOf('month');
+    const endOfMonth = month.endOf('month');
+    const startDayOfWeek = startOfMonth.day() === 0 ? 7 : startOfMonth.day();
+    const days = [];
+
+    for (let i = 1; i < startDayOfWeek; i++) {
+        days.push(
+            <div
+                key={`empty-${i}`}
+                className="flex h-14 items-center justify-center"
+            ></div>
+        );
+    }
+
+    for (
+        let date = startOfMonth;
+        date.isBefore(endOfMonth) || date.isSame(endOfMonth, 'day');
+        date = date.add(1, 'day')
+    ) {
+        const isPast = date.isBefore(today, 'day');
+        const price = getPriceForDate(date, data);
+        days.push(
+            <div
+                key={date.format('YYYY-MM-DD')}
+                className="flex h-14 items-start justify-center"
+                onClick={() => handleDayClick(date)}
+            >
+                <div
+                    className={`flex flex-col items-center ${isPast ? 'opacity-50' : ''}`}
+                >
+                    <div
+                        className={`text-[22px] font-medium ${isPast ? 'opacity-50' : 'text-[var(--black)]'}`}
+                    >
+                        {date.date()}
+                    </div>
+                    <div className="text-xs text-[#E74949]">
+                        {price !== null && `${price}`}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    return days;
+};
+
+const renderMonth = (
+    month: Dayjs,
+    handleDayClick: (day: Dayjs) => void,
+    data: AvailableDate[]
+) => (
+    <div key={month.format('YYYY-MM')} className="mb-5">
+        <div className="my-4 flex items-center justify-center text-2xl font-bold capitalize text-[#E74949]">
+            {month.format('MMMM')}
+        </div>
+        <div className="grid grid-cols-7 gap-y-2">
+            {renderDays(month, handleDayClick, data)}
+        </div>
+    </div>
+);
+
+const getPriceForDate = (date: Dayjs, data: AvailableDate[]) => {
+    const dateString = date.format('YYYY-MM-DD');
+    const dateData = data?.find((item) => item.date === dateString);
+    return dateData ? dateData.price : null;
+};
+
+type Props = {
+    handleSelectDate: (date: Dayjs) => void;
+};
+
+const DatePicker = (props: Props) => {
+    const { handleSelectDate } = props;
+    const months = generateMonths();
+    const { data } = useServerActionQuery(getDatesAction, {
+        input: undefined,
+        queryKey: ['getDates'],
+    });
+
+    const handleDayClick = (day: Dayjs) => {
+        handleSelectDate(day);
+    };
+
+    return (
+        <div className="h-[calc(100vh-220px)] overflow-y-scroll px-5">
+            {months.map((month) =>
+                renderMonth(month, handleDayClick, data || [])
+            )}
+        </div>
+    );
+};
+
+export default DatePicker;
