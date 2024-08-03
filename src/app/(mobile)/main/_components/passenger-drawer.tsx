@@ -1,15 +1,48 @@
 import Counter from '@/components/counter';
-import React from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 import { Drawer } from 'vaul';
 
-interface PassengerDrawerProps {
-    adultPassengers: number;
-    setAdultPassengers: (value: number) => void;
-    childPassengers: number;
-    setChildPassengers: (value: number) => void;
-}
+const PassengerDrawer = () => {
+    const [adultPassengers, setAdultPassengers] = useState(1);
+    const [childPassengers, setChildPassengers] = useState(0);
 
-const PassengerDrawer: React.FC<PassengerDrawerProps> = ({ adultPassengers, setAdultPassengers, childPassengers, setChildPassengers }) => {
+    const totalPassengers = adultPassengers + childPassengers;
+
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const router = useRouter();
+
+    const handleAdultPassengersChange = (value: number) => {
+        setAdultPassengers(value);
+    };
+
+    const handleChildPassengersChange = (value: number) => {
+        setChildPassengers(value);
+    };
+
+    useEffect(() => {
+        const updateSearchQuery = (
+            updatedQuery: Record<string, string | null>
+        ) => {
+            const params = new URLSearchParams(searchParams);
+            Object.keys(updatedQuery).forEach((key) => {
+                if (updatedQuery[key]) {
+                    params.set(key, updatedQuery[key]);
+                } else {
+                    params.delete(key);
+                }
+            });
+            const queryString = params.toString();
+            const updatedPath = queryString
+                ? `${pathname}?${queryString}`
+                : pathname;
+            router.push(updatedPath);
+        };
+
+        updateSearchQuery({ passenger_count: String(totalPassengers) });
+    }, [pathname, router, searchParams, totalPassengers]);
+
     return (
         <Drawer.Portal>
             <Drawer.Overlay className="fixed inset-0 bg-black/40" />
@@ -30,7 +63,10 @@ const PassengerDrawer: React.FC<PassengerDrawerProps> = ({ adultPassengers, setA
                                     от 12 лет
                                 </p>
                             </div>
-                            <Counter value={adultPassengers} setValue={setAdultPassengers} />
+                            <Counter
+                                value={adultPassengers}
+                                setValue={handleAdultPassengersChange}
+                            />
                         </div>
 
                         <div className="mt-6 flex justify-between">
@@ -42,7 +78,10 @@ const PassengerDrawer: React.FC<PassengerDrawerProps> = ({ adultPassengers, setA
                                     младше 12 лет
                                 </p>
                             </div>
-                            <Counter value={childPassengers} setValue={setChildPassengers} />
+                            <Counter
+                                value={childPassengers}
+                                setValue={handleChildPassengersChange}
+                            />
                         </div>
                     </div>
                 </div>

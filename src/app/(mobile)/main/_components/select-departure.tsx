@@ -5,6 +5,8 @@ import Input from '@/components/input';
 import InputFromMain from '@/components/inputFromMain';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
 import { getCitiesAction } from '../actions';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { City } from '@/data/types';
 
 const SelectDeparture = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -15,9 +17,14 @@ const SelectDeparture = () => {
         queryKey: ['cities'],
     });
 
-    const handleCitySelect = (cityName: string) => {
-        setSelectedCity(cityName);
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const router = useRouter();
+
+    const handleCitySelect = (city: City) => {
+        setSelectedCity(city.name);
         setIsOpen(false);
+        updateSearchQuery({ from: String(city.id) });
     };
 
     const filteredCities =
@@ -27,6 +34,22 @@ const SelectDeparture = () => {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
+    };
+
+    const updateSearchQuery = (updatedQuery: Record<string, string | null>) => {
+        const params = new URLSearchParams(searchParams);
+        Object.keys(updatedQuery).forEach((key) => {
+            if (updatedQuery[key]) {
+                params.set(key, updatedQuery[key]);
+            } else {
+                params.delete(key);
+            }
+        });
+        const queryString = params.toString();
+        const updatedPath = queryString
+            ? `${pathname}?${queryString}`
+            : pathname;
+        router.push(updatedPath);
     };
 
     if (isOpen) {
@@ -47,7 +70,7 @@ const SelectDeparture = () => {
                             <li
                                 key={city.id}
                                 className="flex items-center justify-between border-b-[1px] border-b-[#CDCDCD] px-[10px] py-5"
-                                onClick={() => handleCitySelect(city.name)}
+                                onClick={() => handleCitySelect(city)}
                             >
                                 <p className="font-medium tracking-[-3%] text-[var(--black)]">
                                     {city.name}

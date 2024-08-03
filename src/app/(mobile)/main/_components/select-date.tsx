@@ -5,10 +5,18 @@ import Topbar from '@/components/topbar';
 import InputFromMain from '@/components/inputFromMain';
 import DatePicker from './date-picker';
 import { Dayjs } from 'dayjs';
+import { useSearchParams } from 'next/navigation';
+import { dayjsExt } from '@/lib/dayjs';
 
 const SelectDate = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
+
+    const searchParams = useSearchParams();
+    const dateParam = searchParams.get('date');
+    const formattedDate = dateParam
+        ? dayjsExt(dateParam).format('DD.MM.YYYY')
+        : '';
 
     const handleSelectDate = (date: Dayjs) => {
         setSelectedDate(date);
@@ -49,7 +57,7 @@ const SelectDate = () => {
             variant="ghost"
             iconLeft={<Calendar color="white" />}
             onClick={() => setIsOpen(true)}
-            defaultValue={selectedDate?.format('DD.MM.YYYY')}
+            defaultValue={formattedDate}
         />
     );
 };

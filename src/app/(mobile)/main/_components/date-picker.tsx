@@ -4,6 +4,7 @@ import { Dayjs } from 'dayjs';
 import React from 'react';
 import { getDatesAction } from '../actions';
 import { AvailableDate } from '@/data/types';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 const generateMonths = () => {
     const today = dayjsExt();
@@ -94,9 +95,29 @@ const DatePicker = (props: Props) => {
         input: undefined,
         queryKey: ['getDates'],
     });
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const router = useRouter();
 
     const handleDayClick = (day: Dayjs) => {
         handleSelectDate(day);
+        updateSearchQuery({ date: day.format('YYYY-MM-DD') });
+    };
+
+    const updateSearchQuery = (updatedQuery: Record<string, string | null>) => {
+        const params = new URLSearchParams(searchParams);
+        Object.keys(updatedQuery).forEach((key) => {
+            if (updatedQuery[key]) {
+                params.set(key, updatedQuery[key]);
+            } else {
+                params.delete(key);
+            }
+        });
+        const queryString = params.toString();
+        const updatedPath = queryString
+            ? `${pathname}?${queryString}`
+            : pathname;
+        router.push(updatedPath);
     };
 
     return (

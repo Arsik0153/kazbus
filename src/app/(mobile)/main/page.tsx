@@ -11,12 +11,29 @@ import SelectArrival from './_components/select-arrival';
 import Link from 'next/link';
 import Input from '@/components/input';
 import SelectDate from './_components/select-date';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { getStringByNumber } from '@/utils/helper.';
+import toast from 'react-hot-toast';
 
 const MainPage = () => {
-    const [adultPassengers, setAdultPassengers] = useState(1);
-    const [childPassengers, setChildPassengers] = useState(0);
+    const router = useRouter();
+    const searchParams = useSearchParams();
 
-    const totalPassengers = adultPassengers + childPassengers;
+    const dateParam = searchParams.get('date');
+    const fromParam = searchParams.get('from');
+    const toParam = searchParams.get('to');
+    const passengerCountParam =
+        Number(searchParams.get('passenger_count')) || 0;
+
+    const handleSearchClick = () => {
+        if (!fromParam || !toParam || !dateParam || !passengerCountParam) {
+            toast.error('Заполните все поля');
+            return;
+        }
+
+        const updatedSearchParams = new URLSearchParams(searchParams);
+        router.push('/main/tickets?' + updatedSearchParams.toString());
+    };
 
     return (
         <Drawer.Root setBackgroundColorOnScale={false}>
@@ -45,21 +62,19 @@ const MainPage = () => {
                         <SelectDate />
                         <Drawer.Trigger>
                             <Input
-                                label={`${totalPassengers} пассажир${totalPassengers > 1 ? 'а' : ''}`}
+                                label={`${passengerCountParam} ${getStringByNumber(
+                                    passengerCountParam,
+                                    ['пассажир', 'пассажира', 'пассажиров']
+                                )}`}
                                 id="passengers"
                                 variant="ghost"
                                 iconLeft={<User color="white" />}
                             />
                         </Drawer.Trigger>
-                        <PassengerDrawer
-                            adultPassengers={adultPassengers}
-                            setAdultPassengers={setAdultPassengers}
-                            childPassengers={childPassengers}
-                            setChildPassengers={setChildPassengers}
-                        />
-                        <Link href="/main/tickets">
-                            <Button className="mt-1">Начать поиск</Button>
-                        </Link>
+                        <PassengerDrawer />
+                        <Button onClick={handleSearchClick} className="mt-1">
+                            Начать поиск
+                        </Button>
                     </div>
                 </div>
             </div>
