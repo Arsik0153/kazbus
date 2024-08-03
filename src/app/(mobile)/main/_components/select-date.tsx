@@ -10,7 +10,6 @@ import { dayjsExt } from '@/lib/dayjs';
 
 const SelectDate = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
 
     const searchParams = useSearchParams();
     const dateParam = searchParams.get('date');
@@ -18,8 +17,7 @@ const SelectDate = () => {
         ? dayjsExt(dateParam).format('DD.MM.YYYY')
         : '';
 
-    const handleSelectDate = (date: Dayjs) => {
-        setSelectedDate(date);
+    const handleSelectDate = () => {
         setIsOpen(false);
     };
 
@@ -58,6 +56,7 @@ const SelectDate = () => {
             iconLeft={<Calendar color="white" />}
             onClick={() => setIsOpen(true)}
             defaultValue={formattedDate}
+            key={formattedDate}
         />
     );
 };

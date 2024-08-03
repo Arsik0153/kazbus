@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import Button from '@/components/button';
 import Calendar from '../../../../public/assets/calendar';
 import User from '../../../../public/assets/user';
@@ -15,7 +15,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { getStringByNumber } from '@/utils/helper.';
 import toast from 'react-hot-toast';
 
-const MainPage = () => {
+const MainPageSuspended = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -79,6 +79,14 @@ const MainPage = () => {
                 </div>
             </div>
         </Drawer.Root>
+    );
+};
+
+const MainPage = () => {
+    return (
+        <Suspense>
+            <MainPageSuspended />
+        </Suspense>
     );
 };
 

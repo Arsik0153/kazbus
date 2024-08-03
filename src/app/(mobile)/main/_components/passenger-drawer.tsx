@@ -26,9 +26,9 @@ const PassengerDrawer = () => {
             updatedQuery: Record<string, string | null>
         ) => {
             const params = new URLSearchParams(searchParams);
-            Object.keys(updatedQuery).forEach((key) => {
-                if (updatedQuery[key]) {
-                    params.set(key, updatedQuery[key]);
+            Object.entries(updatedQuery).forEach(([key, value]) => {
+                if (value !== null) {
+                    params.set(key, value);
                 } else {
                     params.delete(key);
                 }
