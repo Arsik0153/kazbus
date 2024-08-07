@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import Spinner from './spinner';
 
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-    variant?: 'primary' | 'secondary' | 'ghost';
+    variant?: 'primary' | 'secondary' | 'ghost' | 'ultrared';
     loading?: boolean;
     childrent?: React.ReactNode;
 };
@@ -32,6 +32,8 @@ const Button = (props: Props) => {
                         variant === 'secondary',
                     'max-h-[70px] w-full border border-[#D21F1F] bg-inherit text-[#E74949]':
                         variant === 'ghost',
+                    'max-h-[40px] border py-3 px-[46px] bg-[#E32B2B] text-white':
+                        variant === 'ultrared',
                 }
             )}
             style={disabled ? { opacity: 0.5 } : {}}

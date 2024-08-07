@@ -11,6 +11,7 @@
     "format-all": "bun run format \"src/**/*.{js,jsx,ts,tsx,json,css,scss}\""
   },
   "dependencies": {
+    "@headlessui/react": "^2.1.2",
     "@hookform/resolvers": "^3.9.0",
     "@react-input/mask": "^1.2.5",
     "@tanstack/react-query": "^5.51.21",

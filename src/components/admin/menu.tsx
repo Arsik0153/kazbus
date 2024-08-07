@@ -26,7 +26,7 @@ const menu = () => {
                     <ul>
                         <p className="font-bold text-base text-[#FFFFFF] opacity-40">Управление</p>
 
-                        <li><a href="" className='flex flex-row gap-3 py-2 text-white text-center items-center' ><Route color="#fff" width={20} height={20} />
+                        <li><a href="/admin/main/trips" className='flex flex-row gap-3 py-2 text-white text-center items-center' ><Route color="#fff" width={20} height={20} />
                             Рейсы
                         </a></li>
                         <li><a href="" className='flex flex-row gap-3 py-2 text-white text-center items-center' ><BusFront color="#fff" width={20} height={20} />
