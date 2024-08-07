@@ -7,18 +7,20 @@ import Direction from '@/assets/admin/Direction'
 import Route from '@/assets/admin/Route'
 import Support from '@/assets/admin/Support'
 import User from '@/assets/admin/User'
+import Link from 'next/link'
 
 const menu = () => {
     return (
-        <div className="flex flex-col">
-            <Image
+        <div className="flex flex-col fixed">
+            <Link href="/admin/main"> <Image
                 src={'/logo.svg'}
                 width={160}
                 height={160}
                 alt={'Logo'}
                 className='pl-3'
 
-            />
+            /></Link>
+
             <div className="flex flex-col pl-7 pr-7">
                 <nav className='flex flex-col gap-5'>
                     <ul>

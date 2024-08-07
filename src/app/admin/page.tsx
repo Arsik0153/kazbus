@@ -40,7 +40,7 @@ const LoginPage = () => {
                             label='Введите ваш пароль'
                             id="AdminPassword"
                         />
-                        <a href="admin/adminMain" className='flex items-center justify-center rounded-[10px] px-2 py-6 text-[18px] font-semibold leading-[19.8px] max-h-[72px] w-full bg-[#E74949] text-white active:bg-[#F45A5A]'>Войти в таксопарк</a>
+                        <a href="admin/main" className='flex items-center justify-center rounded-[10px] px-2 py-6 text-[18px] font-semibold leading-[19.8px] max-h-[72px] w-full bg-[#E74949] text-white active:bg-[#F45A5A]'>Войти в таксопарк</a>
                         {/* <Button variant='secondary' >Войти в таксопарк</Button> */}
                     </form>
                 </div>

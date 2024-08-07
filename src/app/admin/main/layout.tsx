@@ -33,7 +33,7 @@ export default function RootLayout({
 
                     </div>
                 </div>
-                <div className="pt-16 px-7 h-full rounded-tl-[40px] bg-[white]">
+                <div className="pt-7 px-7 w-full h-full rounded-tl-[40px] bg-[#F1F5F9]">
                     {children}
                 </div>
 
