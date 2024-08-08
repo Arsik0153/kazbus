@@ -4,6 +4,7 @@ import Ticket from '@/assets/admin/Ticket';
 import Button from '@/components/button';
 import Clock from '@/assets/admin/Clock';
 import WeekButtons from '@/app/admin/main/trips/new-trip/_components/WeekButtons';
+import Link from 'next/link';
 
 const PhaseB = () => {
     const [isWeekly, setIsWeekly] = useState(false); // Состояние для определения типа рейса
@@ -67,7 +68,9 @@ const PhaseB = () => {
                             Рейс проводится несколько раз в неделю
                         </button>
                     </div>
-                    <Button variant='secondary' className='mt-16'>Сохранить рейс</Button>
+                    <Link href="/admin/main/trips/start-trip">
+                        <Button variant='secondary' className='mt-16'>Сохранить рейс</Button>
+                    </Link>
                 </div>
                 {/* Правая колона старт */}
                 <div className="flex flex-col">
