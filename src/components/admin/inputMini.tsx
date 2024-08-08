@@ -25,9 +25,9 @@ const InputMini = forwardRef<HTMLInputElement, Props>((props, ref) => {
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         let value = event.target.value.replace(/[₸\s]/g, ''); // Убираем предыдущие символы "₸" и пробелы
-        event.target.value = `₸ ${value}`;
+        event.target.value = ` ${value}`;
     };
-
+    // ₸
     return (
         <div className='relative max-w-none items-center'>
             {iconLeft && (

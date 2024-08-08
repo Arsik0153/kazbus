@@ -1,5 +1,5 @@
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions, ComboboxButton } from '@headlessui/react';
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
+import { CheckIcon } from '@heroicons/react/20/solid';
 import { useState } from 'react';
 import DownBtn from '@/assets/admin/DownBtb';
 
@@ -16,8 +16,13 @@ interface Person {
     name: string;
 }
 
-function Combo() {
-    const [selectedPerson, setSelectedPerson] = useState<Person | null>(cruise[0]);
+interface ComboBoxProps {
+    name: string;
+    onSelectionChange: (name: string, selected: Person | null) => void;
+}
+
+function ComboBox({ name, onSelectionChange }: ComboBoxProps) {
+    const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
     const [query, setQuery] = useState('');
 
     const filteredPeople =
@@ -27,7 +32,14 @@ function Combo() {
 
     return (
         <div className="relative">
-            <Combobox value={selectedPerson} onChange={setSelectedPerson} onClose={() => setQuery('')}>
+            <Combobox
+                value={selectedPerson}
+                onChange={(person) => {
+                    setSelectedPerson(person);
+                    onSelectionChange(name, person); // Уведомление о выборе
+                }}
+                onClose={() => setQuery('')}
+            >
                 <div className="relative w-full">
                     <ComboboxInput
                         aria-label="Assignee"
@@ -35,7 +47,7 @@ function Combo() {
                         onChange={(event) => setQuery(event.target.value)}
                         className="border border-gray-300 rounded-[10px] p-3 pl-4 text-base font-medium text-[#4A4A4A] focus:outline-none"
                     />
-                    <ComboboxButton className=" absolute top-[30%] right-4 flex items-center p-2">
+                    <ComboboxButton className="absolute top-[30%] right-4 flex items-center p-2">
                         <DownBtn color='#4A4A4A' className='p-2' />
                     </ComboboxButton>
                 </div>
@@ -48,19 +60,15 @@ function Combo() {
                                         {person.name}
                                         <CheckIcon className={`h-5 w-5 ${selected ? 'visible' : 'invisible'}`} />
                                     </div>
-
-                                    <div className="w-full h-0 border "></div>
-
+                                    <div className="w-full h-0 border"></div>
                                 </>
                             )}
                         </ComboboxOption>
-
                     ))}
-
                 </ComboboxOptions>
             </Combobox>
         </div>
     );
 }
 
-export default Combo;
+export default ComboBox;
