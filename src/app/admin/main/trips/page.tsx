@@ -4,7 +4,7 @@ import Button from '@/components/button';
 import Plus from '@/assets/admin/Plus';
 import Edit from '@/assets/admin/Edit';
 import Filter from '@/assets/admin/Filter';
-import Combo from '@/app/admin/main/trips/_components/inputCombo';
+import ComboBox from '@/app/admin/main/trips/_components/inputCombo';
 import Table from './_components/table';
 
 
@@ -16,7 +16,8 @@ const Trips = () => {
             <div className="flex flex-row justify-between">
                 <p className="text-[42px] font-semibold text-[#4A4A4A]">Рейсы</p>
                 <div className="flex flex-row gap-3">
-                    <a href="" className="flex py-[14px] px-12 flex-row rounded-[10px] gap-[10px] items-center justify-center bg-[#E32B2B] text-base font-semibold text-[#FBFBFB]">
+                    {/* TODO: HREF here */}
+                    <a href="/admin/main/trips/new-trip" className="flex py-[14px] px-12 flex-row rounded-[10px] gap-[10px] items-center justify-center bg-[#E32B2B] text-base font-semibold text-[#FBFBFB]">
                         <Plus color="#fff" width={20} height={20} />
                         Запустить рейс
                     </a>
@@ -39,7 +40,7 @@ const Trips = () => {
                         <p className="text-base font-medium ml-[14px] mr-3">По</p>
                         <div className="border mr-2">Компоненту <br /> сюда</div>
                         <div className="flex flex-row gap-2 items-center">
-                            <Combo />
+                            <ComboBox />
                             <Button variant="ultrared">Применить</Button>
                         </div>
 

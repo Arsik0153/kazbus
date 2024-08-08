@@ -26,7 +26,7 @@ function Combo() {
             : cruise.filter((person) => person.name.toLowerCase().includes(query.toLowerCase()));
 
     return (
-        <div className="relative w-full ">
+        <div className="relative">
             <Combobox value={selectedPerson} onChange={setSelectedPerson} onClose={() => setQuery('')}>
                 <div className="relative w-full">
                     <ComboboxInput

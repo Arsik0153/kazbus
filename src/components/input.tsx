@@ -87,3 +87,11 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
 Input.displayName = 'Input';
 
 export default Input;
+
+
+// <Input
+//     label='Введите ваш пароль'
+//     id="AdminPassword"
+//     iconLeft = {< Calendar color = "#E74949" />}
+//     {...register('birth_date') }
+// />
