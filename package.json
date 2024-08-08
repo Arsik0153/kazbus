@@ -11,9 +11,11 @@
     "format-all": "bun run format \"src/**/*.{js,jsx,ts,tsx,json,css,scss}\""
   },
   "dependencies": {
+    "@headlessui/react": "^2.1.2",
     "@hookform/resolvers": "^3.9.0",
     "@react-input/mask": "^1.2.5",
     "@tanstack/react-query": "^5.51.21",
+    "@types/recharts": "^1.8.29",
     "@vercel/speed-insights": "^1.0.12",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.12",
@@ -25,6 +27,7 @@
     "react-hook-form": "^7.52.1",
     "react-hot-toast": "^2.4.1",
     "react-spinners": "^0.14.1",
+    "recharts": "^2.12.7",
     "vaul": "^0.9.1",
     "zod": "^3.23.8",
     "zsa": "^0.5.1",
