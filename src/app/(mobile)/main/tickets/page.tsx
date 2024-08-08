@@ -2,7 +2,7 @@
 import Topbar from '@/components/topbar';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
 import { useSearchParams } from 'next/navigation';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { getTicketsAction } from './actions';
 import Spinner from '@/components/spinner';
 import { getStringByNumber } from '@/utils/helper.';
@@ -89,4 +89,10 @@ const TicketsPage = () => {
     );
 };
 
-export default TicketsPage;
+const TicketPageSuspended = () => {
+    <Suspense>
+        <TicketsPage />
+    </Suspense>;
+};
+
+export default TicketPageSuspended;
