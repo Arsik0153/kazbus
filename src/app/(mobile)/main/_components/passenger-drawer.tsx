@@ -50,9 +50,12 @@ const PassengerDrawer = () => {
                 <div className="flex-1 rounded-t-[10px] bg-white p-4">
                     <div className="mx-auto mb-8 h-1.5 w-12 flex-shrink-0 rounded-full bg-zinc-300" />
                     <div className="mx-auto max-w-md">
-                        <h4 className="text-center text-2xl font-bold text-[#E74949]">
+                        <Drawer.Title className="text-center text-2xl font-bold text-[#E74949]">
                             Сколько пассажиров?
-                        </h4>
+                        </Drawer.Title>
+                        <Drawer.Description hidden>
+                            Выберите количество пассажиров
+                        </Drawer.Description>
 
                         <div className="mt-6 flex justify-between">
                             <div className="flex flex-col justify-center">

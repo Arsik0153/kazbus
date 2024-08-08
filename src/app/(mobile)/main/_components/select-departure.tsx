@@ -1,5 +1,5 @@
 import Topbar from '@/components/topbar';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ArrowLeftIcon from '../../../../../public/assets/arrow-left-icon';
 import Input from '@/components/input';
 import InputFromMain from '@/components/inputFromMain';
@@ -18,6 +18,7 @@ const SelectDeparture = () => {
     });
 
     const searchParams = useSearchParams();
+    const fromParam = searchParams.get('from');
     const pathname = usePathname();
     const router = useRouter();
 
@@ -51,6 +52,15 @@ const SelectDeparture = () => {
             : pathname;
         router.push(updatedPath);
     };
+
+    useEffect(() => {
+        if (fromParam) {
+            setSelectedCity(
+                cities?.find((city) => city.id === Number(fromParam))?.name ||
+                    ''
+            );
+        }
+    }, [fromParam, cities]);
 
     if (isOpen) {
         return (

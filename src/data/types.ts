@@ -39,3 +39,27 @@ export type Ticket = {
         is_recumbent: boolean;
     };
 };
+
+export type Point = {
+    id: number;
+    name: string;
+    region: string;
+};
+
+export type BusStation = {
+    id: number;
+    name: string;
+    point: Point;
+};
+
+export type Trip = {
+    id: number;
+    from_point: Point;
+    to_point: Point;
+    from_bus_station: BusStation;
+    to_bus_station: BusStation;
+    from_datetime: string;
+    to_datetime: string;
+    bus: string;
+    price: string;
+};
