@@ -7,9 +7,11 @@ import Filter from '@/assets/admin/Filter';
 import ComboBox from '@/app/admin/main/trips/_components/inputCombo';
 import Table from './_components/table';
 
-
-
 const Trips = () => {
+    const handleSelectionChange = (name: string, selected: any) => {
+        console.log(`${name} selected:`, selected);
+        // Добавьте здесь необходимую логику для обработки выбора
+    };
 
     return (
         <div className="flex flex-col mt-6">
@@ -40,10 +42,12 @@ const Trips = () => {
                         <p className="text-base font-medium ml-[14px] mr-3">По</p>
                         <div className="border mr-2">Компоненту <br /> сюда</div>
                         <div className="flex flex-row gap-2 items-center">
-                            <ComboBox />
+                            <ComboBox
+                                name="filterComboBox"
+                                onSelectionChange={handleSelectionChange}
+                            />
                             <Button variant="ultrared">Применить</Button>
                         </div>
-
                     </div>
                 </div>
 
