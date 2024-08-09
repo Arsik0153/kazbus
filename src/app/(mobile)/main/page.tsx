@@ -1,8 +1,8 @@
 'use client';
 import React, { Suspense, useState } from 'react';
 import Button from '@/components/button';
-import Calendar from '../../../../public/assets/calendar';
-import User from '../../../../public/assets/user';
+import Calendar from '../../../assets/calendar';
+import User from '../../../assets/user';
 import Image from 'next/image';
 import { Drawer } from 'vaul';
 import PassengerDrawer from './_components/passenger-drawer';

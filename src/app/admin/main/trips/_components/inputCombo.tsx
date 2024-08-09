@@ -18,10 +18,10 @@ interface Person {
 
 interface ComboBoxProps {
     name: string;
-    onSelectionChange: (name: string, selected: Person | null) => void;
+    onSelectionChange?: (name: string, selected: Person | null) => void; // onSelectionChange не обязательный
 }
 
-function ComboBox({ name, onSelectionChange }: ComboBoxProps) {
+function ComboBox({ name, onSelectionChange = () => {} }: ComboBoxProps) {
     const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
     const [query, setQuery] = useState('');
 
@@ -43,7 +43,7 @@ function ComboBox({ name, onSelectionChange }: ComboBoxProps) {
                 <div className="relative w-full">
                     <ComboboxInput
                         aria-label="Assignee"
-                        displayValue={(person: Person | null) => person ? person.name : ''}
+                        displayValue={(person: Person | null) => (person ? person.name : '')}
                         onChange={(event) => setQuery(event.target.value)}
                         className="border border-gray-300 rounded-[10px] p-3 pl-4 text-base font-medium text-[#4A4A4A] focus:outline-none"
                     />

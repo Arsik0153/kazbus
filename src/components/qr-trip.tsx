@@ -1,10 +1,10 @@
 import React from 'react'
-import Bus from '../../public/assets/bus';
-import RouteFill from '../../public/assets/route-fill';
-import ToiletPaper from '../../public/assets/toilet-paper';
-import HotelBed from '../../public/assets/hotel-bed';
-import Wifi from '../../public/assets/wifi';
-import BusMini from '../../public/assets/bus-mini';
+import Bus from '../assets/bus';
+import RouteFill from '../assets/route-fill';
+import ToiletPaper from '../assets/toilet-paper';
+import HotelBed from '../assets/hotel-bed';
+import Wifi from '../assets/wifi';
+import BusMini from '../assets/bus-mini';
 import Image from 'next/image';
 
 const StatusBadge = ({ status }: { status?: string }) => {

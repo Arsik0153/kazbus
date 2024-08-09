@@ -1,5 +1,5 @@
 import React from 'react';
-import MenuArrow from '../../public/assets/menu-arrow';
+import MenuArrow from '../assets/menu-arrow';
 import Link from 'next/link';
 
 const Menu = ({ text, link = '/' }: { text?: string; link?: string }) => {

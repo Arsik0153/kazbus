@@ -1,5 +1,5 @@
 import React from 'react';
-import Clock from '../../public/assets/red-clock';
+import Clock from '../assets/red-clock';
 
 const Expired = () => {
     

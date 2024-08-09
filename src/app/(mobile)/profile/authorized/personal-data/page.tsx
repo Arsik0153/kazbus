@@ -10,7 +10,7 @@ import Input from '@/components/input';
 import ErrorMessage from '@/components/error-message';
 import { documentTypes } from '@/static/constants';
 import Radio from '@/components/radio-input';
-import Calendar from '../../../../../../public/assets/calendar';
+import Calendar from '../../../../../assets/calendar';
 import Button from '@/components/button';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
 import { getPersonalInfoAction, updatePersonalInfoAction } from './actions';

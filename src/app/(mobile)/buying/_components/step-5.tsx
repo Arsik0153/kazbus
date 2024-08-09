@@ -3,7 +3,7 @@ import Input from '@/components/input';
 import kzFlagUrl from '@/assets/shared/🇰🇿.svg'
 import Button from '@/components/button';
 import Topbar from '@/components/topbar';
-import FlagKz from '../../../../../public/assets/flag-kz';
+import FlagKz from '../../../../assets/flag-kz';
 import Image from 'next/image';
 
 // Buying step 5 from figma 

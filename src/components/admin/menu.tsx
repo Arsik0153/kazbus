@@ -35,7 +35,7 @@ const menu = () => {
                         <li><a href="" className='flex flex-row gap-3 py-2 text-white text-center items-center' ><User color="#fff" width={20} height={20} />
                             Водители
                         </a></li>
-                        <li><a href="" className='flex flex-row gap-3 py-2 text-white text-center items-center' ><Direction color="#fff" width={20} height={20} />
+                        <li><a href="/admin/main/routes" className='flex flex-row gap-3 py-2 text-white text-center items-center' ><Direction color="#fff" width={20} height={20} />
                             Маршруты
                         </a></li>
                     </ul>

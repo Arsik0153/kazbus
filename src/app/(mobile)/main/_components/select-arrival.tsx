@@ -1,7 +1,7 @@
 import Topbar from '@/components/topbar';
 import React, { useState } from 'react';
-import ArrowLeftIcon from '../../../../../public/assets/arrow-left-icon';
-import ArrowRightIcon from '../../../../../public/assets/arrow-right-icon';
+import ArrowLeftIcon from '../../../../assets/arrow-left-icon';
+import ArrowRightIcon from '../../../../assets/arrow-right-icon';
 import Input from '@/components/input';
 import InputFromMain from '@/components/inputFromMain';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
