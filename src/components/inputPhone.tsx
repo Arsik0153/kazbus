@@ -47,7 +47,7 @@ const Input: React.FC<InputProps> = ({
                 id={id}
                 ref={inputRef} // Применяем реф для маски
                 className={clsx(
-                    'w-full pr-8 font-medium text-[var(--black)] outline-none',
+                    'hide-tabbar w-full pr-8 font-medium text-[var(--black)] outline-none',
                     {
                         'pl-14': iconLeft,
                         'pl-8': !iconLeft,

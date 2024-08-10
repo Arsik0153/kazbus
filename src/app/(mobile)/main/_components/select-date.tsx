@@ -57,6 +57,7 @@ const SelectDate = () => {
             onClick={() => setIsOpen(true)}
             defaultValue={formattedDate}
             key={formattedDate}
+            hideKeyboardOnFocus={false}
         />
     );
 };
