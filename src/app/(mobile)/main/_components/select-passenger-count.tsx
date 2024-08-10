@@ -2,8 +2,8 @@ import Input from '@/components/input';
 import { getStringByNumber } from '@/utils/helper.';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import User from '../../../../../public/assets/user';
 import Counter from '@/components/counter';
+import User from '@/assets/user';
 
 const SelectPassengerCount = () => {
     const [isOpen, setIsOpen] = useState(false);
