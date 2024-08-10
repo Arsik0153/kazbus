@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Bus from '../../public/assets/bus';
 import Building from '../../public/assets/building';
 import Coupon from '../../public/assets/coupon';
@@ -13,9 +13,44 @@ const getColor = (pathname: string, url: string) => {
 
 const NavBar = () => {
     const pathname = usePathname();
+    const [isTabbarHidden, setIsTabbarHidden] = useState(false);
+
+    useEffect(() => {
+        const handleFocus = (event: FocusEvent) => {
+            if (
+                (event.target as HTMLElement).classList.contains('hide-tabbar')
+            ) {
+                setIsTabbarHidden(true);
+            }
+        };
+
+        const handleBlur = (event: FocusEvent) => {
+            if (
+                (event.target as HTMLElement).classList.contains('hide-tabbar')
+            ) {
+                setIsTabbarHidden(false);
+            }
+        };
+
+        document.addEventListener('focusin', handleFocus as EventListener);
+        document.addEventListener('focusout', handleBlur as EventListener);
+
+        return () => {
+            document.removeEventListener(
+                'focusin',
+                handleFocus as EventListener
+            );
+            document.removeEventListener(
+                'focusout',
+                handleBlur as EventListener
+            );
+        };
+    }, []);
 
     return (
-        <div className="fixed bottom-0 z-10 w-full bg-white">
+        <div
+            className={`fixed bottom-0 z-10 w-full bg-white ${isTabbarHidden && 'hidden'}`}
+        >
             <div className="flex w-full items-center justify-between p-5">
                 <Link href="/main" className="flex flex-col items-center gap-2">
                     <Bus color={getColor('/main', pathname)} />
