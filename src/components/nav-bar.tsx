@@ -1,9 +1,9 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import Bus from '../../public/assets/bus';
-import Building from '../../public/assets/building';
-import Coupon from '../../public/assets/coupon';
-import User from '../../public/assets/user';
+import Bus from '../assets/bus';
+import Building from '../assets/building';
+import Coupon from '../assets/coupon';
+import User from '../assets/user';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 

@@ -1,6 +1,6 @@
 import React from 'react';
-import User from '../../public/assets/user';
-import TrashCan from '../../public/assets/trash-can';
+import User from '../assets/user';
+import TrashCan from '../assets/trash-can';
 
 type Props = {
     name: string;

@@ -2,8 +2,8 @@ import React from 'react';
 import Trip from '@/components/trip';
 import Button from '@/components/button';
 import Topbar from '@/components/topbar';
-import Clock from '../../../../../public/assets/red-clock';
-import Kaspi from '../../../../../public/assets/kaspi';
+import Clock from '../../../../assets/red-clock';
+import Kaspi from '../../../../assets/kaspi';
 // Buying step 3 from figma 
 
 const StepFive = () => {

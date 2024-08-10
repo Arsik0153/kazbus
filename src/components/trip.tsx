@@ -1,8 +1,8 @@
 import React from 'react';
-import ToiletPaper from '../../public/assets/toilet-paper';
-import HotelBed from '../../public/assets/hotel-bed';
-import Wifi from '../../public/assets/wifi';
-import BusMini from '../../public/assets/bus-mini';
+import ToiletPaper from '../assets/toilet-paper';
+import HotelBed from '../assets/hotel-bed';
+import Wifi from '../assets/wifi';
+import BusMini from '../assets/bus-mini';
 
 const StatusBadge = ({ status }: { status?: string }) => {
     if (status === 'paid') {
@@ -25,6 +25,14 @@ const StatusBadge = ({ status }: { status?: string }) => {
         return (
             <div className="rounded-[30px] bg-[#AEAEAE] px-2 py-1 text-[14px] font-medium leading-[15.4px] text-[#FFFFFF]">
                 Просрочен
+            </div>
+        );
+    }
+
+    if (status === 'none') {
+        return (
+            <div className="font-medium ">
+                
             </div>
         );
     }

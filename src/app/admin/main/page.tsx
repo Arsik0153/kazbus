@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Button from '@/components/button';
 import Pulse from '@/components/admin/pulse';
 import Download from '@/assets/admin/Download';
+import Pie from '@/components/admin/pie-chart';
 
 const AdminMain = () => {
   return (
@@ -32,10 +33,12 @@ const AdminMain = () => {
           </div>
 
           <div className="flex flex-row gap-2 mt-4">
-            <div className="flex flex-row py-3 px-4 bg-[#F1F5F9] border gap-5 rounded-[10px] w-[53%] items-center">
-              <div className="">75%</div>
+            <div className="flex flex-row py-3 px-4 bg-[#F1F5F9] border gap-5 rounded-[10px] w-[53%] items-center relative">
+              {/* <Pie/> */}
+              {/* <div className="">75%</div>
+
               {/* TODO: тут нужен пирожок с процентами (pie)  */}
-              <p className="text-sm font-medium text-start">Заполняемость автобуса</p>
+              <p className="text-sm font-medium text-start">Заполняемость автобуса</p> 
             </div>
             <div className="flex flex-row py-[18px] px-[22px] gap-[18px] bg-[#E74949] rounded-[10px] w-[47%]">
               <p className="text-4xl  font-bold text-white">114</p>

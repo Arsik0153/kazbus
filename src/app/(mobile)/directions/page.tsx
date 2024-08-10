@@ -1,9 +1,9 @@
 'use client';
 import React from 'react';
-import BusMini from '../../../../public/assets/bus-mini';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
 import { getDirectionsAction } from './actions';
 import Spinner from '@/components/spinner';
+import BusMini from '../../../assets/bus-mini';
 
 const Directions = () => {
     const { data: directions, isPending } = useServerActionQuery(

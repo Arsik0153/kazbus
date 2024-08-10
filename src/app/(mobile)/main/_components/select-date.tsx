@@ -1,6 +1,6 @@
 import Input from '@/components/input';
 import React, { useState } from 'react';
-import Calendar from '../../../../../public/assets/calendar';
+import Calendar from '../../../../assets/calendar';
 import Topbar from '@/components/topbar';
 import InputFromMain from '@/components/inputFromMain';
 import DatePicker from './date-picker';

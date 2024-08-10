@@ -1,6 +1,6 @@
 import React from 'react';
 import Menu from '@/components/menu';
-import ShieldKeyhole from '../../../../../public/assets/shield-keyhole';
+import ShieldKeyhole from '../../../../assets/shield-keyhole';
 import Topbar from '@/components/topbar';
 import { getSession } from '@/lib/auth';
 import { readablePhone } from '@/utils/helper.';
