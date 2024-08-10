@@ -15,7 +15,7 @@ const NavBar = () => {
     const pathname = usePathname();
 
     return (
-        <div className="fixed bottom-0 z-10 w-full rounded-t-[10px] bg-white">
+        <div className="fixed bottom-0 z-10 w-full bg-white">
             <div className="flex w-full items-center justify-between p-5">
                 <Link href="/main" className="flex flex-col items-center gap-2">
                     <Bus color={getColor('/main', pathname)} />

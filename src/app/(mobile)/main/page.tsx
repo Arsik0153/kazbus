@@ -8,7 +8,6 @@ import { Drawer } from 'vaul';
 import PassengerDrawer from './_components/passenger-drawer';
 import SelectDeparture from './_components/select-departure';
 import SelectArrival from './_components/select-arrival';
-import Link from 'next/link';
 import Input from '@/components/input';
 import SelectDate from './_components/select-date';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -36,7 +35,7 @@ const MainPageSuspended = () => {
     };
 
     return (
-        <Drawer.Root setBackgroundColorOnScale={false}>
+        <Drawer.Root shouldScaleBackground>
             <div className="flex h-full flex-grow flex-col items-center justify-center bg-gradient-to-r from-[#E32828] to-[#E13535]">
                 <div className="flex flex-col items-center justify-center text-center">
                     <Image

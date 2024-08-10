@@ -30,7 +30,7 @@ export default function RootLayout({
         <html lang="en">
             <body className={interTight.className}>
                 <ReactQueryProvider>
-                    <Toaster />
+                    <Toaster containerClassName="mt-10" />
                     {children}
                     <SpeedInsights />
                 </ReactQueryProvider>

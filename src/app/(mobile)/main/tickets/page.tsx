@@ -1,15 +1,68 @@
+'use client';
 import Topbar from '@/components/topbar';
-import Trip from '@/components/trip';
-import React from 'react';
+import { useServerActionQuery } from '@/lib/server-action-hooks';
+import { useSearchParams } from 'next/navigation';
+import React, { Suspense } from 'react';
+import { getTicketsAction } from './actions';
+import Spinner from '@/components/spinner';
+import { getStringByNumber } from '@/utils/helper.';
+import Ticket from '@/components/ticket';
+import { dayjsExt } from '@/lib/dayjs';
 
 const TicketsPage = () => {
+    const searchParams = useSearchParams();
+
+    const dateParam = searchParams.get('date');
+    const fromParam = searchParams.get('from');
+    const toParam = searchParams.get('to');
+    const passengerCountParam =
+        Number(searchParams.get('passenger_count')) || 0;
+
+    const { data: tickets, isPending } = useServerActionQuery(
+        getTicketsAction,
+        {
+            input: {
+                date: dateParam || '',
+                from_point: Number(fromParam) || 0,
+                to_point: Number(toParam) || 0,
+                passenger_count: passengerCountParam,
+            },
+            queryKey: [
+                'tickets',
+                dateParam,
+                fromParam,
+                toParam,
+                passengerCountParam,
+            ],
+        }
+    );
+
+    if (isPending) {
+        return (
+            <>
+                <Topbar backHref="/main">
+                    <div className="flex flex-col items-center py-6" />
+                </Topbar>
+                <div className="my-5 flex justify-center px-4 py-7">
+                    <Spinner size="md" />
+                </div>
+            </>
+        );
+    }
+
     return (
         <>
-            <Topbar backHref="/main">
+            <Topbar backHref={'/main?' + searchParams.toString()}>
                 <div className="flex flex-col items-center">
                     Алматы - Кокшетау
                     <span className="text-sm font-light">
-                        8 мая, 1 пассажир
+                        {dayjsExt(dateParam).format('D MMMM')},{' '}
+                        {passengerCountParam}{' '}
+                        {getStringByNumber(passengerCountParam, [
+                            'пассажир',
+                            'пассажира',
+                            'пассажиров',
+                        ])}
                     </span>
                 </div>
             </Topbar>
@@ -27,43 +80,19 @@ const TicketsPage = () => {
                 </div>
 
                 <div className="mt-3">
-                    <Trip
-                        town_one="Алматы"
-                        town_two="Кокшетау"
-                        departure="12:00"
-                        arrive="16:40"
-                        departure_date="8 мая"
-                        tickets={112}
-                        arriving_date={'9 мая'}
-                        passenger_amount={1}
-                        ticket_amount={12450}
-                    />
-                    <Trip
-                        town_one="Алматы"
-                        town_two="Кокшетау"
-                        departure="12:00"
-                        arrive="16:40"
-                        departure_date="8 мая"
-                        tickets={112}
-                        arriving_date={'9 мая'}
-                        passenger_amount={1}
-                        ticket_amount={12450}
-                    />
-                    <Trip
-                        town_one="Алматы"
-                        town_two="Кокшетау"
-                        departure="12:00"
-                        arrive="16:40"
-                        departure_date="8 мая"
-                        tickets={112}
-                        arriving_date={'9 мая'}
-                        passenger_amount={1}
-                        ticket_amount={12450}
-                    />
+                    {tickets?.map((ticket) => (
+                        <Ticket key={ticket.id} ticket={ticket} />
+                    ))}
                 </div>
             </div>
         </>
     );
 };
 
-export default TicketsPage;
+const TicketPageSuspended = () => {
+    <Suspense>
+        <TicketsPage />
+    </Suspense>;
+};
+
+export default TicketPageSuspended;
