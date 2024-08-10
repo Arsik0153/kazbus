@@ -45,7 +45,7 @@ function ComboBox({ name, onSelectionChange = () => {} }: ComboBoxProps) {
                         aria-label="Assignee"
                         displayValue={(person: Person | null) => (person ? person.name : '')}
                         onChange={(event) => setQuery(event.target.value)}
-                        className="border border-gray-300 rounded-[10px] p-3 pl-4 text-base font-medium text-[#4A4A4A] focus:outline-none"
+                        className="border border-[#A0A0A0] w-f rounded-[10px] p-3 pl-4 text-base font-medium text-[#4A4A4A] focus:outline-none"
                     />
                     <ComboboxButton className="absolute top-[30%] right-4 flex items-center p-2">
                         <DownBtn color='#4A4A4A' className='p-2' />

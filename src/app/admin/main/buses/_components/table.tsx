@@ -16,40 +16,30 @@ const Table = () => {
         <table className=" rounded-[20px] bg-white w-full px-5 pb-3 mb-28 items-center justify-center mt-[17px] border-separate border-spacing-y-2">
             <tbody>
                 <tr className="w-full py-[6px]">
-                    <th className="py-5 px-6 w-fit text-start leading-[22.4px] uppercase items-start font-bold text-[#A0A0A0] text-[16px]">
-                        Маршрут
+                    <th className="py-5 w-fit text-start leading-[22.4px] uppercase items-start font-bold text-[#A0A0A0] text-[16px]">
+                        Название автобуса
                     </th>
                     <th className="py-5 text-start leading-[22.4px] uppercase items-start font-bold text-[#A0A0A0] text-[16px]">
-                        остановки
+                        гос.  номер
                     </th>
                     <th className="py-5 text-start leading-[22.4px] uppercase items-start font-bold text-[#A0A0A0] text-[16px]">
-                        Дата создания
+                        кол. Мест
                     </th>
                     <th className="py-5 text-start leading-[22.4px] uppercase flex-end items-start font-bold text-[#A0A0A0] text-[16px]">
-                        gfhjkl;
                     </th>
                 </tr>
 
                 <tr className="bg-[#F1F5F9] ">
                     <td className="pl-6 w-fit max-w-20 rounded-l-[10px]">
-                        <div className="flex flex-row items-center gap-[18px] w-fit">
-                            <div className="w-8 h-8 rounded-full bg-[#E74949] flex items-center justify-center text-white text-lg">
-                                A
-                            </div>
-                            <p className='text-base font-medium text-[#4A4A4A]'>Алматы</p>
-                        </div>
+                        <p className="text-base font-semibold text-black">Mercedes-Benz Sprinter</p>
                     </td>
                     <td>
-                        <div className="flex flex-row gap-2 items-center">
-                            <Clock color='#E74949' width={16} height={16} />
-                            <p className="text-base font-semibold text-[#E74949]">24 часа 30 минут</p>
-                        </div>
+                        <p className="text-base font-semibold text-black">M218XZY03</p>
+
                     </td>
                     <td>
-                        <div className="flex flex-row gap-2 items-center">
-                            <Calendar color='#E74949' width={16} height={16} />
-                            <p className="text-base font-semibold text-[#4A4A4A]">12.08.2024</p>
-                        </div>
+                        <p className="text-base font-semibold text-black">50</p>
+
                     </td>
                     <td className=" py-4 pr-6 rounded-r-[10px]">
                         {isActive ? (

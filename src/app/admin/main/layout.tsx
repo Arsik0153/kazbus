@@ -2,6 +2,7 @@ import Menu from '@/components/admin/menu';
 import BusFront from '@/assets/admin/BusFront';
 import Pulse from '@/components/admin/pulse';
 import Exit from '@/assets/admin/Exit';
+import Link from 'next/link';
 
 export default function RootLayout({
     children,
@@ -28,8 +29,8 @@ export default function RootLayout({
                         </div>
                     </div>
                     <div className="flex flex-row items-center gap-6">
-                        <a href="" className="text-base font-medium text-white">Редактировать данные</a>
-                        <a href="/admin" className="text-base font-semibold text-white flex flex-row gap-3 items-center opacity-60 "><Exit color='white' /><span className=' underline'>Выйти</span> </a>
+                        <Link href="" className="text-base font-medium text-white">Редактировать данные</Link>
+                        <Link href="/admin" className="text-base font-semibold text-white flex flex-row gap-3 items-center opacity-60 "><Exit color='white' /><span className=' underline'>Выйти</span> </Link>
 
                     </div>
                 </div>

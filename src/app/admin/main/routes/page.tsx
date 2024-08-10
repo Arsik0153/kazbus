@@ -1,6 +1,7 @@
 import React from 'react'
 import Plus from '@/assets/admin/Plus';
 import Table from './_components/table';
+import Link from 'next/link';
 
 const Routes = () => {
     return (

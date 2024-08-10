@@ -26,34 +26,34 @@ const menu = () => {
                     <ul>
                         <p className="font-bold text-base text-[#FFFFFF] opacity-40">Управление</p>
 
-                        <li><a href="/admin/main/trips" className='flex flex-row gap-3 py-2 text-white text-center items-center' ><Route color="#fff" width={20} height={20} />
+                        <li><Link href="/admin/main/trips" className='flex flex-row gap-3 py-2 text-white text-center items-center' ><Route color="#fff" width={20} height={20} />
                             Рейсы
-                        </a></li>
-                        <li><a href="" className='flex flex-row gap-3 py-2 text-white text-center items-center' ><BusFront color="#fff" width={20} height={20} />
+                        </Link></li>
+                        <li><Link href="/admin/main/buses" className='flex flex-row gap-3 py-2 text-white text-center items-center' ><BusFront color="#fff" width={20} height={20} />
                             Автобусы
-                        </a></li>
-                        <li><a href="" className='flex flex-row gap-3 py-2 text-white text-center items-center' ><User color="#fff" width={20} height={20} />
+                        </Link></li>
+                        <li><Link href="" className='flex flex-row gap-3 py-2 text-white text-center items-center' ><User color="#fff" width={20} height={20} />
                             Водители
-                        </a></li>
-                        <li><a href="/admin/main/routes" className='flex flex-row gap-3 py-2 text-white text-center items-center' ><Direction color="#fff" width={20} height={20} />
+                        </Link></li>
+                        <li><Link href="/admin/main/routes" className='flex flex-row gap-3 py-2 text-white text-center items-center' ><Direction color="#fff" width={20} height={20} />
                             Маршруты
-                        </a></li>
+                        </Link></li>
                     </ul>
                     <ul>
                         <p className="font-bold text-base text-[#FFFFFF] opacity-40">Информация</p>
 
-                        <li><a href="" className='flex flex-row gap-3 py-2 text-white text-center items-center' ><Anal color="#fff" width={20} height={20} />
+                        <li><Link href="" className='flex flex-row gap-3 py-2 text-white text-center items-center' ><Anal color="#fff" width={20} height={20} />
                             Аналитика
-                        </a></li>
-                        <li><a href="" className='flex flex-row gap-3 py-2 text-white text-center items-center' ><Coin color="#fff" width={20} height={20} />
+                        </Link></li>
+                        <li><Link href="" className='flex flex-row gap-3 py-2 text-white text-center items-center' ><Coin color="#fff" width={20} height={20} />
                             Выплаты
-                        </a></li>
+                        </Link></li>
 
                     </ul>
                     <ul className='mt-8'>
-                        <li><a href="" className='flex flex-row gap-3 py-2 text-white text-center items-center' ><Support color="#fff" width={20} height={20} />
+                        <li><Link href="" className='flex flex-row gap-3 py-2 text-white text-center items-center' ><Support color="#fff" width={20} height={20} />
                             Служба поддержки
-                        </a></li>
+                        </Link></li>
 
                     </ul>
                 </nav>
