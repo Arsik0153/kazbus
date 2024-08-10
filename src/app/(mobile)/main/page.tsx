@@ -13,6 +13,8 @@ import SelectDate from './_components/select-date';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getStringByNumber } from '@/utils/helper.';
 import toast from 'react-hot-toast';
+import Ellipse from '@/assets/Ellipse';
+import EllipseDown from '@/assets/Ellipse-down';
 
 const MainPageSuspended = () => {
     const router = useRouter();
@@ -38,20 +40,13 @@ const MainPageSuspended = () => {
         <Drawer.Root shouldScaleBackground>
             <div className="flex h-full flex-grow flex-col items-center justify-center bg-gradient-to-r from-[#E32828] to-[#E13535]">
                 <div className="flex flex-col items-center justify-center text-center">
-                    <Image
-                        src={'/assets/main/Ellipse-1.png'}
-                        width={622}
-                        height={750.49}
-                        alt={''}
-                        className="pointer-events-none absolute h-screen w-screen"
-                    />
-                    <Image
-                        src={'/assets/main/Ellipse-2.png'}
-                        width={622}
-                        height={750.49}
-                        alt={''}
-                        className="pointer-events-none absolute bottom-0 left-0"
-                    />
+
+                    <div className="pointer-events-none absolute h-screen top-0 right-0 w-screen z-0 flex justify-end">
+                        <Ellipse/>
+                    </div>
+                    <div className="pointer-events-none absolute h-screen botton-0 left-0 w-screen z-0 flex items-end justify-end">
+                        <EllipseDown />
+                    </div>   
                     <div className="mb-10 px-5 text-[36px] font-medium leading-[39.6px] tracking-[-3%] text-white">
                         Поиск дешевых билетов на автобусы между городами
                     </div>
