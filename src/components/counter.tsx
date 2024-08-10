@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react';
-import Plus from '../../public/assets/plus';
-import Minus from '../../public/assets/minus';
+import Plus from '../assets/plus';
+import Minus from '../assets/minus';
 
 interface CounterProps {
     value: number;
@@ -32,7 +32,7 @@ const Counter: React.FC<CounterProps> = ({ value, setValue }) => {
             <button
                 onClick={increment}
             >   
-                <Plus />
+                <Plus color="#E74949" width={28} height={28} />
             </button>
         </div>
     );

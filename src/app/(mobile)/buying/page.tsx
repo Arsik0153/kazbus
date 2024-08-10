@@ -1,5 +1,5 @@
 import React from 'react';
-import BusMini from '../../../../public/assets/bus-mini';
+import BusMini from '../../../assets/bus-mini';
 import Topbar from '@/components/topbar';
 
 import StepFive from './_components/step-5';

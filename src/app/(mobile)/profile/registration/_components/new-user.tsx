@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Input from '@/components/input';
 import RadioInput from '@/components/radio-input';
-import Calendar from '../../../../../../public/assets/calendar';
+import Calendar from '../../../../../assets/calendar';
 import Button from '@/components/button';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';

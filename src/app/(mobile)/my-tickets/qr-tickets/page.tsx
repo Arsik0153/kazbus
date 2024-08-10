@@ -1,7 +1,7 @@
 import React from 'react';
 import QRTrip from '@/components/qr-trip';
 import Button from '@/components/button';
-import Download from '../../../../../public/assets/download';
+import Download from '../../../../assets/download';
 import Topbar from '@/components/topbar';
 
 const QRTripPage = () => {

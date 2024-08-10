@@ -2,7 +2,7 @@ import React from 'react';
 import Topbar from '@/components/topbar';
 import Image from 'next/image';
 import Button from '@/components/button';
-import ShieldKeyhole from '../../../../../public/assets/shield-keyhole';
+import ShieldKeyhole from '../../../../assets/shield-keyhole';
 import Link from 'next/link';
 import StartSettings from './_components/startSettings';
 

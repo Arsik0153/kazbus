@@ -1,8 +1,8 @@
 import React from 'react';
-import ToiletPaper from '../../public/assets/toilet-paper';
-import HotelBed from '../../public/assets/hotel-bed';
-import Wifi from '../../public/assets/wifi';
-import BusMini from '../../public/assets/bus-mini';
+import ToiletPaper from '@/assets//toilet-paper';
+import HotelBed from '@/assets//hotel-bed';
+import Wifi from '@/assets/wifi';
+import BusMini from '@/assets/bus-mini';
 import { type Ticket } from '@/data/types';
 import { dayjsExt } from '@/lib/dayjs';
 

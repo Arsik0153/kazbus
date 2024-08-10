@@ -26,7 +26,7 @@ const Button = (props: Props) => {
                 'flex w-full items-center justify-center rounded-[10px] px-2 py-6 text-[18px] font-semibold leading-[19.8px]',
                 className,
                 {
-                    'max-h-[80px] w-full bg-white text-[#FF2525] active:opacity-70':
+                    'max-h-[80px] w-full border bg-white text-[#FF2525] active:opacity-70':
                         variant === 'primary',
                     'max-h-[72px] w-full bg-[#E74949] text-white active:bg-[#F45A5A]':
                         variant === 'secondary',

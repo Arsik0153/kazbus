@@ -1,6 +1,6 @@
 import Topbar from '@/components/topbar';
 import React, { useEffect, useState } from 'react';
-import ArrowLeftIcon from '../../../../../public/assets/arrow-left-icon';
+import ArrowLeftIcon from '../../../../assets/arrow-left-icon';
 import Input from '@/components/input';
 import InputFromMain from '@/components/inputFromMain';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
