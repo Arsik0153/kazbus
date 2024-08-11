@@ -42,8 +42,8 @@ const NewBus = () => {
                         </div>
                         <div className="flex flex-col gap-3">
                             <p className="text-base font-medium text-[#4A4A4A]">Количество посадочных мест</p>
-                            <input
-                                type="text"
+                            <InputMask
+                                mask="99"
                                 placeholder='Количество мест'
                                 className='border text-base font-medium text-[#4A4A4A] p-5 pt-[12px] pb-[12px] w-full focus:outline-none border-[#A0A0A0] rounded-[10px]'
                             />

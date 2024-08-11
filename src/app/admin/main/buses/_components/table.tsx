@@ -42,15 +42,13 @@ const Table = () => {
 
                     </td>
                     <td className=" py-4 pr-6 rounded-r-[10px]">
-                        {isActive ? (
-                            <button className='py-3 ml-auto px-8 flex items-center justify-center rounded-[10px] border bg-[#E74949] text-sm font-semibold text-white' onClick={handleButtonClick}>
-                                Редактировать
-                            </button>
-                        ) : (
-                            <button className='py-3 ml-auto px-8 flex items-center justify-center rounded-[10px] border border-[#E74949] text-sm font-semibold text-[#E74949]' onClick={handleButtonClick}>
-                                Редактировать
-                            </button>
-                        )}
+                        {/* <button className='py-3 ml-auto px-8 flex hover:bg-[#F16363] hover:text-white duration-100	 items-center justify-center rounded-[10px] border bg-[#E74949] text-sm font-semibold text-white' onClick={handleButtonClick}>
+                            Редактировать
+                        </button> */}
+                        <button className='py-3 ml-auto px-8 flex  hover:bg-[#F16363] hover:text-white duration-100	 items-center justify-center rounded-[10px] border border-[#E74949] text-sm font-semibold text-[#E74949]' onClick={handleButtonClick}>
+                            Редактировать
+                        </button>
+
                     </td>
                 </tr>
 
