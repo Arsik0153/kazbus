@@ -49,15 +49,19 @@ const SelectDate = () => {
         );
 
     return (
-        <Input
-            label="Дата отправления"
-            id="date"
-            variant="ghost"
-            iconLeft={<Calendar color="white" />}
-            onClick={() => setIsOpen(true)}
-            defaultValue={formattedDate}
-            key={formattedDate}
-        />
+        <div onClick={() => setIsOpen(true)}>
+            <div className="pointer-events-none">
+                <Input
+                    label="Дата отправления"
+                    id="date"
+                    variant="ghost"
+                    iconLeft={<Calendar color="white" />}
+                    defaultValue={formattedDate}
+                    key={formattedDate}
+                    hideKeyboardOnFocus={false}
+                />
+            </div>
+        </div>
     );
 };
 

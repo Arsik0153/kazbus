@@ -97,13 +97,18 @@ const SelectDeparture = () => {
     }
 
     return (
-        <Input
-            label={selectedCity || 'Откуда'}
-            id="whereFrom"
-            onClick={() => setIsOpen(true)}
-            variant="ghost"
-            iconLeft={<ArrowLeftIcon color="white" />}
-        />
+        <div onClick={() => setIsOpen(true)}>
+            <div className="pointer-events-none">
+                <Input
+                    label="Откуда"
+                    defaultValue={selectedCity}
+                    id="from"
+                    variant="ghost"
+                    iconLeft={<ArrowLeftIcon color="white" />}
+                    hideKeyboardOnFocus={false}
+                />
+            </div>
+        </div>
     );
 };
 

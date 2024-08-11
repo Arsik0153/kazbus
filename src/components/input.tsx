@@ -6,6 +6,7 @@ type Props = React.HTMLProps<HTMLInputElement> & {
     iconLeft?: React.ReactNode;
     variant?: 'primary' | 'secondary' | 'ghost' | 'nonPlaceholder';
     loading?: boolean;
+    hideKeyboardOnFocus?: boolean;
 };
 
 const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
@@ -17,6 +18,7 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
         placeholder,
         variant = 'primary',
         loading,
+        hideKeyboardOnFocus = true,
         ...rest
     } = props;
 
@@ -39,7 +41,7 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
             <input
                 id={id}
                 className={clsx(
-                    'peer w-full bg-transparent pr-8 font-medium text-[var(--black)] placeholder-transparent outline-none transition-all duration-200',
+                    `${hideKeyboardOnFocus ? 'hide-tabbar' : ''} peer w-full bg-transparent pr-8 font-medium text-[var(--black)] placeholder-transparent outline-none transition-all duration-200`,
                     {
                         'pl-14': iconLeft,
                         'pl-8': !iconLeft,
