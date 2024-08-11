@@ -41,7 +41,7 @@ function ComboBox({ name, onSelectionChange = () => {} }: ComboBoxProps) {
         <div className="relative">
             <Combobox
                 value={selectedPerson}
-                onChange={(person) => {
+                onChange={(person: Person) => {
                     setSelectedPerson(person);
                     onSelectionChange(name, person); // Уведомление о выборе
                 }}

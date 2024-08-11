@@ -6,6 +6,7 @@ import Edit from '@/assets/admin/Edit';
 import Filter from '@/assets/admin/Filter';
 import ComboBox from '@/app/admin/main/trips/_components/inputCombo';
 import Table from './_components/table';
+import Link from 'next/link';
 
 const Trips = () => {
     const handleSelectionChange = (name: string, selected: any) => {
