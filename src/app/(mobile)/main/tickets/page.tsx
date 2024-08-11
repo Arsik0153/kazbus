@@ -17,7 +17,7 @@ const TicketsPage = () => {
     const toParam = searchParams.get('to');
     const passengerCountParam =
         Number(searchParams.get('passenger_count')) || 0;
-
+    console.log(dateParam, passengerCountParam);
     const { data: tickets, isPending } = useServerActionQuery(
         getTicketsAction,
         {
@@ -45,6 +45,21 @@ const TicketsPage = () => {
                 </Topbar>
                 <div className="my-5 flex justify-center px-4 py-7">
                     <Spinner size="md" />
+                </div>
+            </>
+        );
+    }
+
+    if (!isPending && !tickets) {
+        return (
+            <>
+                <Topbar backHref="/main">
+                    <div className="flex flex-col items-center py-6" />
+                </Topbar>
+                <div className="my-5 flex justify-center px-4 py-7">
+                    <div className="text-center text-[#A0A0A0]">
+                        Нет доступных билетов
+                    </div>
                 </div>
             </>
         );
