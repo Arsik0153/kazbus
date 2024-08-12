@@ -22,7 +22,7 @@ const UnauthorizedProfilePage = () => {
 
             <div className="gap-1 px-5 pb-14">
                 <p className="mt-9 text-center text-3xl font-medium text-[#4A4A4A]">
-                    Хотите хранить свои билеты и данные прямо в прилоежнии?
+                    Хотите хранить свои билеты и данные прямо в приложении?
                 </p>
                 <p className="mt-4 text-center text-base font-medium text-[#4A4A4A]">
                     Зарегистрируйтесь и покупайте билеты всего за пару кликов
