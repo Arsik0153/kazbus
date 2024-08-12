@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Steps } from '../page';
+import { Steps } from '../types';
 import BusLayout from './bus-layout';
 import Topbar from '@/components/topbar';
 import { useSearchParams } from 'next/navigation';

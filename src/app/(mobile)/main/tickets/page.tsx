@@ -8,14 +8,7 @@ import Contacts from './_components/contacts';
 import { z } from 'zod';
 import { contactsSchema } from '@/data/schemas';
 import Booking from './_components/booking';
-
-export enum Steps {
-    SelectTicket = 'SelectTicket',
-    SelectPlace = 'SelectPlace',
-    Passengers = 'Passengers',
-    Contacts = 'Contacts',
-    Booking = 'Booking',
-}
+import { Steps } from './types';
 
 const TicketPageSuspended = () => {
     const [step, setStep] = useState<Steps>(Steps.SelectTicket);

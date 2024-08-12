@@ -4,7 +4,7 @@ import Button from '@/components/button';
 import Topbar from '@/components/topbar';
 import Clock from '@/assets/red-clock';
 import Kaspi from '@/assets/kaspi';
-import { Steps } from '../page';
+import { Steps } from '../types';
 import { Ticket as TicketT } from '@/data/types';
 import Ticket from '@/components/ticket';
 

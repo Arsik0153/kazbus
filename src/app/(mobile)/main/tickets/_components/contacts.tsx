@@ -9,7 +9,7 @@ import { z } from 'zod';
 import { contactsSchema } from '@/data/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import ErrorMessage from '@/components/error-message';
-import { Steps } from '../page';
+import { Steps } from '../types';
 
 type Props = {
     onContactsSubmit: (data: z.output<typeof contactsSchema>) => void;

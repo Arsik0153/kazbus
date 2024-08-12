@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Button from '@/components/button';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
 import { getUserAction } from '../actions';
-import { Steps } from '../page';
+import { Steps } from '../types';
 import { useSearchParams } from 'next/navigation';
 import { Profile } from '@/data/user';
 import CreatePassenger from './create-passenger';
