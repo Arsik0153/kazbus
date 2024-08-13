@@ -6,10 +6,34 @@ import Coupon from '../assets/coupon';
 import User from '../assets/user';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import clsx from 'clsx';
 
 const getColor = (pathname: string, url: string) => {
-    return url.startsWith(pathname) ? '#D21F1F' : '#C8C8C8';
+    return url.startsWith(pathname) ? '#FFF' : '#C8C8C8';
 };
+
+const LINKS = [
+    {
+        href: '/main',
+        icon: Bus,
+        text: 'Поиск',
+    },
+    {
+        href: '/directions',
+        icon: Building,
+        text: 'Направления',
+    },
+    {
+        href: '/my-tickets',
+        icon: Coupon,
+        text: 'Мои билеты',
+    },
+    {
+        href: '/profile',
+        icon: User,
+        text: 'Профиль',
+    },
+];
 
 const NavBar = () => {
     const pathname = usePathname();
@@ -49,50 +73,34 @@ const NavBar = () => {
 
     return (
         <div
-            className={`fixed bottom-0 z-10 w-full bg-white ${isTabbarHidden && 'hidden'}`}
+            className={`fixed bottom-0 z-10 w-full rounded-t-[10px] bg-white ${isTabbarHidden && 'hidden'}`}
         >
-            <div className="flex w-full items-center justify-between p-5">
-                <Link href="/main" className="flex flex-col items-center gap-2">
-                    <Bus color={getColor('/main', pathname)} />
-                    <div
-                        className={`text-[12px] font-normal leading-[13.2px] text-[${getColor('/main', pathname)}]`}
+            <div className="flex w-full items-center justify-between px-[15px] pb-[20px] pt-[10px]">
+                {LINKS.map((link) => (
+                    <Link
+                        key={link.href}
+                        href={link.href}
+                        className={clsx(
+                            'flex flex-col items-center gap-2 rounded-[10px] px-[13px] pb-[15px] pt-[10px]',
+                            {
+                                'bg-[#E23333]': pathname === link.href,
+                            }
+                        )}
                     >
-                        Поиск
-                    </div>
-                </Link>
-                <Link
-                    href="/directions"
-                    className="flex flex-col items-center gap-2"
-                >
-                    <Building color={getColor('/directions', pathname)} />
-                    <div
-                        className={`text-[12px] font-normal leading-[13.2px] text-[${getColor('/directions', pathname)}]`}
-                    >
-                        Направления
-                    </div>
-                </Link>
-                <Link
-                    href="/my-tickets"
-                    className="flex flex-col items-center gap-2"
-                >
-                    <Coupon color={getColor('/my-tickets', pathname)} />
-                    <div
-                        className={`text-[12px] font-normal leading-[13.2px] text-[${getColor('/my-tickets', pathname)}]`}
-                    >
-                        Мои билеты
-                    </div>
-                </Link>
-                <Link
-                    href="/profile"
-                    className="flex flex-col items-center gap-2"
-                >
-                    <User color={getColor('/profile', pathname)} />
-                    <div
-                        className={`text-[12px] font-normal leading-[13.2px] text-[${getColor('/profile', pathname)}]`}
-                    >
-                        Профиль
-                    </div>
-                </Link>
+                        <link.icon color={getColor(link.href, pathname)} />
+                        <div
+                            className={clsx(
+                                'text-[12px] font-medium leading-[13.2px]',
+                                {
+                                    'text-white': pathname === link.href,
+                                    'text-[#C8C8C8]': pathname !== link.href,
+                                }
+                            )}
+                        >
+                            {link.text}
+                        </div>
+                    </Link>
+                ))}
             </div>
         </div>
     );

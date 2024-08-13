@@ -1,5 +1,6 @@
 import React, { forwardRef } from 'react';
 import clsx from 'clsx';
+import { cn } from '@/utils/cn';
 
 type Props = React.HTMLProps<HTMLInputElement> & {
     label: React.ReactNode;
@@ -26,7 +27,7 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
 
     return (
         <div
-            className={clsx(
+            className={cn(
                 'relative w-full rounded-[10px] border border-solid pb-[19px] pt-[35px]',
                 {
                     'bg-[#ffffff]': variant === 'primary',
@@ -43,7 +44,7 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
             )}
             <input
                 id={id}
-                className={clsx(
+                className={cn(
                     `${hideKeyboardOnFocus ? 'hide-tabbar' : ''} peer w-full bg-transparent pr-8 font-medium text-[var(--black)] placeholder-transparent outline-none transition-all duration-200`,
                     {
                         'pl-14': iconLeft,
