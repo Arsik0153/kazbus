@@ -11,7 +11,7 @@ const StyledInput: React.FC<InputProps> = (props) => {
     const { iconLeft, label, className, onChange, value, ...rest } = props;
 
     return (
-        <div className="relative flex max-h-[80px] w-full flex-row items-center gap-4 rounded-[10px] border border-[#AAAAAA] bg-[#FFFFFF29] px-[20px] py-[30px]">
+        <div className="relative flex max-h-[72px] w-full flex-row items-center gap-4 rounded-[10px] border border-[#D1D1D1] bg-[#FFFFFF29] px-[20px] py-[30px]">
             {iconLeft && (
                 <div className="absolute left-5 top-1/2 -translate-y-1/2 transform">
                     {iconLeft}

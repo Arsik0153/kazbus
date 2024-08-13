@@ -7,6 +7,7 @@ type Props = React.HTMLProps<HTMLInputElement> & {
     variant?: 'primary' | 'secondary' | 'ghost' | 'nonPlaceholder';
     loading?: boolean;
     hideKeyboardOnFocus?: boolean;
+    containerClassName?: string;
 };
 
 const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
@@ -15,6 +16,7 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
         label,
         iconLeft,
         className,
+        containerClassName,
         placeholder,
         variant = 'primary',
         loading,
@@ -29,8 +31,9 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
                 {
                     'bg-[#ffffff]': variant === 'primary',
                     'bg-none': variant === 'secondary',
-                    'border-[#AAAAAA] bg-[#FFFFFF29]': variant === 'ghost',
-                }
+                    'border-[#D1D1D1] bg-white/15': variant === 'ghost',
+                },
+                containerClassName
             )}
         >
             {iconLeft && (
@@ -89,7 +92,6 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
 Input.displayName = 'Input';
 
 export default Input;
-
 
 // <Input
 //     label='Введите ваш пароль'
