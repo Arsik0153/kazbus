@@ -1,7 +1,6 @@
 'use client';
 import React, { Suspense } from 'react';
 import Button from '@/components/button';
-import Image from 'next/image';
 import SelectDeparture from './_components/select-departure';
 import SelectArrival from './_components/select-arrival';
 import SelectDate from './_components/select-date';
