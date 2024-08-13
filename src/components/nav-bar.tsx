@@ -83,7 +83,7 @@ const NavBar = () => {
                         className={clsx(
                             'flex flex-col items-center gap-2 rounded-[10px] px-[13px] pb-[15px] pt-[10px]',
                             {
-                                'bg-[#E23333]': pathname === link.href,
+                                'bg-[#E23333]': pathname.startsWith(link.href),
                             }
                         )}
                     >
@@ -92,8 +92,12 @@ const NavBar = () => {
                             className={clsx(
                                 'text-[12px] font-medium leading-[13.2px]',
                                 {
-                                    'text-white': pathname === link.href,
-                                    'text-[#C8C8C8]': pathname !== link.href,
+                                    'text-white': pathname.startsWith(
+                                        link.href
+                                    ),
+                                    'text-[#C8C8C8]': !pathname.startsWith(
+                                        link.href
+                                    ),
                                 }
                             )}
                         >

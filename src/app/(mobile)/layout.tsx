@@ -7,7 +7,7 @@ export default function RootLayout({
 }>) {
     return (
         <div className="flex min-h-screen items-stretch">
-            <div className="mb-[75px] flex-1">{children}</div>
+            <div className="mb-[90px] flex-1">{children}</div>
             <NavBar />
         </div>
     );
