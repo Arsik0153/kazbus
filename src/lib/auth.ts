@@ -21,13 +21,13 @@ export async function decrypt(input: string): Promise<any> {
     return payload;
 }
 
-type LoginCredentials = {
+type SignUpCredentials = {
     phone: string;
     token: string;
     user_id: number;
 };
 
-export async function login(data: LoginCredentials) {
+export async function signUp(data: SignUpCredentials) {
     // Verify credentials && get the user
 
     const response = await fetch(
@@ -44,6 +44,59 @@ export async function login(data: LoginCredentials) {
     const user = {
         user_id: json.id,
         token: data.token,
+        ...json.profile,
+    };
+
+    // Create the session
+    const expires = new Date(Date.now() + 60 * 60 * 1000);
+    const session = await encrypt({ user, expires });
+
+    // Save the session in a cookie
+    cookies().set('session', session, { expires, httpOnly: true });
+}
+
+type LoginCredentials = {
+    phone: string;
+    password: string;
+};
+
+export async function login(data: LoginCredentials) {
+    // Verify credentials && get the user
+
+    const loginResponse = await fetch(
+        `${process.env.API_URL}/accounts/login/`,
+        {
+            body: JSON.stringify({
+                phone_number: data.phone,
+                password: data.password,
+            }),
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }
+    );
+
+    if (!loginResponse.ok) {
+        throw 'Неверный номер телефона или пароль';
+    }
+
+    const loginData = (await loginResponse.json()) as { token: string };
+
+    const response = await fetch(
+        `${process.env.API_URL}/accounts/user-profile`,
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Token ${loginData.token}`,
+            },
+        }
+    );
+    const json = await response.json();
+
+    const user = {
+        user_id: json.id,
+        token: loginData.token,
         ...json.profile,
     };
 

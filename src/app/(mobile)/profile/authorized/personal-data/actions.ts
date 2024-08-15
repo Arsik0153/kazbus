@@ -1,7 +1,7 @@
 'use server';
 
 import { createServerAction } from 'zsa';
-import { getSession, login, logout } from '@/lib/auth';
+import { getSession, signUp, logout } from '@/lib/auth';
 import { editProfileSchema } from '@/data/schemas';
 import { dateToDTO } from '@/utils/helper.';
 import { authedProcedure } from '@/actions';
@@ -38,7 +38,7 @@ export const updatePersonalInfoAction = authedProcedure
 
         await logout();
 
-        await login({
+        await signUp({
             phone: user.phone_number,
             token: user.token,
             user_id: user.user_id,

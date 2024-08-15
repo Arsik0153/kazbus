@@ -6,7 +6,7 @@ import Clock from '@/assets/red-clock'
 const parking = () => {
     return (
         <div className="flex flex-row p-4 pr-12 rounded-[5px] bg-white justify-between">
-            <ComboBox name="stop" />
+            <ComboBox name="stop" placeholder='Остановка'/>
             <div className="flex flex-col gap-3 w-3/5">
                 <div className="w-full flex flex-row items-center justify-between ">
                     <p className="text-base font-semibold text-[#4A4A4A]">Время в пути до конечной точки</p>

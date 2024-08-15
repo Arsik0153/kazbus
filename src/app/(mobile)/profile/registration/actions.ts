@@ -1,8 +1,8 @@
 'use server';
 
 import { authedProcedure } from '@/actions';
-import { profileSchema } from '@/data/schemas';
-import { getSession, login, logout } from '@/lib/auth';
+import { passwordSchema, profileSchema } from '@/data/schemas';
+import { getSession, signUp, logout } from '@/lib/auth';
 import { dateToDTO } from '@/utils/helper.';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
@@ -23,6 +23,8 @@ export const loginAction = createServerAction()
                 body: JSON.stringify({
                     phone_number: input.phone,
                     code: input.otp,
+                    password1: '12345678',
+                    password2: '12345678',
                 }),
                 headers: {
                     'Content-Type': 'application/json',
@@ -36,7 +38,7 @@ export const loginAction = createServerAction()
         const data = await response.json();
         const { user_id, token } = data;
 
-        await login({ phone: input.phone, token, user_id });
+        await signUp({ phone: input.phone, token, user_id });
 
         return 'Успешно подтверждено';
     });
@@ -92,12 +94,15 @@ export const updatePersonalInfoAction = createServerAction()
             }
         );
         if (!response.ok) {
+            const data = await response.json();
+
+            console.log(data);
             throw 'Произошла ошибка при изменении данных';
         }
 
         await logout();
 
-        await login({
+        await signUp({
             phone: user.phone_number,
             token: user.token,
             user_id: user.user_id,
@@ -105,4 +110,38 @@ export const updatePersonalInfoAction = createServerAction()
         redirect('/profile');
 
         return 'Упешно изменено';
+    });
+
+export const setPasswordAction = createServerAction()
+    .input(passwordSchema)
+    .handler(async ({ input }) => {
+        if (input.password !== input.repeatPassword) {
+            throw 'Пароли не совпадают';
+        }
+
+        const session = await getSession();
+        const user = session?.user;
+        if (!user) {
+            throw 'Необходимо авторизоваться';
+        }
+
+        const response = await fetch(
+            `${process.env.API_URL}/accounts/set-password/`,
+            {
+                method: 'POST',
+                body: JSON.stringify({
+                    password1: input.password,
+                    password2: input.repeatPassword,
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Token ${user.token}`,
+                },
+            }
+        );
+        if (!response.ok) {
+            throw 'Произошла ошибка при установлении пароля';
+        }
+
+        return 'Пароль успешно установлен';
     });

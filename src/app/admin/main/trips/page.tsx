@@ -1,11 +1,13 @@
 'use client';
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import Button from '@/components/button';
 import Plus from '@/assets/admin/Plus';
 import Edit from '@/assets/admin/Edit';
 import Filter from '@/assets/admin/Filter';
-import ComboBox from '@/app/admin/main/trips/_components/inputCombo';
+import ComboBox from './_components/inputCombo';
 import Table from './_components/table';
+import Link from 'next/link';
+import CalendarPC from '@/components/calendar/select-date';
 
 const Trips = () => {
     const handleSelectionChange = (name: string, selected: any) => {
@@ -14,37 +16,53 @@ const Trips = () => {
     };
 
     return (
-        <div className="flex flex-col mt-6">
+        <div className="mt-6 flex flex-col">
             <div className="flex flex-row justify-between">
-                <p className="text-[42px] font-semibold text-[#4A4A4A]">Рейсы</p>
+                <p className="text-[42px] font-semibold text-[#4A4A4A]">
+                    Рейсы
+                </p>
                 <div className="flex flex-row gap-3">
-                    {/* TODO: HREF here */}
-                    <a href="/admin/main/trips/new-trip" className="flex py-[14px] px-12 flex-row rounded-[10px] gap-[10px] items-center justify-center bg-[#E32B2B] text-base font-semibold text-[#FBFBFB]">
+                    <Link
+                        href="/admin/main/trips/new-trip"
+                        className="flex flex-row items-center justify-center gap-[10px] rounded-[10px] bg-[#E32B2B] px-12 py-[14px] text-base font-semibold text-[#FBFBFB] duration-150 hover:bg-[#F16363] hover:text-white"
+                    >
                         <Plus color="#fff" width={20} height={20} />
                         Запустить рейс
-                    </a>
-                    <a href="" className="flex flex-row py-[14px] px-11 border rounded-[10px] gap-[10px] items-center justify-center bg-white text-base font-semibold text-[#E32B2B]">
+                    </Link>
+                    <Link
+                        href=""
+                        className="flex flex-row items-center justify-center gap-[10px] rounded-[10px] border bg-white px-11 py-[14px] text-base font-semibold text-[#E32B2B] duration-150 hover:border-[#F16363]"
+                    >
                         <Edit color="#E32B2B" width={20} height={20} />
                         Редактировать несколько рейсов
-                    </a>
+                    </Link>
                 </div>
             </div>
 
-            <div className="flex flex-col p-6 mt-3 mb-20 rounded-[20px] bg-[#FFFFFF] border">
-                <div className="flex flex-row rounded-[10px] border px-3 py-3 justify-between">
-                    <div className="flex flex-row items-center gap-[5px] ml-2">
+            <div className="mb-20 mt-3 flex flex-col rounded-[20px] border bg-[#FFFFFF] p-6">
+                <div className="flex flex-row justify-between rounded-[10px] border px-3 py-3">
+                    <div className="ml-2 flex flex-row items-center gap-[5px]">
                         <Filter color="#E32B2B" width={20} height={20} />
-                        <p className="text-base font-semibold text-[#E32B2B]">Фильтр</p>
+                        <p className="text-base font-semibold text-[#E32B2B]">
+                            Фильтр
+                        </p>
                     </div>
                     <div className="flex flex-row items-center">
-                        <p className="text-base font-medium mr-3">C</p>
-                        <div className="border">Компоненту <br /> сюда</div>
-                        <p className="text-base font-medium ml-[14px] mr-3">По</p>
-                        <div className="border mr-2">Компоненту <br /> сюда</div>
-                        <div className="flex flex-row gap-2 items-center">
+                        <p className="mr-3 text-base font-medium">C</p>
+                        <Suspense>
+                            <CalendarPC />
+                        </Suspense>
+                        <p className="ml-[14px] mr-3 text-base font-medium">
+                            По
+                        </p>
+                        <Suspense>
+                            <CalendarPC />
+                        </Suspense>
+                        <div className="ml-2 flex flex-row items-center gap-2">
                             <ComboBox
                                 name="filterComboBox"
                                 onSelectionChange={handleSelectionChange}
+                                placeholder="Маршруты"
                             />
                             <Button variant="ultrared">Применить</Button>
                         </div>
@@ -52,7 +70,6 @@ const Trips = () => {
                 </div>
 
                 <Table />
-
             </div>
         </div>
     );
