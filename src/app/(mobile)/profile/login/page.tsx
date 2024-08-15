@@ -16,7 +16,7 @@ import toast from 'react-hot-toast';
 import { sanitizePhone } from '@/utils/helper.';
 
 const LoginPage = () => {
-    const { execute } = useServerAction(loginAction, {
+    const { execute, isPending } = useServerAction(loginAction, {
         onSuccess: () => {
             console.log('success');
         },
@@ -71,7 +71,11 @@ const LoginPage = () => {
                     {...register('password')}
                 />
                 <ErrorMessage message={errors.password?.message} />
-                <Button variant="secondary" className="mt-4">
+                <Button
+                    variant="secondary"
+                    className="mt-4"
+                    loading={isPending}
+                >
                     Войти
                 </Button>
             </form>
