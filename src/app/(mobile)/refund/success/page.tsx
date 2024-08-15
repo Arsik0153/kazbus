@@ -1,6 +1,5 @@
 import React from 'react'
 import Topbar from '@/components/topbar';
-import Yes from '@/assets/'
 
 const Success = () => {
     return (

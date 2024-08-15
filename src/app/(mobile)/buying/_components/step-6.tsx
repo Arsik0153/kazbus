@@ -34,6 +34,8 @@ const StepFive = () => {
                     arriving_date={'9 мая'}
                     passenger_amount={1}
                     ticket_amount={12450}
+                    taxi_park='wdwedqw'
+
                 />
                 <div className="flex flex-row justify-between gap-3 p-5 border border-[#D1D1D1] rounded-lg bg-none">
                     <p className="font-normal text-base text-[#4A4A4A]">Место</p>

@@ -17,6 +17,8 @@ const HistoryTicketsPage = () => {
                     arriving_date={'9 мая'}
                     passenger_amount={1}
                     ticket_amount={12450}
+                    taxi_park='wdwedqw'
+
                 />
                 <Trip
                     town_one="Алматы"
@@ -28,6 +30,8 @@ const HistoryTicketsPage = () => {
                     arriving_date={'9 мая'}
                     passenger_amount={1}
                     ticket_amount={12450}
+                    taxi_park='wdwedqw'
+
                 />
                 <Trip
                     town_one="Алматы"
@@ -39,6 +43,8 @@ const HistoryTicketsPage = () => {
                     arriving_date={'9 мая'}
                     passenger_amount={1}
                     ticket_amount={12450}
+                    taxi_park='wdwedqw'
+
                 />
                 <Trip
                     town_one="Алматы"
@@ -50,6 +56,8 @@ const HistoryTicketsPage = () => {
                     arriving_date={'9 мая'}
                     passenger_amount={1}
                     ticket_amount={12450}
+                    taxi_park='wdwedqw'
+
                 />
                 <Trip
                     town_one="Алматы"
@@ -61,6 +69,8 @@ const HistoryTicketsPage = () => {
                     arriving_date={'9 мая'}
                     passenger_amount={1}
                     ticket_amount={12450}
+                    taxi_park='wdwedqw'
+
                 />
             </div>
         </>

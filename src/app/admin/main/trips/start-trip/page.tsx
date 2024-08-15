@@ -19,6 +19,7 @@ const StartTrip = () => {
                     arriving_date={'9 мая'}
                     passenger_amount={5}
                     ticket_amount={12450}
+                    taxi_park='wdwedqw'
                 />
             </div>
             <div className="flex flex-row gap-2 items-center w-1/2">
