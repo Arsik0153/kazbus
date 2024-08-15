@@ -1,5 +1,6 @@
 import React, { forwardRef } from 'react';
 import clsx from 'clsx';
+import { cn } from '@/utils/cn';
 
 type Props = React.HTMLProps<HTMLInputElement> & {
     label: React.ReactNode;
@@ -7,6 +8,7 @@ type Props = React.HTMLProps<HTMLInputElement> & {
     variant?: 'primary' | 'secondary' | 'ghost' | 'nonPlaceholder';
     loading?: boolean;
     hideKeyboardOnFocus?: boolean;
+    containerClassName?: string;
 };
 
 const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
@@ -15,6 +17,7 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
         label,
         iconLeft,
         className,
+        containerClassName,
         placeholder,
         variant = 'primary',
         loading,
@@ -24,13 +27,14 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
 
     return (
         <div
-            className={clsx(
+            className={cn(
                 'relative w-full rounded-[10px] border border-solid pb-[19px] pt-[35px]',
                 {
                     'bg-[#ffffff]': variant === 'primary',
                     'bg-none': variant === 'secondary',
-                    'border-[#AAAAAA] bg-[#FFFFFF29]': variant === 'ghost',
-                }
+                    'border-[#D1D1D1] bg-white/15': variant === 'ghost',
+                },
+                containerClassName
             )}
         >
             {iconLeft && (
@@ -40,7 +44,7 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
             )}
             <input
                 id={id}
-                className={clsx(
+                className={cn(
                     `${hideKeyboardOnFocus ? 'hide-tabbar' : ''} peer w-full bg-transparent pr-8 font-medium text-[var(--black)] placeholder-transparent outline-none transition-all duration-200`,
                     {
                         'pl-14': iconLeft,
@@ -89,7 +93,6 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
 Input.displayName = 'Input';
 
 export default Input;
-
 
 // <Input
 //     label='Введите ваш пароль'

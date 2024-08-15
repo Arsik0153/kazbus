@@ -16,7 +16,7 @@ export const dateToDTO = (inputDate: string): string => {
 export const dateToReadable = (inputDate: string): string => {
     const datePattern = /^\d{4}-\d{2}-\d{2}$/;
     if (!datePattern.test(inputDate)) {
-        throw new Error('Invalid date format. Expected format is YYYY-MM-DD.');
+        return inputDate;
     }
     const date = dayjs(inputDate);
     return date.format('DD.MM.YYYY');
