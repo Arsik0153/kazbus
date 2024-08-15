@@ -100,18 +100,7 @@ const NewDriver = () => {
                                 className='text-2xl font-semibold text-[#4A4A4A]'>
                                 Дата выдачи водительских прав
                             </label>
-                            <div className="relative w-full">
-                                <InputMask
-                                    mask="99 - 99 - 9999" // Маска для ввода
-                                    placeholder="__ - __ - ____"
-                                    type="text"
-                                    name="whenGiven"
-                                    className="py-5 pl-12 border border-[#4A4A4A] rounded-[10px] focus:outlined-none outline-none w-full"
-                                />
-                                <div className="absolute top-0 left-0 pl-[20px] p-[25px]">
-                                    <Calendar color="#E74949" />
-                                </div>
-                            </div>
+                            <CalendarPC variant='secondary'/>
 
                         </div>
                     </div>
