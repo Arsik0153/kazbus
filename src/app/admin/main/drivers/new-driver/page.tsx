@@ -93,14 +93,14 @@ const NewDriver = () => {
                                 className='text-2xl font-semibold text-[#4A4A4A]'>
                                 Дата рождения
                             </label>
-                            <CalendarPC variant='secondary'/>
+                            {/* <CalendarPC variant='secondary'/> */}
                         </div>
                         <div className="flex flex-col relative gap-4 w-full">
                             <label htmlFor="whenGiven"
                                 className='text-2xl font-semibold text-[#4A4A4A]'>
                                 Дата выдачи водительских прав
                             </label>
-                            <CalendarPC variant='secondary'/>
+                            {/* <CalendarPC variant='secondary'/> */}
 
                         </div>
                     </div>

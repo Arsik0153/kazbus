@@ -1,3 +1,4 @@
+'use client';
 import { dayjsExt } from '@/lib/dayjs';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
 import { Dayjs } from 'dayjs';

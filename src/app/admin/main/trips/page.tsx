@@ -10,10 +10,10 @@ import Link from 'next/link';
 import CalendarPC from '@/components/calendar/calendarPC';
 
 const Trips = () => {
-    // const handleSelectionChange = (name: string, selected: any) => {
-    //     console.log(`${name} selected:`, selected);
-    //     // Добавьте здесь необходимую логику для обработки выбора
-    // };
+    const handleSelectionChange = (name: string, selected: any) => {
+        console.log(`${name} selected:`, selected);
+        // Добавьте здесь необходимую логику для обработки выбора
+    };
 
     return (
         <div className="flex flex-col mt-6">
@@ -39,13 +39,13 @@ const Trips = () => {
                     </div>
                     <div className="flex flex-row items-center">
                         <p className="text-base font-medium mr-3">C</p>
-                        <CalendarPC />
+                        {/* <CalendarPC />
                         <p className="text-base font-medium ml-[14px] mr-3">По</p>
-                        <CalendarPC/>
+                        <CalendarPC/> */}
                         <div className="flex flex-row gap-2 ml-2 items-center">
                             <ComboBox
                                 name="filterComboBox"
-                                // onSelectionChange={handleSelectionChange}
+                                onSelectionChange={handleSelectionChange}
                                 placeholder='Маршруты'
                             />
                             <Button variant="ultrared">Применить</Button>
