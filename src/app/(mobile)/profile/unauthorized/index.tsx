@@ -33,20 +33,14 @@ const UnauthorizedProfilePage = () => {
                     </Button>
                 </Link>
                 <div className="mt-4 text-center">
-                    {/* change route!!! IMPORTANT */}
-                    <a
-                        href="#!"
+                    <Link
+                        href="/profile/login"
                         className="mx-auto text-lg font-normal text-[#4A4A4A] underline"
                     >
                         Войти
-                    </a>
-                    {/* change route!!! IMPORTANT */}
+                    </Link>
                 </div>
-
-                {/* change route!!! IMPORTANT */}
                 <StartSettings />
-                {/* change route!!! IMPORTANT */}
-
                 <div className="mt-11 pb-[20px]">
                     <div className="flex w-full flex-row items-center justify-center gap-3 rounded-[50px] bg-[#EFEFEF] p-2">
                         <ShieldKeyhole color="#E74949" />

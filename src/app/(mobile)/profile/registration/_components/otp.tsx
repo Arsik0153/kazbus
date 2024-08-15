@@ -3,22 +3,28 @@
 import React, { useState, useEffect } from 'react';
 import OTPInput from '@/components/OTPInput';
 import Button from '@/components/button';
-import NewUser from '@/app/(mobile)/profile/registration/_components/new-user';
 import { useServerAction } from 'zsa-react';
 import { loginAction } from '../actions';
 import { sanitizePhone } from '@/utils/helper.';
+import { Steps } from '../types';
+import toast from 'react-hot-toast';
 
-const OTPPage = ({ phone }: { phone: string }) => {
+type Props = {
+    phone: string;
+    setStep: (step: Steps) => void;
+};
+
+const OTPPage = (props: Props) => {
+    const { phone, setStep } = props;
     const [otp, setOtp] = useState<string[]>(Array(4).fill(''));
     const [isButtonVisible, setIsButtonVisible] = useState<boolean>(false);
-    const [showNewUser, setShowNewUser] = useState<boolean>(false);
     const { execute, isPending } = useServerAction(loginAction, {
-        onSuccess: (data) => {
-            console.log(data);
-            setShowNewUser(true);
+        onSuccess: () => {
+            console.log('success');
+            setStep(Steps.PASSWORD);
         },
         onError: (error) => {
-            console.log('Error happened', error);
+            toast.error(error.err.message);
         },
     });
 
@@ -33,8 +39,6 @@ const OTPPage = ({ phone }: { phone: string }) => {
     useEffect(() => {
         setIsButtonVisible(otp.every((value) => value !== ''));
     }, [otp]);
-
-    if (showNewUser) return <NewUser />;
 
     return (
         <div className="mt-24 flex flex-col gap-6">
