@@ -11,7 +11,10 @@ interface SelectDateProps {
     variant?: 'primary' | 'secondary';
 }
 
-const SelectDate: React.FC<SelectDateProps> = ({ placeholder, variant = 'primary' }) => {
+const SelectDate: React.FC<SelectDateProps> = ({
+    placeholder,
+    variant = 'primary',
+}) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const dataChooserRef = useRef<HTMLDivElement | null>(null);
@@ -29,7 +32,10 @@ const SelectDate: React.FC<SelectDateProps> = ({ placeholder, variant = 'primary
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (dataChooserRef.current && !dataChooserRef.current.contains(event.target as Node)) {
+            if (
+                dataChooserRef.current &&
+                !dataChooserRef.current.contains(event.target as Node)
+            ) {
                 setIsOpen(false);
             }
         };
@@ -41,43 +47,52 @@ const SelectDate: React.FC<SelectDateProps> = ({ placeholder, variant = 'primary
     }, []);
 
     return (
-        <div className={clsx("relative",
-            {
+        <div
+            className={clsx('relative', {
                 'w-fit': variant === 'primary',
                 'w-full': variant === 'secondary',
-            }
-        )}>
-            <div className={clsx(
-                "relative  cursor-pointer",
-                {
+            })}
+        >
+            <div
+                className={clsx('relative cursor-pointer', {
                     'w-fit': variant === 'primary',
                     'w-full': variant === 'secondary',
-                }
-            )}
+                })}
             >
                 {/* TODO: Календарь не принимает текст в инпут(теряется фокус) */}
                 <input
                     key={selectedDate || formattedDate}
-                    placeholder={placeholder || "__ - __ - ____"}
+                    placeholder={placeholder || '__ - __ - ____'}
                     type="text"
                     name="birthday"
                     value={selectedDate || formattedDate}
                     className={clsx(
-                        "py-3 text-base font-medium  pr-3 border rounded-[10px] focus:outline-none",
+                        'rounded-[10px] border py-3 pr-3 text-base font-medium focus:outline-none',
                         {
-                            'text-[#4A4A4A] pl-10 border-[#A0A0A0]  max-w-[141px]': variant === 'primary',
-                            'py-5 pl-12 border border-[#4A4A4A] w-full': variant === 'secondary',
+                            'max-w-[141px] border-[#A0A0A0] pl-10 text-[#4A4A4A]':
+                                variant === 'primary',
+                            'w-full border border-[#4A4A4A] py-5 pl-12':
+                                variant === 'secondary',
                         }
                     )}
                     onChange={(e) => setSelectedDate(e.target.value)}
                 />
-                <div className={clsx("absolute top-0 left-0 p-[16px] cursor-pointer", {
-                    'p-[16px]': variant === 'primary',
-                    'pl-[20px] p-[25px] pt-[26px]': variant === 'secondary',
-                })}
-                    onClick={() => setIsOpen(!isOpen)}>
-
-                    <Calendar color="#E74949" width={variant === 'primary' ? 16 : 16} height={16} />
+                <div
+                    className={clsx(
+                        'absolute left-0 top-0 cursor-pointer p-[16px]',
+                        {
+                            'p-[16px]': variant === 'primary',
+                            'p-[25px] pl-[20px] pt-[26px]':
+                                variant === 'secondary',
+                        }
+                    )}
+                    onClick={() => setIsOpen(!isOpen)}
+                >
+                    <Calendar
+                        color="#E74949"
+                        width={variant === 'primary' ? 16 : 16}
+                        height={16}
+                    />
                 </div>
             </div>
 
