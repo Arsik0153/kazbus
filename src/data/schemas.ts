@@ -34,3 +34,12 @@ export const editProfileSchema = z.object({
 //         .string({ message: 'Введите пароль' })
 //         .min(2, 'Введите пароль'),
 // });
+
+export const contactsSchema = z.object({
+    phone: z
+        .string({ message: 'Введите номер телефона' })
+        .min(5, 'Введите номер телефона'),
+    email: z
+        .union([z.string().email('Введите корректный email'), z.literal('')])
+        .optional(),
+});

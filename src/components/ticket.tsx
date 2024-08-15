@@ -34,10 +34,19 @@ const StatusBadge = ({ status }: { status?: string }) => {
     return null;
 };
 
-const Ticket = ({ ticket }: { ticket: Ticket }) => {
+type TicketProps = React.HTMLAttributes<HTMLDivElement> & {
+    ticket: Ticket;
+    selected?: boolean;
+};
+
+const Ticket = ({ ticket, selected = false, ...rest }: TicketProps) => {
+    const borderColor = selected ? 'border-[#E74949]' : 'border-[#D1D1D1]';
+
     return (
-        <div className="py-2">
-            <div className="flex w-full flex-col gap-5 rounded-[10px] border border-[#D1D1D1] bg-[#FFFFFF] p-5">
+        <div className="py-2" {...rest}>
+            <div
+                className={`flex w-full flex-col gap-5 rounded-[10px] border ${borderColor} bg-[#FFFFFF] p-5`}
+            >
                 <div className="flex flex-row items-center justify-between">
                     <div className="flex flex-row items-center justify-between">
                         <div className="flex flex-col">

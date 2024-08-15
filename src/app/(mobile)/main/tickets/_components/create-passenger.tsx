@@ -11,16 +11,27 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import ErrorMessage from '@/components/error-message';
 import { useServerAction } from 'zsa-react';
 import { documentTypes } from '@/static/constants';
-import { updatePersonalInfoAction } from './actions';
 import Topbar from '@/components/topbar';
+import { createPassenger } from '../actions';
+import toast from 'react-hot-toast';
+import { Profile } from '@/data/user';
+import { User } from './select-passengers';
 
-const NewUser = () => {
-    const { execute, isPending } = useServerAction(updatePersonalInfoAction, {
-        onSuccess: (data) => {
-            console.log('Success', data);
+type Props = {
+    onBack: () => void;
+    onAddPassenger: (data: User) => void;
+};
+
+const CreatePassenger = (props: Props) => {
+    const { onBack, onAddPassenger } = props;
+
+    const { execute, isPending } = useServerAction(createPassenger, {
+        onSuccess: async (data) => {
+            onAddPassenger(data.data);
+            toast.success('Пассажир добавлен');
         },
         onError: (error) => {
-            console.log('Error', error);
+            toast.error(error.err.message);
         },
     });
     const {
@@ -33,21 +44,17 @@ const NewUser = () => {
     });
 
     const onSubmit = handleSubmit((data) => {
-        console.log('Form Data:', data);
         execute(data);
-
     });
 
     const documentType = watch('document_type');
 
     return (
         <>
-            <Topbar backHref='/main/tickets/passengers'>
-                <div className="flex flex-col items-center">
-                    Покупка билета
-                </div>
+            <Topbar onBack={onBack}>
+                <div className="flex flex-col items-center">Покупка билета</div>
             </Topbar>
-            <div className="flex flex-col  px-5">
+            <div className="flex flex-col px-5">
                 <form className="mt-10" onSubmit={onSubmit}>
                     <p className="mb-3 text-3xl font-medium text-[#4A4A4A]">
                         Данные пассажира
@@ -58,7 +65,10 @@ const NewUser = () => {
                         {...register('full_name')}
                     />
                     <ErrorMessage message={errors.full_name?.message} />
-                    <p className="text-sm font-medium text-[#A0A0A0] mt-3">При посадке в автобус ФИО будет сверяться с документом. Пишите без сокращений.</p>
+                    <p className="mt-3 text-sm font-medium text-[#A0A0A0]">
+                        При посадке в автобус ФИО будет сверяться с документом.
+                        Пишите без сокращений.
+                    </p>
                     <p className="mb-3 mt-9 text-xl font-medium text-[#4A4A4A]">
                         Выберите тип документа
                     </p>
@@ -92,17 +102,22 @@ const NewUser = () => {
                                 iconLeft={<Calendar color="#E74949" />}
                                 {...register('birth_date')}
                             />
-                            <ErrorMessage message={errors.birth_date?.message} />
+                            <ErrorMessage
+                                message={errors.birth_date?.message}
+                            />
                         </div>
                     </div>
-                    <Button variant="primary" loading={isPending}>
-                        Закончить регистрацию
+                    <Button
+                        variant="secondary"
+                        loading={isPending}
+                        className="mb-10"
+                    >
+                        Продолжить
                     </Button>
                 </form>
             </div>
         </>
-
     );
 };
 
-export default NewUser;
+export default CreatePassenger;
