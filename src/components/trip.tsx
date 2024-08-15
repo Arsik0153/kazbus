@@ -1,4 +1,5 @@
-import React from 'react';
+'use client';
+import React, { useState } from 'react';
 import ToiletPaper from '../assets/toilet-paper';
 import HotelBed from '../assets/hotel-bed';
 import Wifi from '../assets/wifi';
@@ -31,9 +32,7 @@ const StatusBadge = ({ status }: { status?: string }) => {
 
     if (status === 'none') {
         return (
-            <div className="font-medium ">
-                
-            </div>
+            <div className="font-medium "></div>
         );
     }
 
@@ -51,6 +50,7 @@ const Trip = ({
     arriving_date,
     passenger_amount,
     ticket_amount,
+    taxi_park,
 }: {
     status?: string;
     town_one: string;
@@ -62,23 +62,39 @@ const Trip = ({
     arriving_date: string;
     passenger_amount: number;
     ticket_amount: number;
+    taxi_park: string;
 }) => {
+    const [isSelected, setIsSelected] = useState(false);
+
+    const handleClick = () => {
+        setIsSelected(prevState => !prevState);
+    };
+
     return (
         <div className="py-2">
-            <div className="flex w-full flex-col gap-5 rounded-[10px] border border-[#D1D1D1] bg-[#FFFFFF] p-5">
-                <div className="flex flex-row items-center justify-between">
+            <div
+                className={`flex w-full flex-col gap-3 rounded-[10px] border border-[#D1D1D1] p-5 cursor-pointer transition-colors ${
+                    isSelected ? 'bg-[#E23333] text-[#FFFFFF]' : 'bg-[#FFFFFF] text-[#4A4A4A]'
+                }`}
+                onClick={handleClick}
+            >
+                <div className="flex flex-row items-start justify-between">
                     <div className="flex flex-row items-center justify-between">
                         <div className="flex flex-col">
                             <div className="flex flex-row items-center justify-between">
                                 <div className="flex flex-row items-center gap-2">
-                                    <BusMini color="#E74949" />
-                                    <div className="text-[16px] font-semibold leading-[17.6px] text-[#4A4A4A]">
+                                    <BusMini color={isSelected ? "#FFFFFF" : "#E74949"} />
+                                    <div className="text-[16px] font-semibold leading-[17.6px]">
                                         {town_one} - {town_two}
                                     </div>
                                 </div>
                             </div>
-                            <div className="pt-1 text-[14px] font-semibold leading-[15.4px] text-[#C7C7C7]">
-                                Осталось {tickets} билетов
+
+                            <div className="flex flex-row gap-3 mt-[14px] text-[24px] font-bold leading-[26.4px]">
+                                {ticket_amount} ₸
+                                <div className="pt-1 text-xs font-normal leading-[15.4px]">
+                                    {passenger_amount} пассажир
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -88,45 +104,39 @@ const Trip = ({
                 </div>
                 <div className="flex flex-row items-center justify-between">
                     <div className="flex flex-row gap-5">
-                        <div className="flex flex-col gap-1">
-                            <div className="text-[14px] font-normal leading-[15.4px] text-[#4A4A4A]">
-                                Отправление
+                        <div className="flex flex-row gap-3">
+                            <div className="flex flex-col">
+                                <div className="text-[14px] font-semibold leading-[15.4px]">
+                                    Выезд
+                                </div>
+                                <div className="text-sm font-normal leading-[17.6px]">
+                                    {departure_date}
+                                </div>
                             </div>
-                            <div className="text-[28px] font-medium leading-[30.8px] text-[#4A4A4A]">
+
+                            <div className="text-[24px] font-medium leading-[30.8px]">
                                 {departure}
                             </div>
-                            <div className="text-[16px] font-normal leading-[17.6px] text-[#C8C8C8]">
-                                {departure_date}
-                            </div>
                         </div>
-                        <div className="flex flex-col gap-1">
-                            <div className="text-[14px] font-normal leading-[15.4px] text-[#4A4A4A]">
-                                Прибытие
+
+                        <div className="flex flex-row gap-3">
+                            <div className="flex flex-col">
+                                <div className="text-[14px] font-semibold leading-[15.4px]">
+                                    Прибытие
+                                </div>
+                                <div className="text-sm font-normal leading-[17.6px]">
+                                    {arriving_date}
+                                </div>
                             </div>
-                            <div className="text-[28px] font-medium leading-[30.8px] text-[#4A4A4A]">
+
+                            <div className="text-[24px] font-medium leading-[30.8px]">
                                 {arrive}
-                            </div>
-                            <div className="text-[16px] font-normal leading-[17.6px] text-[#C8C8C8]">
-                                {arriving_date}
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                        <div className="flex flex-row place-content-end gap-2">
-                            <ToiletPaper />
-                            <HotelBed />
-                            <Wifi />
-                        </div>
-                        <div className="text-right">
-                            <div className="text-[12px] font-normal leading-[13.2px] text-[#A0A0A0]">
-                                {passenger_amount} пассажир
-                            </div>
-                            <div className="text-[24px] font-medium leading-[26.4px] text-[#4A4A4A]">
-                                {ticket_amount}₸
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <p className={`text-xs font-medium ${isSelected ? "text-[#FFFFFF] opacity-100" : "text-[#E23333] opacity-50"}`}>{taxi_park}</p>
             </div>
         </div>
     );
