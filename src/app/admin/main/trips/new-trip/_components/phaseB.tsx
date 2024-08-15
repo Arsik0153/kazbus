@@ -5,6 +5,8 @@ import Button from '@/components/button';
 import Clock from '@/assets/admin/Clock';
 import WeekButtons from '@/app/admin/main/trips/new-trip/_components/WeekButtons';
 import Link from 'next/link';
+import Calendar from '@/assets/calendar';
+import CalendarPC from '@/components/calendar/calendarPC'
 
 const PhaseB = () => {
     const [isWeekly, setIsWeekly] = useState(false); // Состояние для определения типа рейса
@@ -39,14 +41,14 @@ const PhaseB = () => {
                         <div className="flex flex-row items-center gap-3 mt-4">
                             <InputMini
                                 id="AdminPassword"
-                                placeholder=''
+                                placeholder='___'
                                 className='max-w-20'
                                 iconLeft={<Clock color="#E74949" />}
                             />
                             <p className="text-base font-medium text-[#4A4A4A]">часов</p>
                             <InputMini
                                 id="AdminPassword"
-                                placeholder=''
+                                placeholder='___'
                                 className='max-w-20'
                                 iconLeft={<Clock color="#E74949" />}
                             />
@@ -78,19 +80,11 @@ const PhaseB = () => {
                         <p className="text-2xl font-semibold text-[#4A4A4A]">Назначьте даты рейса</p>
                         <div className="flex flex-row items-center gap-3 mt-4">
                             <p className="text-base font-medium text-[#4A4A4A]">C</p>
-                            <InputMini
-                                id="AdminPassword"
-                                placeholder=''
-                                className='max-w-20'
-                                iconLeft={<Clock color="#E74949" />}
-                            />
+                            <CalendarPC placeholder='__-__-____'/>
+
                             <p className="text-base font-medium text-[#4A4A4A]">По</p>
-                            <InputMini
-                                id="AdminPassword"
-                                placeholder=''
-                                className='max-w-20'
-                                iconLeft={<Clock color="#E74949" />}
-                            />
+                            <CalendarPC />
+
                         </div>
                     </div>
                     {/* Условное отображение блока с выбором дней недели */}

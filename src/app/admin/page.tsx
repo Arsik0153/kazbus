@@ -3,10 +3,11 @@ import Input from '@/components/input';
 import Button from '@/components/button';
 import Link from 'next/link';
 import Image from 'next/image';
+
 // bg-[#E32B2B]
 const LoginPage = () => {
     return (
-        <div className="flex items-start justify-center h-screen bg-[#E32B2B]">
+        <div className="flex items-start justify-center min-h-screen overflow-y-hidden bg-[#E32B2B]">
             <Image
                 src={'/Ellipse.svg'}
                 width={622}

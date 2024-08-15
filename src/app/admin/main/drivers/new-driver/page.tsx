@@ -5,6 +5,8 @@ import Calendar from '@/assets/admin/Calendar';
 import InputMask from 'react-input-mask';
 import BigAvatar from '@/assets/admin/BigAvatar';
 import Button from '@/components/button';
+import CalendarPC from '@/components/calendar/calendarPC'
+import Link from 'next/link';
 
 const NewDriver = () => {
     const [image, setImage] = useState<string | null>(null); // Типизация состояния image
@@ -91,18 +93,7 @@ const NewDriver = () => {
                                 className='text-2xl font-semibold text-[#4A4A4A]'>
                                 Дата рождения
                             </label>
-                            <div className="relative w-full">
-                                <InputMask
-                                    mask="99 - 99 - 9999" // Маска для ввода
-                                    placeholder="__ - __ - ____"
-                                    type="text"
-                                    name="birthday"
-                                    className="py-5 pl-12 border border-[#4A4A4A] rounded-[10px] focus:outlined-none outline-none w-full"
-                                />
-                                <div className="absolute top-0 left-0 pl-[20px] p-[25px]">
-                                    <Calendar color="#E74949" />
-                                </div>
-                            </div>
+                            <CalendarPC variant='secondary'/>
                         </div>
                         <div className="flex flex-col relative gap-4 w-full">
                             <label htmlFor="whenGiven"
@@ -125,10 +116,9 @@ const NewDriver = () => {
                         </div>
                     </div>
                 </div>
-                <div className="max-w-[290px] mt-14">
+                <Link href='/admin/main/drivers' className="max-w-[290px] mt-14">
                     <Button variant='secondary'>Сохранить водителя</Button>
-
-                </div>
+                </Link>
             </div>
         </div>
     );

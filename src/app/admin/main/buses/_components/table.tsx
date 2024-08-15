@@ -4,6 +4,7 @@ import Arrow from '@/assets/admin/Arrow'
 import Clock from '@/assets/admin/Clock'
 import Calendar from '@/assets/admin/Calendar'
 import Button from '@/components/button'
+import Link from 'next/link';
 
 
 const Table = () => {
@@ -11,6 +12,7 @@ const Table = () => {
 
     const handleButtonClick = () => {
         setIsActive(!isActive);
+        console.log('edit bus btn activated');
     };
     return (
         <table className=" rounded-[20px] bg-white w-full px-5 pb-3 mb-28 items-center justify-center mt-[17px] border-separate border-spacing-y-2">
@@ -45,10 +47,11 @@ const Table = () => {
                         {/* <button className='py-3 ml-auto px-8 flex hover:bg-[#F16363] hover:text-white duration-100	 items-center justify-center rounded-[10px] border bg-[#E74949] text-sm font-semibold text-white' onClick={handleButtonClick}>
                             Редактировать
                         </button> */}
-                        <button className='py-3 ml-auto px-8 flex  hover:bg-[#F16363] hover:text-white duration-100 items-center justify-center rounded-[10px] border border-[#E74949] text-sm font-semibold text-[#E74949]' onClick={handleButtonClick}>
-                            Редактировать
-                        </button>
-
+                        <Link href='/admin/main/buses/new-bus'>
+                            <button className='py-3 ml-auto px-8 flex  hover:bg-[#F16363] hover:text-white duration-100 items-center justify-center rounded-[10px] border border-[#E74949] text-sm font-semibold text-[#E74949]' onClick={handleButtonClick}>
+                                Редактировать
+                            </button>
+                        </Link>
                     </td>
                 </tr>
 

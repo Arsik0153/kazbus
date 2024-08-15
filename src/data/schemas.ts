@@ -25,3 +25,12 @@ export const editProfileSchema = z.object({
         .string({ message: 'Введите дату рождения' })
         .min(5, 'Введите дату рождения'),
 });
+
+// export const adminLogin = z.object({
+//     document_adminName: z
+//     .string({ message: 'Введите имя пользователя' })
+//     .min(2, 'Введите пароль'),
+//     document_password: z
+//         .string({ message: 'Введите пароль' })
+//         .min(2, 'Введите пароль'),
+// });

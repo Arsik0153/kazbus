@@ -16,29 +16,31 @@ const NewBus = () => {
             <div className="flex flex-col rounded-[20px] bg-white mt-[14px] py-10 px-8">
                 <p className="text-2xl font-semibold text-[#4A4A4A]">Введите название автобуса</p>
                 <div className="flex flex-col gap-4 items-start mt-4">
-                    <ComboBox name="bus-name" />
+                    <ComboBox name="bus-name" placeholder='Введите название' />
                 </div>
                 <p className="text-2xl font-semibold text-[#4A4A4A] mt-9">Информация о ТС</p>
                 <div className="flex flex-row gap-6 mt-7">
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col gap-3">
                             <p className="text-base font-medium text-[#4A4A4A]">Марка</p>
-                            <ComboBox name="brand" />
+                            <ComboBox name="brand" placeholder='Введите марку' />
                         </div>
                         <div className="flex flex-col gap-3">
                             <p className="text-base font-medium text-[#4A4A4A]">VIN</p>
                             <InputMask
-                                mask="999 999 999 999 999 99"
+                                mask={[/\d/, /\d/, /\d/, ' ', /[A-Za-z]/, /[A-Za-z]/, /[A-Za-z]/, ' ', /\d/, /\d/]}
                                 placeholder="XXX XXX XXX XXX XXX XX"
-                                className='border text-base font-medium text-[#4A4A4A] p-5 pt-[12px] pb-[12px] w-full focus:outline-none border-[#A0A0A0] rounded-[10px]'
-                            />
+                                className='border text-base font-medium text-[#4A4A4A]  p-5 pt-[12px] pb-[12px] w-full focus:outline-none border-[#A0A0A0] rounded-[10px]'
+                                maxLength={17} // Ограничение длины ввода
+                                maskChar="_" // Используем символ подчеркивания
 
+                            />
                         </div>
                     </div>
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col gap-3">
                             <p className="text-base font-medium text-[#4A4A4A]">Модель</p>
-                            <ComboBox name="model" />
+                            <ComboBox name="model" placeholder='Введите модель' />
                         </div>
                         <div className="flex flex-col gap-3">
                             <p className="text-base font-medium text-[#4A4A4A]">Количество посадочных мест</p>

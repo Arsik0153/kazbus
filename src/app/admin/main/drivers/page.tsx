@@ -1,3 +1,4 @@
+'use client';
 import React from 'react'
 import Plus from '@/assets/admin/Plus';
 import Table from '@/app/admin/main/drivers/_components/table';
