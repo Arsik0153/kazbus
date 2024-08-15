@@ -32,7 +32,10 @@ export default function RootLayout({
                     </div>
                     <div className="flex flex-row items-center gap-6">
                         <Link href="" className="text-base font-medium text-white">Редактировать данные</Link>
-                        <Link href="/admin" className="text-base font-semibold text-white flex flex-row gap-3 items-center opacity-60 "><Exit color='white' /><span className=' underline'>Выйти</span> </Link>
+                        <Link href="/admin" className="text-base font-semibold text-white flex flex-row gap-3 items-center opacity-60 ">
+                            <Exit color='white' />
+                            <span className=' underline'>Выйти</span>
+                        </Link>
 
                     </div>
                 </div>

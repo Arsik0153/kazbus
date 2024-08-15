@@ -1,3 +1,4 @@
+'use client';
 import {
     Combobox,
     ComboboxInput,
@@ -23,10 +24,11 @@ interface Person {
 
 interface ComboBoxProps {
     name: string;
+    placeholder?: string; // placeholder необязательный
     onSelectionChange?: (name: string, selected: Person | null) => void; // onSelectionChange не обязательный
 }
 
-function ComboBox({ name, onSelectionChange = () => {} }: ComboBoxProps) {
+function ComboBox({ name, placeholder = 'Выберите нужный вариант', onSelectionChange = () => {} }: ComboBoxProps) {
     const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
     const [query, setQuery] = useState('');
 
@@ -54,7 +56,8 @@ function ComboBox({ name, onSelectionChange = () => {} }: ComboBoxProps) {
                             person ? person.name : ''
                         }
                         onChange={(event) => setQuery(event.target.value)}
-                        className="rounded-[10px] border border-gray-300 p-3 pl-4 text-base font-medium text-[#4A4A4A] focus:outline-none"
+                        placeholder={placeholder}
+                        className="rounded-[10px] border border-[#A0A0A0] p-3 pl-4 text-base font-medium text-[#4A4A4A] focus:outline-none"
                     />
                     <ComboboxButton className="absolute right-4 top-[30%] flex items-center p-2">
                         <DownBtn color="#4A4A4A" className="p-2" />
@@ -62,26 +65,23 @@ function ComboBox({ name, onSelectionChange = () => {} }: ComboBoxProps) {
                 </div>
                 <ComboboxOptions className="absolute z-10 mt-2 w-full rounded-[10px] bg-[#F1F5F9] p-3">
                     {filteredPeople.map((person, index) => (
-                        <>
+                        <div key={person.id}>
                             <ComboboxOption
-                                key={person.id}
                                 value={person}
                                 className="group flex flex-col data-[focus]:rounded-[5px] data-[focus]:bg-white"
                             >
                                 {({ selected }) => (
-                                    <>
-                                        <div
-                                            className={`flex flex-row justify-between p-2 text-base font-medium text-[#4A4A4A] hover:rounded-[5px] hover:bg-white ${selected ? 'bg-white' : ''}`}
-                                        >
-                                            {person.name}
-                                        </div>
-                                    </>
+                                    <div
+                                        className={`flex flex-row justify-between p-2 text-base font-medium text-[#4A4A4A] hover:rounded-[5px] hover:bg-white ${selected ? 'bg-white' : ''}`}
+                                    >
+                                        {person.name}
+                                    </div>
                                 )}
                             </ComboboxOption>
                             {index !== filteredPeople.length - 1 && (
                                 <div className="my-2 h-[1px] w-full bg-[#CDCDCD]" />
                             )}
-                        </>
+                        </div>
                     ))}
                 </ComboboxOptions>
             </Combobox>

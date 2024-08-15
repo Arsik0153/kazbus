@@ -4,9 +4,10 @@ import Button from '@/components/button';
 import Plus from '@/assets/admin/Plus';
 import Edit from '@/assets/admin/Edit';
 import Filter from '@/assets/admin/Filter';
-import ComboBox from '@/app/admin/main/trips/_components/inputCombo';
+import ComboBox from './_components/inputCombo';
 import Table from './_components/table';
 import Link from 'next/link';
+import CalendarPC from '@/components/calendar/calendarPC';
 
 const Trips = () => {
     const handleSelectionChange = (name: string, selected: any) => {
@@ -19,15 +20,14 @@ const Trips = () => {
             <div className="flex flex-row justify-between">
                 <p className="text-[42px] font-semibold text-[#4A4A4A]">Рейсы</p>
                 <div className="flex flex-row gap-3">
-                    {/* TODO: HREF here */}
-                    <a href="/admin/main/trips/new-trip" className="flex py-[14px] px-12 flex-row rounded-[10px] gap-[10px] items-center justify-center bg-[#E32B2B] text-base font-semibold text-[#FBFBFB]">
+                    <Link href="/admin/main/trips/new-trip" className="hover:bg-[#F16363] hover:text-white duration-150  flex py-[14px] px-12 flex-row rounded-[10px] gap-[10px] items-center justify-center bg-[#E32B2B] text-base font-semibold text-[#FBFBFB]">
                         <Plus color="#fff" width={20} height={20} />
                         Запустить рейс
-                    </a>
-                    <a href="" className="flex flex-row py-[14px] px-11 border rounded-[10px] gap-[10px] items-center justify-center bg-white text-base font-semibold text-[#E32B2B]">
+                    </Link>
+                    <Link href="" className="hover:border-[#F16363] duration-150  flex flex-row py-[14px] px-11 border rounded-[10px] gap-[10px] items-center justify-center bg-white text-base font-semibold text-[#E32B2B]">
                         <Edit color="#E32B2B" width={20} height={20} />
                         Редактировать несколько рейсов
-                    </a>
+                    </Link>
                 </div>
             </div>
 
@@ -39,13 +39,14 @@ const Trips = () => {
                     </div>
                     <div className="flex flex-row items-center">
                         <p className="text-base font-medium mr-3">C</p>
-                        <div className="border">Компоненту <br /> сюда</div>
+                        {/* <CalendarPC />
                         <p className="text-base font-medium ml-[14px] mr-3">По</p>
-                        <div className="border mr-2">Компоненту <br /> сюда</div>
-                        <div className="flex flex-row gap-2 items-center">
+                        <CalendarPC/> */}
+                        <div className="flex flex-row gap-2 ml-2 items-center">
                             <ComboBox
                                 name="filterComboBox"
                                 onSelectionChange={handleSelectionChange}
+                                placeholder='Маршруты'
                             />
                             <Button variant="ultrared">Применить</Button>
                         </div>

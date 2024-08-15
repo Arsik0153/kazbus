@@ -32,7 +32,8 @@ const Button = (props: Props) => {
                         variant === 'secondary',
                     'max-h-[70px] w-full border border-[#D21F1F] bg-inherit font-semibold text-[#E23333]':
                         variant === 'ghost',
-                    'max-h-[40px] border bg-[#E32B2B] px-[46px] py-3 font-semibold text-white':
+                    'max-h-[40px] border py-3 px-[46px] hover:bg-[#F16363] bg-[#E32B2B] text-white':
+
                         variant === 'ultrared',
                 }
             )}
