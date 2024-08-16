@@ -31,7 +31,7 @@ const InputMini = forwardRef<HTMLInputElement, Props>((props, ref) => {
     return (
         <div className='relative max-w-none items-center'>
             {iconLeft && (
-                <div className="absolute left-2 top-1/2 origin-top-left -translate-y-1/2 transform">
+                <div className="absolute left-[10px] top-1/2 origin-top-left -translate-y-1/2 transform">
                     {iconLeft}
                 </div>
             )}

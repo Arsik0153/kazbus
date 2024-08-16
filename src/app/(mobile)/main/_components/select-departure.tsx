@@ -100,12 +100,13 @@ const SelectDeparture = () => {
         <div onClick={() => setIsOpen(true)}>
             <div className="pointer-events-none">
                 <Input
-                    label="Откуда"
+                    label="Откуда вы отправляетесь"
                     defaultValue={selectedCity}
                     id="from"
                     variant="ghost"
                     iconLeft={<ArrowLeftIcon color="white" />}
                     hideKeyboardOnFocus={false}
+                    containerClassName="pt-[30px] pb-[16px]"
                 />
             </div>
         </div>

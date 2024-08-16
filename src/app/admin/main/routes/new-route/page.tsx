@@ -25,11 +25,11 @@ const NewRoute = () => {
                 <p className="text-2xl font-semibold text-[#4A4A4A]">Выберите маршрут</p>
                 <div className="flex flex-row gap-[18px] items-center mt-4">
                     <div className="flex flex-col gap-4 items-start">
-                        <ComboBox name="route" onSelectionChange={handleSelectionChange} />
+                        <ComboBox name="route" placeholder='Названия остановки' onSelectionChange={handleSelectionChange} />
                     </div>
                     <p className="text-[#4A4A4A] text-2xl font-semibold">-</p>
                     <div className="flex flex-col gap-4 items-start">
-                        <ComboBox name="driver" onSelectionChange={handleSelectionChange} />
+                        <ComboBox name="driver" placeholder='Названия остановки' onSelectionChange={handleSelectionChange} />
                     </div>
                 </div>
 

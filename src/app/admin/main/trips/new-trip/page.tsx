@@ -29,16 +29,16 @@ const NewTrips = () => {
                 <div className="flex flex-row gap-8 items-start">
                     <div className="flex flex-col gap-4 items-start">
                         <p className="text-2xl font-semibold text-[#4A4A4A]">Выберите маршрут</p>
-                        <ComboBox name="route" onSelectionChange={handleSelectionChange} />
+                        <ComboBox name="route" placeholder='Маршруты' onSelectionChange={handleSelectionChange} />
                     </div>
                     <div className="flex flex-col gap-4 items-start">
                         <p className="text-2xl font-semibold text-[#4A4A4A]">Выберите водителя</p>
-                        <ComboBox name="driver" onSelectionChange={handleSelectionChange} />
+                        <ComboBox name="driver" placeholder='Водители' onSelectionChange={handleSelectionChange} />
                     </div>
                 </div>
                 <div className="flex flex-col mt-6 gap-4 items-start">
                     <p className="text-2xl font-semibold text-[#4A4A4A]">Выберите автобус</p>
-                    <ComboBox name="bus" onSelectionChange={handleSelectionChange} />
+                    <ComboBox name="bus" placeholder='Автобусы' onSelectionChange={handleSelectionChange} />
                 </div>
                 {/* Отображение PhaseA и PhaseB в зависимости от выбора */}
                 {allSelected && <PhaseA />}

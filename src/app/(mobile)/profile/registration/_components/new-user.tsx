@@ -12,6 +12,7 @@ import ErrorMessage from '@/components/error-message';
 import { updatePersonalInfoAction } from '../actions';
 import { useServerAction } from 'zsa-react';
 import { documentTypes } from '@/static/constants';
+import toast from 'react-hot-toast';
 
 const NewUser = () => {
     const { execute, isPending } = useServerAction(updatePersonalInfoAction, {
@@ -19,7 +20,7 @@ const NewUser = () => {
             console.log('Success', data);
         },
         onError: (error) => {
-            console.log('Error', error);
+            toast.error(error.err.message);
         },
     });
     const {

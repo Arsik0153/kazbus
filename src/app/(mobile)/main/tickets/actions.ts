@@ -1,8 +1,13 @@
 'use server';
 
+import { authedProcedure } from '@/actions';
+import { profileSchema } from '@/data/schemas';
 import { Ticket } from '@/data/types';
+import { getSession } from '@/lib/auth';
+import { dateToDTO } from '@/utils/helper.';
 import { z } from 'zod';
 import { createServerAction } from 'zsa';
+import { User } from './_components/select-passengers';
 
 const schema = z.object({
     from_point: z.number(),
@@ -39,4 +44,48 @@ export const getTicketsAction = createServerAction()
         const result = (await response.json()) as Ticket[];
 
         return result;
+    });
+
+export const createPassenger = createServerAction()
+    .input(profileSchema)
+    .handler(async ({ input }) => {
+        const session = await getSession();
+
+        if (!session) {
+            throw 'Необходимо авторизоваться';
+        }
+
+        const response = await fetch(
+            `${process.env.API_URL}/accounts/create-passenger/`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Token ${session?.user.token}`,
+                },
+                body: JSON.stringify({
+                    ...input,
+                    birth_date: dateToDTO(input.birth_date),
+                }),
+            }
+        );
+
+        if (!response.ok) {
+            console.log(response);
+
+            throw 'Произошла ошибка при создании пассажира';
+        }
+
+        const result = (await response.json()) as number;
+
+        return {
+            ...input,
+            user_id: result,
+        } as User;
+    });
+
+export const getUserAction = authedProcedure
+    .createServerAction()
+    .handler(async ({ ctx }) => {
+        return ctx.user;
     });
