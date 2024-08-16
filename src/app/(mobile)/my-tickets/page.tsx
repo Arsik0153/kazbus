@@ -2,6 +2,7 @@ import React from 'react';
 import Trip from '@/components/trip';
 import Button from '@/components/button';
 import Link from 'next/link';
+import Ticket from '@/components/ticket';
 
 const MyTicketsPage = () => {
     return (
@@ -54,7 +55,9 @@ const MyTicketsPage = () => {
                         taxi_park=''
 
                     />
+                    
                 </div>
+
                 <Link href="/my-tickets/history-tickets">
                     <Button variant="ghost" className="my-5">
                         История покупки билетов

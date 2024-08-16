@@ -4,6 +4,7 @@ import Button from '@/components/button';
 import Pulse from '@/components/admin/pulse';
 import Download from '@/assets/admin/Download';
 import Pie from '@/components/admin/pie-chart';
+import Link from 'next/link';
 
 const AdminMain = () => {
   return (
@@ -38,7 +39,7 @@ const AdminMain = () => {
               {/* <div className="">75%</div>
 
               {/* TODO: тут нужен пирожок с процентами (pie)  */}
-              <p className="text-sm font-medium text-start">Заполняемость автобуса</p> 
+              <p className="text-sm font-medium text-start">Заполняемость автобуса</p>
             </div>
             <div className="flex flex-row py-[18px] px-[22px] gap-[18px] bg-[#E74949] rounded-[10px] w-[47%]">
               <p className="text-4xl  font-bold text-white">114</p>
@@ -58,7 +59,9 @@ const AdminMain = () => {
             <div className="font-bold text-base text-[#E74949] flex flex-row">15:30 <span className='ml-11'>Астана - Кокшетау</span> </div>
             <div className="font-bold text-base text-[#E74949] flex flex-row">16:00 <span className='ml-11'>Астана - Караганды</span> </div>
           </div>
-          <a href="" className="mt-8 flex flex-row items-center text-[#E74949] text-base font-medium gap-4 underline"> Все рейсы </a>
+          <Link href='/admin/main/trips' className="mt-8 flex flex-row items-center text-[#E74949] text-base font-medium gap-4 underline">
+            Все рейсы
+          </Link>
         </div>
       </div>
 

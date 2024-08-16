@@ -15,12 +15,15 @@ const Reason = () => {
 
     return (
         <>
+
             <Topbar backHref="/main">
                 <h1 className="text-[20px] font-medium leading-[46.2px] tracking-[-3%] text-white">
                     Оформить возврат
                 </h1>
             </Topbar>
+
             <div className="flex flex-col px-5 pt-9 gap-2">
+                <p className="text-2xl font-semibold text-black mb-3">Выберите причину возврата</p>
                 <RadioInput 
                     label='Изменились планы' 
                     name='return-reason' 
@@ -59,7 +62,7 @@ const Reason = () => {
             </div>
 
             {selectedOption && (
-                <Link href='/next-step' className='fixed bottom-28 left-5 right-5'>
+                <Link href='/refund' className='fixed bottom-28 left-5 right-5'>
                     <Button variant='secondary'>Продолжить</Button>
                 </Link>
             )}
