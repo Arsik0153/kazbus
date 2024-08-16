@@ -4,7 +4,7 @@ import React from 'react';
 const ConfidentialityPage = () => {
     return (
         <>
-            <Topbar backHref="/profile/authorized">Конфиденциальность</Topbar>
+            <Topbar backHref="/profile">Конфиденциальность</Topbar>
             <div className="mb-4 mt-8 px-5">
                 <div>
                     <div className="text-[32px] font-medium leading-[35.2px] tracking-[-3%]">

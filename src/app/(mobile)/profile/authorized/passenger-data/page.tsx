@@ -5,9 +5,7 @@ import Topbar from '@/components/topbar';
 const PassengerDataPage = () => {
     return (
         <>
-            <Topbar backHref="/profile/authorized">
-                Данные моих пассажиров
-            </Topbar>
+            <Topbar backHref="/profile">Данные моих пассажиров</Topbar>
             <div className="my-6 grid gap-4 px-5">
                 <PassengerDataCard
                     name="Купертино Стив Джобсович"

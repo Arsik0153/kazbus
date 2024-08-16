@@ -13,7 +13,7 @@ const Registration = () => {
 
     return (
         <>
-            <Topbar backHref="/start">Регистрация</Topbar>
+            <Topbar backHref="/profile">Регистрация</Topbar>
 
             <div className="h-full px-5">
                 <div className="flex flex-col gap-1">

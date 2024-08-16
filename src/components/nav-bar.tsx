@@ -79,7 +79,11 @@ const NavBar = () => {
                 {LINKS.map((link) => (
                     <Link
                         key={link.href}
-                        href={link.href}
+                        href={
+                            link.href === '/main'
+                                ? '/main?passenger_count=1'
+                                : link.href
+                        }
                         className={clsx(
                             'flex flex-col items-center gap-2 rounded-[10px] px-[13px] pb-[15px] pt-[10px]',
                             {

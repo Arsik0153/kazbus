@@ -45,10 +45,7 @@ const AuthorizedProfilePage = async () => {
                             <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
                             <Menu link="/profile/authorized/faq" text="FAQ" />
                             <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
-                            <Menu
-                                link="/profile/authorized/"
-                                text="Служба поддержки"
-                            />
+                            <Menu link="#" text="Служба поддержки" />
                             <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
                             <Menu
                                 link="/profile/authorized/logout/"
