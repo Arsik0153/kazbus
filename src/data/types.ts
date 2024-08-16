@@ -38,6 +38,7 @@ export type Ticket = {
         have_wifi: boolean;
         is_recumbent: boolean;
     };
+    taxi_park: string;
 };
 
 export type Point = {
