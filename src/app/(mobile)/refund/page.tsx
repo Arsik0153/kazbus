@@ -53,7 +53,7 @@ const page = () => {
                     <p className="text-base font-normal text-[#4A4A4A]">Место</p>
                     <p className="text-base font-bold text-[#E23333]">06</p>
                 </div>
-                <Link href='' className='fixed bottom-28 left-5 right-5'>
+                <Link href='/refund/success' className='fixed bottom-28 left-5 right-5'>
                     <Button variant='secondary'>Подтвердить возврат</Button>
                 </Link>
             </div>
