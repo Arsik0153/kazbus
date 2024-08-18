@@ -2,6 +2,7 @@ import React from 'react';
 import Trip from '@/components/trip';
 import Button from '@/components/button';
 import Link from 'next/link';
+import Ticket from '@/components/ticket';
 
 const MyTicketsPage = () => {
     return (
@@ -23,6 +24,7 @@ const MyTicketsPage = () => {
                             arriving_date={'9 мая'}
                             passenger_amount={1}
                             ticket_amount={12450}
+                            taxi_park=''
                         />
                     </Link>
                     <Trip
@@ -36,6 +38,8 @@ const MyTicketsPage = () => {
                         arriving_date={'9 мая'}
                         passenger_amount={1}
                         ticket_amount={12450}
+                        taxi_park=''
+
                     />
                     <Trip
                         status="expired"
@@ -48,8 +52,12 @@ const MyTicketsPage = () => {
                         arriving_date={'9 мая'}
                         passenger_amount={1}
                         ticket_amount={12450}
+                        taxi_park=''
+
                     />
+                    
                 </div>
+
                 <Link href="/my-tickets/history-tickets">
                     <Button variant="ghost" className="my-5">
                         История покупки билетов

@@ -5,7 +5,7 @@ type Props = React.HTMLProps<HTMLInputElement> & {
     label: React.ReactNode;
 };
 
-const Radio = forwardRef<HTMLInputElement, Props>((props, ref) => {
+const RadioInput = forwardRef<HTMLInputElement, Props>((props, ref) => {
     const { name, checked, label, ...rest } = props;
 
     return (
@@ -41,6 +41,6 @@ const Radio = forwardRef<HTMLInputElement, Props>((props, ref) => {
     );
 });
 
-Radio.displayName = 'Radio';
+RadioInput.displayName = 'Radio';
 
-export default Radio;
+export default RadioInput;

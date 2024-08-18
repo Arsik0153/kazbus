@@ -1,18 +1,24 @@
 import React from 'react';
 
-const Yes = ({
-    color,
-    ...rest
-}: { color: string } & React.SVGProps<SVGSVGElement>) => {
+interface YesProps extends React.SVGProps<SVGSVGElement> {
+    color: string;
+}
+
+const Yes: React.FC<YesProps> = ({ color, width = '11', height = '8', ...rest }) => {
     return (
-        <svg width="11" height="8" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3.83316 5.84977L9.19539 0.487549L10.0203 1.3125L3.83316 7.49967L0.12085 3.7874L0.945811 2.96245L3.83316 5.84977Z"
-                fill={color} />
+        <svg
+            width={width}
+            height={height}
+            viewBox="0 0 11 8"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            {...rest}
+        >
+            <path
+                d="M3.83316 5.84977L9.19539 0.487549L10.0203 1.3125L3.83316 7.49967L0.12085 3.7874L0.945811 2.96245L3.83316 5.84977Z"
+                fill={color}
+            />
         </svg>
-
-
-
-
     );
 };
 

@@ -19,9 +19,76 @@ const StartTrip = () => {
                     arriving_date={'9 мая'}
                     passenger_amount={5}
                     ticket_amount={12450}
+                    taxi_park='wdwedqw'
                 />
+                <Trip
+                    status="none"
+                    town_one="Алматы"
+                    town_two="Кокшетау"
+                    departure="12:00"
+                    arrive="16:40"
+                    departure_date="8 мая"
+                    tickets={112}
+                    arriving_date={'9 мая'}
+                    passenger_amount={5}
+                    ticket_amount={12450}
+                    taxi_park='wdwedqw'
+                />
+                <Trip
+                    status="none"
+                    town_one="Алматы"
+                    town_two="Кокшетау"
+                    departure="12:00"
+                    arrive="16:40"
+                    departure_date="8 мая"
+                    tickets={112}
+                    arriving_date={'9 мая'}
+                    passenger_amount={5}
+                    ticket_amount={12450}
+                    taxi_park='wdwedqw'
+                />
+                <Trip
+                    status="none"
+                    town_one="Алматы"
+                    town_two="Кокшетау"
+                    departure="12:00"
+                    arrive="16:40"
+                    departure_date="8 мая"
+                    tickets={112}
+                    arriving_date={'9 мая'}
+                    passenger_amount={5}
+                    ticket_amount={12450}
+                    taxi_park='wdwedqw'
+                />
+                <Trip
+                    status="none"
+                    town_one="Алматы"
+                    town_two="Кокшетау"
+                    departure="12:00"
+                    arrive="16:40"
+                    departure_date="8 мая"
+                    tickets={112}
+                    arriving_date={'9 мая'}
+                    passenger_amount={5}
+                    ticket_amount={12450}
+                    taxi_park='wdwedqw'
+                />
+                <Trip
+                    status="none"
+                    town_one="Алматы"
+                    town_two="Кокшетау"
+                    departure="12:00"
+                    arrive="16:40"
+                    departure_date="8 мая"
+                    tickets={112}
+                    arriving_date={'9 мая'}
+                    passenger_amount={5}
+                    ticket_amount={12450}
+                    taxi_park='wdwedqw'
+                />
+                
             </div>
-            <div className="flex flex-row gap-2 items-center w-1/2">
+            <div className="flex flex-row gap-2 items-center w-3/5">
                 <Link href='/admin/main/trips'>
                     <Button variant='secondary'>Запустить рейс в продажу</Button>
                 </Link>
