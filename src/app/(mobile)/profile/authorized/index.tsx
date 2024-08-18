@@ -51,6 +51,11 @@ const AuthorizedProfilePage = async () => {
                                 link="/profile/authorized/logout/"
                                 text="Выйти из аккаунта"
                             />
+                            <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
+                            <Menu
+                                link="/profile/authorized/delete-account/"
+                                text="Удалить аккаунт"
+                            />
                         </div>
                     </div>
                 </div>
