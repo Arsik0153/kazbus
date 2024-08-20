@@ -8,6 +8,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 import SelectPassengerCount from './_components/select-passenger-count';
 import EllipseMain from '@/assets/ellipse-main';
+import { Drawer } from 'vaul';
 
 const MainPageSuspended = () => {
     const router = useRouter();
@@ -30,25 +31,30 @@ const MainPageSuspended = () => {
     };
 
     return (
-        <div className="flex h-full flex-grow flex-col items-center justify-center bg-gradient-to-r from-[#E32828] to-[#E13535]">
-            <div className="flex flex-col items-center justify-center text-center">
-                <div className="pointer-events-none absolute right-0 top-0 z-0 flex h-screen w-screen justify-end">
-                    <EllipseMain />
-                </div>
-                <div className="mb-2 mt-16 text-balance px-5 text-[32px] font-bold leading-[39.6px] tracking-[-3%] text-white">
-                    Поиск дешевых билетов на автобусы между городами
-                </div>
-                <div className="flex w-screen flex-col gap-2 p-5">
-                    <SelectDeparture />
-                    <SelectArrival />
-                    <SelectDate />
-                    <SelectPassengerCount />
-                    <Button onClick={handleSearchClick} className="mb-5 mt-1">
-                        Начать поиск
-                    </Button>
+        <Drawer.Root shouldScaleBackground>
+            <div className="flex h-full flex-grow flex-col items-center justify-center bg-gradient-to-r from-[#E32828] to-[#E13535]">
+                <div className="flex flex-col items-center justify-center text-center">
+                    <div className="pointer-events-none absolute right-0 top-0 z-0 flex h-screen w-screen justify-end">
+                        <EllipseMain />
+                    </div>
+                    <div className="mb-2 mt-16 text-balance px-5 text-[32px] font-bold leading-[39.6px] tracking-[-3%] text-white">
+                        Поиск дешевых билетов на автобусы между городами
+                    </div>
+                    <div className="flex w-screen flex-col gap-2 p-5">
+                        <SelectDeparture />
+                        <SelectArrival />
+                        <SelectDate />
+                        <SelectPassengerCount />
+                        <Button
+                            onClick={handleSearchClick}
+                            className="mb-5 mt-1"
+                        >
+                            Начать поиск
+                        </Button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </Drawer.Root>
     );
 };
 
