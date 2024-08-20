@@ -14,7 +14,7 @@
 
 body {
     color: rgb(var(--black));
-    background-color: rgb(var(--bg));
+    background-color: black;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
