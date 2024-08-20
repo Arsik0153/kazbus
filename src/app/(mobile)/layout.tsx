@@ -7,7 +7,7 @@ export default function RootLayout({
 }>) {
     return (
         <div
-            className="flex min-h-screen items-stretch bg-[var(--bg)]"
+            className="flex min-h-[100dvh] items-stretch bg-[var(--bg)]"
             vaul-drawer-wrapper=""
         >
             <div className="mb-[90px] flex-1">{children}</div>
