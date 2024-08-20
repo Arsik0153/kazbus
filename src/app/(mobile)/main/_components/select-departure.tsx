@@ -7,6 +7,7 @@ import { useServerActionQuery } from '@/lib/server-action-hooks';
 import { getCitiesAction } from '../actions';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { City } from '@/data/types';
+import { Drawer } from 'vaul';
 
 const SelectDeparture = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -62,54 +63,60 @@ const SelectDeparture = () => {
         }
     }, [fromParam, cities]);
 
-    if (isOpen) {
-        return (
-            <>
-                <div className="fixed inset-0 z-30 h-full min-h-screen w-full overflow-auto bg-[var(--bg)]">
-                    <Topbar className="mx-0 w-full">
-                        <InputFromMain
-                            iconLeft={<ArrowLeftIcon color="white" />}
-                            id="whereFrom"
-                            label="Откуда вы отправляетесь?"
-                            onChange={handleInputChange}
-                            value={searchTerm}
-                        />
-                    </Topbar>
-                    <ul className="mx-5 mb-10">
-                        {filteredCities.map((city) => (
-                            <li
-                                key={city.id}
-                                className="flex items-center justify-between border-b-[1px] border-b-[#CDCDCD] px-[10px] py-5"
-                                onClick={() => handleCitySelect(city)}
-                            >
-                                <p className="font-medium tracking-[-3%] text-[var(--black)]">
-                                    {city.name}
-                                </p>
-                                <span className="text-sm font-medium text-[#A0A0A0]">
-                                    Город
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            </>
-        );
-    }
-
     return (
-        <div onClick={() => setIsOpen(true)}>
-            <div className="pointer-events-none">
-                <Input
-                    label="Откуда вы отправляетесь"
-                    defaultValue={selectedCity}
-                    id="from"
-                    variant="ghost"
-                    iconLeft={<ArrowLeftIcon color="white" />}
-                    hideKeyboardOnFocus={false}
-                    containerClassName="pt-[30px] pb-[16px]"
-                />
-            </div>
-        </div>
+        <Drawer.Root shouldScaleBackground open={isOpen}>
+            <Drawer.Portal>
+                <Drawer.Overlay className="fixed inset-0 bg-black/40" />
+                <Drawer.Content className="fixed bottom-0 left-0 right-0 flex h-[96%] flex-col rounded-t-[10px] bg-white">
+                    <div className="overflow-auto rounded-t-[10px]">
+                        <Topbar className="mx-0 w-full">
+                            <InputFromMain
+                                iconLeft={<ArrowLeftIcon color="white" />}
+                                id="whereFrom"
+                                label="Откуда вы отправляетесь?"
+                                onChange={handleInputChange}
+                                value={searchTerm}
+                            />
+                        </Topbar>
+                        <ul className="mx-5 mb-10">
+                            {[
+                                ...filteredCities,
+                                ...filteredCities,
+                                ...filteredCities,
+                                ...filteredCities,
+                                ...filteredCities,
+                            ].map((city) => (
+                                <li
+                                    key={city.id}
+                                    className="flex items-center justify-between border-b-[1px] border-b-[#CDCDCD] px-[10px] py-5"
+                                    onClick={() => handleCitySelect(city)}
+                                >
+                                    <p className="font-medium tracking-[-3%] text-[var(--black)]">
+                                        {city.name}
+                                    </p>
+                                    <span className="text-sm font-medium text-[#A0A0A0]">
+                                        Город
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </Drawer.Content>
+            </Drawer.Portal>
+            <button onClick={() => setIsOpen(true)}>
+                <div className="pointer-events-none">
+                    <Input
+                        label="Откуда вы отправляетесь"
+                        defaultValue={selectedCity}
+                        id="from"
+                        variant="ghost"
+                        iconLeft={<ArrowLeftIcon color="white" />}
+                        hideKeyboardOnFocus={false}
+                        containerClassName="pt-[30px] pb-[16px]"
+                    />
+                </div>
+            </button>
+        </Drawer.Root>
     );
 };
 

@@ -31,7 +31,7 @@ const MainPageSuspended = () => {
     };
 
     return (
-        <Drawer.Root shouldScaleBackground>
+        <>
             <div className="flex h-full flex-grow flex-col items-center justify-center bg-gradient-to-r from-[#E32828] to-[#E13535]">
                 <div className="flex flex-col items-center justify-center text-center">
                     <div className="pointer-events-none absolute right-0 top-0 z-0 flex h-screen w-screen justify-end">
@@ -54,7 +54,7 @@ const MainPageSuspended = () => {
                     </div>
                 </div>
             </div>
-        </Drawer.Root>
+        </>
     );
 };
 

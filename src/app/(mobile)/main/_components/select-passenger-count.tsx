@@ -57,16 +57,19 @@ const SelectPassengerCount = () => {
     }, [pathname, router, searchParams, totalPassengers]);
 
     return (
-        <>
+        <Drawer.Root shouldScaleBackground>
             <Drawer.Portal>
                 <Drawer.Overlay className="fixed inset-0 bg-black/40" />
                 <Drawer.Content className="fixed bottom-0 left-0 right-0 z-30 mt-24 flex flex-col rounded-t-[10px] bg-white pb-24">
                     <div className="flex-1 rounded-t-[10px] bg-white p-4">
                         <div className="mx-auto mb-8 h-1.5 w-12 flex-shrink-0 rounded-full bg-zinc-300" />
                         <div className="mx-auto max-w-md">
-                            <h1 className="text-center text-2xl font-bold text-[#E74949]">
+                            <Drawer.Title className="text-center text-2xl font-bold text-[#E74949]">
                                 Сколько пассажиров?
-                            </h1>
+                            </Drawer.Title>
+                            <Drawer.Description hidden>
+                                Выберите количество пассажиров
+                            </Drawer.Description>
 
                             <div className="mt-6 flex justify-between">
                                 <div className="flex flex-col items-start">
@@ -119,7 +122,7 @@ const SelectPassengerCount = () => {
                     </div>
                 </button>
             </Drawer.Trigger>
-        </>
+        </Drawer.Root>
     );
 };
 
