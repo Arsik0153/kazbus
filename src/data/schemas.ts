@@ -66,3 +66,9 @@ export const loginSchema = z.object({
         .string({ message: 'Введите пароль' })
         .min(8, 'Пароль должен содержать минимум 8 символов'),
 });
+
+export const bookTicketSchema = z.object({
+    direction: z.number(),
+    place_num: z.number(),
+    place_floor: z.number(),
+});

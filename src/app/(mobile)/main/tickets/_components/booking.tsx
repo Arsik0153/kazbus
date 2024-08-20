@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Trip from '@/components/trip';
 import Button from '@/components/button';
 import Topbar from '@/components/topbar';
@@ -7,6 +7,7 @@ import Kaspi from '@/assets/kaspi';
 import { Steps } from '../types';
 import { Ticket as TicketT } from '@/data/types';
 import Ticket from '@/components/ticket';
+import dayjs from 'dayjs';
 
 type Props = {
     setStep: (step: Steps) => void;
@@ -17,9 +18,31 @@ type Props = {
 const Booking = (props: Props) => {
     const { setStep, selectedTicket, seats } = props;
 
+    // Set initial time for countdown (e.g., 30 minutes)
+    const countdownTime = 30 * 60; // 30 minutes in seconds
+    const [timeLeft, setTimeLeft] = useState(countdownTime);
+
+    useEffect(() => {
+        if (timeLeft > 0) {
+            const timerId = setInterval(() => {
+                setTimeLeft((prevTime) => prevTime - 1);
+            }, 1000);
+
+            return () => clearInterval(timerId);
+        }
+    }, [timeLeft]);
+
     if (!selectedTicket) {
         return null;
     }
+
+    const formatTime = (seconds: number) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes.toString().padStart(2, '0')}:${remainingSeconds
+            .toString()
+            .padStart(2, '0')}`;
+    };
 
     return (
         <>
@@ -36,7 +59,7 @@ const Booking = (props: Props) => {
                         </p>
                     </div>
                     <p className="text-4xl font-semibold text-[#E74949]">
-                        29:43
+                        {formatTime(timeLeft)}
                     </p>
                 </div>
                 <Ticket ticket={selectedTicket} />

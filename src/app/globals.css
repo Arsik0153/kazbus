@@ -18,7 +18,11 @@ body {
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    overscroll-behavior-y: none;
+    overscroll-behavior: none;
+}
+
+html {
+    overscroll-behavior: none;
 }
 
 a {

@@ -20,19 +20,19 @@ type Props = {
     onPassengersSelect: (users: User[]) => void;
 };
 
+// const passenger = {
+//     full_name: 'Максим Максимович',
+//     document_type: 'id',
+//     document_number_or_iin: '123213123312',
+//     birth_date: '12.12.2000',
+//     user_id: 17,
+//     email: 'asdfasdf',
+// };
+
 const SelectPassengers = (props: Props) => {
     const { setStep, onPassengersSelect } = props;
     const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
-    const [users, setUsers] = useState<User[]>([
-        {
-            full_name: 'Максим Максимович',
-            document_type: 'id',
-            document_number_or_iin: '123213123312',
-            birth_date: '12.12.2000',
-            user_id: 17,
-            email: 'asdfasdf',
-        },
-    ]);
+    const [users, setUsers] = useState<User[]>([]);
     const { data: user } = useServerActionQuery(getUserAction, {
         input: undefined,
         queryKey: ['user'],

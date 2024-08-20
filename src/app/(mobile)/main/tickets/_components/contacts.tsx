@@ -14,9 +14,10 @@ import { Steps } from '../types';
 type Props = {
     onContactsSubmit: (data: z.output<typeof contactsSchema>) => void;
     setStep: (step: Steps) => void;
+    isLoading: boolean;
 };
 const Contacts = (props: Props) => {
-    const { onContactsSubmit, setStep } = props;
+    const { onContactsSubmit, setStep, isLoading } = props;
     const {
         register,
         formState: { errors },
@@ -67,7 +68,9 @@ const Contacts = (props: Props) => {
                         />
                         <ErrorMessage message={errors.email?.message} />
                     </div>
-                    <Button variant="secondary">Перейти к оплате</Button>
+                    <Button variant="secondary" loading={isLoading}>
+                        Перейти к оплате
+                    </Button>
                 </form>
             </div>
         </>

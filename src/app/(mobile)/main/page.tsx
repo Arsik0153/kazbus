@@ -35,7 +35,7 @@ const MainPageSuspended = () => {
                 <div className="pointer-events-none absolute right-0 top-0 z-0 flex h-screen w-screen justify-end">
                     <EllipseMain />
                 </div>
-                <div className="mb-2 text-balance px-5 text-[32px] font-bold leading-[39.6px] tracking-[-3%] text-white">
+                <div className="mb-2 mt-16 text-balance px-5 text-[32px] font-bold leading-[39.6px] tracking-[-3%] text-white">
                     Поиск дешевых билетов на автобусы между городами
                 </div>
                 <div className="flex w-screen flex-col gap-2 p-5">
@@ -43,7 +43,7 @@ const MainPageSuspended = () => {
                     <SelectArrival />
                     <SelectDate />
                     <SelectPassengerCount />
-                    <Button onClick={handleSearchClick} className="mt-1">
+                    <Button onClick={handleSearchClick} className="mb-5 mt-1">
                         Начать поиск
                     </Button>
                 </div>

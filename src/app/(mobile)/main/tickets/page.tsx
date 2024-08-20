@@ -9,6 +9,9 @@ import { z } from 'zod';
 import { contactsSchema } from '@/data/schemas';
 import Booking from './_components/booking';
 import { Steps } from './types';
+import { useServerAction } from 'zsa-react';
+import { createTicketAction } from './actions';
+import toast from 'react-hot-toast';
 
 const TicketPageSuspended = () => {
     const [step, setStep] = useState<Steps>(Steps.SelectTicket);
@@ -18,6 +21,16 @@ const TicketPageSuspended = () => {
     const [contacts, setContacts] = useState<z.output<
         typeof contactsSchema
     > | null>(null);
+
+    const { execute: createTicket, isPending: isTicketCreating } =
+        useServerAction(createTicketAction, {
+            onSuccess: () => {
+                setStep(Steps.Booking);
+            },
+            onError: (data) => {
+                toast.error(data.err.message);
+            },
+        });
 
     const handleTicketSelect = (ticket: Ticket) => {
         setSelectedTicket(ticket);
@@ -29,9 +42,15 @@ const TicketPageSuspended = () => {
         setStep(Steps.Contacts);
     };
 
-    const handleContactsSubmit = (data: z.output<typeof contactsSchema>) => {
+    const handleContactsSubmit = async (
+        data: z.output<typeof contactsSchema>
+    ) => {
         setContacts(data);
-        setStep(Steps.Booking);
+        await createTicket({
+            direction: selectedTicket?.id || 1,
+            place_num: seats[0],
+            place_floor: 1,
+        });
     };
 
     return (
@@ -57,6 +76,7 @@ const TicketPageSuspended = () => {
                 <Contacts
                     onContactsSubmit={handleContactsSubmit}
                     setStep={setStep}
+                    isLoading={isTicketCreating}
                 />
             )}
             {step === Steps.Booking && (
