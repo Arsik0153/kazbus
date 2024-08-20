@@ -57,7 +57,7 @@ const SelectPassengerCount = () => {
     }, [pathname, router, searchParams, totalPassengers]);
 
     return (
-        <Drawer.Root shouldScaleBackground>
+        <Drawer.Root>
             <Drawer.Portal>
                 <Drawer.Overlay className="fixed inset-0 bg-black/40" />
                 <Drawer.Content className="fixed bottom-0 left-0 right-0 z-30 mt-24 flex flex-col rounded-t-[10px] bg-white pb-24">

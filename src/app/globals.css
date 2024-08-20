@@ -14,7 +14,7 @@
 
 body {
     color: rgb(var(--black));
-    background-color: black;
+    background-color: var(--bg);
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
@@ -31,4 +31,8 @@ a {
 
 [vaul-drawer][vaul-drawer-direction='bottom']:after {
     z-index: -1;
+}
+
+[vaul-drawer] {
+    z-index: 1000;
 }

@@ -6,10 +6,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <div
-            className="flex min-h-[100dvh] items-stretch bg-[var(--bg)]"
-            vaul-drawer-wrapper=""
-        >
+        <div className="min-h-100vh flex items-stretch">
             <div className="mb-[90px] flex-1">{children}</div>
             <NavBar />
         </div>

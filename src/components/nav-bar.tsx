@@ -73,7 +73,7 @@ const NavBar = () => {
 
     return (
         <div
-            className={`fixed bottom-0 z-10 w-full rounded-t-[10px] bg-white ${isTabbarHidden && '-z-10'}`}
+            className={`fixed bottom-0 z-10 w-full rounded-t-[10px] bg-white ${isTabbarHidden && 'pointer-events-none opacity-0'}`}
         >
             <div className="flex w-full items-center justify-between px-[15px] pb-[20px] pt-[10px]">
                 {LINKS.map((link) => (
