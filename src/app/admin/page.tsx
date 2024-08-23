@@ -1,11 +1,30 @@
+'use client';
 import React from 'react';
 import Input from '@/components/input';
 import Button from '@/components/button';
 import Link from 'next/link';
 import Image from 'next/image';
+// import { useRouter, useSearchParams } from 'next/navigation';
+// import { toast } from 'react-hot-toast';
 
 // bg-[#E32B2B]
 const LoginPage = () => {
+    // const router = useRouter();
+    // const searchParams = useSearchParams();
+
+    // const userName = searchParams.get('name');
+    // const userPassword = searchParams.get('password');
+
+    // const handleSearchClick = () => {
+    //     if (!userName || !userPassword) {
+    //         // toast.error('Заполните все поля');
+    //         return;
+    //     }
+
+    //     const updatedSearchParams = new URLSearchParams(searchParams);
+    //     router.push('/admin/main?' + updatedSearchParams.toString());
+    // };
+
     return (
         <div className="flex items-start justify-center min-h-screen overflow-y-hidden bg-[#E32B2B]">
             <Image
@@ -42,8 +61,11 @@ const LoginPage = () => {
                             label='Введите ваш пароль'
                             id="AdminPassword"
                         />
-                        <Link href="admin/main" className='flex items-center justify-center rounded-[10px] px-2 py-6 text-[18px] font-semibold leading-[19.8px] max-h-[72px] w-full bg-[#E74949] text-white active:bg-[#F45A5A]'>Войти в таксопарк</Link>
-                        {/* <Button variant='secondary' >Войти в таксопарк</Button> */}
+                        <Button
+                            // onClick={handleSearchClick} 
+                            variant='secondary' >
+                            Войти в таксопарк
+                        </Button>
                     </form>
                 </div>
             </div>

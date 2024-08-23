@@ -31,6 +31,13 @@ const StatusBadge = ({ status }: { status?: string }) => {
             </div>
         );
     }
+    if (status === 'none') {
+        return (
+            <div className="rounded-[30px] bg-none px-2 py-1 text-[14px] font-medium leading-[15.4px] text-[#FFFFFF]">
+                
+            </div>
+        );
+    }
 
     return null;
 };
