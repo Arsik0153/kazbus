@@ -6,11 +6,15 @@ import InputMask from 'react-input-mask';
 import YesOrNo from './_components/yesOrNo';
 import Button from '@/components/button';
 import Link from 'next/link';
+import Floors from '@/app/admin/main/buses/new-bus/_components/floors';
+import Scheme from '@/app/admin/main/buses/new-bus/_components/scheme';
 
 const NewBus = () => {
+    const [selectedFloor, setSelectedFloor] = useState<'first' | 'second' | 'third' | null>(null);
+    const [seatCount, setSeatCount] = useState<string>(''); // Состояние для хранения количества мест
 
     return (
-        <div className="flex flex-col mt-6">
+        <div className="flex flex-col mb-96 mt-6">
             <p className="text-[42px] font-semibold text-[#4A4A4A]">Добавить автобус</p>
 
             <div className="flex flex-col rounded-[20px] bg-white mt-[14px] py-10 px-8">
@@ -47,9 +51,11 @@ const NewBus = () => {
                             <InputMask
                                 mask="99"
                                 placeholder='Количество мест'
+                                onChange={(e) => setSeatCount(e.target.value)} // Обновление состояния при вводе
                                 className='border text-base font-medium text-[#4A4A4A] p-5 pt-[12px] pb-[12px] w-full focus:outline-none border-[#A0A0A0] rounded-[10px]'
                             />
                         </div>
+
                     </div>
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col gap-3">
@@ -60,6 +66,10 @@ const NewBus = () => {
                                 className='border text-base font-medium text-[#4A4A4A] p-5 pt-[12px] pb-[12px] w-full focus:outline-none border-[#A0A0A0] rounded-[10px]'
                                 guide={false}
                             />
+                        </div>
+                        <div className="flex flex-col gap-3">
+                            <p className="text-base font-medium text-[#4A4A4A]">Выберите кол-во этажей на автобусе</p>
+                            <Floors selected={selectedFloor} onSelect={setSelectedFloor} />
                         </div>
                     </div>
                 </div>
@@ -79,11 +89,8 @@ const NewBus = () => {
                         <YesOrNo />
                     </div>
                 </div>
-                <p className="text-2xl font-semibold text-[#4A4A4A]">Свойства автобуса</p>
-                <div className="w-full h-60 bg-slate-500 my-5"></div>
-                <Link href='/admin/main/buses' className='max-w-72'>
-                    <Button variant='secondary' >Сохранить рейс</Button>
-                </Link>
+                <Scheme selectedFloor={selectedFloor} seatCount={Number(seatCount)} />
+
             </div>
         </div>
     );
