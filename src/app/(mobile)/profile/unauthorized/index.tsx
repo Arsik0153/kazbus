@@ -25,21 +25,14 @@ const UnauthorizedProfilePage = () => {
                     Хотите хранить свои билеты и данные прямо в приложении?
                 </p>
                 <p className="mt-4 text-center text-base font-medium text-[#4A4A4A]">
-                    Зарегистрируйтесь и покупайте билеты всего за пару кликов
+                    Заполните все свои данные, и покупайте дешевые билеты за
+                    пару кликов
                 </p>
                 <Link href="/profile/registration" passHref>
-                    <Button variant="secondary" className="mb-3 mt-16">
-                        Пройти регистрацию
+                    <Button variant="secondary" className="mb-3 mt-9">
+                        Заполнить данные
                     </Button>
                 </Link>
-                <div className="mt-4 text-center">
-                    <Link
-                        href="/profile/login"
-                        className="mx-auto text-lg font-normal text-[#4A4A4A] underline"
-                    >
-                        Войти
-                    </Link>
-                </div>
                 <StartSettings />
                 <div className="mt-11 pb-[20px]">
                     <div className="flex w-full flex-row items-center justify-center gap-3 rounded-[50px] bg-[#EFEFEF] p-2">
