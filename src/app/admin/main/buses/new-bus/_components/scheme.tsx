@@ -1,54 +1,23 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Button from '@/components/button';
 import Divan from '@/assets/admin/Divan';
-import SeatConfigurator from './seatConfigurator';
+import SeatSchemeBuilder from './seatSchemeBuilder'; // Исправлено название
 
-interface SchemeProps {
+type SchemeProps = {
     selectedFloor: 'first' | 'second' | 'third' | null;
     seatCount: number;
-}
-
+};
 
 const Scheme: React.FC<SchemeProps> = ({ selectedFloor, seatCount }) => {
     return (
-        <div className="flex flex-col w-3/4">
-            <p className="text-2xl font-semibold text-[#4A4A4A]">Задать схему автобуса</p>
+        <div className="flex flex-col ">
+            <p className="text-2xl mb-5 font-semibold text-[#4A4A4A]">Задать схему автобуса</p>
             {selectedFloor && seatCount ? (
-                <>
-                    <div className="flex flex-row mt-5 gap-3 items-start w-full">
-                        <SeatConfigurator
-                            label="Установка мест"
-                            value="01"
-                            // isActive={activeButton === '01'}
-                            // onClick={() => handleButtonClick('01')}
-                        />
-                        <SeatConfigurator
-                            label="Установка места водителя"
-                            value="02"
-                            // isActive={activeButton === '02'}
-                            // onClick={() => handleButtonClick('02')}
-                        />
-                        <SeatConfigurator
-                            label="Установка прохода"
-                            value="03"
-                            // isActive={activeButton === '03'}
-                            // onClick={() => handleButtonClick('03')}
-                        />
-                    </div>
-
-
-                    <div className="w-full flex flex-col gap-4 py-[60px] px-11 rounded-[10px] bg-[#F1F5F9] my-5">
-                        <Divan color='#E23333' />
-                        <p className="text-2xl font-semibold text-[#4A4A4A]">
-                            Вы выбрали {selectedFloor}/null этаж и указали {seatCount}/number посадочных мест.
-                        </p>
-                    </div>
-                </>
-
+                <SeatSchemeBuilder selectedFloor={selectedFloor} seatCount={seatCount} /> // Исправлено
             ) : (
-                <div className="w-full flex flex-col gap-4 py-[60px] px-11 rounded-[10px] bg-[#F1F5F9] my-5">
+                <div className=" flex w-3/4 flex-col gap-4 py-[60px] px-11 rounded-[10px] bg-[#F1F5F9] my-5">
                     <Divan color='#E23333' />
                     <p className="text-2xl font-semibold text-[#4A4A4A]">
                         Укажите количество посадочных мест для создания схемы
@@ -61,6 +30,5 @@ const Scheme: React.FC<SchemeProps> = ({ selectedFloor, seatCount }) => {
         </div>
     );
 };
-
 
 export default Scheme;

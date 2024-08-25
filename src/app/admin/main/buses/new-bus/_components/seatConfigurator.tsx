@@ -1,35 +1,47 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-interface SeatConfiguratorProps {
-    label: string;    // Текст, который будет отображаться слева
-    value: string;    // Значение, которое будет отображаться в круге
-    onClick?: () => void; // Функция для обработки кликов
-}
+type SeatOption = {
+    label: string;
+    value?: string;
+    icon?: React.ReactNode; 
+};
 
-const SeatConfigurator: React.FC<SeatConfiguratorProps> = ({ label, value, onClick }) => {
-    const [isActive, setIsActive] = useState<boolean>(false);
+type SeatConfiguratorProps = {
+    options: SeatOption[];
+    selectedValue: string;
+    onChange: (value: string) => void;
+};
 
-    const handleClick = () => {
-        setIsActive(!isActive);
-        if (onClick) {
-            onClick();
-        }
-    };
-
+const SeatConfigurator: React.FC<SeatConfiguratorProps> = ({ options, selectedValue, onChange }) => {
     return (
-        <button
-            className={`text-sm font-semibold flex flex-row justify-between p-[6px] pl-4 items-center rounded-[10px] 
-                ${isActive ? 'bg-[#E23333] text-white border-white' : 'border border-[#E32B2B] text-[#4A4A4A]'}`}
-            onClick={handleClick}
-        >
-            <span className={`mr-8 text-start text-nowrap ${isActive ? 'text-white' : 'text-[#4A4A4A]'}`}>
-                {label}
-            </span>
-            <p className={`text-xl font-bold h-12 w-12 border flex justify-center items-center rounded-[10px]
-                ${isActive ? 'bg-[#E23333] text-white border-white' : 'text-[#E23333] border-[#E23333]'}`}>
-                {value}
-            </p>
-        </button>
+        <div className="flex flex-row gap-2">
+            {options.map((option) => {
+                const isActive = selectedValue === option.value;
+                return (
+                    <label key={option.value || option.label} className="flex items-center">
+                        <input
+                            type="radio"
+                            name="seat-configurator"
+                            value={option.value}
+                            checked={isActive}
+                            onChange={() => option.value && onChange(option.value)}
+                            className="hidden"
+                        />
+                        <div className={`text-sm font-semibold flex flex-row justify-between p-[6px] pl-4 items-center rounded-[10px] cursor-pointer 
+                                ${isActive ? 'bg-[#E23333] text-white border-white' : 'border border-[#E32B2B] text-[#4A4A4A]'}`}>
+                            <span className={`mr-8 text-start text-nowrap ${isActive ? 'text-white' : 'text-[#4A4A4A]'}`}>
+                                {option.label}
+                            </span>
+                            <div className={`text-xl font-bold border flex justify-center items-center rounded-[10px]
+                            ${option.icon ? ' h-12 w-24 ' : 'h-12 w-12'}
+                                ${isActive ? 'bg-[#E23333] text-white border-white' : 'text-[#E23333] border-[#E23333]'}`}>
+                                {option.icon ? React.cloneElement(option.icon as React.ReactElement, { color: isActive ? '#FFFFFF' : '#A0A0A0' }) : option.value}
+                            </div>
+                        </div>
+                    </label>
+                );
+            })}
+        </div>
     );
 };
 
