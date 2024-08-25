@@ -1,3 +1,4 @@
+'use client';
 import React, { forwardRef } from 'react';
 import clsx from 'clsx';
 import { useMask } from '@react-input/mask';
@@ -5,7 +6,7 @@ import { useMask } from '@react-input/mask';
 type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
     label: React.ReactNode;
     iconLeft?: React.ReactNode;
-    variant?: 'primary' | 'secondary' | 'ghost';
+    variant?: 'primary' | 'secondary' | 'ghost' | 'ghostOTP';
     loading?: boolean;
     mask?: string;
     placeholder?: string;
@@ -44,11 +45,12 @@ const InputPhone = forwardRef<HTMLInputElement, InputProps>(
         return (
             <div
                 className={clsx(
-                    'relative w-full rounded-[10px] border border-solid pb-[27px] pt-[27px]',
+                    'relative w-full rounded-[10px] border border-solid ',
                     {
-                        'bg-[#ffffff]': variant === 'primary',
-                        'bg-none': variant === 'secondary',
-                        'border-[#AAAAAA] bg-[#FFFFFF29]': variant === 'ghost',
+                        'bg-[#ffffff] py-[27px]': variant === 'primary',
+                        'bg-none py-[27px]': variant === 'secondary',
+                        'border-[#D1D1D1] bg-white/15 py-[27px]': variant === 'ghost',
+                        'border-[#D1D1D1] bg-white/15 py-5': variant === 'ghostOTP',
                     }
                 )}
             >
@@ -61,7 +63,7 @@ const InputPhone = forwardRef<HTMLInputElement, InputProps>(
                     id={id}
                     ref={combinedRef}
                     className={clsx(
-                        'hide-tabbar w-full pr-8 font-medium text-[var(--black)] outline-none',
+                        'hide-tabbar w-full pr-8 font-medium text-[var(--black)] outline-none ',
                         {
                             'pl-14': iconLeft,
                             'pl-8': !iconLeft,
@@ -70,7 +72,8 @@ const InputPhone = forwardRef<HTMLInputElement, InputProps>(
                         {
                             'text-[var(--black)]': variant === 'primary',
                             'bg-none': variant === 'secondary',
-                            'text-white': variant === 'ghost',
+                            'text-white bg-transparent placeholder:text-white': variant === 'ghost',
+                            'text-white bg-transparent placeholder:text-white text-center text-7xl font-semibold ': variant === 'ghostOTP',
                         }
                     )}
                     placeholder={placeholder || ''}
