@@ -8,31 +8,64 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import ErrorMessage from '@/components/error-message';
+import dayjs from 'dayjs';
 
 const NewDriver = () => {
     const [image, setImage] = useState<string | null>(null);
     const [fileName, setFileName] = useState<string>('');
-    const [birthDate, setBirthDate] = useState<Date | null>(null); // Состояние для даты рождения
-    const [licenseDate, setLicenseDate] = useState<Date | null>(null); // Состояние для даты выдачи прав
+    const [birthDate, setBirthDate] = useState<string | null>(null);
+    const [licenseDate, setLicenseDate] = useState<string | null>(null);
+
+    // const { execute, isPending } = useServerAction(updatePersonalInfoAction, {
+    //     onSuccess: async (data) => {
+    //         await refetch();
+    //         toast.success(data.data);
+    //     },
+    //     onError: ({ err }) => {
+    //         toast.error(err.data);
+    //     },
+    // });
+    // const onSubmit = handleSubmit((data) => {
+    //     execute(data);
+    // });
+
+
 
     const {
         register,
         formState: { errors },
         handleSubmit,
+        setValue,
     } = useForm<z.output<typeof driverSchema>>({
         resolver: zodResolver(driverSchema),
     });
-
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
             setImage(URL.createObjectURL(file));
             setFileName(file.name);
+            setValue('picture', file); // Сохраняем файл в форму для валидации
         }
     };
 
+
+    const handleBirthDateChange = (date: Date | null) => {
+        const formattedDate = date ? dayjs(date).format('YYYY-MM-DD') : '';
+        setBirthDate(formattedDate);
+        setValue('date_of_birth', formattedDate);
+    };
+
+    const handleLicenseDateChange = (date: Date | null) => {
+        const formattedDate = date ? dayjs(date).format('YYYY-MM-DD') : '';
+        setLicenseDate(formattedDate);
+        setValue('license_issue_date', formattedDate);
+    };
+
+
+
     const onSubmit = handleSubmit((data) => {
         console.log(data);
+
     });
 
     return (
@@ -92,7 +125,7 @@ const NewDriver = () => {
                                 className="text-2xl flex flex-row justify-between font-semibold text-[#4A4A4A]"
                             >
                                 ФИО водителя
-                                
+
                             </label>
                             <input
                                 placeholder="Введите ФИО"
@@ -101,8 +134,8 @@ const NewDriver = () => {
                                 {...register('full_name')}
                             />
                             <ErrorMessage
-                                    message={errors?.full_name?.message}
-                                />
+                                message={errors?.full_name?.message}
+                            />
                         </div>
                         <div className="flex w-full flex-col gap-4">
                             <label
@@ -133,9 +166,8 @@ const NewDriver = () => {
                             <Suspense>
                                 <CalendarPC
                                     variant="secondary"
-                                    value={birthDate} // Passing Date | null value
-                                    onChange={setBirthDate} // onChange expects Date | null
-                                    
+                                    value={birthDate ? new Date(birthDate) : null}
+                                    onChange={handleBirthDateChange}
                                 />
                                 <ErrorMessage
                                     message={errors?.date_of_birth?.message}
@@ -152,8 +184,8 @@ const NewDriver = () => {
                             <Suspense>
                                 <CalendarPC
                                     variant="secondary"
-                                    value={licenseDate} // Passing Date | null value
-                                    onChange={setLicenseDate} // onChange expects Date | null
+                                    value={licenseDate ? new Date(licenseDate) : null}
+                                    onChange={handleLicenseDateChange}
                                 />
                                 <ErrorMessage
                                     message={errors?.license_issue_date?.message}
