@@ -3,7 +3,6 @@ import React, { Suspense, useState } from 'react';
 import Upload from '@/assets/admin/Upload';
 import Button from '@/components/button';
 import CalendarPC from '@/components/calendar/select-date';
-import Link from 'next/link';
 import { driverSchema } from '@/data/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -11,8 +10,10 @@ import { z } from 'zod';
 import ErrorMessage from '@/components/error-message';
 
 const NewDriver = () => {
-    const [image, setImage] = useState<string | null>(null); // Типизация состояния image
-    const [fileName, setFileName] = useState<string>(''); // Типизация состояния fileName
+    const [image, setImage] = useState<string | null>(null);
+    const [fileName, setFileName] = useState<string>('');
+    const [birthDate, setBirthDate] = useState<Date | null>(null); // Состояние для даты рождения
+    const [licenseDate, setLicenseDate] = useState<Date | null>(null); // Состояние для даты выдачи прав
 
     const {
         register,
@@ -26,7 +27,7 @@ const NewDriver = () => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
             setImage(URL.createObjectURL(file));
-            setFileName(file.name); // Обновление названия файла
+            setFileName(file.name);
         }
     };
 
@@ -44,7 +45,7 @@ const NewDriver = () => {
                 <div className="grid w-[800px] grid-cols-2 gap-5">
                     <div className="flex flex-row items-start gap-8">
                         <img
-                            src={image || '/assets/admin/avatar.png'} // Показываем загруженное изображение или дефолтное
+                            src={image || '/assets/admin/avatar.png'}
                             alt="Avatar preview"
                             className="mt-4 h-32 w-32 rounded-full object-cover"
                         />
@@ -56,16 +57,15 @@ const NewDriver = () => {
                                 *необязательно{' '}
                             </p>
                             <div className="mt-4 flex flex-row items-center gap-[18px]">
-                                <div className="flex w-full flex-row items-center">
+                                <div className="flex w-full gap-5 flex-row items-center">
                                     <label
                                         htmlFor="file-upload"
-                                        className="relative mr-14 w-full cursor-pointer rounded-[10px] border border-[#A0A0A0] p-4 pl-12 text-base font-medium text-[#4A4A4A]"
+                                        className="relative  w-full cursor-pointer rounded-[10px] border border-[#A0A0A0] p-4 pl-12 text-nowrap text-base font-medium text-[#4A4A4A]"
                                     >
                                         <div className="absolute left-0 top-0 p-4">
                                             <Upload color="#E74949" />
                                         </div>
                                         {fileName ? fileName : 'Загрузить фото'}{' '}
-                                        {/* Отображение названия файла или текста по умолчанию */}
                                     </label>
                                     <input
                                         id="file-upload"
@@ -73,6 +73,9 @@ const NewDriver = () => {
                                         className="hidden"
                                         accept="image/*"
                                         onChange={handleImageChange}
+                                    />
+                                    <ErrorMessage
+                                        message={errors?.picture?.message}
                                     />
                                 </div>
                             </div>
@@ -86,9 +89,10 @@ const NewDriver = () => {
                         <div className="flex w-full flex-col gap-6">
                             <label
                                 htmlFor="FCs"
-                                className="text-2xl font-semibold text-[#4A4A4A]"
+                                className="text-2xl flex flex-row justify-between font-semibold text-[#4A4A4A]"
                             >
                                 ФИО водителя
+                                
                             </label>
                             <input
                                 placeholder="Введите ФИО"
@@ -97,8 +101,8 @@ const NewDriver = () => {
                                 {...register('full_name')}
                             />
                             <ErrorMessage
-                                message={errors?.full_name?.message}
-                            />
+                                    message={errors?.full_name?.message}
+                                />
                         </div>
                         <div className="flex w-full flex-col gap-4">
                             <label
@@ -114,7 +118,7 @@ const NewDriver = () => {
                                 {...register('license_number')}
                             />
                             <ErrorMessage
-                                message={errors?.full_name?.message}
+                                message={errors?.license_number?.message}
                             />
                         </div>
                     </div>
@@ -127,7 +131,15 @@ const NewDriver = () => {
                                 Дата рождения
                             </label>
                             <Suspense>
-                                <CalendarPC variant="secondary" />
+                                <CalendarPC
+                                    variant="secondary"
+                                    value={birthDate} // Passing Date | null value
+                                    onChange={setBirthDate} // onChange expects Date | null
+                                    
+                                />
+                                <ErrorMessage
+                                    message={errors?.date_of_birth?.message}
+                                />
                             </Suspense>
                         </div>
                         <div className="relative flex w-full flex-col gap-4">
@@ -138,7 +150,14 @@ const NewDriver = () => {
                                 Дата выдачи водительских прав
                             </label>
                             <Suspense>
-                                <CalendarPC variant="secondary" />
+                                <CalendarPC
+                                    variant="secondary"
+                                    value={licenseDate} // Passing Date | null value
+                                    onChange={setLicenseDate} // onChange expects Date | null
+                                />
+                                <ErrorMessage
+                                    message={errors?.license_issue_date?.message}
+                                />
                             </Suspense>
                         </div>
                     </div>

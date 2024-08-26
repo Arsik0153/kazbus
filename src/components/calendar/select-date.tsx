@@ -7,8 +7,8 @@ import clsx from 'clsx';
 type SelectDateProps = {
     placeholder?: string;
     variant?: 'primary' | 'secondary';
-    value: string;
-    onChange: (date: string) => void;
+    value: Date | null; // Change the type to Date | null
+    onChange: (date: Date | null) => void; // Change the type to match
 };
 
 const SelectDate: React.FC<SelectDateProps> = ({
@@ -20,7 +20,7 @@ const SelectDate: React.FC<SelectDateProps> = ({
     const [isOpen, setIsOpen] = useState(false);
     const dataChooserRef = useRef<HTMLDivElement | null>(null);
 
-    const handleSelectDate = (date: string) => {
+    const handleSelectDate = (date: Date) => { // Change to handle Date type
         onChange(date);
         setIsOpen(false);
     };
@@ -58,7 +58,7 @@ const SelectDate: React.FC<SelectDateProps> = ({
                     placeholder={placeholder || '__ - __ - ____'}
                     type="text"
                     name="birthday"
-                    value={value}
+                    value={value ? value.toLocaleDateString() : ''} // Format Date to string
                     className={clsx(
                         'rounded-[10px] border py-3 pr-3 text-base font-medium focus:outline-none',
                         {
@@ -68,7 +68,7 @@ const SelectDate: React.FC<SelectDateProps> = ({
                                 variant === 'secondary',
                         }
                     )}
-                    onChange={(e) => onChange(e.target.value)}
+                    onChange={(e) => onChange(new Date(e.target.value))} // Convert string to Date
                 />
                 <div
                     className={clsx(

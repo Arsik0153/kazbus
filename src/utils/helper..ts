@@ -48,3 +48,15 @@ export function getStringByNumber(
 
     return strings[stringIndex];
 }
+
+export const dateTimeToReadable = (inputDateTime: string): string => {
+    // Проверяем, соответствует ли входная строка формату ISO
+    const datePattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
+    if (!datePattern.test(inputDateTime)) {
+        throw new Error('Invalid datetime format. Expected format is YYYY-MM-DDTHH:mm:ssZ.');
+    }
+
+    // Преобразуем и форматируем дату
+    const dateTime = dayjs(inputDateTime);
+    return dateTime.format('DD.MM.YYYY HH:mm');
+};

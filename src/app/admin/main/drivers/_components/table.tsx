@@ -1,6 +1,5 @@
 'use client';
 import React, { useState } from 'react';
-import Clock from '@/assets/admin/Clock';
 import Calendar from '@/assets/admin/Calendar';
 import Link from 'next/link';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
@@ -14,7 +13,6 @@ const Table = () => {
         input: undefined,
         queryKey: ['getDrivers'],
     });
-
     const handleButtonClick = () => {
         setIsActive(!isActive);
         console.log('edit new-driver activated');
@@ -26,7 +24,6 @@ const Table = () => {
             </div>
         );
     }
-
     return (
         <table className="mb-28 mt-[17px] w-full border-separate border-spacing-y-2 items-center justify-center rounded-[20px] bg-white px-5 pb-3">
             <tbody>
@@ -37,10 +34,8 @@ const Table = () => {
                     <th className="items-start py-5 text-start text-[16px] font-bold uppercase leading-[22.4px] text-[#A0A0A0]">
                         Дата рождения
                     </th>
-
                     <th></th>
                 </tr>
-
                 {data?.map((driver) => (
                     <tr className="bg-[#F1F5F9]" key={driver.full_name}>
                         <td className="w-fit max-w-[180px] rounded-l-[10px] pl-6">
@@ -69,9 +64,6 @@ const Table = () => {
                             </div>
                         </td>
                         <td className="rounded-r-[10px] py-4 pr-6">
-                            {/* <button className='py-3 ml-auto px-8 flex items-center justify-center rounded-[10px] border bg-[#E74949] text-sm font-semibold text-white' onClick={handleButtonClick}>
-                            Редактировать
-                        </button> */}
                             <Link href="/admin/main/drivers/new-driver">
                                 <button
                                     className="ml-auto flex items-center justify-center rounded-[10px] border border-[#E74949] px-8 py-3 text-sm font-semibold text-[#E74949] duration-100 hover:bg-[#F16363] hover:text-white"
