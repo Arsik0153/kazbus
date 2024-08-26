@@ -2,31 +2,26 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Calendar from '@/assets/calendar';
 import DataChooser from '@/components/calendar/data-chooser';
-import { useSearchParams } from 'next/navigation';
-import { dayjsExt } from '@/lib/dayjs';
 import clsx from 'clsx';
 
-interface SelectDateProps {
+type SelectDateProps = {
     placeholder?: string;
     variant?: 'primary' | 'secondary';
-}
+    value: string;
+    onChange: (date: string) => void;
+};
 
 const SelectDate: React.FC<SelectDateProps> = ({
     placeholder,
     variant = 'primary',
+    onChange,
+    value,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const dataChooserRef = useRef<HTMLDivElement | null>(null);
 
-    const searchParams = useSearchParams();
-    const dateParam = searchParams.get('date');
-    const formattedDate = dateParam
-        ? dayjsExt(dateParam).format('DD.MM.YYYY')
-        : '';
-
     const handleSelectDate = (date: string) => {
-        setSelectedDate(date);
+        onChange(date);
         setIsOpen(false);
     };
 
@@ -59,13 +54,11 @@ const SelectDate: React.FC<SelectDateProps> = ({
                     'w-full': variant === 'secondary',
                 })}
             >
-                {/* TODO: Календарь не принимает текст в инпут(теряется фокус) */}
                 <input
-                    key={selectedDate || formattedDate}
                     placeholder={placeholder || '__ - __ - ____'}
                     type="text"
                     name="birthday"
-                    value={selectedDate || formattedDate}
+                    value={value}
                     className={clsx(
                         'rounded-[10px] border py-3 pr-3 text-base font-medium focus:outline-none',
                         {
@@ -75,7 +68,7 @@ const SelectDate: React.FC<SelectDateProps> = ({
                                 variant === 'secondary',
                         }
                     )}
-                    onChange={(e) => setSelectedDate(e.target.value)}
+                    onChange={(e) => onChange(e.target.value)}
                 />
                 <div
                     className={clsx(

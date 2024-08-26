@@ -64,3 +64,8 @@ export type Trip = {
     bus: string;
     price: string;
 };
+
+export type Driver = {
+    full_name: string;
+    date_of_birth: string;
+};

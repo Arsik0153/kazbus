@@ -1,16 +1,26 @@
 'use client';
 import React, { Suspense, useState } from 'react';
 import Upload from '@/assets/admin/Upload';
-import Calendar from '@/assets/admin/Calendar';
-import InputMask from 'react-input-mask';
-import BigAvatar from '@/assets/admin/BigAvatar';
 import Button from '@/components/button';
 import CalendarPC from '@/components/calendar/select-date';
 import Link from 'next/link';
+import { driverSchema } from '@/data/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import ErrorMessage from '@/components/error-message';
 
 const NewDriver = () => {
     const [image, setImage] = useState<string | null>(null); // Типизация состояния image
     const [fileName, setFileName] = useState<string>(''); // Типизация состояния fileName
+
+    const {
+        register,
+        formState: { errors },
+        handleSubmit,
+    } = useForm<z.output<typeof driverSchema>>({
+        resolver: zodResolver(driverSchema),
+    });
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -20,8 +30,12 @@ const NewDriver = () => {
         }
     };
 
+    const onSubmit = handleSubmit((data) => {
+        console.log(data);
+    });
+
     return (
-        <div className="mt-6 flex flex-col">
+        <form className="mt-6 flex flex-col" onSubmit={onSubmit}>
             <p className="text-[42px] font-semibold text-[#4A4A4A]">
                 Добавить водителя
             </p>
@@ -30,7 +44,6 @@ const NewDriver = () => {
                 <div className="grid w-[800px] grid-cols-2 gap-5">
                     <div className="flex flex-row items-start gap-8">
                         <img
-                            // "/assets/user-avatar.jpg"
                             src={image || '/assets/admin/avatar.png'} // Показываем загруженное изображение или дефолтное
                             alt="Avatar preview"
                             className="mt-4 h-32 w-32 rounded-full object-cover"
@@ -80,8 +93,11 @@ const NewDriver = () => {
                             <input
                                 placeholder="Введите ФИО"
                                 type="text"
-                                name="FCs"
                                 className="focus:outlined-none w-full rounded-[10px] border border-[#4A4A4A] py-5 pl-6 outline-none"
+                                {...register('full_name')}
+                            />
+                            <ErrorMessage
+                                message={errors?.full_name?.message}
                             />
                         </div>
                         <div className="flex w-full flex-col gap-4">
@@ -94,8 +110,11 @@ const NewDriver = () => {
                             <input
                                 placeholder="Введите номер вод. прав"
                                 type="text"
-                                name="DriverCard"
                                 className="focus:outlined-none w-full rounded-[10px] border border-[#4A4A4A] py-5 pl-6 outline-none"
+                                {...register('license_number')}
+                            />
+                            <ErrorMessage
+                                message={errors?.full_name?.message}
                             />
                         </div>
                     </div>
@@ -124,14 +143,11 @@ const NewDriver = () => {
                         </div>
                     </div>
                 </div>
-                <Link
-                    href="/admin/main/drivers"
-                    className="mt-14 max-w-[290px]"
-                >
+                <div className="mt-14 max-w-[290px]">
                     <Button variant="secondary">Сохранить водителя</Button>
-                </Link>
+                </div>
             </div>
-        </div>
+        </form>
     );
 };
 
