@@ -1,4 +1,5 @@
-import React from 'react'
+'use client';
+import React, { useState, useEffect } from 'react';
 import Plus from '@/assets/admin/Plus';
 import Table from '@/app/admin/main/buses/_components/table';
 import Link from 'next/link';
@@ -11,6 +12,13 @@ const Buses = () => {
         input: undefined,
         queryKey: ['getBuses'],
     });
+    const [buses, setBuses] = useState<any[]>([]);
+
+    useEffect(() => {
+        if (data) {
+            setBuses(data);
+        }
+    }, [data]);
 
     if (isPending) {
         return (
@@ -19,6 +27,7 @@ const Buses = () => {
             </div>
         );
     }
+
     return (
         <div className="flex flex-col mt-6">
             <div className="flex flex-row justify-between">
@@ -30,11 +39,10 @@ const Buses = () => {
                             Добавить автобус
                         </p>
                     </Link>
-
                 </div>
             </div>
 
-            {data && data.length > 0 ? (
+            {buses.length > 0 ? (
                 <Table />
             ) : (
                 <div className="flex flex-col rounded-[20px] bg-white w-full py-[108px] items-center justify-center gap-4 mt-[14px]">
@@ -48,7 +56,7 @@ const Buses = () => {
                 </div>
             )}
         </div>
-    )
-}
+    );
+};
 
 export default Buses;
