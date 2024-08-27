@@ -45,6 +45,9 @@ const SelectTicket = (props: Props) => {
                 toParam,
                 passengerCountParam,
             ],
+            refetchOnMount: false,
+            refetchOnReconnect: false,
+            refetchOnWindowFocus: false,
         }
     );
 

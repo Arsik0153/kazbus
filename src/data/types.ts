@@ -1,5 +1,5 @@
 export type AvailableDate = {
-    price: number;
+    price: string;
     date: string;
 };
 

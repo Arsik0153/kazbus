@@ -22,8 +22,8 @@ export const getTicketsAction = createServerAction()
         const { from_point, to_point, date, passenger_count } = input;
 
         const searchParams = new URLSearchParams({
-            from_point: from_point.toString(),
-            to_point: to_point.toString(),
+            from: from_point.toString(),
+            to: to_point.toString(),
             date,
             passenger_count: passenger_count.toString(),
         });

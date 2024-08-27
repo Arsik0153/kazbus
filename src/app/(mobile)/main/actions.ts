@@ -1,29 +1,44 @@
 'use server';
 
-import { AvailableDate, City } from '@/data/types';
+import { AvailableDate, City, Ticket } from '@/data/types';
+import { z } from 'zod';
 import { createServerAction } from 'zsa';
 
-export const getDatesAction = createServerAction().handler(async () => {
-    const response = await fetch(
-        `${process.env.API_URL}/books/get-dates/?from_point=3&to_point=1`,
-        {
-            headers: {
-                'Content-Type': 'application/json',
-            },
+export const getDatesAction = createServerAction()
+    .input(
+        z.object({
+            from: z.number(),
+            to: z.number(),
+        })
+    )
+    .handler(async ({ input }) => {
+        const response = await fetch(
+            `${process.env.API_URL}/books/get-dates/?from_point=${input.from}&to_point=${input.to}`,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw 'Произошла ошибка при изменении данных';
         }
-    );
 
-    if (!response.ok) {
-        throw 'Произошла ошибка при изменении данных';
-    }
+        const result = (await response.json()) as Ticket[];
 
-    const result = (await response.json()) as AvailableDate[];
+        const formatted = result.map((item) => {
+            return {
+                date: item.from_date,
+                price: item.price,
+            };
+        }) as AvailableDate[];
 
-    return result;
-});
+        return formatted;
+    });
 
 export const getCitiesAction = createServerAction().handler(async () => {
-    const response = await fetch(`${process.env.API_URL}/trips/points/`, {
+    const response = await fetch(`${process.env.API_URL}/trip_v2/cities/`, {
         headers: {
             'Content-Type': 'application/json',
         },
