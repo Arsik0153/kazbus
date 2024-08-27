@@ -27,7 +27,7 @@ const Download = () => {
                     gradientTransform="translate(182 218.244) rotate(90) scale(375.244 311)"
                 >
                     <stop stopColor="white" />
-                    <stop offset="1" stopColor="white" stop-opacity="0" />
+                    <stop offset="1" stopColor="white" stopOpacity="0" />
                 </radialGradient>
             </defs>
         </svg>

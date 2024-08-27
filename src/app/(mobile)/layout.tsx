@@ -9,7 +9,7 @@ export default function RootLayout({
     return (
         <div className="flex min-h-screen items-stretch">
             <BadgeLogo />
-            <div className="mb-[90px] flex-1">{children}</div>
+            <div className="xs:mb-[90px] flex-1">{children}</div>
             <NavBar />
         </div>
     );
