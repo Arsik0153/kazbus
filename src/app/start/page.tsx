@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import Image from 'next/image';
 import Button from '@/components/button';
 import EllipsStart from '@/assets/EllipsStart';
@@ -42,4 +42,12 @@ const Start = () => {
     );
 };
 
-export default Start;
+const StartSuspended = () => {
+    return (
+        <Suspense>
+            <Start />
+        </Suspense>
+    );
+};
+
+export default StartSuspended;

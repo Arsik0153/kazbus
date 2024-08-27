@@ -28,7 +28,7 @@ const UnauthorizedProfilePage = () => {
                     Заполните все свои данные, и покупайте дешевые билеты за
                     пару кликов
                 </p>
-                <Link href="/profile/registration" passHref>
+                <Link href="/profile/form" passHref>
                     <Button variant="secondary" className="mb-3 mt-9">
                         Заполнить данные
                     </Button>

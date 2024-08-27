@@ -33,9 +33,13 @@ export const loginAction = createServerAction()
         );
 
         if (!response.ok) {
+            console.log(response);
+            const data = await response.json();
+            console.log(data);
             throw 'Произошла ошибка при подтверждении кода';
         }
         const data = await response.json();
+        console.log(data);
         const { user_id, token } = data;
 
         await signUp({ phone: input.phone, token, user_id });

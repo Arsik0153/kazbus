@@ -39,11 +39,11 @@ const LINKS = [
 const NavBar = () => {
     const pathname = usePathname();
     const [isTabbarHidden, setIsTabbarHidden] = useState(false);
-    const [isClient, setIsClient] = useState(false);
-    const hideGap = isClient ? !!localStorage.getItem('hideGap') : false;
+    const [hideGap, setHideGap] = React.useState(false);
 
     useEffect(() => {
-        setIsClient(true);
+        const gap = !!localStorage.getItem('hideGap');
+        setHideGap(gap);
     }, []);
 
     useEffect(() => {

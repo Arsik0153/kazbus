@@ -5,13 +5,45 @@ import Button from '@/components/button';
 import Link from 'next/link';
 import InputPhone from '@/components/inputPhone';
 import Image from 'next/image';
-import Otp from './_components/otp';
 import MenuArrow from '@/assets/menu-arrow';
+import toast from 'react-hot-toast';
+import { useServerAction } from 'zsa-react';
+import { sendOtpAction } from '../actions';
+import { sanitizePhone } from '@/utils/helper.';
+import Mail from '@/assets/mail';
+import { loginAction } from '@/app/(mobile)/profile/registration/actions';
+import { useRouter } from 'next/navigation';
 
 const Login = () => {
     const [step, setStep] = useState(1);
+    const [phone, setPhone] = useState<string>('');
+    const [otp, setOtp] = useState<string>('');
+    const router = useRouter();
+    const { execute: sendOtp, isPending: isOtpLoading } = useServerAction(
+        sendOtpAction,
+        {
+            onSuccess: () => {
+                setStep(2);
+            },
+            onError: (error) => {
+                toast.error(error.err.message);
+            },
+        }
+    );
+    const { execute, isPending } = useServerAction(loginAction, {
+        onSuccess: () => {
+            router.push('/main');
+        },
+        onError: (error) => {
+            toast.error(error.err.message);
+        },
+    });
     const handleNextStep = () => {
-        setStep(2);
+        if (phone.length < 18) {
+            toast.error('Введите корректный номер телефона');
+            return;
+        }
+        sendOtp({ phone: sanitizePhone(phone) });
     };
     const handlePrevStep = () => {
         setStep(1);
@@ -45,9 +77,18 @@ const Login = () => {
                                     alt="KZ"
                                 />
                             }
+                            value={phone}
+                            onChange={(e) => {
+                                setPhone(e.target.value);
+                            }}
                         />
                         <div className="mt-2 w-full">
-                            <Button onClick={handleNextStep}>Продолжить</Button>
+                            <Button
+                                onClick={handleNextStep}
+                                loading={isOtpLoading}
+                            >
+                                Продолжить
+                            </Button>
                         </div>
                         <Link
                             href="/start/registration"
@@ -61,7 +102,41 @@ const Login = () => {
 
             {step === 2 && (
                 <>
-                    <Otp />
+                    <div className="flex flex-col items-center">
+                        <Mail color="white" />
+                        <p className="mb-4 mt-5 text-center text-[32px] font-bold leading-9 text-white">
+                            На ваш телефон пришел СМС-код
+                        </p>
+                        <p className="text-sm font-medium text-white">
+                            Введите 4-х значный код
+                        </p>
+                        <div className="mt-8 flex w-full flex-col items-center gap-2">
+                            <InputPhone
+                                id="newUserPhone"
+                                label="None label here"
+                                variant="ghostOTP"
+                                placeholder="0000"
+                                mask="____"
+                                type="tel"
+                                value={otp}
+                                onChange={(e) => {
+                                    setOtp(e.target.value);
+                                }}
+                            />
+
+                            <Button
+                                onClick={() =>
+                                    execute({
+                                        phone: sanitizePhone(phone),
+                                        otp,
+                                    })
+                                }
+                                loading={isPending}
+                            >
+                                Начать поиск билетов
+                            </Button>
+                        </div>
+                    </div>
                     <div className="flex justify-center">
                         <button
                             onClick={handlePrevStep}

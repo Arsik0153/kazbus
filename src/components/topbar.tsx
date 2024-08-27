@@ -2,7 +2,7 @@
 import BackIcon from '@/assets/shared/back-icon';
 import { cn } from '@/utils/cn';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 type Props = React.HTMLProps<HTMLDivElement> & {
     backHref?: string;
@@ -11,8 +11,13 @@ type Props = React.HTMLProps<HTMLDivElement> & {
 };
 
 const Topbar = (props: Props) => {
-    const hideGap = !!localStorage.getItem('hideGap');
     const { backHref, children, className, onBack, ...rest } = props;
+    const [hideGap, setHideGap] = React.useState(false);
+
+    useEffect(() => {
+        const gap = !!localStorage.getItem('hideGap');
+        setHideGap(gap);
+    }, []);
 
     return (
         <div
