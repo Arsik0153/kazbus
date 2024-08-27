@@ -65,14 +65,11 @@ type Weekdays = {
 
 export type Trip = {
     id: number;
-    departure_time: string;
-    start_date: string; // "YYYY-MM-DD" format
-    end_date: string; // "YYYY-MM-DD" format
-    ticket_price: string; // assuming it's a string representing a decimal
-    frequency: string; // e.g., "Daily"
-    weekdays: Weekdays;
-    status: string; // e.g., "active", "inactive"
-    route: number;
-    bus: string;
-    driver: number;
+    from_point: Point;
+    to_point: Point;
+    from_bus_station: BusStation;
+    to_bus_station: BusStation;
+    from_datetime: string;
+    to_datetime: string;
+    price: string;
 };
