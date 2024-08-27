@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
 import Input from '@/components/input';
 import RadioInput from '@/components/radio-input';
 import Calendar from '../../../../../assets/calendar';
@@ -13,6 +13,7 @@ import { updatePersonalInfoAction } from '../actions';
 import { useServerAction } from 'zsa-react';
 import { documentTypes } from '@/static/constants';
 import toast from 'react-hot-toast';
+import { InputMask, useMask } from '@react-input/mask';
 
 const NewUser = () => {
     const { execute, isPending } = useServerAction(updatePersonalInfoAction, {
@@ -87,17 +88,21 @@ const NewUser = () => {
                     />
                 </div>
                 <div>
-                    <Input
+                    <InputMask
+                        component={Input}
                         label="Дата рождения"
                         id="birth_date"
+                        type="tel"
                         iconLeft={<Calendar color="#E74949" />}
+                        mask="__.__.____"
+                        replacement="_"
                         {...register('birth_date')}
                     />
                     <ErrorMessage message={errors.birth_date?.message} />
                 </div>
             </div>
             <Button variant="secondary" loading={isPending}>
-                Закончить регистрацию
+                Сохранить данные
             </Button>
         </form>
     );
