@@ -53,14 +53,26 @@ export type BusStation = {
     point: Point;
 };
 
+type Weekdays = {
+    Monday: boolean;
+    Tuesday: boolean;
+    Wednesday: boolean;
+    Thursday: boolean;
+    Friday: boolean;
+    Saturday: boolean;
+    Sunday: boolean;
+};
+
 export type Trip = {
     id: number;
-    from_point: Point;
-    to_point: Point;
-    from_bus_station: BusStation;
-    to_bus_station: BusStation;
-    from_datetime: string;
-    to_datetime: string;
+    departure_time: string;
+    start_date: string; // "YYYY-MM-DD" format
+    end_date: string; // "YYYY-MM-DD" format
+    ticket_price: string; // assuming it's a string representing a decimal
+    frequency: string; // e.g., "Daily"
+    weekdays: Weekdays;
+    status: string; // e.g., "active", "inactive"
+    route: number;
     bus: string;
-    price: string;
+    driver: number;
 };

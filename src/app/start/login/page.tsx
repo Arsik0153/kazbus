@@ -35,6 +35,13 @@ const Login = () => {
             router.push('/main');
         },
         onError: (error) => {
+            if (error.err.name === 'ZodError') {
+                toast.error(
+                    error.err.fieldErrors?.otp?.[0] ||
+                        'Произошла ошибка при подтверждении кода'
+                );
+                return;
+            }
             toast.error(error.err.message);
         },
     });
