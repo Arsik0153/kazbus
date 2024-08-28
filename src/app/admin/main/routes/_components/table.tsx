@@ -18,7 +18,7 @@ const Table = () => {
 
     const handleButtonClick = () => {
         setIsActive(!isActive);
-        console.log('edit routes activated');
+        console.log('edit routes activated'); 
     };
     if (isPending) {
         return (
@@ -27,7 +27,7 @@ const Table = () => {
             </div>
         );
     }
-
+    console.log(data);
     return (
         <table className=" rounded-[20px] bg-white w-full px-5 pb-3 mb-28 items-center justify-center mt-[17px] border-separate border-spacing-y-2">
             <tbody>

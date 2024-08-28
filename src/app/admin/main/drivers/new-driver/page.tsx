@@ -9,27 +9,16 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import ErrorMessage from '@/components/error-message';
 import dayjs from 'dayjs';
+import toast from 'react-hot-toast';
+import { postDriversAction } from '../actions';
+import { useServerAction } from 'zsa-react';
+import { useServerActionQuery } from '@/lib/server-action-hooks';
 
 const NewDriver = () => {
     const [image, setImage] = useState<string | null>(null);
     const [fileName, setFileName] = useState<string>('');
     const [birthDate, setBirthDate] = useState<string | null>(null);
     const [licenseDate, setLicenseDate] = useState<string | null>(null);
-
-    // const { execute, isPending } = useServerAction(updatePersonalInfoAction, {
-    //     onSuccess: async (data) => {
-    //         await refetch();
-    //         toast.success(data.data);
-    //     },
-    //     onError: ({ err }) => {
-    //         toast.error(err.data);
-    //     },
-    // });
-    // const onSubmit = handleSubmit((data) => {
-    //     execute(data);
-    // });
-
-
 
     const {
         register,
@@ -39,6 +28,52 @@ const NewDriver = () => {
     } = useForm<z.output<typeof driverSchema>>({
         resolver: zodResolver(driverSchema),
     });
+
+    // const { execute, isPending } = useServerAction(postDriversAction, {
+        
+    //     onSuccess: async (data) => {
+    //         await refetch();
+    //         toast.success(data.data);
+    //     },
+    //     onError: ({ err }) => {
+    //         toast.error(err.data);
+    //     },
+    // });
+    
+    
+    // const onSubmit = handleSubmit(async (data) => {
+    //     try {
+    //         const formData = new FormData();
+    
+    //         // Добавляем данные формы в FormData
+    //         formData.append('full_name', data.full_name);
+    //         formData.append('date_of_birth', data.date_of_birth);
+    //         formData.append('license_number', data.license_number);
+    //         formData.append('license_issue_date', data.license_issue_date);
+    
+    //         // Добавляем изображение, если оно есть
+    //         if (image) {
+    //             const file = new File([image], fileName);
+    //             formData.append('picture', file);
+    //         }
+    
+    //         // Отправка данных с использованием execute или fetch
+    //         execute({
+    //             full_name: data.full_name,
+    //             date_of_birth: data.date_of_birth,
+    //             license_number: data.license_number,
+    //             license_issue_date: data.license_issue_date,
+    //             picture: image ? URL.createObjectURL(file) : null,
+    //         });
+    
+    //         console.log('FormData успешно создана и отправлена');
+    //     } catch (error) {
+    //         console.error('Ошибка при создании FormData:', error);
+    //     }
+    // });
+ 
+
+    
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
@@ -47,8 +82,6 @@ const NewDriver = () => {
             setValue('picture', file); // Сохраняем файл в форму для валидации
         }
     };
-
-
     const handleBirthDateChange = (date: Date | null) => {
         const formattedDate = date ? dayjs(date).format('YYYY-MM-DD') : '';
         setBirthDate(formattedDate);
@@ -61,15 +94,10 @@ const NewDriver = () => {
         setValue('license_issue_date', formattedDate);
     };
 
-
-
-    const onSubmit = handleSubmit((data) => {
-        console.log(data);
-
-    });
-
     return (
-        <form className="mt-6 flex flex-col" onSubmit={onSubmit}>
+        <form className="mt-6 flex flex-col" 
+        // onSubmit={onSubmit}
+        >
             <p className="text-[42px] font-semibold text-[#4A4A4A]">
                 Добавить водителя
             </p>

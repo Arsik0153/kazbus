@@ -4,7 +4,7 @@ import { Bus } from '@/data/types';
 import { createServerAction } from 'zsa';
 
 export const getBusesAction = createServerAction().handler(async () => {
-    const response = await fetch(`${process.env.API_URL}/buses/buses/`, {
+    const response = await fetch(`${process.env.API_URL}/buses/`, {
         headers: {
             'Content-Type': 'application/json',
         },
