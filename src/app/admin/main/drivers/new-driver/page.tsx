@@ -21,7 +21,7 @@ const NewDriver = () => {
     };
 
     return (
-        <div className="mt-6 flex flex-col">
+        <div className="mt-6 mb-32 flex flex-col">
             <p className="text-[42px] font-semibold text-[#4A4A4A]">
                 Добавить водителя
             </p>

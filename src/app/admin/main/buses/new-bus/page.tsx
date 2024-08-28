@@ -10,8 +10,8 @@ import Floors from '@/app/admin/main/buses/new-bus/_components/floors';
 import Scheme from '@/app/admin/main/buses/new-bus/_components/scheme';
 
 const NewBus = () => {
-    const [selectedFloor, setSelectedFloor] = useState<'first' | 'second' | 'third' | null>(null);
-    const [seatCount, setSeatCount] = useState<string>(''); // Состояние для хранения количества мест
+    const [selectedFloor, setSelectedFloor] = useState< 1 | 2 | 3 | null>(null);
+    const [seatCount, setSeatCount] = useState<number | string>(''); // Состояние для хранения количества мест
 
     return (
         <div className="flex flex-col mb-96 mt-6">
