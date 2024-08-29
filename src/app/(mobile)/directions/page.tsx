@@ -62,11 +62,12 @@ const Directions = () => {
                         <div className="flex items-center gap-2">
                             <BusMini color="#E74949" />
                             <p className="text-sm font-medium text-[var(--black)]">
-                                {direction.from_point.name} / ав.{' '}
-                                {direction.from_bus_station.name} -{' '}
-                                {direction.to_point.name} / ав.{' '}
-                                {direction.to_bus_station.name}
+                                {direction.from_point?.name ?? 'Неизвестная точка'} / ав.{' '}
+                                {direction.from_bus_station?.name ?? 'Неизвестная станция'} -{' '}
+                                {direction.to_point?.name ?? 'Неизвестная точка'} / ав.{' '}
+                                {direction.to_bus_station?.name ?? 'Неизвестная станция'}
                             </p>
+
                         </div>
                         <div className="mt-2 flex items-end justify-between">
                             <span className="m-0 text-[28px] font-bold text-[#E74949]">

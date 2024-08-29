@@ -45,7 +45,7 @@ const MyTicketsPage = () => {
             </h1>
             <div className="flex flex-col">
                 <div className="flex flex-col pt-5">
-                    <Ticket ticket={ticket} status="paid" />
+                    {/* <Ticket ticket={ticket} status="paid" /> */}
 
                     <Link href="/my-tickets/qr-tickets">
                         <Trip

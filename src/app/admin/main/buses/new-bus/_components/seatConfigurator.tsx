@@ -3,7 +3,7 @@ import React from 'react';
 type SeatOption = {
     label: string;
     value?: string;
-    icon?: React.ReactNode; 
+    icon?: React.ReactNode;
 };
 
 type SeatConfiguratorProps = {
@@ -33,9 +33,9 @@ const SeatConfigurator: React.FC<SeatConfiguratorProps> = ({ options, selectedVa
                                 {option.label}
                             </span>
                             <div className={`text-xl font-bold border flex justify-center items-center rounded-[10px]
-                            ${option.icon ? ' h-12 w-24 ' : 'h-12 w-12'}
-                                ${isActive ? 'bg-[#E23333] text-white border-white' : 'text-[#E23333] border-[#E23333]'}`}>
-                                {option.icon ? React.cloneElement(option.icon as React.ReactElement, { color: isActive ? '#FFFFFF' : '#A0A0A0' }) : option.value}
+                            ${option.icon ? 'h-12 w-24 ' : 'h-12 w-12'}
+                                ${isActive ? 'bg-[#E23333] text-white border-white' : 'text-[#E23333] border-[#A0A0A0]'}`}>
+                                {option.icon ?  React.cloneElement(option.icon as React.ReactElement, { color: isActive ? '#FFFFFF' : '#A0A0A0' }) : option.value}
                             </div>
                         </div>
                     </label>

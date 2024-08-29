@@ -17,7 +17,7 @@ const HistoryTicketsPage = () => {
                     arriving_date={'9 мая'}
                     passenger_amount={1}
                     ticket_amount={12450}
-                    taxi_park='wdwedqw'
+                    taxi_park='Таксопарк “ТОО ЖОЛЫМБЕТ ПЕРЕВОЗКИ”'
 
                 />
                 <Trip
@@ -30,7 +30,7 @@ const HistoryTicketsPage = () => {
                     arriving_date={'9 мая'}
                     passenger_amount={1}
                     ticket_amount={12450}
-                    taxi_park='wdwedqw'
+                    taxi_park='Таксопарк “ТОО ЖОЛЫМБЕТ ПЕРЕВОЗКИ”'
 
                 />
                 <Trip
@@ -43,7 +43,7 @@ const HistoryTicketsPage = () => {
                     arriving_date={'9 мая'}
                     passenger_amount={1}
                     ticket_amount={12450}
-                    taxi_park='wdwedqw'
+                    taxi_park='Таксопарк “ТОО ЖОЛЫМБЕТ ПЕРЕВОЗКИ”'
 
                 />
                 <Trip
@@ -56,7 +56,7 @@ const HistoryTicketsPage = () => {
                     arriving_date={'9 мая'}
                     passenger_amount={1}
                     ticket_amount={12450}
-                    taxi_park='wdwedqw'
+                    taxi_park='Таксопарк “ТОО ЖОЛЫМБЕТ ПЕРЕВОЗКИ”'
 
                 />
                 <Trip
@@ -69,7 +69,7 @@ const HistoryTicketsPage = () => {
                     arriving_date={'9 мая'}
                     passenger_amount={1}
                     ticket_amount={12450}
-                    taxi_park='wdwedqw'
+                    taxi_park='Таксопарк “ТОО ЖОЛЫМБЕТ ПЕРЕВОЗКИ”'
 
                 />
             </div>
