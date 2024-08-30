@@ -49,9 +49,7 @@ const renderDays = (
                 <div
                     className={`flex flex-col items-center ${isPast ? 'opacity-50' : ''}`}
                 >
-                    <div
-                        className={`text-[22px] font-medium ${isPast ? 'opacity-50' : 'text-[var(--black)]'}`}
-                    >
+                    <div className={`text-[22px] font-medium ${isPast ? 'opacity-50' : 'text-[var(--black)]'}`}>
                         {date.date()}
                     </div>
                     <div className="text-xs text-[#E74949]">
@@ -87,22 +85,30 @@ const getPriceForDate = (date: Dayjs, data: AvailableDate[]) => {
 };
 
 type Props = {
-    handleSelectDate: (date: string) => void;
+    handleSelectDate: (date: Date) => void;
 };
 
-const DatePicker = (props: Props) => {
+const DatePicker: React.FC<Props> = (props) => {
     const { handleSelectDate } = props;
     const months = generateMonths();
+
+    const today = dayjsExt();
+    const dateRange = {
+        from: today.startOf('day').valueOf(),
+        to: today.add(2, 'months').endOf('day').valueOf()
+    };
+
     const { data } = useServerActionQuery(getDatesAction, {
-        input: undefined,
-        queryKey: ['getDates'],
+        input: dateRange,
+        queryKey: ['getDates', dateRange],
     });
+    
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const router = useRouter();
 
     const handleDayClick = (day: Dayjs) => {
-        handleSelectDate(day.format('DD.MM.YYYY'));
+        handleSelectDate(day.toDate());
     };
 
     return (

@@ -14,6 +14,9 @@ const PhaseB = () => {
     const handleButtonClick = (isWeekly: boolean) => {
         setIsWeekly(isWeekly);
     };
+    const handleBirthDateChange = () => {
+        console.log('ewfw');
+    };
 
     return (
         <>
@@ -97,14 +100,20 @@ const PhaseB = () => {
                                 C
                             </p>
                             <Suspense>
-                                <CalendarPC placeholder="__-__-____" />
+                                <CalendarPC
+                                    value={null}
+                                    onChange={handleBirthDateChange}
+                                />
                             </Suspense>
 
                             <p className="text-base font-medium text-[#4A4A4A]">
                                 По
                             </p>
                             <Suspense>
-                                <CalendarPC />
+                                <CalendarPC
+                                    value={null}
+                                    onChange={handleBirthDateChange}
+                                />
                             </Suspense>
                         </div>
                     </div>

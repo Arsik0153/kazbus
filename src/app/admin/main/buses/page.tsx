@@ -1,9 +1,33 @@
-import React from 'react'
+'use client';
+import React, { useState, useEffect } from 'react';
 import Plus from '@/assets/admin/Plus';
 import Table from '@/app/admin/main/buses/_components/table';
 import Link from 'next/link';
+import { useServerActionQuery } from '@/lib/server-action-hooks';
+import { getBusesAction } from './actions';
+import Spinner from '@/components/spinner';
 
 const Buses = () => {
+    const { data, isPending } = useServerActionQuery(getBusesAction, {
+        input: undefined,
+        queryKey: ['getBuses'],
+    });
+    const [buses, setBuses] = useState<any[]>([]);
+
+    useEffect(() => {
+        if (data) {
+            setBuses(data);
+        }
+    }, [data]);
+
+    if (isPending) {
+        return (
+            <div className="flex justify-center py-11">
+                <Spinner />
+            </div>
+        );
+    }
+
     return (
         <div className="flex flex-col mt-6">
             <div className="flex flex-row justify-between">
@@ -15,22 +39,24 @@ const Buses = () => {
                             Добавить автобус
                         </p>
                     </Link>
-
                 </div>
             </div>
 
-            <div className="flex flex-col rounded-[20px] bg-white w-full py-[108px] items-center justify-center gap-4 mt-[14px]">
-                <p className="text-[36px] font-semibold text-center text-[#4A4A4A]">Автобусы еще не <br /> зарегистрированы в системе</p>
-                <Link href="/admin/main/buses/new-bus">
+            {buses.length > 0 ? (
+                <Table />
+            ) : (
+                <div className="flex flex-col rounded-[20px] bg-white w-full py-[108px] items-center justify-center gap-4 mt-[14px]">
+                    <p className="text-[36px] font-semibold text-center text-[#4A4A4A]">Автобусы еще не <br /> зарегистрированы в системе</p>
+                    <Link href="/admin/main/buses/new-bus">
                         <p className="flex py-[14px] px-12 flex-row hover:bg-[#F16363] duration-100 rounded-[10px] gap-[10px] items-center justify-center bg-[#E32B2B] text-base font-semibold text-[#FBFBFB]">
                             <Plus color="#fff" width={20} height={20} />
                             Добавить автобус
                         </p>
                     </Link>
-            </div>
-            <Table />
+                </div>
+            )}
         </div>
-    )
-}
+    );
+};
 
 export default Buses;
