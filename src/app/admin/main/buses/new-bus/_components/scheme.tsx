@@ -17,12 +17,19 @@ type SchemeProps = {
 
 const Scheme: React.FC<SchemeProps> = ({ selectedFloor, seatCount }) => {
     const [selectedSeat, setSelectedSeat] = useState<string>('A');
+    const [columns, setColumns] = useState(Math.ceil(seatCount / 5) + 7); // Изначально столько колонок + 2 для свободного места
+    const [rows, setRows] = useState(5); // Изначально 5 строк
 
     const options = [
         { label: 'Установка мест', value: '01' },
         { label: 'Установка места водителя', value: 'handlebar', icon: <Handlebar color='#A0A0A0' /> },
         { label: 'Установка прохода', value: '/' },
     ];
+
+    const addRow = () => setRows((prevRows) => prevRows + 1);
+    const removeRow = () => setRows((prevRows) => (prevRows > 1 ? prevRows - 1 : prevRows));
+    const addColumn = () => setColumns((prevColumns) => prevColumns + 1);
+    const removeColumn = () => setColumns((prevColumns) => (prevColumns > 1 ? prevColumns - 1 : prevColumns));
 
     return (
         <div className="flex flex-col">
@@ -36,15 +43,27 @@ const Scheme: React.FC<SchemeProps> = ({ selectedFloor, seatCount }) => {
                     />
                     <div className="w-full flex flex-col gap-4 px-6 pt-6 pb-12 rounded-[10px] bg-[#F1F5F9] my-5">
                         <div className="flex flex-row justify-between mb-8">
-                            <div className="flex flex-row items-center gap-9">
-                                <p className="flex flex-row gap-4 items-center text-base font-medium text-[#4A4A4A]">
+                            <div className="flex flex-row items-center gap-4">
+                                <button onClick={addColumn} className="flex items-center gap-2">
+                                    <ChooseRow color='#4A4A4A' />
+                                    Добавить колонку сбоку
+                                </button>
+                                <button onClick={addRow} className="border-none bg-none flex items-center gap-2">
                                     <ChooseCol color='#4A4A4A' />
                                     Добавить ряд снизу
-                                </p>
-                                <p className="flex flex-row gap-4 items-center text-base font-medium text-[#4A4A4A]">
-                                    <ChooseRow color='#4A4A4A' />
-                                    Добавить ряд сбоку
-                                </p>
+                                </button>
+                                <button onClick={removeColumn} className="flex items-center gap-2">
+                                    <div className="w-6 h-6 rounded-full border border-[#E23333] flex items-center justify-center">
+                                        <div className="w-[10px] h-[3px] bg-[#E23333] rounded-[4px]"></div>
+                                    </div>
+                                    Удалить колонку сбоку
+                                </button>
+                                <button onClick={removeRow} className="flex items-center gap-2">
+                                    <div className="w-6 h-6 rounded-full border border-[#E23333] flex items-center justify-center">
+                                        <div className="w-[10px] h-[3px] bg-[#E23333] rounded-[4px]"></div>
+                                    </div>
+                                    Удалить ряд снизу
+                                </button>
                             </div>
                             <p className="flex flex-row gap-4 items-center text-base font-medium text-[#4A4A4A]">
                                 <Cursor color='#E23333' />
@@ -54,7 +73,9 @@ const Scheme: React.FC<SchemeProps> = ({ selectedFloor, seatCount }) => {
                         <SeatSchemeBuilder 
                             selectedFloor={selectedFloor} 
                             seatCount={seatCount} 
-                            selectedSeat={selectedSeat} // Передаем selectedSeat
+                            selectedSeat={selectedSeat} 
+                            columns={columns}
+                            rows={rows}
                         /> 
                     </div>
                 </>

@@ -1,21 +1,115 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import Handlebar from '@/assets/admin/Handlebar';
 
 type SeatSchemeBuilderProps = {
-    selectedFloor: 1 | 2 | 3 | null; // Изменен тип на числа
+    selectedFloor: 1 | 2 | 3 | null;
     seatCount: number;
-    selectedSeat: string; // Принимаем selectedSeat как пропс
+    selectedSeat: string;
+    columns: number;
+    rows: number;
 };
 
-const SeatSchemeBuilder: React.FC<SeatSchemeBuilderProps> = ({ selectedFloor, seatCount, selectedSeat }) => {
-    
+const SeatSchemeBuilder: React.FC<SeatSchemeBuilderProps> = ({ selectedFloor, seatCount, selectedSeat, columns, rows }) => {
+    const [seats, setSeats] = useState<string[]>(Array(rows * columns).fill(''));
+
+    const handleSeatClick = (index: number) => {
+        setSeats((prevSeats) => {
+            const newSeats = [...prevSeats];
+            const seatValue = newSeats[index];
+
+            if (seatValue) {
+                if (seatValue.match(/^\d+$/)) {
+                    // Удаление номера пассажира и пересчет последующих номеров
+                    const updatedSeats = newSeats.map((seat, i) => {
+                        if (i > index && seat.match(/^\d+$/)) {
+                            return (parseInt(seat) - 1).toString().padStart(2, '0');
+                        }
+                        return seat;
+                    });
+                    updatedSeats[index] = ''; // Очистить место
+                    return updatedSeats;
+                } else {
+                    // Удаление любых других значений
+                    newSeats[index] = '';
+                    return newSeats;
+                }
+            } else {
+                // Если ячейка пустая, добавляем новое значение
+                if (selectedSeat === '01') {
+                    // Найти максимальный номер и добавить следующий
+                    const maxSeatNumber = Math.max(
+                        ...newSeats.map((seat) => (seat.match(/^\d+$/) ? parseInt(seat) : 0))
+                    );
+                    newSeats[index] = (maxSeatNumber + 1).toString().padStart(2, '0');
+                } else if (selectedSeat === 'handlebar') {
+                    newSeats[index] = 'handlebar'; // Устанавливаем специальный идентификатор
+                } else if (selectedSeat === '/') {
+                    newSeats[index] = '/'; // Устанавливаем специальный идентификатор
+                }
+                // СУЧКА ЕБАННАЯ
+                return newSeats;
+            }
+        });
+    };
+
+    const clearAllSeats = () => {
+        setSeats(Array(rows * columns).fill(''));
+    };
+
+    const renderGridCells = () => {
+        return Array(rows * columns)
+            .fill('')
+            .map((_, i) => {
+                const seatValue = seats[i];
+                let content = null;
+                let cellStyle = 'bg-none border-[#B8B8B8]'; 
+
+                if (seatValue === 'handlebar') {
+                    content = <Handlebar color='#A0A0A0' />;
+                    cellStyle = 'bg-none'; 
+                } else if (seatValue === '/') {
+                    content = '/';
+                    cellStyle = 'border-[#B8B8B8] text-xl font-bold border flex justify-center items-center rounded-[10px] h-12 w-12'; // Например, другой фон
+                } else if (seatValue) {
+                    content = seatValue; 
+                    cellStyle = 'border-[#E32B2B] text-[#E32B2B]'; 
+                }
+
+                return (
+                    <div
+                        key={i}
+                        className={`w-[52px] h-[52px] flex items-center justify-center text-center border rounded-[10px] text-base font-semibold ${cellStyle}`}
+                        onClick={() => handleSeatClick(i)}
+                    >
+                        {content}
+                    </div>
+                );
+            });
+    };
+
     return (
         <div>
-            <p>Выбранное место: {selectedSeat}</p>
+            <p>Выбранное действие: {selectedSeat}</p>
             <p>Этажей: {selectedFloor}</p>
             <p>Посадочных мест: {seatCount}</p>
-            {/* Остальной код для построения схемы */}
+            
+            <button
+                onClick={clearAllSeats}
+                className="bg-red-500 text-white py-2 px-4 rounded mt-4"
+            >
+                Стереть все
+            </button>
+
+            <div
+                className="grid w-fit gap-2 mt-4"
+                style={{
+                    gridTemplateColumns: `repeat(${columns}, 1fr)`,
+                    gridTemplateRows: `repeat(${rows}, 1fr)`,
+                }}
+            >
+                {renderGridCells()}
+            </div>
         </div>
     );
 };

@@ -14,7 +14,7 @@ const NewBus = () => {
     const [seatCount, setSeatCount] = useState<number | string>(''); // Состояние для хранения количества мест
 
     return (
-        <div className="flex flex-col mb-96 mt-6">
+        <div className="flex flex-col mb-60 mt-6">
             <p className="text-[42px] font-semibold text-[#4A4A4A]">Добавить автобус</p>
 
             <div className="flex flex-col rounded-[20px] bg-white mt-[14px] py-10 px-8">
