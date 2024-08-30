@@ -7,21 +7,32 @@ import Button from '@/components/button';
 import Parking from './parking';
 import Link from 'next/link';
 
-const phasaB = () => {
+const PhasaB = () => {
+    const [stops, setStops] = useState<number[]>([]);
+
+    const addStop = () => {
+        const newIndex = stops.length > 0 ? stops[stops.length - 1] + 1 : 0;
+        setStops([...stops, newIndex]);
+    };
+
+    const removeStop = (index: number) => {
+        setStops(stops.filter((stopIndex) => stopIndex !== index));
+    };
+
     return (
         <>
             <div className="flex flex-col mt-7">
                 <p className="text-2xl font-semibold text-[#4A4A4A]">Время в пути до конечной точки</p>
                 <div className="flex flex-row items-center gap-3 mt-4">
                     <InputMini
-                        id="AdminPassword"
+                        id="tripHour"
                         placeholder=''
                         className='max-w-20'
                         iconLeft={<Clock color="#E74949" />}
                     />
                     <p className="text-base font-medium text-[#4A4A4A]">часов</p>
                     <InputMini
-                        id="AdminPassword"
+                        id="tripMinutes"
                         placeholder=''
                         className='max-w-20'
                         iconLeft={<Clock color="#E74949" />}
@@ -42,16 +53,22 @@ const phasaB = () => {
 
                     <div className="p-4 border-l-2 border-[#525252] border-dashed ml-[21px]">
                         <div className="flex flex-col gap-2 ">
-                            <Parking />
-                            <Parking />
-                            <Parking />
+                            {stops.map((stopIndex) => (
+                                <Parking key={stopIndex} index={stopIndex} onRemove={() => removeStop(stopIndex)} />
+                            ))}
 
                             <div className="flex flex-row mt-6 gap-[14px]">
-                                <button className="flex w-fit pr-16 px-3 py-3 flex-row rounded-[10px] gap-[10px] items-center bg-[#E74949] text-sm font-medium text-[#FBFBFB] transition-all duration-150 ease-in-out active:bg-[#c63b3b]">
+                                <button
+                                    className="flex w-fit pr-16 px-3 py-3 flex-row rounded-[10px] gap-[10px] items-center bg-[#E74949] text-sm font-medium text-[#FBFBFB] transition-all duration-150 ease-in-out active:bg-[#c63b3b]"
+                                    onClick={addStop}
+                                >
                                     <Plus color="#ffffff" width={16} height={16} />
                                     Добавить маршрут
                                 </button>
-                                <button className="flex w-fit px-3 py-3 flex-row rounded-[10px] gap-[10px] items-center border border-[#A0A0A0] text-sm font-medium text-[#4A4A4A] transition-all duration-150 ease-in-out active:bg-[#E74949] active:text-white">
+                                <button
+                                    className="flex w-fit px-3 py-3 flex-row rounded-[10px] gap-[10px] items-center border border-[#A0A0A0] text-sm font-medium text-[#4A4A4A] transition-all duration-150 ease-in-out active:bg-[#E74949] active:text-white"
+                                    onClick={() => setStops([])}
+                                >
                                     Без остановок
                                 </button>
                             </div>
@@ -68,11 +85,10 @@ const phasaB = () => {
             <div className="max-w-72 mt-6">
                 <Link href='/admin/main/routes'>
                     <Button variant='secondary'> Сохранить маршрут</Button>
-
                 </Link>
             </div>
         </>
-    )
+    );
 }
 
-export default phasaB
+export default PhasaB;

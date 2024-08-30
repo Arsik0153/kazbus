@@ -59,7 +59,7 @@ const SelectDate = () => {
                     defaultValue={formattedDate}
                     key={formattedDate}
                     hideKeyboardOnFocus={false}
-                    containerClassName="pt-[30px] pb-[16px]"
+                    containerClassName="xs:pt-[30px] xs:pb-[16px]"
                 />
             </div>
         </div>

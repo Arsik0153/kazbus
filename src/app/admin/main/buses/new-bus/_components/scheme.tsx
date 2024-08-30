@@ -3,52 +3,63 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Button from '@/components/button';
 import Divan from '@/assets/admin/Divan';
+import SeatSchemeBuilder from './seatSchemeBuilder';
 import SeatConfigurator from './seatConfigurator';
+import Handlebar from '@/assets/admin/Handlebar';
+import ChooseRow from '@/assets/admin/ChooseRow';
+import ChooseCol from '@/assets/admin/ChooseCol';
+import Cursor from '@/assets/admin/Cursor';
 
-interface SchemeProps {
-    selectedFloor: 'first' | 'second' | 'third' | null;
+type SchemeProps = {
+    selectedFloor: 1 | 2 | 3 | null;
     seatCount: number;
-}
-
+};
 
 const Scheme: React.FC<SchemeProps> = ({ selectedFloor, seatCount }) => {
+    const [selectedSeat, setSelectedSeat] = useState<string>('A');
+
+    const options = [
+        { label: 'Установка мест', value: '01' },
+        { label: 'Установка места водителя', value: 'handlebar', icon: <Handlebar color='#A0A0A0' /> },
+        { label: 'Установка прохода', value: '/' },
+    ];
+
     return (
-        <div className="flex flex-col w-3/4">
-            <p className="text-2xl font-semibold text-[#4A4A4A]">Задать схему автобуса</p>
+        <div className="flex flex-col">
+            <p className="text-2xl mb-5 font-semibold text-[#4A4A4A]">Задать схему автобуса</p>
             {selectedFloor && seatCount ? (
                 <>
-                    <div className="flex flex-row mt-5 gap-3 items-start w-full">
-                        <SeatConfigurator
-                            label="Установка мест"
-                            value="01"
-                            // isActive={activeButton === '01'}
-                            // onClick={() => handleButtonClick('01')}
-                        />
-                        <SeatConfigurator
-                            label="Установка места водителя"
-                            value="02"
-                            // isActive={activeButton === '02'}
-                            // onClick={() => handleButtonClick('02')}
-                        />
-                        <SeatConfigurator
-                            label="Установка прохода"
-                            value="03"
-                            // isActive={activeButton === '03'}
-                            // onClick={() => handleButtonClick('03')}
-                        />
-                    </div>
-
-
-                    <div className="w-full flex flex-col gap-4 py-[60px] px-11 rounded-[10px] bg-[#F1F5F9] my-5">
-                        <Divan color='#E23333' />
-                        <p className="text-2xl font-semibold text-[#4A4A4A]">
-                            Вы выбрали {selectedFloor}/null этаж и указали {seatCount}/number посадочных мест.
-                        </p>
+                    <SeatConfigurator
+                        options={options}
+                        selectedValue={selectedSeat}
+                        onChange={setSelectedSeat}
+                    />
+                    <div className="w-full flex flex-col gap-4 px-6 pt-6 pb-12 rounded-[10px] bg-[#F1F5F9] my-5">
+                        <div className="flex flex-row justify-between mb-8">
+                            <div className="flex flex-row items-center gap-9">
+                                <p className="flex flex-row gap-4 items-center text-base font-medium text-[#4A4A4A]">
+                                    <ChooseCol color='#4A4A4A' />
+                                    Добавить ряд снизу
+                                </p>
+                                <p className="flex flex-row gap-4 items-center text-base font-medium text-[#4A4A4A]">
+                                    <ChooseRow color='#4A4A4A' />
+                                    Добавить ряд сбоку
+                                </p>
+                            </div>
+                            <p className="flex flex-row gap-4 items-center text-base font-medium text-[#4A4A4A]">
+                                <Cursor color='#E23333' />
+                                Два клика - удалить
+                            </p>
+                        </div>
+                        <SeatSchemeBuilder 
+                            selectedFloor={selectedFloor} 
+                            seatCount={seatCount} 
+                            selectedSeat={selectedSeat} // Передаем selectedSeat
+                        /> 
                     </div>
                 </>
-
             ) : (
-                <div className="w-full flex flex-col gap-4 py-[60px] px-11 rounded-[10px] bg-[#F1F5F9] my-5">
+                <div className="flex w-3/4 flex-col gap-4 py-[60px] px-11 rounded-[10px] bg-[#F1F5F9] my-5">
                     <Divan color='#E23333' />
                     <p className="text-2xl font-semibold text-[#4A4A4A]">
                         Укажите количество посадочных мест для создания схемы
@@ -61,6 +72,5 @@ const Scheme: React.FC<SchemeProps> = ({ selectedFloor, seatCount }) => {
         </div>
     );
 };
-
 
 export default Scheme;

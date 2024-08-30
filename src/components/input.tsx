@@ -28,7 +28,7 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
     return (
         <div
             className={cn(
-                'relative w-full rounded-[10px] border border-solid pb-[19px] pt-[35px]',
+                'xs:pb-[19px] xs:pt-[35px] relative w-full rounded-[10px] border border-solid pb-[10px] pt-[24px]',
                 {
                     'bg-[#ffffff]': variant === 'primary',
                     'bg-none': variant === 'secondary',
@@ -69,7 +69,7 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
             <label
                 htmlFor={id}
                 className={clsx(
-                    'pointer-events-none absolute top-1/2 origin-top-left -translate-y-1/2 transform font-medium transition-all duration-200 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-bold peer-focus:text-[#A0A0A0] peer-[:not(:placeholder-shown)]:-translate-y-6 peer-[:not(:placeholder-shown)]:scale-75 peer-[:not(:placeholder-shown)]:font-bold peer-[:not(:placeholder-shown)]:text-[#A0A0A0]',
+                    'xs:text-base pointer-events-none absolute top-1/2 origin-top-left -translate-y-1/2 transform text-[14px] font-medium transition-all duration-200 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-bold peer-focus:text-[#A0A0A0] peer-[:not(:placeholder-shown)]:-translate-y-6 peer-[:not(:placeholder-shown)]:scale-75 peer-[:not(:placeholder-shown)]:font-bold peer-[:not(:placeholder-shown)]:text-[#A0A0A0]',
                     {
                         'left-14': iconLeft,
                         'left-8': !iconLeft,

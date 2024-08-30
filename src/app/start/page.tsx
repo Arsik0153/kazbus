@@ -1,12 +1,23 @@
-import React from 'react';
+'use client';
+import React, { Suspense, useEffect } from 'react';
 import Image from 'next/image';
 import Button from '@/components/button';
 import EllipsStart from '@/assets/EllipsStart';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 const Start = () => {
+    const searchParams = useSearchParams();
+    const isFullScreen = searchParams.get('isFullScreen');
+
+    useEffect(() => {
+        if (isFullScreen === 'false') {
+            localStorage.setItem('hideGap', 'true');
+        }
+    }, [isFullScreen]);
+
     return (
-        <div className="relative flex h-full h-screen w-screen flex-col items-center justify-center bg-gradient-to-t from-[#E32828] to-[#E13535]">
+        <div className="relative flex h-full w-screen flex-col items-center justify-center bg-gradient-to-t from-[#E32828] to-[#E13535]">
             <div className="absolute left-0 top-0 w-full">
                 <EllipsStart />
             </div>
@@ -14,7 +25,7 @@ const Start = () => {
                 src="/assets/main/startPic.png"
                 alt="Откуда и куда угодно"
                 width={280}
-                height={280}
+                height={288}
             />
             <div className="my-11 flex flex-col items-center gap-3 px-8">
                 <p className="text-center text-4xl font-bold text-white">
@@ -31,4 +42,12 @@ const Start = () => {
     );
 };
 
-export default Start;
+const StartSuspended = () => {
+    return (
+        <Suspense>
+            <Start />
+        </Suspense>
+    );
+};
+
+export default StartSuspended;

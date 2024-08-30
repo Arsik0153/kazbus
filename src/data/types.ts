@@ -1,5 +1,5 @@
 export type AvailableDate = {
-    price: number;
+    price: string;
     date: string;
 };
 
@@ -53,6 +53,16 @@ export type BusStation = {
     point: Point;
 };
 
+type Weekdays = {
+    Monday: boolean;
+    Tuesday: boolean;
+    Wednesday: boolean;
+    Thursday: boolean;
+    Friday: boolean;
+    Saturday: boolean;
+    Sunday: boolean;
+};
+
 export type Trip = {
     id: number;
     from_point: Point;
@@ -61,7 +71,6 @@ export type Trip = {
     to_bus_station: BusStation;
     from_datetime: string;
     to_datetime: string;
-    bus: string;
     price: string;
 };
 

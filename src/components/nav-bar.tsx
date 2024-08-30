@@ -7,6 +7,7 @@ import User from '../assets/user';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import clsx from 'clsx';
+import { cn } from '@/utils/cn';
 
 const getColor = (pathname: string, url: string) => {
     return url.startsWith(pathname) ? '#FFF' : '#C8C8C8';
@@ -38,6 +39,12 @@ const LINKS = [
 const NavBar = () => {
     const pathname = usePathname();
     const [isTabbarHidden, setIsTabbarHidden] = useState(false);
+    const [hideGap, setHideGap] = React.useState(false);
+
+    useEffect(() => {
+        const gap = !!localStorage.getItem('hideGap');
+        setHideGap(gap);
+    }, []);
 
     useEffect(() => {
         const handleFocus = (event: FocusEvent) => {
@@ -75,7 +82,15 @@ const NavBar = () => {
         <div
             className={`fixed bottom-0 z-10 w-full rounded-t-[10px] bg-white ${isTabbarHidden && 'pointer-events-none opacity-0'}`}
         >
-            <div className="flex w-full items-center justify-between px-[15px] pb-[20px] pt-[10px]">
+            <div
+                className={cn(
+                    'xs:px-[15px] flex w-full items-center justify-between px-[8px]',
+                    {
+                        'xs:pb-[10px] xs:pt-[8px] pb-[5px] pt-[5px]': hideGap,
+                        'pb-[20px] pt-[10px]': !hideGap,
+                    }
+                )}
+            >
                 {LINKS.map((link) => (
                     <Link
                         key={link.href}
@@ -85,7 +100,7 @@ const NavBar = () => {
                                 : link.href
                         }
                         className={clsx(
-                            'flex flex-col items-center gap-2 rounded-[10px] px-[13px] pb-[15px] pt-[10px]',
+                            'xs:px-[13px] xs:pb-[15px] xs:pt-[10px] flex flex-col items-center gap-2 text-nowrap rounded-[10px] px-[10px] pb-[12px] pt-[8px]',
                             {
                                 'bg-[#E23333]': pathname.startsWith(link.href),
                             }
@@ -94,7 +109,7 @@ const NavBar = () => {
                         <link.icon color={getColor(link.href, pathname)} />
                         <div
                             className={clsx(
-                                'text-[12px] font-medium leading-[13.2px]',
+                                'text-center text-[12px] font-medium leading-[13.2px]',
                                 {
                                     'text-white': pathname.startsWith(
                                         link.href

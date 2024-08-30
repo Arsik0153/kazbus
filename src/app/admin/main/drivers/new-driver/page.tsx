@@ -95,9 +95,6 @@ const NewDriver = () => {
     };
 
     return (
-        <form className="mt-6 flex flex-col" 
-        // onSubmit={onSubmit}
-        >
             <p className="text-[42px] font-semibold text-[#4A4A4A]">
                 Добавить водителя
             </p>

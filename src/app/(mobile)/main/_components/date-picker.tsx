@@ -53,7 +53,7 @@ const renderDays = (
                         {date.date()}
                     </div>
                     <div className="text-xs text-[#E74949]">
-                        {price !== null && `${price}`}
+                        {price !== null && `${parseFloat(price).toString()}`}
                     </div>
                 </div>
             </div>
@@ -91,13 +91,21 @@ type Props = {
 const DatePicker = (props: Props) => {
     const { handleSelectDate } = props;
     const months = generateMonths();
-    const { data } = useServerActionQuery(getDatesAction, {
-        input: undefined,
-        queryKey: ['getDates'],
-    });
+
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const router = useRouter();
+
+    const fromParam = searchParams.get('from');
+    const toParam = searchParams.get('to');
+
+    const { data } = useServerActionQuery(getDatesAction, {
+        input: {
+            from: Number(fromParam),
+            to: Number(toParam),
+        },
+        queryKey: ['getDates', fromParam, toParam],
+    });
 
     const handleDayClick = (day: Dayjs) => {
         handleSelectDate();

@@ -117,7 +117,7 @@ const SelectPassengerCount = () => {
                             variant="ghost"
                             iconLeft={<User color="white" />}
                             hideKeyboardOnFocus={false}
-                            containerClassName="pt-[30px] pb-[16px]"
+                            containerClassName="xs:pt-[30px] xs:pb-[16px]"
                         />
                     </div>
                 </button>
