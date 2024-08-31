@@ -10,8 +10,38 @@ import Floors from '@/app/admin/main/buses/new-bus/_components/floors';
 import Scheme from '@/app/admin/main/buses/new-bus/_components/scheme';
 
 const NewBus = () => {
-    const [selectedFloor, setSelectedFloor] = useState< 1 | 2 | 3 | null>(null);
-    const [seatCount, setSeatCount] = useState<number | string>(''); // Состояние для хранения количества мест
+    const cities = [
+        { id: 1, name: 'Алматы' },
+        { id: 2, name: 'Нур-Султан' },
+        { id: 3, name: 'Шымкент' },
+    ];
+
+    const [selectedCity, setSelectedCity] = useState<{ id: number; name: string } | null>(null);
+    const [selectedBrand, setSelectedBrand] = useState<{ id: number; name: string } | null>(null);
+    const [selectedModel, setSelectedModel] = useState<{ id: number; name: string } | null>(null);
+    const [seatCount, setSeatCount] = useState<number | string>(''); 
+    const [selectedFloor, setSelectedFloor] = useState<1 | 2 | 3 | null>(null);
+
+    const handleOptionSelect = (name: string, selectedItem: { id: number; name: string } | null) => {
+        switch (name) {
+            case 'city':
+                setSelectedCity(selectedItem);
+                break;
+            case 'brand':
+                setSelectedBrand(selectedItem);
+                break;
+            case 'model':
+                setSelectedModel(selectedItem);
+                break;
+            default:
+                break;
+        }
+        console.log('Выбранный элемент:', selectedItem);
+    };
+
+    const handleNewItem = (newItem: string) => {
+        console.log('Добавить новый элемент:', newItem);
+    };
 
     return (
         <div className="flex flex-col mb-96 mt-6">
@@ -20,14 +50,26 @@ const NewBus = () => {
             <div className="flex flex-col rounded-[20px] bg-white mt-[14px] py-10 px-8">
                 <p className="text-2xl font-semibold text-[#4A4A4A]">Введите название автобуса</p>
                 <div className="flex flex-col gap-4 items-start mt-4">
-                    <ComboBox name="bus-name" placeholder='Введите название' />
+                    <ComboBox
+                        name="city"
+                        options={cities}
+                        placeholder="Выберите город"
+                        onOptionSelect={handleOptionSelect}
+                        onNewItem={handleNewItem}
+                    />
                 </div>
                 <p className="text-2xl font-semibold text-[#4A4A4A] mt-9">Информация о ТС</p>
                 <div className="flex flex-row gap-6 mt-7">
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col gap-3">
                             <p className="text-base font-medium text-[#4A4A4A]">Марка</p>
-                            <ComboBox name="brand" placeholder='Введите марку' />
+                            <ComboBox
+                                name="brand"
+                                options={cities}
+                                placeholder="Введите марку"
+                                onOptionSelect={handleOptionSelect}
+                                onNewItem={handleNewItem}
+                            />
                         </div>
                         <div className="flex flex-col gap-3">
                             <p className="text-base font-medium text-[#4A4A4A]">VIN</p>
@@ -35,27 +77,31 @@ const NewBus = () => {
                                 mask={[/\d/, /\d/, /\d/, ' ', /[A-Za-z]/, /[A-Za-z]/, /[A-Za-z]/, ' ', /\d/, /\d/]}
                                 placeholder="XXX XXX XXX XXX XXX XX"
                                 className='border text-base font-medium text-[#4A4A4A]  p-5 pt-[12px] pb-[12px] w-full focus:outline-none border-[#A0A0A0] rounded-[10px]'
-                                maxLength={17} // Ограничение длины ввода
-                                maskChar="_" // Используем символ подчеркивания
-
+                                maxLength={17}
+                                maskChar="_"
                             />
                         </div>
                     </div>
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col gap-3">
                             <p className="text-base font-medium text-[#4A4A4A]">Модель</p>
-                            <ComboBox name="model" placeholder='Введите модель' />
+                            <ComboBox
+                                name="model"
+                                options={cities}
+                                placeholder="Введите модель"
+                                onOptionSelect={handleOptionSelect}
+                                onNewItem={handleNewItem}
+                            />
                         </div>
                         <div className="flex flex-col gap-3">
                             <p className="text-base font-medium text-[#4A4A4A]">Количество посадочных мест</p>
                             <InputMask
                                 mask="99"
                                 placeholder='Количество мест'
-                                onChange={(e) => setSeatCount(e.target.value)} // Обновление состояния при вводе
+                                onChange={(e) => setSeatCount(e.target.value)}
                                 className='border text-base font-medium text-[#4A4A4A] p-5 pt-[12px] pb-[12px] w-full focus:outline-none border-[#A0A0A0] rounded-[10px]'
                             />
                         </div>
-
                     </div>
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col gap-3">
@@ -90,7 +136,6 @@ const NewBus = () => {
                     </div>
                 </div>
                 <Scheme selectedFloor={selectedFloor} seatCount={Number(seatCount)} />
-
             </div>
         </div>
     );

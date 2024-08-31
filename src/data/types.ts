@@ -105,6 +105,7 @@ export type Driver = {
 };
 
 export type Bus = {
+    id: number;
     model_stamp: string;
     state_number: string;
     count_of_seats: number;
