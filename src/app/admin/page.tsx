@@ -4,29 +4,48 @@ import Input from '@/components/input';
 import Button from '@/components/button';
 import Link from 'next/link';
 import Image from 'next/image';
+import ErrorMessage from '@/components/error-message';
 // import { useRouter, useSearchParams } from 'next/navigation';
-// import { toast } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
+import { loginAction } from './action';
+import { useServerAction } from 'zsa-react';
+
+import InputPhone from '@/components/inputPhone';
+import Topbar from '@/components/topbar';
+import { adminLoginSchema } from '@/data/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { sanitizePhone } from '@/utils/helper.';
+
+
 
 // bg-[#E32B2B]
 const LoginPage = () => {
-    // const router = useRouter();
-    // const searchParams = useSearchParams();
+    const { execute, isPending } = useServerAction(loginAction, {
+        onSuccess: () => {
+            console.log('success');
+        },
+        onError: (error) => {
+            toast.error(error.err.message);
+        },
+    });
+    const {
+        register,
+        formState: { errors },
+        handleSubmit,
+    } = useForm<z.output<typeof adminLoginSchema>>({
+        resolver: zodResolver(adminLoginSchema),
+    });
 
-    // const userName = searchParams.get('name');
-    // const userPassword = searchParams.get('password');
-
-    // const handleSearchClick = () => {
-    //     if (!userName || !userPassword) {
-    //         // toast.error('Заполните все поля');
-    //         return;
-    //     }
-
-    //     const updatedSearchParams = new URLSearchParams(searchParams);
-    //     router.push('/admin/main?' + updatedSearchParams.toString());
-    // };
-
+    const onSubmit = handleSubmit((data) => {
+        execute({
+            username: sanitizePhone(data.username),
+            password: data.password,
+        });
+    });
     return (
-        <div className="flex items-start justify-center min-h-screen overflow-y-hidden bg-[#E32B2B]">
+        <form onSubmit={onSubmit} className="flex items-start justify-center min-h-screen overflow-y-hidden bg-[#E32B2B]">
             <Image
                 src={'/Ellipse.svg'}
                 width={622}
@@ -56,21 +75,33 @@ const LoginPage = () => {
                         <Input
                             label='Введите ваш логин'
                             id="AdminLogin"
+                            {...register('username')}
+
                         />
+                        <ErrorMessage message={errors.username?.message} />
+
                         <Input
                             label='Введите ваш пароль'
                             id="AdminPassword"
+                            type="password"
+
+                            {...register('password')}
+
                         />
+                        <ErrorMessage message={errors.password?.message} />
+
                         <Button
                             // onClick={handleSearchClick} 
-                            variant='secondary' >
+                            variant='secondary'
+                            loading={isPending}
+                        >
                             Войти в таксопарк
                         </Button>
                     </form>
                 </div>
             </div>
 
-        </div>
+        </form>
     );
 };
 

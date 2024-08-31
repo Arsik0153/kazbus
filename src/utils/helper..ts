@@ -60,3 +60,12 @@ export const dateTimeToReadable = (inputDateTime: string): string => {
     const dateTime = dayjs(inputDateTime);
     return dateTime.format('DD.MM.YYYY HH:mm');
 };
+
+// Пример функции dateToReadable, которая преобразует "HH:MM:SS" в "HH:MM"
+export const timetoReadable = (timeStr: string): string => {
+    if (!timeStr || !/^(\d{2}):(\d{2}):(\d{2})$/.test(timeStr)) {
+        return 'Некорректное время';
+    }
+    const [hours, minutes] = timeStr.split(':');
+    return `${hours}:${minutes}`;
+};
