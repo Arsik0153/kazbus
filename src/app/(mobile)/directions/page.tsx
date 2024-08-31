@@ -18,7 +18,6 @@ const Directions = () => {
             queryKey: ['getPopularDirections'],
         }
     );
-
     if (isPending) {
         return (
             <div className="h-full bg-[var(--gray)] px-5">
@@ -31,7 +30,6 @@ const Directions = () => {
             </div>
         );
     }
-
     return (
         <div className="h-full bg-[var(--gray)] px-5">
             <h1 className="pt-[75px] text-[42px] font-semibold leading-[46.2px] tracking-[-3%] text-[var(--black)]">
@@ -39,21 +37,7 @@ const Directions = () => {
             </h1>
             <div className="mt-3 flex flex-wrap gap-1">
                 <CitySelector />
-                {/* <div className="flex w-fit items-center gap-2 rounded-full border border-[#E74949] px-5 py-[5px] text-sm font-semibold text-[#E74949]">
-                    Из Алматы
-                    <svg
-                        width="10"
-                        height="6"
-                        viewBox="0 0 10 6"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            d="M4.99993 3.78095L8.2998 0.48114L9.2426 1.42395L4.99993 5.66662L0.757324 1.42395L1.70013 0.48114L4.99993 3.78095Z"
-                            fill="#E74949"
-                        />
-                    </svg>
-                </div> */}
+                
                 <div className="w-fit rounded-full border border-[#A0A0A0] px-5 py-[5px] text-sm font-semibold text-[#A0A0A0]">
                     Самые дешевые
                 </div>
@@ -93,5 +77,4 @@ const Directions = () => {
         </div>
     );
 };
-
 export default Directions;

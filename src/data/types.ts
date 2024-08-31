@@ -91,6 +91,22 @@ export type Route = {
     total_travel_time: string;
 };
 
+export type GetRequestData = {
+    departure_time: string;
+    start_date: string;
+    end_date: string;
+    ticket_price: string;
+    frequency: string;
+    weekdays: Weekdays;
+    status: string;
+    route: Route;
+    bus: Bus;
+    driver: number;
+    from_city: string;
+    to_city: string;
+};
+
+
 export type Driver = {
     full_name: string;
     date_of_birth: string;
@@ -105,18 +121,6 @@ export type Bus = {
     is_recumbent: boolean;
 };
 
-export type GetRequestData = {
-    departure_time: string;
-    start_date: string;
-    end_date: string;
-    ticket_price: string;
-    frequency: string;
-    weekdays: Weekdays;
-    status: string;
-    route: Route;
-    bus: Bus;
-    driver: number;
-};
 export type Stop = {
     id: number;
     name: string;
