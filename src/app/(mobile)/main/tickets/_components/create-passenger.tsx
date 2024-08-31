@@ -17,6 +17,7 @@ import toast from 'react-hot-toast';
 import { Profile } from '@/data/user';
 import { User } from './select-passengers';
 import { InputMask } from '@react-input/mask';
+import { useQueryClient } from '@tanstack/react-query';
 
 type Props = {
     onBack: () => void;
@@ -25,9 +26,13 @@ type Props = {
 
 const CreatePassenger = (props: Props) => {
     const { onBack, onAddPassenger } = props;
+    const queryClient = useQueryClient();
 
     const { execute, isPending } = useServerAction(createPassenger, {
         onSuccess: async (data) => {
+            queryClient.invalidateQueries({
+                queryKey: ['passengers'],
+            });
             onAddPassenger(data.data);
             toast.success('Пассажир добавлен');
         },
