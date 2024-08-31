@@ -1,14 +1,11 @@
 'use client';
 import React, { useState } from 'react';
-import ToiletPaper from '@/assets//toilet-paper';
-import HotelBed from '@/assets//hotel-bed';
-import Wifi from '@/assets/wifi';
 import BusMini from '@/assets/bus-mini';
-import { type Ticket } from '@/data/types';
+import { type Ticket as TicketT } from '@/data/types';
 import { dayjsExt } from '@/lib/dayjs';
 
 const StatusBadge = ({ status }: { status?: string }) => {
-    if (status === 'paid') {
+    if (status === 'Payed') {
         return (
             <div className="rounded-[30px] bg-[#7CC71C] px-2 py-1 text-[14px] font-medium leading-[15.4px] text-[#FFFFFF]">
                 Оплачен
@@ -16,7 +13,7 @@ const StatusBadge = ({ status }: { status?: string }) => {
         );
     }
 
-    if (status === 'booked') {
+    if (status === 'Booked') {
         return (
             <div className="rounded-[30px] bg-[#FF2D2D] px-2 py-1 text-[14px] font-medium leading-[15.4px] text-[#FFFFFF]">
                 Забронирован
@@ -41,7 +38,7 @@ const StatusBadge = ({ status }: { status?: string }) => {
 };
 
 type TicketProps = React.HTMLAttributes<HTMLDivElement> & {
-    ticket: Ticket;
+    ticket: TicketT;
     selected?: boolean;
     status?: string;
 };
@@ -83,11 +80,11 @@ const Ticket = ({ ticket, status, selected = false, ...rest }: TicketProps) => {
                         </div>
                     </div>
                     <div className="pb-4">
-                        <StatusBadge status={status} />
+                        <StatusBadge status={ticket.status} />
                     </div>
                 </div>
                 <div className="flex flex-row items-center justify-between">
-                    <div className="flex flex-row gap-5">
+                    <div className="flex flex-row gap-4">
                         <div className="flex flex-row gap-3">
                             <div className="flex flex-col">
                                 <div
