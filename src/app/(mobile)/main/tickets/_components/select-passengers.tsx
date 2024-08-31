@@ -5,13 +5,14 @@ import PassengerCard from '@/components/passenger-card';
 import Link from 'next/link';
 import Button from '@/components/button';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
-import { getUserAction } from '../actions';
+import { getMyPassengersAction, getUserAction } from '../actions';
 import { Steps } from '../types';
 import { useSearchParams } from 'next/navigation';
 import { Profile } from '@/data/user';
 import CreatePassenger from './create-passenger';
+import Spinner from '@/components/spinner';
 
-export type User = Omit<Profile, 'phone_number'> & {
+export type User = Omit<Profile, 'phone_number' | 'email'> & {
     user_id: number;
 };
 
@@ -32,11 +33,19 @@ type Props = {
 const SelectPassengers = (props: Props) => {
     const { setStep, onPassengersSelect } = props;
     const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
-    const [users, setUsers] = useState<User[]>([]);
-    const { data: user } = useServerActionQuery(getUserAction, {
-        input: undefined,
-        queryKey: ['user'],
-    });
+    const { data: user, isPending: isUserPending } = useServerActionQuery(
+        getUserAction,
+        {
+            input: undefined,
+            queryKey: ['user'],
+        }
+    );
+    const { data: passengers, isPending: isPassengersPending } =
+        useServerActionQuery(getMyPassengersAction, {
+            input: undefined,
+            queryKey: ['passengers'],
+        });
+
     const [isNewUserFormOpen, setIsNewUserFormOpen] = useState(false);
 
     const searchParams = useSearchParams();
@@ -69,7 +78,6 @@ const SelectPassengers = (props: Props) => {
     );
 
     const handleAddPassenger = (user: User) => {
-        setUsers((prevSelected) => [...prevSelected, user]);
         setIsNewUserFormOpen(false);
     };
 
@@ -79,6 +87,26 @@ const SelectPassengers = (props: Props) => {
                 onBack={() => setIsNewUserFormOpen(false)}
                 onAddPassenger={handleAddPassenger}
             />
+        );
+    }
+
+    if (isUserPending || isPassengersPending) {
+        return (
+            <>
+                <Topbar onBack={() => setStep(Steps.SelectPlace)}>
+                    <div className="flex flex-col items-center">
+                        Покупка билета
+                    </div>
+                </Topbar>
+                <div className="mt-[42px] flex flex-col px-5">
+                    <p className="mb-4 text-[30px] font-medium text-[#4A4A4A]">
+                        Данные пассажиров
+                    </p>
+                    <div className="flex justify-center gap-3 py-5">
+                        <Spinner size="md" />
+                    </div>
+                </div>
+            </>
         );
     }
 
@@ -99,21 +127,22 @@ const SelectPassengers = (props: Props) => {
                             onClick={() => handlePassengerClick(user)}
                         />
                     )}
-                    {users
-                        .filter(
-                            (selectedUser) =>
-                                selectedUser.user_id !== user?.user_id
-                        )
-                        .map((selectedUser) => (
-                            <PassengerCard
-                                key={selectedUser.user_id}
-                                selected={isSelected(selectedUser)}
-                                user={selectedUser}
-                                onClick={() =>
-                                    handlePassengerClick(selectedUser)
-                                }
-                            />
-                        ))}
+                    {passengers?.length !== 0 &&
+                        passengers
+                            ?.filter(
+                                (selectedUser) =>
+                                    selectedUser.user_id !== user?.user_id
+                            )
+                            .map((selectedUser) => (
+                                <PassengerCard
+                                    key={selectedUser.user_id}
+                                    selected={isSelected(selectedUser)}
+                                    user={selectedUser}
+                                    onClick={() =>
+                                        handlePassengerClick(selectedUser)
+                                    }
+                                />
+                            ))}
                 </div>
                 <Button
                     variant="ghost"

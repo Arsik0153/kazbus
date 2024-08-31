@@ -97,12 +97,12 @@ const Login = () => {
                                 Продолжить
                             </Button>
                         </div>
-                        <Link
+                        {/* <Link
                             href="/start/registration"
                             className="mt-11 text-base font-medium text-white underline"
                         >
                             Перейти к регистрации
-                        </Link>
+                        </Link> */}
                     </div>
                 </>
             )}

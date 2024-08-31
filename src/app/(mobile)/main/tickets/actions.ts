@@ -46,6 +46,42 @@ export const getTicketsAction = createServerAction()
         return result;
     });
 
+export const getMyPassengersAction = createServerAction().handler(async () => {
+    const session = await getSession();
+    if (!session) {
+        throw 'Необходимо авторизоваться';
+    }
+
+    const response = await fetch(
+        `${process.env.API_URL}/accounts/my-passengers/`,
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Token ${session?.user.token}`,
+            },
+        }
+    );
+
+    if (!response.ok) {
+        throw 'Произошла ошибка при получении пассажиров';
+    }
+
+    const result = (await response.json()) as {
+        id: number;
+        full_name: string;
+        document_type: string;
+        document_number_or_iin: string;
+        birth_date: string;
+    }[];
+
+    const passengers: User[] = result.map((passenger) => ({
+        ...passenger,
+        user_id: passenger.id,
+    }));
+
+    return passengers;
+});
+
 export const createPassenger = createServerAction()
     .input(profileSchema)
     .handler(async ({ input }) => {
@@ -115,6 +151,44 @@ export const createTicketAction = createServerAction()
         }
 
         return 'Билет успешно забронирован';
+    });
+
+export const payTicketAction = createServerAction()
+    .input(
+        z.object({
+            ticket_id: z.number(),
+        })
+    )
+    .handler(async ({ input }) => {
+        const session = await getSession();
+
+        if (!session) {
+            throw 'Необходимо авторизоваться';
+        }
+
+        const response = await fetch(
+            `${process.env.API_URL}/payments/pay-ticket/`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Token ${session?.user.token}`,
+                },
+                body: JSON.stringify({
+                    ticket_id: input.ticket_id,
+                }),
+            }
+        );
+
+        if (!response.ok) {
+            console.log(response);
+            const result = await response.json();
+            console.log(result);
+
+            throw 'Произошла ошибка при оплате билета';
+        }
+
+        return 'Билет успешно оплачен';
     });
 
 export const getUserAction = authedProcedure
