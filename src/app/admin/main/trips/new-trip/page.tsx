@@ -4,6 +4,7 @@ import ComboBox from '@/app/admin/main/trips/_components/inputCombo';
 import PhaseA from './_components/phaseA';
 import PhaseB from './_components/phaseB';
 
+
 const NewTrips = () => {
     const [selections, setSelections] = useState<Record<string, any | null>>({
         route: null,
