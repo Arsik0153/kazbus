@@ -52,7 +52,7 @@ const Directions = () => {
                         <div className="flex items-center gap-2">
                             <BusMini color="#E74949" />
                             <p className="text-sm font-medium text-[var(--black)]">
-                                {direction.route.start_city} - {direction.route.end_city}
+                                {direction.from_city} - {direction.to_city}
                             </p>
                         </div>
                         <div className="flex items-end justify-between">
@@ -66,9 +66,9 @@ const Directions = () => {
                         <div className="text-xs flex flex-row gap-2 items-center text-[#A0A0A0]">
                             {direction.bus.have_wifi ? <Wifi /> : ' '}  {direction.bus.have_toilet ? <ToiletPaper /> : ' '} {direction.bus.is_recumbent ? ' ' : <HotelBed />}
                         </div>
-                        <div className="text-xs text-[#A0A0A0]">
+                        {/* <div className="text-xs text-[#A0A0A0]">
                             В пути: {parseFloat(direction.route.total_travel_time) / 3600} ч.
-                        </div>
+                        </div> */}
 
 
                     </div>

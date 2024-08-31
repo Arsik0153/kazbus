@@ -83,6 +83,7 @@ export type Direction = {
     from_datetime: string;
     to_datetime: string;
     price: string;
+    route: Route;
 };
 
 export type Route = {
