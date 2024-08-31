@@ -3,11 +3,7 @@ export type AvailableDate = {
     date: string;
 };
 
-export type City = {
-    id: number;
-    name: string;
-    region: string;
-};
+
 
 export type Ticket = {
     id: number;
@@ -87,12 +83,6 @@ export type Direction = {
     route: Route;
 };
 
-export type Route = {
-    start_city: string;
-    end_city: string;
-    total_travel_time: string;
-};
-
 export type GetRequestData = {
     departure_time: string;
     start_date: string;
@@ -129,7 +119,12 @@ export type Stop = {
     travel_time_from_start: string; // Время в формате "HH:MM:SS"
     stop_time: string; // Время в формате "HH:MM:SS"
 };
-export type Routes = {
+export type City = {
+    id: number;
+    name: string;
+    region: string;
+};
+export type Route = {
     id: number;
     start_city: string;
     end_city: string;
@@ -148,7 +143,7 @@ export type Trips = {
     frequency: string;
     weekdays: Weekdays;
     status: string;
-    route: Routes;
+    route: Route;
     bus: Bus;
     driver: number; // ID водителя
     from_city: string;

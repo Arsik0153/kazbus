@@ -11,18 +11,15 @@ import { adminLoginSchema } from '@/data/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { sanitizePhone } from '@/utils/helper.';
 import { useRouter } from 'next/navigation';
 
 const LoginPage = () => {
     const { execute, isPending } = useServerAction(loginAction, {
         onSuccess: () => {
             console.log('success');
-            // После успешного входа перенаправляем на /admin/main/
             router.push('/admin/main/');
         },
         onError: (error) => {
-            // Проверка типа ошибки и вывод сообщения
             console.log('unsuccess');
 
             const message = error?.err?.message || 'Произошла ошибка';
