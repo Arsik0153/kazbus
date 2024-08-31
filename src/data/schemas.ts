@@ -106,3 +106,25 @@ export const driverSchema = z.object({
             'Неверный формат файла'
         ),
 });
+
+const PassengerSchema = z.object({
+    passenger: z.number().nullable(),
+    place_num: z.number(),
+    place_floor: z.number(),
+});
+
+const TicketsSchema = z.object({
+    direction: z.number(),
+    tickets: z.array(PassengerSchema),
+});
+
+const SingleTicketSchema = z.object({
+    direction: z.number(),
+    place_num: z.number(),
+    place_floor: z.number(),
+});
+
+export const CombinedBookingSchema = z.union([
+    TicketsSchema,
+    SingleTicketSchema,
+]);

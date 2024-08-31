@@ -39,6 +39,7 @@ export type Ticket = {
         is_recumbent: boolean;
     };
     taxi_park: string;
+    status: string;
 };
 
 export type Point = {

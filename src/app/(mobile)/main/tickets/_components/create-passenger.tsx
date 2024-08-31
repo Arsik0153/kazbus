@@ -16,6 +16,7 @@ import { createPassenger } from '../actions';
 import toast from 'react-hot-toast';
 import { Profile } from '@/data/user';
 import { User } from './select-passengers';
+import { InputMask } from '@react-input/mask';
 
 type Props = {
     onBack: () => void;
@@ -96,10 +97,14 @@ const CreatePassenger = (props: Props) => {
                             />
                         </div>
                         <div>
-                            <Input
+                            <InputMask
+                                component={Input}
                                 label="Дата рождения"
                                 id="birth_date"
+                                type="tel"
                                 iconLeft={<Calendar color="#E74949" />}
+                                mask="__.__.____"
+                                replacement="_"
                                 {...register('birth_date')}
                             />
                             <ErrorMessage
