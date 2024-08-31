@@ -73,3 +73,29 @@ export type Trip = {
     to_datetime: string;
     price: string;
 };
+
+export type Driver = {
+    full_name: string;
+    date_of_birth: string;
+};
+
+export type Bus = {
+    model_stamp: string;
+    state_number: string;
+    count_of_seats: number;
+};
+export type Stop = {
+    id: number;
+    name: string;
+    travel_time_from_start: string; // Время в формате "HH:MM:SS"
+    stop_time: string; // Время в формате "HH:MM:SS"
+};
+
+export type Routes = {
+    id: number;
+    start_city: string;
+    end_city: string;
+    total_travel_time: string; // Время в формате "HH:MM:SS"
+    created_at: string; // Дата в формате ISO
+    stops: Stop[];
+};

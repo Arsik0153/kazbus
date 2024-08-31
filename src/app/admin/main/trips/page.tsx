@@ -14,6 +14,9 @@ const Trips = () => {
         console.log(`${name} selected:`, selected);
         // Добавьте здесь необходимую логику для обработки выбора
     };
+    const handleBirthDateChange = () => {
+        console.log('ewfw');
+    };
 
     return (
         <div className="mt-6 flex flex-col">
@@ -50,13 +53,20 @@ const Trips = () => {
                     <div className="flex flex-row items-center">
                         <p className="mr-3 text-base font-medium">C</p>
                         <Suspense>
-                            <CalendarPC />
+                            <CalendarPC
+                                value={null}
+                                onChange={handleBirthDateChange}
+                            />
+
                         </Suspense>
                         <p className="ml-[14px] mr-3 text-base font-medium">
                             По
                         </p>
                         <Suspense>
-                            <CalendarPC />
+                            <CalendarPC
+                                value={null}
+                                onChange={handleBirthDateChange}
+                            />
                         </Suspense>
                         <div className="ml-2 flex flex-row items-center gap-2">
                             <ComboBox

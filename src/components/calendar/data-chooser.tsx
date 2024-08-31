@@ -87,25 +87,30 @@ const getPriceForDate = (date: Dayjs, data: AvailableDate[]) => {
 };
 
 type Props = {
-    handleSelectDate: (date: string) => void;
+    handleSelectDate: (date: Date) => void;
 };
 
-const DatePicker = (props: Props) => {
+const DatePicker: React.FC<Props> = (props) => {
     const { handleSelectDate } = props;
     const months = generateMonths();
+
+    const today = dayjsExt();
+    const dateRange = {
+        from: today.startOf('day').valueOf(),
+        to: today.add(2, 'months').endOf('day').valueOf(),
+    };
+
     const { data } = useServerActionQuery(getDatesAction, {
-        input: {
-            from: 1,
-            to: 2,
-        },
-        queryKey: ['getDates'],
+        input: dateRange,
+        queryKey: ['getDates', dateRange],
     });
+
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const router = useRouter();
 
     const handleDayClick = (day: Dayjs) => {
-        handleSelectDate(day.format('DD.MM.YYYY'));
+        handleSelectDate(day.toDate());
     };
 
     return (
