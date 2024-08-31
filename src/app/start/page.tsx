@@ -35,7 +35,7 @@ const Start = () => {
                     Самые дешевые билеты на автобусы в другие города и страны
                 </p>
             </div>
-            <Link href="/start/registration" className="w-full px-8">
+            <Link href="/start/login" className="w-full px-8">
                 <Button> Начать поиски</Button>
             </Link>
         </div>

@@ -2,28 +2,50 @@
 import React from 'react';
 import Input from '@/components/input';
 import Button from '@/components/button';
-import Link from 'next/link';
 import Image from 'next/image';
-// import { useRouter, useSearchParams } from 'next/navigation';
-// import { toast } from 'react-hot-toast';
+import ErrorMessage from '@/components/error-message';
+import { toast } from 'react-hot-toast';
+import { loginAction } from './action';
+import { useServerAction } from 'zsa-react';
+import { adminLoginSchema } from '@/data/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { sanitizePhone } from '@/utils/helper.';
+import { useRouter } from 'next/navigation';
 
-// bg-[#E32B2B]
 const LoginPage = () => {
-    // const router = useRouter();
-    // const searchParams = useSearchParams();
+    const { execute, isPending } = useServerAction(loginAction, {
+        onSuccess: () => {
+            console.log('success');
+            // После успешного входа перенаправляем на /admin/main/
+            router.push('/admin/main/');
+        },
+        onError: (error) => {
+            // Проверка типа ошибки и вывод сообщения
+            console.log('unsuccess');
 
-    // const userName = searchParams.get('name');
-    // const userPassword = searchParams.get('password');
+            const message = error?.err?.message || 'Произошла ошибка';
+            toast.error(message);
+        },
+    });
 
-    // const handleSearchClick = () => {
-    //     if (!userName || !userPassword) {
-    //         // toast.error('Заполните все поля');
-    //         return;
-    //     }
+    const {
+        register,
+        formState: { errors },
+        handleSubmit,
+    } = useForm<z.output<typeof adminLoginSchema>>({
+        resolver: zodResolver(adminLoginSchema),
+    });
 
-    //     const updatedSearchParams = new URLSearchParams(searchParams);
-    //     router.push('/admin/main?' + updatedSearchParams.toString());
-    // };
+    const router = useRouter(); 
+
+    const onSubmit = handleSubmit((data) => {
+        execute({
+            username: (data.username),
+            password: data.password,
+        });
+    });
 
     return (
         <div className="flex items-start justify-center min-h-screen overflow-y-hidden bg-[#E32B2B]">
@@ -48,28 +70,34 @@ const LoginPage = () => {
                     width={80}
                     height={80}
                     alt={'Logo'}
-
                 />
                 <div className="flex flex-col gap-4 bg-white px-6 pt-11 pb-8 rounded-[20px] shadow-md w-full max-w-[340px]">
                     <h2 className="text-4xl font-bold text-center text-[#E32B2B]">Авторизация таксопарка</h2>
-                    <form className='flex flex-col gap-2'>
+                    <form onSubmit={onSubmit} className='flex flex-col gap-2'>
                         <Input
                             label='Введите ваш логин'
                             id="AdminLogin"
+                            {...register('username')}
                         />
+                        <ErrorMessage message={errors.username?.message} />
+
                         <Input
                             label='Введите ваш пароль'
                             id="AdminPassword"
+                            type="password"
+                            {...register('password')}
                         />
+                        <ErrorMessage message={errors.password?.message} />
+
                         <Button
-                            // onClick={handleSearchClick} 
-                            variant='secondary' >
+                            variant='secondary'
+                            loading={isPending}
+                        >
                             Войти в таксопарк
                         </Button>
                     </form>
                 </div>
             </div>
-
         </div>
     );
 };

@@ -79,7 +79,11 @@ const Booking = (props: Props) => {
                     >
                         <Kaspi /> Оплатить через Kaspi.kz
                     </Button>
-                    <Button variant="ghost" className="border border-[#D21F1F]">
+                    <Button
+                        variant="ghost"
+                        className="border border-[#D21F1F]"
+                        onClick={() => setStep(Steps.Payment)}
+                    >
                         Оплатить банковской картой
                     </Button>
                 </div>

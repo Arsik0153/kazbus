@@ -91,7 +91,15 @@ export type Route = {
     total_travel_time: string;
 };
 
+export type Driver = {
+    full_name: string;
+    date_of_birth: string;
+};
+
 export type Bus = {
+    model_stamp: string;
+    state_number: string;
+    count_of_seats: number;
     have_toilet: boolean;
     have_wifi: boolean;
     is_recumbent: boolean;
@@ -108,6 +116,35 @@ export type GetRequestData = {
     route: Route;
     bus: Bus;
     driver: number;
+};
+export type Stop = {
+    id: number;
+    name: string;
+    travel_time_from_start: string; // Время в формате "HH:MM:SS"
+    stop_time: string; // Время в формате "HH:MM:SS"
+};
+export type Routes = {
+    id: number;
+    start_city: string;
+    end_city: string;
+    total_travel_time: string; // Время в формате "HH:MM:SS"
+    created_at: string; // Дата в формате ISO
+    stops: Stop[];
+};
+
+
+export type Trips = {
+    id: number;
+    departure_time: string; // Время в формате "HH:MM:SS"
+    start_date: string; // Дата в формате "YYYY-MM-DD"
+    end_date: string; // Дата в формате "YYYY-MM-DD"
+    ticket_price: string; // Цена в виде строки
+    frequency: string;
+    weekdays: Weekdays;
+    status: string;
+    route: Routes;
+    bus: Bus;
+    driver: number; // ID водителя
     from_city: string;
     to_city: string;
 };
