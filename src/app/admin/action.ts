@@ -2,41 +2,13 @@
 
 import { z } from 'zod';
 import { createServerAction } from 'zsa';
-import { loginSchema } from '@/data/schemas';
+import { adminLoginSchema } from '@/data/schemas';
 import { getSession, login } from '@/lib/auth';
-import { redirect } from 'next/navigation';
-
-export const checkLoginAction = createServerAction()
-    .input(loginSchema)
-    .handler(async ({ input }) => {
-        const session = await getSession();
-        if (session) {
-            throw new Error('Вход уже выполнен');
-        }
-
-        try {
-            await login({
-                phone: input.phone_number,
-                password: input.password,
-            });
-        } catch (error) {
-            throw error;
-        }
-
-        redirect('/profile');
-
-        return 'Вход успешно выполнен';
-    });
 
 export const loginAction = createServerAction()
-    .input(
-        z.object({
-            username: z.string().min(1, 'Логин обязателен'),
-            password: z.string().min(1, 'Пароль обязателен'),
-        })
-    )
+    .input(adminLoginSchema)
     .handler(async ({ input }) => {
-        const response = await fetch(`${process.env.API_URL}/auth/login/`, {
+        const response = await fetch(`${process.env.API_URL}/accounts/login/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -54,8 +26,10 @@ export const loginAction = createServerAction()
         }
 
         const data = await response.json();
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('authToken', data.token);
+        }
 
-        // Предположим, что ответ содержит токен и другую информацию о сессии
         return {
             token: data.token,
             user: data.user,

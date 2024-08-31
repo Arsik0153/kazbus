@@ -2,34 +2,34 @@
 import React from 'react';
 import Input from '@/components/input';
 import Button from '@/components/button';
-import Link from 'next/link';
 import Image from 'next/image';
 import ErrorMessage from '@/components/error-message';
-// import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { loginAction } from './action';
 import { useServerAction } from 'zsa-react';
-
-import InputPhone from '@/components/inputPhone';
-import Topbar from '@/components/topbar';
 import { adminLoginSchema } from '@/data/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { sanitizePhone } from '@/utils/helper.';
+import { useRouter } from 'next/navigation';
 
-
-
-// bg-[#E32B2B]
 const LoginPage = () => {
     const { execute, isPending } = useServerAction(loginAction, {
         onSuccess: () => {
             console.log('success');
+            // После успешного входа перенаправляем на /admin/main/
+            router.push('/admin/main/');
         },
         onError: (error) => {
-            toast.error(error.err.message);
+            // Проверка типа ошибки и вывод сообщения
+            console.log('unsuccess');
+
+            const message = error?.err?.message || 'Произошла ошибка';
+            toast.error(message);
         },
     });
+
     const {
         register,
         formState: { errors },
@@ -38,14 +38,17 @@ const LoginPage = () => {
         resolver: zodResolver(adminLoginSchema),
     });
 
+    const router = useRouter(); 
+
     const onSubmit = handleSubmit((data) => {
         execute({
-            username: sanitizePhone(data.username),
+            username: (data.username),
             password: data.password,
         });
     });
+
     return (
-        <form onSubmit={onSubmit} className="flex items-start justify-center min-h-screen overflow-y-hidden bg-[#E32B2B]">
+        <div className="flex items-start justify-center min-h-screen overflow-y-hidden bg-[#E32B2B]">
             <Image
                 src={'/Ellipse.svg'}
                 width={622}
@@ -67,16 +70,14 @@ const LoginPage = () => {
                     width={80}
                     height={80}
                     alt={'Logo'}
-
                 />
                 <div className="flex flex-col gap-4 bg-white px-6 pt-11 pb-8 rounded-[20px] shadow-md w-full max-w-[340px]">
                     <h2 className="text-4xl font-bold text-center text-[#E32B2B]">Авторизация таксопарка</h2>
-                    <form className='flex flex-col gap-2'>
+                    <form onSubmit={onSubmit} className='flex flex-col gap-2'>
                         <Input
                             label='Введите ваш логин'
                             id="AdminLogin"
                             {...register('username')}
-
                         />
                         <ErrorMessage message={errors.username?.message} />
 
@@ -84,14 +85,11 @@ const LoginPage = () => {
                             label='Введите ваш пароль'
                             id="AdminPassword"
                             type="password"
-
                             {...register('password')}
-
                         />
                         <ErrorMessage message={errors.password?.message} />
 
                         <Button
-                            // onClick={handleSearchClick} 
                             variant='secondary'
                             loading={isPending}
                         >
@@ -100,8 +98,7 @@ const LoginPage = () => {
                     </form>
                 </div>
             </div>
-
-        </form>
+        </div>
     );
 };
 
