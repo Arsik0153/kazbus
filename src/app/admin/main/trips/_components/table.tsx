@@ -4,7 +4,7 @@ import Pulse from '@/components/admin/pulse';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
 import { getTripsAction } from '../action';
 import Spinner from '@/components/spinner';
-import { timetoReadable } from '@/utils/helper.';
+// import { timetoReadable } from '@/utils/helper.';
 
 const Table: React.FC = () => {
     const [isActive, setIsActive] = useState(false);
@@ -68,7 +68,7 @@ const Table: React.FC = () => {
                 {data?.map((trip) => (
                     <tr className="bg-[#F1F5F9] px-6" key={trip.id}>
                         <td className="px-6 rounded-l-[10px] text-base font-bold text-[#E74949]">
-                            {timetoReadable(trip.departure_time)}                        
+                            {trip.departure_time}                    
                         </td>
                         <td className="text-base font-bold text-[#E74949]">
                             {trip.from_city} - {trip.to_city}
