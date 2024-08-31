@@ -4,4 +4,5 @@ export enum Steps {
     Passengers = 'Passengers',
     Contacts = 'Contacts',
     Booking = 'Booking',
+    Payment = 'Payment',
 }

@@ -12,6 +12,7 @@ import { Steps } from './types';
 import { useServerAction } from 'zsa-react';
 import { createTicketAction } from './actions';
 import toast from 'react-hot-toast';
+import Payment from './_components/payment';
 
 const TicketPageSuspended = () => {
     const [step, setStep] = useState<Steps>(Steps.SelectTicket);
@@ -85,6 +86,9 @@ const TicketPageSuspended = () => {
                     setStep={setStep}
                     selectedTicket={selectedTicket}
                 />
+            )}
+            {step === Steps.Payment && (
+                <Payment selectedTicket={selectedTicket} />
             )}
         </Suspense>
     );
