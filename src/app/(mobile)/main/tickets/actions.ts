@@ -1,7 +1,11 @@
 'use server';
 
 import { authedProcedure } from '@/actions';
-import { bookTicketSchema, profileSchema } from '@/data/schemas';
+import {
+    bookTicketSchema,
+    CombinedBookingSchema,
+    profileSchema,
+} from '@/data/schemas';
 import { Ticket } from '@/data/types';
 import { getSession } from '@/lib/auth';
 import { dateToDTO } from '@/utils/helper.';
@@ -121,7 +125,7 @@ export const createPassenger = createServerAction()
     });
 
 export const createTicketAction = createServerAction()
-    .input(bookTicketSchema)
+    .input(CombinedBookingSchema)
     .handler(async ({ input }) => {
         const session = await getSession();
 
@@ -150,7 +154,10 @@ export const createTicketAction = createServerAction()
             throw 'Произошла ошибка при бронировании билета';
         }
 
-        return 'Билет успешно забронирован';
+        const result = await response.json();
+        console.log(result);
+
+        return result;
     });
 
 export const payTicketAction = createServerAction()
@@ -165,6 +172,7 @@ export const payTicketAction = createServerAction()
         if (!session) {
             throw 'Необходимо авторизоваться';
         }
+        console.log(input.ticket_id);
 
         const response = await fetch(
             `${process.env.API_URL}/payments/pay-ticket/`,

@@ -2,16 +2,21 @@ import Button from '@/components/button';
 import { Ticket } from '@/data/types';
 import { payTicketAction } from '../actions';
 import { useServerAction } from 'zsa-react';
+import BackIcon from '@/assets/shared/back-icon';
+import { Steps } from '../types';
+import { useRouter } from 'next/navigation';
 
 type Props = {
-    selectedTicket: Ticket | null;
+    ticked_id: number;
+    setStep: (step: Steps) => void;
 };
 
 const Payment = (props: Props) => {
-    const { selectedTicket } = props;
+    const { ticked_id, setStep } = props;
+    const router = useRouter();
     const { execute, isPending } = useServerAction(payTicketAction, {
         onSuccess: () => {
-            console.log('success');
+            router.push('/my-tickets');
         },
         onError: (data) => {
             console.log(data);
@@ -20,14 +25,20 @@ const Payment = (props: Props) => {
 
     const handleSubmit = () => {
         execute({
-            ticket_id: selectedTicket?.id || 0,
+            ticket_id: ticked_id,
         });
     };
 
     return (
         <>
             <div className="h-full bg-[var(--gray)] px-5">
-                <h1 className="pt-[75px] text-[42px] font-semibold leading-[46.2px] tracking-[-3%] text-[var(--black)]">
+                <button
+                    onClick={() => setStep(Steps.Booking)}
+                    className="pt-[75px]"
+                >
+                    <BackIcon color="#4A4A4A" width={17} height={22} />
+                </button>
+                <h1 className="pt-[25px] text-[42px] font-semibold leading-[46.2px] tracking-[-3%] text-[var(--black)]">
                     Оплата банковской картой
                 </h1>
 
@@ -41,7 +52,7 @@ const Payment = (props: Props) => {
                     <input
                         type="text"
                         id="cardnumber"
-                        className="mt-2 h-[70px] w-full rounded-[10px] border border-white bg-[#FFFFFF14] px-4 text-white placeholder:text-white focus:outline-none"
+                        className="hide-tabbar mt-2 h-[70px] w-full rounded-[10px] border border-white bg-[#FFFFFF14] px-4 text-white placeholder:text-white focus:outline-none"
                         placeholder="XXXX - XXXX - XXXX - XXXX"
                     />
                     <div className="flex gap-7">
@@ -55,7 +66,7 @@ const Payment = (props: Props) => {
                             <input
                                 type="text"
                                 id="date"
-                                className="h-[70px] w-[120px] rounded-[10px] border border-white bg-[#FFFFFF14] px-4 text-white placeholder:text-white focus:outline-none"
+                                className="hide-tabbar h-[70px] w-[120px] rounded-[10px] border border-white bg-[#FFFFFF14] px-4 text-white placeholder:text-white focus:outline-none"
                                 placeholder="MM/YY"
                             />
                         </div>
@@ -69,7 +80,7 @@ const Payment = (props: Props) => {
                             <input
                                 type="text"
                                 id="cvv"
-                                className="h-[70px] w-[100px] rounded-[10px] border border-white bg-[#FFFFFF14] px-4 text-white placeholder:text-white focus:outline-none"
+                                className="hide-tabbar h-[70px] w-[100px] rounded-[10px] border border-white bg-[#FFFFFF14] px-4 text-white placeholder:text-white focus:outline-none"
                                 placeholder="XXX"
                             />
                         </div>
