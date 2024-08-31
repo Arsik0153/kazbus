@@ -117,16 +117,28 @@ const SelectTicket = (props: Props) => {
             </Topbar>
             <div className="my-5 px-4">
                 <div className="flex flex-wrap gap-1">
-                    <div className="w-fit rounded-full border border-[#E74949] px-5 py-[5px] text-sm font-semibold text-[#E74949]">
-                        Самые дешевые
-                    </div>
-                    <div className="w-fit rounded-full border border-[#A0A0A0] px-5 py-[5px] text-sm font-semibold text-[#A0A0A0]">
-                        Быстрые
-                    </div>
-                    <div className="w-fit rounded-full border border-[#A0A0A0] px-5 py-[5px] text-sm font-semibold text-[#A0A0A0]">
-                        Лежачие
-                    </div>
+                    <label className="cursor-pointer">
+                        <input type="radio" name="options" value="cheap" className="sr-only peer" />
+                        <p className="w-fit rounded-full border border-[#A0A0A0] px-5 py-[5px] text-sm font-semibold text-[#A0A0A0] peer-checked:border-[#E74949] peer-checked:text-[#E74949]">
+                            Самые дешевые
+                        </p>
+                    </label>
+
+                    <label className="cursor-pointer">
+                        <input type="radio" name="options" value="fast" className="sr-only peer" />
+                        <p className="w-fit rounded-full border border-[#A0A0A0] px-5 py-[5px] text-sm font-semibold text-[#A0A0A0]  peer-checked:border-[#E74949] peer-checked:text-[#E74949]">
+                            Быстрые
+                        </p>
+                    </label>
+
+                    <label className="cursor-pointer">
+                        <input type="radio" name="options" value="lying" className="sr-only peer" />
+                        <p className="w-fit rounded-full border border-[#A0A0A0] px-5 py-[5px] text-sm font-semibold text-[#A0A0A0]  peer-checked:border-[#E74949] peer-checked:text-[#E74949]">
+                            Лежачие
+                        </p>
+                    </label>
                 </div>
+
 
                 <div className="mt-3">
                     {tickets?.map((ticket) => (

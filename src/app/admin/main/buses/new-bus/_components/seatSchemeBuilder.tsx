@@ -12,7 +12,7 @@ const SeatSchemeBuilder: React.FC<SeatSchemeBuilderProps> = ({ selectedFloor, se
     
     return (
         <div>
-            <p>Выбранное место: {selectedSeat}</p>
+            <p>Установить место: {selectedSeat}</p>
             <p>Этажей: {selectedFloor}</p>
             <p>Посадочных мест: {seatCount}</p>
             {/* Остальной код для построения схемы */}

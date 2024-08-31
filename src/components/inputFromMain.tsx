@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 type InputProps = React.HTMLProps<HTMLInputElement> & {
     iconLeft?: React.ReactNode;
@@ -13,7 +14,7 @@ const StyledInput: React.FC<InputProps> = (props) => {
     return (
         <div className="xs:py-[30px] relative flex max-h-[72px] w-full flex-row items-center gap-4 rounded-[10px] border border-[#D1D1D1] bg-[#FFFFFF29] px-[20px] py-[21px]">
             {iconLeft && (
-                <div className="absolute left-5 top-1/2 -translate-y-1/2 transform">
+                <div className="absolute left-5 z-10 top-1/2 -translate-y-1/2 transform">
                     {iconLeft}
                 </div>
             )}

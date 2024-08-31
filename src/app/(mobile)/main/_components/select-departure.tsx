@@ -7,6 +7,7 @@ import { useServerActionQuery } from '@/lib/server-action-hooks';
 import { getCitiesAction } from '../actions';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { City } from '@/data/types';
+import Link from 'next/link';
 
 const SelectDeparture = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -68,7 +69,7 @@ const SelectDeparture = () => {
                 <div className="fixed inset-0 z-30 h-full min-h-screen w-full overflow-auto bg-[var(--bg)]">
                     <Topbar className="mx-0 w-full">
                         <InputFromMain
-                            iconLeft={<ArrowLeftIcon color="white" />}
+                            iconLeft={<Link href='/main'><ArrowLeftIcon color="white" /></Link>}
                             id="whereFrom"
                             label="Откуда вы отправляетесь?"
                             onChange={handleInputChange}

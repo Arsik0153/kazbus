@@ -75,6 +75,40 @@ export type Trip = {
     price: string;
 };
 
+export type Direction = {
+    id: number;
+    from_point: Point;
+    to_point: Point;
+    from_bus_station: BusStation;
+    to_bus_station: BusStation;
+    from_datetime: string;
+    to_datetime: string;
+    price: string;
+    route: Route;
+};
+
+export type Route = {
+    start_city: string;
+    end_city: string;
+    total_travel_time: string;
+};
+
+export type GetRequestData = {
+    departure_time: string;
+    start_date: string;
+    end_date: string;
+    ticket_price: string;
+    frequency: string;
+    weekdays: Weekdays;
+    status: string;
+    route: Route;
+    bus: Bus;
+    driver: number;
+    from_city: string;
+    to_city: string;
+};
+
+
 export type Driver = {
     full_name: string;
     date_of_birth: string;
@@ -95,7 +129,6 @@ export type Stop = {
     travel_time_from_start: string; // Время в формате "HH:MM:SS"
     stop_time: string; // Время в формате "HH:MM:SS"
 };
-
 export type Routes = {
     id: number;
     start_city: string;
