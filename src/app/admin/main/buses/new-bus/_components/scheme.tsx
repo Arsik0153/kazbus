@@ -36,7 +36,7 @@ const Scheme: React.FC<SchemeProps> = ({ selectedFloor, seatCount }) => {
             <p className="text-2xl mb-5 font-semibold text-[#4A4A4A]">Задать схему автобуса</p>
             {selectedFloor && seatCount ? (
                 <>
-                    <SeatConfigurator
+                <SeatConfigurator
                         options={options}
                         selectedValue={selectedSeat}
                         onChange={setSelectedSeat}
@@ -70,13 +70,13 @@ const Scheme: React.FC<SchemeProps> = ({ selectedFloor, seatCount }) => {
                                 Два клика - удалить
                             </p>
                         </div>
-                        <SeatSchemeBuilder 
-                            selectedFloor={selectedFloor} 
-                            seatCount={seatCount} 
-                            selectedSeat={selectedSeat} 
+                        <SeatSchemeBuilder
+                            selectedFloor={selectedFloor}
+                            seatCount={seatCount}
+                            selectedSeat={selectedSeat}
                             columns={columns}
                             rows={rows}
-                        /> 
+                        />
                     </div>
                 </>
             ) : (

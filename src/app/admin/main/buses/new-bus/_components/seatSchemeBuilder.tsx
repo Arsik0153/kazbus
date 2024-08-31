@@ -11,27 +11,37 @@ type SeatSchemeBuilderProps = {
 };
 
 const SeatSchemeBuilder: React.FC<SeatSchemeBuilderProps> = ({ selectedFloor, seatCount, selectedSeat, columns, rows }) => {
-    const [seats, setSeats] = useState<string[]>(Array(rows * columns).fill(''));
+    // Структура хранения мест для каждого этажа
+    const [seats, setSeats] = useState({
+        1: Array(rows * columns).fill(''),
+        2: Array(rows * columns).fill(''),
+        3: Array(rows * columns).fill(''),
+    });
 
     const handleSeatClick = (index: number) => {
+        if (selectedFloor === null) return; // Если этаж не выбран, выходим
+
         setSeats((prevSeats) => {
-            const newSeats = [...prevSeats];
-            const seatValue = newSeats[index];
+            const newSeats = { ...prevSeats };
+            const floorSeats = [...newSeats[selectedFloor]];
+            const seatValue = floorSeats[index];
 
             if (seatValue) {
                 if (seatValue.match(/^\d+$/)) {
                     // Удаление номера пассажира и пересчет последующих номеров
-                    const updatedSeats = newSeats.map((seat, i) => {
+                    const updatedSeats = floorSeats.map((seat, i) => {
                         if (i > index && seat.match(/^\d+$/)) {
                             return (parseInt(seat) - 1).toString().padStart(2, '0');
                         }
                         return seat;
                     });
                     updatedSeats[index] = ''; // Очистить место
-                    return updatedSeats;
+                    newSeats[selectedFloor] = updatedSeats;
+                    return newSeats;
                 } else {
                     // Удаление любых других значений
-                    newSeats[index] = '';
+                    floorSeats[index] = '';
+                    newSeats[selectedFloor] = floorSeats;
                     return newSeats;
                 }
             } else {
@@ -39,41 +49,48 @@ const SeatSchemeBuilder: React.FC<SeatSchemeBuilderProps> = ({ selectedFloor, se
                 if (selectedSeat === '01') {
                     // Найти максимальный номер и добавить следующий
                     const maxSeatNumber = Math.max(
-                        ...newSeats.map((seat) => (seat.match(/^\d+$/) ? parseInt(seat) : 0))
+                        ...floorSeats.map((seat) => (seat.match(/^\d+$/) ? parseInt(seat) : 0))
                     );
-                    newSeats[index] = (maxSeatNumber + 1).toString().padStart(2, '0');
+                    floorSeats[index] = (maxSeatNumber + 1).toString().padStart(2, '0');
                 } else if (selectedSeat === 'handlebar') {
-                    newSeats[index] = 'handlebar'; // Устанавливаем специальный идентификатор
+                    floorSeats[index] = 'handlebar'; // Устанавливаем специальный идентификатор
                 } else if (selectedSeat === '/') {
-                    newSeats[index] = '/'; // Устанавливаем специальный идентификатор
+                    floorSeats[index] = '/'; // Устанавливаем специальный идентификатор
                 }
-                // СУЧКА ЕБАННАЯ
+                newSeats[selectedFloor] = floorSeats;
                 return newSeats;
             }
         });
     };
 
     const clearAllSeats = () => {
-        setSeats(Array(rows * columns).fill(''));
+        if (selectedFloor !== null) {
+            setSeats((prevSeats) => ({
+                ...prevSeats,
+                [selectedFloor]: Array(rows * columns).fill(''),
+            }));
+        }
     };
 
     const renderGridCells = () => {
+        if (selectedFloor === null) return null; // Если этаж не выбран, ничего не рендерим
+
         return Array(rows * columns)
             .fill('')
             .map((_, i) => {
-                const seatValue = seats[i];
+                const seatValue = seats[selectedFloor][i];
                 let content = null;
-                let cellStyle = 'bg-none border-[#B8B8B8]'; 
+                let cellStyle = 'bg-none border-[#B8B8B8]';
 
                 if (seatValue === 'handlebar') {
                     content = <Handlebar color='#A0A0A0' />;
-                    cellStyle = 'bg-none'; 
+                    cellStyle = 'border-[#B8B8B8]';
                 } else if (seatValue === '/') {
                     content = '/';
                     cellStyle = 'border-[#B8B8B8] text-xl font-bold border flex justify-center items-center rounded-[10px] h-12 w-12'; // Например, другой фон
                 } else if (seatValue) {
-                    content = seatValue; 
-                    cellStyle = 'border-[#E32B2B] text-[#E32B2B]'; 
+                    content = seatValue;
+                    cellStyle = 'border-[#E32B2B] text-[#E32B2B]';
                 }
 
                 return (
@@ -90,16 +107,17 @@ const SeatSchemeBuilder: React.FC<SeatSchemeBuilderProps> = ({ selectedFloor, se
 
     return (
         <div>
-            <p>Выбранное действие: {selectedSeat}</p>
-            <p>Этажей: {selectedFloor}</p>
-            <p>Посадочных мест: {seatCount}</p>
-            
-            <button
-                onClick={clearAllSeats}
-                className="bg-red-500 text-white py-2 px-4 rounded mt-4"
-            >
-                Стереть все
-            </button>
+            <div className="flex flex-row items-center gap-3">
+                <p>Выбранное действие: {selectedSeat}/</p>
+                <p>Этаж: {selectedFloor}/</p>
+                <p>Посадочных мест: {seatCount}</p>
+                <button
+                    onClick={clearAllSeats}
+                    className="bg-red-500 text-white py-2 px-4 rounded mt-4"
+                >
+                    Стереть все
+                </button>
+            </div>
 
             <div
                 className="grid w-fit gap-2 mt-4"
