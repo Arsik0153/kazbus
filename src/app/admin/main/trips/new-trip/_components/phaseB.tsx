@@ -1,31 +1,83 @@
-import React, { Suspense, useState } from 'react';
+import React, {Suspense, useState } from 'react';
 import InputMini from '@/components/admin/inputMini';
 import Ticket from '@/assets/admin/Ticket';
 import Button from '@/components/button';
 import Clock from '@/assets/admin/Clock';
 import WeekButtons from '@/app/admin/main/trips/new-trip/_components/WeekButtons';
 import Link from 'next/link';
-import Calendar from '@/assets/calendar';
+import { Trips } from '@/data/types';
 import CalendarPC from '@/components/calendar/select-date';
+import { timeToReadable } from '@/utils/helper.';
 
-const PhaseB = () => {
-    const [isWeekly, setIsWeekly] = useState(false); // Состояние для определения типа рейса
+interface PhaseBProps {
+    selectedTrip: {
+        from_city: string;
+        to_city: string;
+        route: {
+            id: number;
+            start_city: {
+                id: number;
+                name: string;
+                region: string;
+            };
+            end_city: {
+                id: number;
+                name: string;
+                region: string;
+            };
+            total_travel_time: string;
+            created_at: string;
+            stops: {
+                id: number;
+                name: string;
+                travel_time_from_start: string;
+                stop_time: string;
+            }[];
+        };
+    };
+}
+
+const PhaseB: React.FC<PhaseBProps> = ({ selectedTrip }) => {
+    console.log("Прилетели данные с: ", { selectedTrip });
+    const [isWeekly, setIsWeekly] = useState(false);
 
     const handleButtonClick = (isWeekly: boolean) => {
         setIsWeekly(isWeekly);
     };
     const handleBirthDateChange = () => {
-        console.log('ewfw');
+        console.log('Дата изменена');
     };
-
     return (
         <>
-            {/* В - Бишкек старт */}
+            {/* А - старт*/}
+            <div className="p-[6px] flex flex-row w-full bg-[#EEF2F6] items-center gap-5 rounded-[5px] mt-11">
+                <div className="w-8 h-8 rounded-full bg-[#E74949] flex items-center justify-center text-white text-lg">
+                    A
+                </div>
+                <p className="text-base font-medium text-[#4A4A4A]">Алматы</p>
+            </div>
+
+            <div className="flex flex-col my-[22px] gap-[22px] max-w-72">
+                {selectedTrip.route.stops.map((stop) => (
+                    <p
+                        key={stop.id}
+                        className="flex flex-row items-center justify-between text-base font-medium text-[#4A4A4A] border border-[#A0A0A0] rounded-[10px] p-3"
+                    >
+                        <p>{stop.name} </p>
+                        {/* <p>{timeToReadable(stop.stop_time)} минут</p> */}
+                        <p>{stop.stop_time} минут</p>
+                    </p>
+                ))}
+            </div>
+
+            {/* В - старт */}
             <div className="flex w-full flex-row items-center gap-5 rounded-[5px] bg-[#EEF2F6] p-[6px]">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#E74949] text-lg text-white">
                     В
                 </div>
                 <p className="text-base font-medium text-[#4A4A4A]">Алматы</p>
+                {/* <p className="text-base font-medium text-[#4A4A4A]">{selectedTrip.from_city}</p> */}
+
                 <div className="ml-[20%] flex flex-row items-center gap-4 whitespace-nowrap">
                     <p className="whitespace-nowrap text-base font-semibold text-[#4A4A4A]">
                         Цена билета от начальной точки
@@ -38,6 +90,7 @@ const PhaseB = () => {
                     />
                 </div>
             </div>
+
             <div className="mt-14 flex flex-row gap-14">
                 {/* Левая колона старт */}
                 <div className="flex flex-col">

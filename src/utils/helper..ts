@@ -60,3 +60,16 @@ export const dateTimeToReadable = (inputDateTime: string): string => {
     // Возвращаем дату в формате YYYY-MM-DD
     return dateTime.format('YYYY-MM-DD');
 };
+
+export const timeToReadable = (inputTime: string): string => {
+    // Пытаемся создать объект dayjs с предполагаемым форматом
+    const time = dayjs(inputTime, 'HH:mm:ss', true);
+    
+    // Проверяем, является ли объект корректным и совпадает ли формат с исходным
+    if (!time.isValid() || time.format('HH:mm:ss') !== inputTime) {
+        return 'Ошибка: Неверный формат времени. Ожидается формат HH:mm:ss.';
+    }
+
+    // Возвращаем время в формате HH:mm
+    return time.format('HH:mm');
+};

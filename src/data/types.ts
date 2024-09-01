@@ -100,8 +100,10 @@ export type GetRequestData = {
 
 
 export type Driver = {
+    id: number; 
     full_name: string;
     date_of_birth: string;
+    picture: string;
 };
 
 export type Bus = {
@@ -127,8 +129,8 @@ export type City = {
 };
 export type Route = {
     id: number;
-    start_city: string;
-    end_city: string;
+    start_city: City;
+    end_city: City;
     total_travel_time: string; // Время в формате "HH:MM:SS"
     created_at: string; // Дата в формате ISO
     stops: Stop[];
@@ -146,7 +148,7 @@ export type Trips = {
     status: string;
     route: Route;
     bus: Bus;
-    driver: number; // ID водителя
+    driver: Driver; // ID водителя
     from_city: string;
     to_city: string;
 };

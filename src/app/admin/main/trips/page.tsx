@@ -23,12 +23,10 @@ const Trips = () => {
     const handleSelectionChange = (name: string, selected: any) => {
         console.log(`${name} selected:`, selected);
         setSelectedOption(selected);
-        // Добавьте здесь необходимую логику для обработки выбора
     };
 
     const handleNewItem = (name: string) => {
         console.log(`Добавление нового элемента: ${name}`);
-        // Добавьте здесь логику для обработки добавления нового элемента
     };
 
     const handleBirthDateChange = () => {

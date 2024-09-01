@@ -68,7 +68,7 @@ const Table = () => {
                                 <div className="w-8 h-8 rounded-full bg-[#E74949] flex items-center justify-center text-white text-lg">
                                     A
                                 </div>
-                                <p className='text-base font-medium text-[#4A4A4A]'>{routes.start_city}</p>
+                                <p className='text-base font-medium text-[#4A4A4A]'>{routes.start_city.name}</p>
                             </div>
                         </td>
                         <td className="text-base font-bold text-[#E74949] pr-5">
@@ -79,7 +79,7 @@ const Table = () => {
                                 <div className="w-8 h-8 rounded-full bg-[#E74949] flex items-center justify-center text-white text-lg">
                                     В
                                 </div>
-                                <p className='text-base font-medium text-[#4A4A4A]'>{routes.end_city}</p>
+                                <p className='text-base font-medium text-[#4A4A4A]'>{routes.end_city.name}</p>
                             </div>
 
                         </td>
