@@ -7,6 +7,7 @@ import WeekButtons from '@/app/admin/main/trips/new-trip/_components/WeekButtons
 import Link from 'next/link';
 import { Trips } from '@/data/types';
 import CalendarPC from '@/components/calendar/select-date';
+import dayjs from 'dayjs';
 import { timeToReadable } from '@/utils/helper.';
 
 interface PhaseBProps {
@@ -38,18 +39,41 @@ interface PhaseBProps {
 }
 
 const PhaseB: React.FC<PhaseBProps> = ({ selectedTrip }) => {
+    const [RouteFrom, setRouteFrom] = useState<string | null>(null);
+    const [Routeto, setRouteto] = useState<string | null>(null);
+
+    // const {
+    //     register,
+    //     formState: { errors },
+    //     handleSubmit,
+    //     setValue,
+    // } = useForm<z.output<typeof driverSchema>>({
+    //     resolver: zodResolver(driverSchema),
+    // });
     console.log("Прилетели данные с: ", { selectedTrip });
     const [isWeekly, setIsWeekly] = useState(false);
 
     const handleButtonClick = (isWeekly: boolean) => {
         setIsWeekly(isWeekly);
     };
-    const handleBirthDateChange = () => {
+
+
+    const handleRouteFromChange = (date: Date | null) => {
+        const formattedDate = date ? dayjs(date).format('YYYY-MM-DD') : '';
+        setRouteFrom(formattedDate);
+        // setValue('date_of_birth', formattedDate);
         console.log('Дата изменена');
+
     };
+
+    const handleRouteToChange = (date: Date | null) => {
+        const formattedDate = date ? dayjs(date).format('YYYY-MM-DD') : '';
+        setRouteto(formattedDate);
+        // setValue('license_issue_date', formattedDate);
+    };
+
     return (
         <>
-            {/* А - старт*/}
             <div className="p-[6px] flex flex-row w-full bg-[#EEF2F6] items-center gap-5 rounded-[5px] mt-11">
                 <div className="w-8 h-8 rounded-full bg-[#E74949] flex items-center justify-center text-white text-lg">
                     A
@@ -70,7 +94,6 @@ const PhaseB: React.FC<PhaseBProps> = ({ selectedTrip }) => {
                 ))}
             </div>
 
-            {/* В - старт */}
             <div className="flex w-full flex-row items-center gap-5 rounded-[5px] bg-[#EEF2F6] p-[6px]">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#E74949] text-lg text-white">
                     В
@@ -154,8 +177,8 @@ const PhaseB: React.FC<PhaseBProps> = ({ selectedTrip }) => {
                             </p>
                             <Suspense>
                                 <CalendarPC
-                                    value={null}
-                                    onChange={handleBirthDateChange}
+                                    value={RouteFrom ? new Date(RouteFrom) : null}
+                                    onChange={handleRouteFromChange}
                                 />
                             </Suspense>
 
@@ -164,8 +187,9 @@ const PhaseB: React.FC<PhaseBProps> = ({ selectedTrip }) => {
                             </p>
                             <Suspense>
                                 <CalendarPC
-                                    value={null}
-                                    onChange={handleBirthDateChange}
+                                    value={Routeto ? new Date(Routeto) : null}
+                                    onChange={handleRouteToChange}
+                                    
                                 />
                             </Suspense>
                         </div>
