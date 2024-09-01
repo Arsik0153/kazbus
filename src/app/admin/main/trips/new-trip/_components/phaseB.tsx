@@ -78,7 +78,7 @@ const PhaseB: React.FC<PhaseBProps> = ({ selectedTrip }) => {
                 <div className="w-8 h-8 rounded-full bg-[#E74949] flex items-center justify-center text-white text-lg">
                     A
                 </div>
-                <p className="text-base font-medium text-[#4A4A4A]">Алматы</p>
+                <p className="text-base font-medium text-[#4A4A4A]">{selectedTrip.from_city}</p>
             </div>
 
             <div className="flex flex-col my-[22px] gap-[22px] max-w-72">
@@ -98,7 +98,7 @@ const PhaseB: React.FC<PhaseBProps> = ({ selectedTrip }) => {
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#E74949] text-lg text-white">
                     В
                 </div>
-                <p className="text-base font-medium text-[#4A4A4A]">Алматы</p>
+                <p className="text-base font-medium text-[#4A4A4A]">{selectedTrip.to_city}</p>
                 {/* <p className="text-base font-medium text-[#4A4A4A]">{selectedTrip.from_city}</p> */}
 
                 <div className="ml-[20%] flex flex-row items-center gap-4 whitespace-nowrap">

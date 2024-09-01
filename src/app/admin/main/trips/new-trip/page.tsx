@@ -5,6 +5,7 @@ import PhaseB from './_components/phaseB';
 import { getTripsAction } from '../action';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
 import { Trips } from '@/data/types';
+import Spinner from '@/components/spinner';
 
 const NewTrips: React.FC = () => {
     const { data, isPending } = useServerActionQuery(getTripsAction, {
@@ -60,6 +61,13 @@ const NewTrips: React.FC = () => {
         );
     }, [route, driver, bus, data]);
 
+    if (isPending) {
+        return (
+            <div className="flex justify-center py-11">
+                <Spinner />
+            </div>
+        );
+    }
     return (
         <div className="flex flex-col my-6 mb-96 gap-4">
             <p className="text-[42px] font-semibold text-[#4A4A4A]">Добавить рейс</p>
