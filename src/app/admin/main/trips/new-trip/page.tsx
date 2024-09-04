@@ -31,9 +31,8 @@ const NewTrips: React.FC = () => {
     });
 
     const onSubmit = handleSubmit((data) => {
-        console.log('Выбранный маршрут:', route);
-        console.log('Выбранный водитель:', driver);
-        console.log('Выбранный автобус:', bus);
+        console.log('Выбранный маршрут:', data);
+
     });
 
     const routes = useMemo(() => {
@@ -74,7 +73,10 @@ const NewTrips: React.FC = () => {
     const selectedTrip = useMemo(() => {
         return data?.find(
             (trip: Trips) =>
-                trip.route.id === route?.id
+                trip.route.id === route?.id 
+                // &&
+                // trip.bus.id === bus?.id &&
+                // trip.driver.id === driver?.id &&
         );
     }, [route, driver, bus, data]);
 

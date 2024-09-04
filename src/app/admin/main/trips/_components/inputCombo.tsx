@@ -70,12 +70,12 @@ const ComboBox: React.FC<ComboBoxProps> = ({ name, options, placeholder = 'Вы�
                         <DownBtn color="#4A4A4A" className="p-2" />
                     </ComboboxButton>
                 </div>
-                <ComboboxOptions className="absolute z-10 mt-2 w-full rounded-[10px] bg-[#F1F5F9] p-3">
+                <ComboboxOptions className="absolute z-10 mt-2 max-h-64 overflow-y-scroll w-full rounded-[10px] bg-[#F1F5F9] p-3">
                     {filteredOptions.map((option, index) => (
                         <div key={option.id}>
                             <ComboboxOption
                                 value={option}
-                                className="group flex flex-col data-[focus]:rounded-[5px] data-[focus]:bg-white"
+                                className="group flex flex-col data-[focus]:rounded-[5px]  data-[focus]:bg-white"
                             >
                                 {({ active }) => (
                                     <div
