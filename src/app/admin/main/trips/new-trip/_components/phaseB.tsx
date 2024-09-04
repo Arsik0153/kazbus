@@ -159,11 +159,11 @@ const PhaseB: React.FC<PhaseBProps> = ({ selectedTrip }) => {
                             Рейс проводится несколько раз в неделю
                         </button>
                     </div>
-                    <Link href="/admin/main/trips/start-trip">
+                    {/* <Link href="/admin/main/trips/start-trip"> */}
                         <Button variant="secondary" className="mt-16">
                             Сохранить рейс
                         </Button>
-                    </Link>
+                    {/* </Link> */}
                 </div>
                 {/* Правая колона старт */}
                 <div className="flex flex-col">

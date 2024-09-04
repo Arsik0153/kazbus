@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions, ComboboxButton } from '@headlessui/react';
 import DownBtn from '@/assets/admin/DownBtb';
 
-// Определение типа Item
 interface Item {
     id: number;
     name: string;
@@ -21,45 +20,49 @@ const ComboBox: React.FC<ComboBoxProps> = ({ name, options, placeholder = 'Вы�
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
     const [query, setQuery] = useState('');
 
-    // Проверяем, что options определен и является массивом
     const safeOptions = Array.isArray(options) ? options : [];
-    
-    // Фильтруем варианты по запросу
-    const filteredOptions = query === '' 
-        ? safeOptions 
+
+    const filteredOptions = query === ''
+        ? safeOptions
         : safeOptions.filter(option => option.name.toLowerCase().includes(query.toLowerCase()));
 
-    // Проверяем, существует ли элемент, соответствующий запросу
     const itemExists = filteredOptions.some(option => option.name.toLowerCase() === query.toLowerCase());
 
-    // Добавляем опцию "Добавить" только если такого элемента нет в filteredOptions
-    if (query !== '' && !itemExists) {
-        filteredOptions.push({ id: -1, name: `Добавить "${query}"` });
-    }
+    useEffect(() => {
+        if (query !== '' && !itemExists) {
+            filteredOptions.push({ id: -1, name: `Добавить "${query}"` });
+        }
+    }, [query, itemExists, filteredOptions]);
+
+    const handleChange = (item: Item) => {
+        if (item.id === -1) {
+            const newItem = { id: Date.now(), name: query };
+            setSelectedItem(newItem);
+            onNewItem(query);
+            onOptionSelect(name, newItem);
+        } else {
+            setSelectedItem(item);
+            onOptionSelect(name, item);
+        }
+        if (onSelectionChange) onSelectionChange(name, item);
+    };
+
+    const handleQueryChange = (newQuery: string) => {
+        setQuery(newQuery);
+    };
 
     return (
         <div className="relative">
             <Combobox
                 value={selectedItem}
-                onChange={(item: Item) => {
-                    if (item.id === -1) {
-                        const newItem = { id: Date.now(), name: query };
-                        setSelectedItem(newItem);
-                        onNewItem(query);
-                        if (onOptionSelect) onOptionSelect(name, newItem);
-                    } else {
-                        setSelectedItem(item);
-                        if (onOptionSelect) onOptionSelect(name, item);
-                    }
-                    if (onSelectionChange) onSelectionChange(name, item);
-                }}
-                onClose={() => setQuery('')}
+                onChange={handleChange}
+                onClose={() => handleQueryChange('')}
             >
                 <div className="relative w-full">
                     <ComboboxInput
                         aria-label="Select item"
-                        displayValue={(item: Item | null) => item ? item.name : ''}
-                        onChange={(event) => setQuery(event.target.value)}
+                        displayValue={(item: Item | null) => (item ? item.name : '')}
+                        onChange={(event) => handleQueryChange(event.target.value)}
                         placeholder={placeholder}
                         className="rounded-[10px] border border-[#A0A0A0] p-3 pl-4 text-base font-medium text-[#4A4A4A] focus:outline-none"
                     />
