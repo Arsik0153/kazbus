@@ -160,36 +160,6 @@ export const NewTripSchema = z.object({
     message: 'Укажите статус рейса',
   }),
   route: z.number().int({ message: 'Укажите маршрут' }),
-  bus: z.object({
-    name: z
-      .string({ message: 'Укажите название автобуса' })
-      .min(1, 'Название автобуса не может быть пустым')
-      .max(255, 'Название автобуса слишком длинное'),
-    state_number: z
-      .string({ message: 'Укажите государственный номер автобуса' })
-      .min(1, 'Государственный номер не может быть пустым')
-      .max(10, 'Государственный номер слишком длинный'),
-    VIN: z
-      .string({ message: 'Укажите VIN автобуса' })
-      .min(1, 'VIN не может быть пустым')
-      .max(17, 'VIN слишком длинный'),
-    count_of_seats: z
-      .number()
-      .int()
-      .min(0, 'Количество мест не может быть отрицательным')
-      .max(9223372036854776000, 'Слишком большое количество мест'),
-    have_toilet: z.boolean({ message: 'Укажите наличие туалета' }),
-    have_wifi: z.boolean({ message: 'Укажите наличие Wi-Fi' }),
-    is_recumbent: z.boolean({ message: 'Укажите наличие лежачих мест' }),
-    floors: z.union([z.literal(1), z.literal(2)], { message: 'Количество этажей может быть только 1 или 2' }),
-  }),
-  driver: z.object({
-    full_name: z
-      .string({ message: 'Укажите полное имя водителя' })
-      .min(1, 'Полное имя не может быть пустым')
-      .max(255, 'Полное имя слишком длинное'),
-    date_of_birth: z
-      .string({ message: 'Укажите дату рождения водителя' })
-      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Неверный формат даты рождения (ожидается YYYY-MM-DD)'),
-  }),
+  bus: z.number().int({ message: 'Укажите автобус (нужен id)' }),
+  driver: z.number().int({ message: 'Укажите полное имя водителя (нужен id)' }),
 });

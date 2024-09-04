@@ -7,32 +7,33 @@ import { useServerActionQuery } from '@/lib/server-action-hooks';
 import { Trips } from '@/data/types';
 import Spinner from '@/components/spinner';
 import { NewTripSchema } from '@/data/schemas';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import ErrorMessage from '@/components/error-message';
+import { z } from 'zod';
 
 const NewTrips: React.FC = () => {
     const { data, isPending } = useServerActionQuery(getTripsAction, {
         input: undefined,
         queryKey: ['getTrips'],
     });
-    
+
     const [route, setRoute] = useState<{ id: number; name: string } | null>(null);
     const [driver, setDriver] = useState<{ id: number; name: string } | null>(null);
     const [bus, setBus] = useState<{ id: number; name: string } | null>(null);
+
     const {
-        register,
+        control,
         formState: { errors },
-        handleSubmit,
-        watch,
+        handleSubmit
     } = useForm<z.output<typeof NewTripSchema>>({
         resolver: zodResolver(NewTripSchema),
     });
 
     const onSubmit = handleSubmit((data) => {
-        // execute(data);
-        console.log('our data is:', data);
+        console.log('Выбранный маршрут:', route);
+        console.log('Выбранный водитель:', driver);
+        console.log('Выбранный автобус:', bus);
     });
 
     const routes = useMemo(() => {
@@ -45,7 +46,7 @@ const NewTrips: React.FC = () => {
     const drivers = useMemo(() => {
         return data?.map((trip: Trips) => ({
             id: trip.driver.id,
-            name: `${trip.driver.full_name}`, 
+            name: `${trip.driver.full_name}`,
         })) || [];
     }, [data]);
 
@@ -73,9 +74,7 @@ const NewTrips: React.FC = () => {
     const selectedTrip = useMemo(() => {
         return data?.find(
             (trip: Trips) =>
-                trip.route.id === route?.id &&
-                trip.driver.id  &&
-                trip.bus.id 
+                trip.route.id === route?.id
         );
     }, [route, driver, bus, data]);
 
@@ -86,6 +85,7 @@ const NewTrips: React.FC = () => {
             </div>
         );
     }
+
     return (
         <form onSubmit={onSubmit} className="flex flex-col my-6 mb-96 gap-4">
             <p className="text-[42px] font-semibold text-[#4A4A4A]">Добавить рейс</p>
@@ -93,42 +93,74 @@ const NewTrips: React.FC = () => {
                 <div className="flex flex-row gap-8 items-start">
                     <div className="flex flex-col gap-4 items-start">
                         <p className="text-2xl font-semibold text-[#4A4A4A]">Выберите маршрут</p>
-                        <ErrorMessage message={errors.route?.message} />
-                        <ComboBox
-                            // name="route"
-                            options={routes}
-                            placeholder="Маршрут"
-                            onOptionSelect={handleOptionSelect}
-                            onNewItem={handleNewItem}
-                            onSelectionChange={(name, selected) => handleOptionSelect(name, selected)}
-                            {...register('route')}
+                        <Controller
+                            name="route"
+                            control={control}
+                            render={({ field }) => (
+                                <>
+                                    <ComboBox
+                                        name="route"
+                                        options={routes}
+                                        placeholder="Маршрут"
+                                        onNewItem={handleNewItem}
+                                        onOptionSelect={(name, selected) => field.onChange(selected?.id || null)}
+
+                                        onSelectionChange={(name, selected) => {
+                                            handleOptionSelect(name, selected);
+                                            field.onChange(selected?.id || null);
+                                        }}
+                                    />
+                                    <ErrorMessage message={errors.route?.message} />
+                                </>
+                            )}
                         />
                     </div>
                     <div className="flex flex-col gap-4 items-start">
                         <p className="text-2xl font-semibold text-[#4A4A4A]">Выберите водителя</p>
-                        <ErrorMessage message={errors.route?.message} />
-                        <ComboBox
-                            // name="driver"
-                            options={drivers}
-                            placeholder="Водители"
-                            onOptionSelect={handleOptionSelect}
-                            onNewItem={handleNewItem}
-                            onSelectionChange={(name, selected) => handleOptionSelect(name, selected)}
-                            {...register('driver')}
+                        <Controller
+                            name="driver"
+                            control={control}
+                            render={({ field }) => (
+                                <>
+                                    <ComboBox
+                                        name="driver"
+                                        options={drivers}
+                                        placeholder="Водители"
+                                        onNewItem={handleNewItem}
+                                        onOptionSelect={(name, selected) => field.onChange(selected?.id || null)}
+
+                                        onSelectionChange={(name, selected) => {
+                                            handleOptionSelect(name, selected);
+                                            field.onChange(selected?.id || null);
+                                        }}
+                                    />
+                                    <ErrorMessage message={errors.driver?.message} />
+                                </>
+                            )}
                         />
                     </div>
                 </div>
                 <div className="flex flex-col mt-6 gap-4 items-start">
                     <p className="text-2xl font-semibold text-[#4A4A4A]">Выберите автобус</p>
-                    <ErrorMessage message={errors.route?.message} />
-                    <ComboBox
-                        // name="bus"
-                        options={buses}
-                        placeholder="Автобусы"
-                        onOptionSelect={handleOptionSelect}
-                        onNewItem={handleNewItem}
-                        onSelectionChange={(name, selected) => handleOptionSelect(name, selected)}
-                        {...register('bus')}
+                    <Controller
+                        name="bus"
+                        control={control}
+                        render={({ field }) => (
+                            <>
+                                <ComboBox
+                                    name="bus"
+                                    options={buses}
+                                    placeholder="Автобусы"
+                                    onNewItem={handleNewItem}
+                                    onOptionSelect={(name, selected) => field.onChange(selected?.id || null)}
+                                    onSelectionChange={(name, selected) => {
+                                        handleOptionSelect(name, selected);
+                                        field.onChange(selected?.id || null);
+                                    }}
+                                />
+                                <ErrorMessage message={errors.bus?.message} />
+                            </>
+                        )}
                     />
                 </div>
 

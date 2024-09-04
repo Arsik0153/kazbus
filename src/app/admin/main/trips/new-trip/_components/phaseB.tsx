@@ -11,45 +11,14 @@ import dayjs from 'dayjs';
 import { timeToReadable } from '@/utils/helper.';
 
 interface PhaseBProps {
-    selectedTrip: {
-        from_city: string;
-        to_city: string;
-        route: {
-            id: number;
-            start_city: {
-                id: number;
-                name: string;
-                region: string;
-            };
-            end_city: {
-                id: number;
-                name: string;
-                region: string;
-            };
-            total_travel_time: string;
-            created_at: string;
-            stops: {
-                id: number;
-                name: string;
-                travel_time_from_start: string;
-                stop_time: string;
-            }[];
-        };
-    };
+    selectedTrip: Trips;
+    // onDateChange: (fromDate: string | null, toDate: string | null) => void;
+
 }
 
 const PhaseB: React.FC<PhaseBProps> = ({ selectedTrip }) => {
     const [RouteFrom, setRouteFrom] = useState<string | null>(null);
     const [Routeto, setRouteto] = useState<string | null>(null);
-
-    // const {
-    //     register,
-    //     formState: { errors },
-    //     handleSubmit,
-    //     setValue,
-    // } = useForm<z.output<typeof driverSchema>>({
-    //     resolver: zodResolver(driverSchema),
-    // });
     console.log("Прилетели данные с: ", { selectedTrip });
     const [isWeekly, setIsWeekly] = useState(false);
 
