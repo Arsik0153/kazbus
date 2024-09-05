@@ -32,7 +32,7 @@ const Login = () => {
     );
     const { execute, isPending } = useServerAction(loginAction, {
         onSuccess: () => {
-            router.push('/main');
+            router.push('/main?passenger_count=1');
         },
         onError: (error) => {
             console.log(error);

@@ -91,7 +91,7 @@ const SelectDeparture = () => {
                         </p>
                         <div />
                     </div>
-                    <ul className="mx-5 mb-10">
+                    <ul className="h-[calc(100vh-217px)] overflow-y-scroll px-5 pb-10">
                         {filteredCities.map((city) => (
                             <li
                                 key={city.id}

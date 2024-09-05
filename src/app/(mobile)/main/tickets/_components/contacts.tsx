@@ -59,11 +59,13 @@ const Contacts = (props: Props) => {
                                     alt="KZ"
                                 />
                             }
+                            type="tel"
                             {...register('phone')}
                         />
                         <ErrorMessage message={errors.phone?.message} />
                         <Input
                             label="Электронная почта (необязательно)"
+                            type="email"
                             {...register('email')}
                         />
                         <ErrorMessage message={errors.email?.message} />

@@ -21,12 +21,12 @@ const Counter: React.FC<CounterProps> = ({ value, setValue }) => {
 
     return (
         <div className="flex h-full max-h-[52px] w-full max-w-[171px] flex-row items-center justify-between rounded-[10px] border border-[#A0A0A0] p-3">
-            <button onClick={increment}>
-                <Plus color="#E74949" width={28} height={28} />
-            </button>
-            <span className="text-2xl">{value}</span>
             <button onClick={decrement}>
                 <Minus />
+            </button>
+            <span className="text-2xl">{value}</span>
+            <button onClick={increment}>
+                <Plus color="#E74949" width={28} height={28} />
             </button>
         </div>
     );
