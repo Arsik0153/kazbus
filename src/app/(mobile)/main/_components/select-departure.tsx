@@ -8,6 +8,7 @@ import { getCitiesAction } from '../actions';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { City } from '@/data/types';
 import Link from 'next/link';
+import ArrowLeft from '@/assets/shared/arrow-left';
 
 const SelectDeparture = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -69,13 +70,27 @@ const SelectDeparture = () => {
                 <div className="fixed inset-0 z-30 h-full min-h-screen w-full overflow-auto bg-[var(--bg)]">
                     <Topbar className="mx-0 w-full">
                         <InputFromMain
-                            iconLeft={<Link href='/main'><ArrowLeftIcon color="white" /></Link>}
+                            iconLeft={
+                                <Link href="/main">
+                                    <ArrowLeftIcon color="white" />
+                                </Link>
+                            }
                             id="whereFrom"
                             label="Откуда вы отправляетесь?"
                             onChange={handleInputChange}
                             value={searchTerm}
                         />
                     </Topbar>
+                    <div
+                        className="flex w-full items-center justify-between border-b-[1px] border-b-[#CDCDCD] px-5 py-4"
+                        onClick={() => setIsOpen(false)}
+                    >
+                        <ArrowLeft color="#4a4a4a" />
+                        <p className="text-[14px] font-medium text-[#4A4A4A]">
+                            Вернуться назад
+                        </p>
+                        <div />
+                    </div>
                     <ul className="mx-5 mb-10">
                         {filteredCities.map((city) => (
                             <li

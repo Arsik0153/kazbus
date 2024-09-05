@@ -8,5 +8,5 @@ export const logoutAction = authedProcedure
     .createServerAction()
     .handler(async () => {
         await logout();
-        redirect('/profile');
+        redirect('/start');
     });

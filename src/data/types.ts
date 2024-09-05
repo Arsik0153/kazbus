@@ -108,7 +108,6 @@ export type GetRequestData = {
     to_city: string;
 };
 
-
 export type Driver = {
     full_name: string;
     date_of_birth: string;
@@ -137,7 +136,6 @@ export type Routes = {
     created_at: string; // Дата в формате ISO
     stops: Stop[];
 };
-
 
 export type Trips = {
     id: number;

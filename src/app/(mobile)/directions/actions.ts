@@ -3,7 +3,6 @@
 import { GetRequestData } from '@/data/types';
 import { createServerAction } from 'zsa';
 
-
 export const getDirectionsAction = createServerAction().handler(async () => {
     const response = await fetch(`${process.env.API_URL}/trip/trips`, {
         headers: {

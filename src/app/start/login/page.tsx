@@ -35,6 +35,7 @@ const Login = () => {
             router.push('/main');
         },
         onError: (error) => {
+            console.log(error);
             if (error.err.name === 'ZodError') {
                 toast.error(
                     error.err.fieldErrors?.otp?.[0] ||

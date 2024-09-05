@@ -7,6 +7,7 @@ import DatePicker from './date-picker';
 import { Dayjs } from 'dayjs';
 import { useSearchParams } from 'next/navigation';
 import { dayjsExt } from '@/lib/dayjs';
+import ArrowLeft from '@/assets/shared/arrow-left';
 
 const SelectDate = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -29,9 +30,20 @@ const SelectDate = () => {
                         <InputFromMain
                             iconLeft={<Calendar color="white" />}
                             id="whereFrom"
-                            label="Откуда вы отправляетесь?"
+                            label="Дата отправления"
+                            disabled
                         />
                     </Topbar>
+                    <div
+                        className="flex w-full items-center justify-between border-b-[1px] border-b-[#CDCDCD] px-5 py-4"
+                        onClick={() => setIsOpen(false)}
+                    >
+                        <ArrowLeft color="#4a4a4a" />
+                        <p className="text-[14px] font-medium text-[#4A4A4A]">
+                            Вернуться назад
+                        </p>
+                        <div />
+                    </div>
                     <div className="relative text-left">
                         <div className="grid w-full grid-cols-7 border-b border-[#dbdbdb] px-5 py-3 text-center text-base font-medium text-[var(--black)]">
                             <div>Пн</div>

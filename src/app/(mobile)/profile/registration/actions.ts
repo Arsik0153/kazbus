@@ -33,7 +33,7 @@ export const loginAction = createServerAction()
         );
 
         if (!response.ok) {
-            throw 'Произошла ошибка при подтверждении кода';
+            throw 'Неверный код подтверждения';
         }
         const data = await response.json();
         const { user_id, token } = data;
