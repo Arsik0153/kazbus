@@ -31,8 +31,7 @@ const NewTrips: React.FC = () => {
     });
 
     const onSubmit = handleSubmit((data) => {
-        console.log('Выбранный маршрут:', data);
-
+        console.log('Выбранные данные:', data);
     });
 
     const routes = useMemo(() => {
@@ -73,10 +72,10 @@ const NewTrips: React.FC = () => {
     const selectedTrip = useMemo(() => {
         return data?.find(
             (trip: Trips) =>
-                trip.route.id === route?.id 
-                // &&
-                // trip.bus.id === bus?.id &&
-                // trip.driver.id === driver?.id &&
+                trip.route.id === route?.id
+            // &&
+            // trip.bus.id === bus?.id &&
+            // trip.driver.id === driver?.id &&
         );
     }, [route, driver, bus, data]);
 
@@ -105,11 +104,9 @@ const NewTrips: React.FC = () => {
                                         options={routes}
                                         placeholder="Маршрут"
                                         onNewItem={handleNewItem}
-                                        onOptionSelect={(name, selected) => field.onChange(selected?.id || null)}
-
-                                        onSelectionChange={(name, selected) => {
+                                        onOptionSelect={(name, selected) => {
                                             handleOptionSelect(name, selected);
-                                            field.onChange(selected?.id || null);
+                                            field.onChange(selected); // Передаем весь объект, а не только ID
                                         }}
                                     />
                                     <ErrorMessage message={errors.route?.message} />
@@ -129,11 +126,9 @@ const NewTrips: React.FC = () => {
                                         options={drivers}
                                         placeholder="Водители"
                                         onNewItem={handleNewItem}
-                                        onOptionSelect={(name, selected) => field.onChange(selected?.id || null)}
-
-                                        onSelectionChange={(name, selected) => {
+                                        onOptionSelect={(name, selected) => {
                                             handleOptionSelect(name, selected);
-                                            field.onChange(selected?.id || null);
+                                            field.onChange(selected); // Передаем весь объект
                                         }}
                                     />
                                     <ErrorMessage message={errors.driver?.message} />
@@ -154,10 +149,9 @@ const NewTrips: React.FC = () => {
                                     options={buses}
                                     placeholder="Автобусы"
                                     onNewItem={handleNewItem}
-                                    onOptionSelect={(name, selected) => field.onChange(selected?.id || null)}
-                                    onSelectionChange={(name, selected) => {
+                                    onOptionSelect={(name, selected) => {
                                         handleOptionSelect(name, selected);
-                                        field.onChange(selected?.id || null);
+                                        field.onChange(selected); // Передаем весь объект
                                     }}
                                 />
                                 <ErrorMessage message={errors.bus?.message} />

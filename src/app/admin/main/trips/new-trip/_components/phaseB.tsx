@@ -19,7 +19,7 @@ interface PhaseBProps {
 const PhaseB: React.FC<PhaseBProps> = ({ selectedTrip }) => {
     const [RouteFrom, setRouteFrom] = useState<string | null>(null);
     const [Routeto, setRouteto] = useState<string | null>(null);
-    console.log("Прилетели данные с: ", { selectedTrip });
+    // console.log("Прилетели данные с: ", { selectedTrip });
     const [isWeekly, setIsWeekly] = useState(false);
 
     const handleButtonClick = (isWeekly: boolean) => {
@@ -116,13 +116,13 @@ const PhaseB: React.FC<PhaseBProps> = ({ selectedTrip }) => {
                             Выберите тип рейса
                         </p>
                         <button
-                            className={`w-full rounded-[10px] border p-3 text-base font-medium ${!isWeekly ? 'bg-[#E74949] text-white' : 'text-[#4A4A4A]'}`}
+                            className={`w-full text-nowrap rounded-[10px] border p-3 text-base font-medium ${!isWeekly ? 'bg-[#E74949] text-white' : 'text-[#4A4A4A]'}`}
                             onClick={() => handleButtonClick(false)}
                         >
                             Рейс проводится каждый день
                         </button>
                         <button
-                            className={`w-full rounded-[10px] border p-3 text-base font-medium ${isWeekly ? 'bg-[#E74949] text-white' : 'text-[#4A4A4A]'}`}
+                            className={`w-full text-nowrap rounded-[10px] border p-3 text-base font-medium ${isWeekly ? 'bg-[#E74949] text-white' : 'text-[#4A4A4A]'}`}
                             onClick={() => handleButtonClick(true)}
                         >
                             Рейс проводится несколько раз в неделю
