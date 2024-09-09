@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Button from '@/components/button';
 import Divan from '@/assets/admin/Divan';
@@ -10,6 +10,7 @@ import ChooseRow from '@/assets/admin/ChooseRow';
 import ChooseCol from '@/assets/admin/ChooseCol';
 import Cursor from '@/assets/admin/Cursor';
 
+
 type SchemeProps = {
     selectedFloor: 1 | 2 | 3 | null;
     seatCount: number;
@@ -17,15 +18,20 @@ type SchemeProps = {
 
 const Scheme: React.FC<SchemeProps> = ({ selectedFloor, seatCount }) => {
     const [selectedSeat, setSelectedSeat] = useState<string>('A');
-    const [columns, setColumns] = useState(Math.ceil(seatCount / 5) + 7); // Изначально столько колонок + 2 для свободного места
+    const [columns, setColumns] = useState(0);
     const [rows, setRows] = useState(5); // Изначально 5 строк
+
+    useEffect(() => {
+        if (seatCount > 0) {
+            setColumns(Math.ceil(seatCount / 5) + 2); // Обновляем колонки, когда seatCount не пустой
+        }
+    }, [seatCount]); // Зависимость от изменения seatCount
 
     const options = [
         { label: 'Установка мест', value: '01' },
         { label: 'Установка места водителя', value: 'handlebar', icon: <Handlebar color='#A0A0A0' /> },
         { label: 'Установка прохода', value: '/' },
     ];
-
     const addRow = () => setRows((prevRows) => prevRows + 1);
     const removeRow = () => setRows((prevRows) => (prevRows > 1 ? prevRows - 1 : prevRows));
     const addColumn = () => setColumns((prevColumns) => prevColumns + 1);
@@ -34,9 +40,9 @@ const Scheme: React.FC<SchemeProps> = ({ selectedFloor, seatCount }) => {
     return (
         <div className="flex flex-col">
             <p className="text-2xl mb-5 font-semibold text-[#4A4A4A]">Задать схему автобуса</p>
-            {selectedFloor && seatCount ? (
+            {selectedFloor && seatCount > 0 ? (
                 <>
-                <SeatConfigurator
+                    <SeatConfigurator
                         options={options}
                         selectedValue={selectedSeat}
                         onChange={setSelectedSeat}

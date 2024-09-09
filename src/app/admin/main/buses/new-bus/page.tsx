@@ -10,7 +10,7 @@ import Floors from '@/app/admin/main/buses/new-bus/_components/floors';
 import Scheme from '@/app/admin/main/buses/new-bus/_components/scheme';
 
 const NewBus = () => {
-    const [selectedFloor, setSelectedFloor] = useState< 1 | 2 | 3 | null>(null);
+    const [selectedFloor, setSelectedFloor] = useState<1 | 2 | 3 | null>(null);
     const [seatCount, setSeatCount] = useState<number | string>(''); // Состояние для хранения количества мест
 
     return (
@@ -51,9 +51,10 @@ const NewBus = () => {
                             <InputMask
                                 mask="99"
                                 placeholder='Количество мест'
-                                onChange={(e) => setSeatCount(e.target.value)} // Обновление состояния при вводе
+                                onChange={(e) => setSeatCount(Number(e.target.value) || '')} // Преобразуем в число или оставляем пустую строку
                                 className='border text-base font-medium text-[#4A4A4A] p-5 pt-[12px] pb-[12px] w-full focus:outline-none border-[#A0A0A0] rounded-[10px]'
                             />
+
                         </div>
 
                     </div>
