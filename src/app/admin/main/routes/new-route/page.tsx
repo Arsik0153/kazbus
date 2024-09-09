@@ -2,18 +2,14 @@
 import React, { useState } from 'react';
 import ComboBox from '../../trips/_components/inputCombo';
 import PhasaB from './_components/phasaB';
+import { cities } from '@/static/city';
 
 const NewRoute = () => {
     // Состояния для каждого ComboBox
     const [startCity, setStartCity] = useState<{ id: number; name: string } | null>(null);
     const [endCity, setEndCity] = useState<{ id: number; name: string } | null>(null);
 
-    const cities = [
-        { id: 1, name: 'Алматы' },
-        { id: 2, name: 'Нур-Султан' },
-        { id: 3, name: 'Шымкент' },
-    ];
-
+   
     // Обработчик выбора опции
     const handleOptionSelect = (name: string, selectedItem: { id: number; name: string } | null) => {
         if (name === 'startCity') {
