@@ -8,6 +8,7 @@ import { useServerActionQuery } from '@/lib/server-action-hooks';
 import { getCitiesAction } from '../actions';
 import { City } from '@/data/types';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import ArrowLeft from '@/assets/shared/arrow-left';
 
 const SelectDeparture = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -75,7 +76,17 @@ const SelectDeparture = () => {
                             value={searchTerm}
                         />
                     </Topbar>
-                    <ul className="mx-5 mb-10">
+                    <div
+                        className="flex w-full items-center justify-between border-b-[1px] border-b-[#CDCDCD] px-5 py-4"
+                        onClick={() => setIsOpen(false)}
+                    >
+                        <ArrowLeft color="#4a4a4a" />
+                        <p className="text-[14px] font-medium text-[#4A4A4A]">
+                            Вернуться назад
+                        </p>
+                        <div />
+                    </div>
+                    <ul className="h-[calc(100vh-217px)] overflow-y-scroll px-5 pb-10">
                         {filteredCities.map((city) => (
                             <li
                                 key={city.id}

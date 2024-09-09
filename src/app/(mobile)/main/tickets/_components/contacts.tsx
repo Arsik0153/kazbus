@@ -57,13 +57,16 @@ const Contacts = (props: Props) => {
                                     width={24}
                                     height={26}
                                     alt="KZ"
+                                    quality={100}
                                 />
                             }
+                            type="tel"
                             {...register('phone')}
                         />
                         <ErrorMessage message={errors.phone?.message} />
                         <Input
                             label="Электронная почта (необязательно)"
+                            type="email"
                             {...register('email')}
                         />
                         <ErrorMessage message={errors.email?.message} />

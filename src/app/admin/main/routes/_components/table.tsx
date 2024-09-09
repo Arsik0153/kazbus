@@ -89,7 +89,9 @@ const Table = () => {
                         <td>
                             <div className="flex flex-row gap-2 items-center">
                                 <Calendar color='#E74949' width={16} height={16} />
-                                <p className="text-base font-semibold text-[#4A4A4A]">{dateTimeToReadable(routes.created_at)}</p>
+                                <p className="text-base font-semibold text-[#4A4A4A]">
+                                    {dateTimeToReadable(routes.created_at)}
+                                    </p>
                             </div>
                         </td>
                         <td className=" py-4 pr-6 rounded-r-[10px]">

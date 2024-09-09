@@ -12,6 +12,7 @@ import { Steps } from './types';
 import { useServerAction } from 'zsa-react';
 import { createTicketAction } from './actions';
 import toast from 'react-hot-toast';
+import Payment from './_components/payment';
 
 const TicketPageSuspended = () => {
     const [step, setStep] = useState<Steps>(Steps.SelectTicket);
@@ -21,10 +22,13 @@ const TicketPageSuspended = () => {
     const [contacts, setContacts] = useState<z.output<
         typeof contactsSchema
     > | null>(null);
+    const [bookingTicketId, setBookingTicketId] = useState<number>(0);
 
     const { execute: createTicket, isPending: isTicketCreating } =
         useServerAction(createTicketAction, {
-            onSuccess: () => {
+            onSuccess: (data) => {
+                console.log(data);
+                setBookingTicketId(data.data.ticket_id);
                 setStep(Steps.Booking);
             },
             onError: (data) => {
@@ -46,10 +50,14 @@ const TicketPageSuspended = () => {
         data: z.output<typeof contactsSchema>
     ) => {
         setContacts(data);
+
         await createTicket({
             direction: selectedTicket?.id || 1,
-            place_num: seats[0],
-            place_floor: 1,
+            tickets: passengers.map((passenger, i) => ({
+                place_num: seats[i],
+                place_floor: 1,
+                passenger: passenger.user_id,
+            })),
         });
     };
 
@@ -85,6 +93,9 @@ const TicketPageSuspended = () => {
                     setStep={setStep}
                     selectedTicket={selectedTicket}
                 />
+            )}
+            {step === Steps.Payment && (
+                <Payment ticked_id={bookingTicketId} setStep={setStep} />
             )}
         </Suspense>
     );

@@ -51,6 +51,7 @@ const PhoneStep = (props: Props) => {
                             width={24}
                             height={26}
                             alt="KZ"
+                            quality={100}
                         />
                     }
                     value={phone}

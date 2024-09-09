@@ -32,9 +32,10 @@ const Login = () => {
     );
     const { execute, isPending } = useServerAction(loginAction, {
         onSuccess: () => {
-            router.push('/main');
+            router.push('/main?passenger_count=1');
         },
         onError: (error) => {
+            console.log(error);
             if (error.err.name === 'ZodError') {
                 toast.error(
                     error.err.fieldErrors?.otp?.[0] ||
@@ -82,6 +83,7 @@ const Login = () => {
                                     width={24}
                                     height={26}
                                     alt="KZ"
+                                    quality={100}
                                 />
                             }
                             value={phone}
@@ -97,12 +99,12 @@ const Login = () => {
                                 Продолжить
                             </Button>
                         </div>
-                        <Link
+                        {/* <Link
                             href="/start/registration"
                             className="mt-11 text-base font-medium text-white underline"
                         >
                             Перейти к регистрации
-                        </Link>
+                        </Link> */}
                     </div>
                 </>
             )}

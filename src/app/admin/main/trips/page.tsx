@@ -9,7 +9,9 @@ import Table from './_components/table';
 import Link from 'next/link';
 import CalendarPC from '@/components/calendar/select-date';
 
+
 const Trips = () => {
+    
     const handleSelectionChange = (name: string, selected: any) => {
         console.log(`${name} selected:`, selected);
         // Добавьте здесь необходимую логику для обработки выбора
@@ -17,6 +19,7 @@ const Trips = () => {
     const handleBirthDateChange = () => {
         console.log('ewfw');
     };
+    
 
     return (
         <div className="mt-6 flex flex-col">

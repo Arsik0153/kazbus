@@ -41,14 +41,18 @@ const renderDays = (
         days.push(
             <div
                 key={date.format('YYYY-MM-DD')}
-                className="flex h-14 items-start justify-center"
-                onClick={() => handleDayClick(date)}
+                className={`flex h-14 items-start justify-center ${
+                    isPast ? 'cursor-not-allowed' : 'cursor-pointer'
+                }`}
+                onClick={() => !isPast && handleDayClick(date)}
             >
                 <div
                     className={`flex flex-col items-center ${isPast ? 'opacity-50' : ''}`}
                 >
                     <div
-                        className={`text-[22px] font-medium ${isPast ? 'opacity-50' : 'text-[var(--black)]'}`}
+                        className={`text-[22px] font-medium ${
+                            isPast ? 'opacity-50' : 'text-[var(--black)]'
+                        }`}
                     >
                         {date.date()}
                     </div>
@@ -129,7 +133,7 @@ const DatePicker = (props: Props) => {
     };
 
     return (
-        <div className="h-[calc(100vh-220px)] overflow-y-scroll px-5">
+        <div className="h-[calc(100vh-274px)] overflow-y-scroll px-5">
             {months.map((month) =>
                 renderMonth(month, handleDayClick, data || [])
             )}

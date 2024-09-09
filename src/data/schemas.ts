@@ -74,6 +74,14 @@ export const loginSchema = z.object({
         .string({ message: 'Введите пароль' })
         .min(8, 'Пароль должен содержать минимум 8 символов'),
 });
+export const adminLoginSchema = z.object({
+    username: z
+        .string({ message: 'Введите логин' })
+        .min(4, 'Введите логин'),
+    password: z
+        .string({ message: 'Введите пароль' })
+        .min(1, 'Пароль должен содержать минимум 1 символов'),
+});
 
 export const bookTicketSchema = z.object({
     direction: z.number(),
@@ -106,3 +114,25 @@ export const driverSchema = z.object({
             'Неверный формат файла'
         ),
 });
+
+const PassengerSchema = z.object({
+    passenger: z.number().nullable(),
+    place_num: z.number(),
+    place_floor: z.number(),
+});
+
+const TicketsSchema = z.object({
+    direction: z.number(),
+    tickets: z.array(PassengerSchema),
+});
+
+const SingleTicketSchema = z.object({
+    direction: z.number(),
+    place_num: z.number(),
+    place_floor: z.number(),
+});
+
+export const CombinedBookingSchema = z.union([
+    TicketsSchema,
+    SingleTicketSchema,
+]);

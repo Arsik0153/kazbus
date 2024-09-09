@@ -16,6 +16,8 @@ import { createPassenger } from '../actions';
 import toast from 'react-hot-toast';
 import { Profile } from '@/data/user';
 import { User } from './select-passengers';
+import { InputMask } from '@react-input/mask';
+import { useQueryClient } from '@tanstack/react-query';
 
 type Props = {
     onBack: () => void;
@@ -24,9 +26,13 @@ type Props = {
 
 const CreatePassenger = (props: Props) => {
     const { onBack, onAddPassenger } = props;
+    const queryClient = useQueryClient();
 
     const { execute, isPending } = useServerAction(createPassenger, {
         onSuccess: async (data) => {
+            queryClient.invalidateQueries({
+                queryKey: ['passengers'],
+            });
             onAddPassenger(data.data);
             toast.success('Пассажир добавлен');
         },
@@ -96,10 +102,14 @@ const CreatePassenger = (props: Props) => {
                             />
                         </div>
                         <div>
-                            <Input
+                            <InputMask
+                                component={Input}
                                 label="Дата рождения"
                                 id="birth_date"
+                                type="tel"
                                 iconLeft={<Calendar color="#E74949" />}
+                                mask="__.__.____"
+                                replacement="_"
                                 {...register('birth_date')}
                             />
                             <ErrorMessage

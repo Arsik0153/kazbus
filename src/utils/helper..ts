@@ -50,13 +50,13 @@ export function getStringByNumber(
 }
 
 export const dateTimeToReadable = (inputDateTime: string): string => {
-    // Проверяем, соответствует ли входная строка формату ISO
-    const datePattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
-    if (!datePattern.test(inputDateTime)) {
-        throw new Error('Invalid datetime format. Expected format is YYYY-MM-DDTHH:mm:ssZ.');
+    // Пробуем создать объект dayjs и проверить его валидность
+    const dateTime = dayjs(inputDateTime, { utc: true });
+
+    if (!dateTime.isValid()) {
+        throw new Error('Invalid datetime format.');
     }
 
-    // Преобразуем и форматируем дату
-    const dateTime = dayjs(inputDateTime);
-    return dateTime.format('DD.MM.YYYY HH:mm');
+    // Возвращаем дату в формате YYYY-MM-DD
+    return dateTime.format('YYYY-MM-DD');
 };

@@ -6,13 +6,18 @@ import Link from 'next/link';
 import React from 'react';
 import { useServerAction } from 'zsa-react';
 import { logoutAction } from './actions';
+import { useQueryClient } from '@tanstack/react-query';
 
 const LogoutPage = () => {
-    const { execute, isPending } = useServerAction(logoutAction, {
-        onError: () => {
-            console.log('error');
-        },
-    });
+    const queryClient = useQueryClient();
+    const { execute, isPending } = useServerAction(logoutAction);
+
+    const handleLogoutClick = () => {
+        queryClient.clear();
+        queryClient.removeQueries();
+        execute();
+    };
+
     return (
         <>
             <Topbar backHref="/profile">Выйти</Topbar>
@@ -24,7 +29,7 @@ const LogoutPage = () => {
                     <Link href="/profile">
                         <Button variant="secondary">Вернуться назад</Button>
                     </Link>
-                    <Button loading={isPending} onClick={() => execute()}>
+                    <Button loading={isPending} onClick={handleLogoutClick}>
                         Выйти из аккаунта
                     </Button>
                 </div>

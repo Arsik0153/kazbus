@@ -59,7 +59,7 @@ const AuthorizedProfilePage = async () => {
                         </div>
                     </div>
                 </div>
-                <div className="mt-11 pb-[20px]">
+                <div className="mb-10 mt-11 pb-[20px]">
                     <div className="flex w-full flex-row items-center justify-center gap-3 rounded-[50px] bg-[#EFEFEF] p-2">
                         <ShieldKeyhole color="#E74949" />
                         <div className="text-[16px] font-semibold leading-[17.6px] text-[#E74949]">

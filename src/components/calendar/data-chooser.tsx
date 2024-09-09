@@ -6,7 +6,7 @@ import React from 'react';
 import { getDatesAction } from '@/app/(mobile)/main/actions';
 import { AvailableDate } from '@/data/types';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import './scrollbar-hide.css'; 
+import './scrollbar-hide.css';
 
 const generateMonths = () => {
     const today = dayjsExt();
@@ -49,7 +49,9 @@ const renderDays = (
                 <div
                     className={`flex flex-col items-center ${isPast ? 'opacity-50' : ''}`}
                 >
-                    <div className={`text-[22px] font-medium ${isPast ? 'opacity-50' : 'text-[var(--black)]'}`}>
+                    <div
+                        className={`text-[22px] font-medium ${isPast ? 'opacity-50' : 'text-[var(--black)]'}`}
+                    >
                         {date.date()}
                     </div>
                     <div className="text-xs text-[#E74949]">
@@ -95,14 +97,14 @@ const DatePicker: React.FC<Props> = (props) => {
     const today = dayjsExt();
     const dateRange = {
         from: today.startOf('day').valueOf(),
-        to: today.add(2, 'months').endOf('day').valueOf()
+        to: today.add(2, 'months').endOf('day').valueOf(),
     };
 
     const { data } = useServerActionQuery(getDatesAction, {
         input: dateRange,
         queryKey: ['getDates', dateRange],
     });
-    
+
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const router = useRouter();
@@ -112,15 +114,15 @@ const DatePicker: React.FC<Props> = (props) => {
     };
 
     return (
-        <div className='absolute z-30 mt-[12px] w-[320px] h-[350px] bg-[var(--bg)] rounded-[10px] px-5 border overflow-y-scroll scrollbar-hide'>
-            <div className="sticky top-0 grid w-full grid-cols-7 border-b border-[#dbdbdb] py-3 text-center text-base font-medium text-[var(--black)] bg-[var(--bg)] z-10">
-                <div className='text-base font-medium'>Пн</div>
-                <div className='text-base font-medium'>Вт</div>
-                <div className='text-base font-medium'>Ср</div>
-                <div className='text-base font-medium'>Чт</div>
-                <div className='text-base font-medium'>Пт</div>
-                <div className='text-base font-medium'>Сб</div>
-                <div className='text-base font-medium'>Вс</div>
+        <div className="scrollbar-hide absolute z-30 mt-[12px] h-[350px] w-[320px] overflow-y-scroll rounded-[10px] border bg-[var(--bg)] px-5">
+            <div className="sticky top-0 z-10 grid w-full grid-cols-7 border-b border-[#dbdbdb] bg-[var(--bg)] py-3 text-center text-base font-medium text-[var(--black)]">
+                <div className="text-base font-medium">Пн</div>
+                <div className="text-base font-medium">Вт</div>
+                <div className="text-base font-medium">Ср</div>
+                <div className="text-base font-medium">Чт</div>
+                <div className="text-base font-medium">Пт</div>
+                <div className="text-base font-medium">Сб</div>
+                <div className="text-base font-medium">Вс</div>
             </div>
             <div className="h-full">
                 {months.map((month) =>
