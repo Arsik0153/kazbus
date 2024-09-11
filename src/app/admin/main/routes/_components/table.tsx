@@ -18,7 +18,7 @@ const Table = () => {
 
     const handleButtonClick = () => {
         setIsActive(!isActive);
-        console.log('edit routes activated'); 
+        console.log('edit routes activated');
     };
     if (isPending) {
         return (
@@ -55,14 +55,13 @@ const Table = () => {
                     </th>
                 </tr>
                 {data?.map((routes) => (
-
-                    <tr className="bg-[#F1F5F9]" key={routes.start_city}>
+                    <tr className="bg-[#F1F5F9]" key={routes.id}>
                         <td className="pl-6 w-fit max-w-20 rounded-l-[10px]">
                             <div className="flex flex-row items-center gap-[18px] w-fit">
                                 <div className="w-8 h-8 rounded-full bg-[#E74949] flex items-center justify-center text-white text-lg">
                                     A
                                 </div>
-                                <p className='text-base font-medium text-[#4A4A4A]'>{routes.start_city}</p>
+                                <p className='text-base font-medium text-[#4A4A4A]'>{routes.start_city.name}</p>
                             </div>
                         </td>
                         <td className="text-base font-bold text-[#E74949] pr-5">
@@ -73,9 +72,8 @@ const Table = () => {
                                 <div className="w-8 h-8 rounded-full bg-[#E74949] flex items-center justify-center text-white text-lg">
                                     В
                                 </div>
-                                <p className='text-base font-medium text-[#4A4A4A]'>{routes.end_city}</p>
+                                <p className='text-base font-medium text-[#4A4A4A]'>{routes.end_city.name}</p>
                             </div>
-
                         </td>
                         <td className="text-base font-semibold text-[#4A4A4A]">
                             {routes.stops.length}
@@ -91,11 +89,10 @@ const Table = () => {
                                 <Calendar color='#E74949' width={16} height={16} />
                                 <p className="text-base font-semibold text-[#4A4A4A]">
                                     {dateTimeToReadable(routes.created_at)}
-                                    </p>
+                                </p>
                             </div>
                         </td>
                         <td className=" py-4 pr-6 rounded-r-[10px]">
-
                             <Link href='/admin/main/routes/new-route'>
                                 <button className='py-3 ml-auto px-8 flex items-center justify-center rounded-[10px] border border-[#E74949] text-sm font-semibold text-[#E74949] hover:bg-[#F16363] hover:text-white duration-150' onClick={handleButtonClick}>
                                     Редактировать
@@ -104,6 +101,7 @@ const Table = () => {
                         </td>
                     </tr>
                 ))}
+
             </tbody>
         </table>
     )

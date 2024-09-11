@@ -1,6 +1,8 @@
 'use client';
 import React, { useState } from 'react';
 import Handlebar from '@/assets/admin/Handlebar';
+import ChooseRow from '@/assets/admin/ChooseRow';
+import ChooseCol from '@/assets/admin/ChooseCol';
 
 type SeatSchemeBuilderProps = {
     selectedFloor: 1 | 2 | 3 | null;
@@ -10,20 +12,65 @@ type SeatSchemeBuilderProps = {
     rows: number;
 };
 
-const SeatSchemeBuilder: React.FC<SeatSchemeBuilderProps> = ({ selectedFloor, seatCount, selectedSeat, columns, rows }) => {
+const SeatSchemeBuilder: React.FC<SeatSchemeBuilderProps> = ({ selectedFloor, seatCount, selectedSeat, columns: initialColumns, rows: initialRows }) => {
+    const [columns, setColumns] = useState(initialColumns);
+    const [rows, setRows] = useState(initialRows);
+
     // Структура хранения мест для каждого этажа
     const [seats, setSeats] = useState({
-        1: Array(rows * columns).fill(''),
-        2: Array(rows * columns).fill(''),
-        3: Array(rows * columns).fill(''),
+        1: Array(initialRows * initialColumns).fill(''),
+        2: Array(initialRows * initialColumns).fill(''),
+        3: Array(initialRows * initialColumns).fill(''),
     });
+
+    // Функции добавления и удаления колонок
+    const addColumn = () => {
+        setColumns((prevColumns) => prevColumns + 1);
+        if (selectedFloor !== null) {
+            setSeats((prevSeats) => ({
+                ...prevSeats,
+                [selectedFloor]: [...prevSeats[selectedFloor], ...Array(rows).fill('')],
+            }));
+        }
+    };
+
+    const removeColumn = () => {
+        if (columns > 1 && selectedFloor !== null) {
+            setColumns((prevColumns) => prevColumns - 1);
+            setSeats((prevSeats) => ({
+                ...prevSeats,
+                [selectedFloor]: prevSeats[selectedFloor].slice(0, rows * (columns - 1)),
+            }));
+        }
+    };
+
+    // Функции добавления и удаления строк
+    const addRow = () => {
+        setRows((prevRows) => prevRows + 1);
+        if (selectedFloor !== null) {
+            setSeats((prevSeats) => ({
+                ...prevSeats,
+                [selectedFloor]: [...prevSeats[selectedFloor], ...Array(columns).fill('')],
+            }));
+        }
+    };
+
+    const removeRow = () => {
+        if (rows > 1 && selectedFloor !== null) {
+            setRows((prevRows) => prevRows - 1);
+            setSeats((prevSeats) => ({
+                ...prevSeats,
+                [selectedFloor]: prevSeats[selectedFloor].slice(0, (rows - 1) * columns),
+            }));
+        }
+    };
 
     const handleSeatClick = (index: number) => {
         if (selectedFloor === null) return; // Если этаж не выбран, выходим
 
         setSeats((prevSeats) => {
             const newSeats = { ...prevSeats };
-            const floorSeats = [...newSeats[selectedFloor]];
+            const floorSeats = [...newSeats[selectedFloor as 1 | 2 | 3]]; // Убедитесь, что selectedFloor - это число
             const seatValue = floorSeats[index];
 
             if (seatValue) {
@@ -54,9 +101,12 @@ const SeatSchemeBuilder: React.FC<SeatSchemeBuilderProps> = ({ selectedFloor, se
                     floorSeats[index] = (maxSeatNumber + 1).toString().padStart(2, '0');
                 } else if (selectedSeat === 'handlebar') {
                     floorSeats[index] = 'handlebar'; // Устанавливаем специальный идентификатор
+                } else if (selectedSeat === '///') {
+                    floorSeats[index] = '///'; // Устанавливаем специальный идентификатор
                 } else if (selectedSeat === '/') {
                     floorSeats[index] = '/'; // Устанавливаем специальный идентификатор
                 }
+
                 newSeats[selectedFloor] = floorSeats;
                 return newSeats;
             }
@@ -78,7 +128,7 @@ const SeatSchemeBuilder: React.FC<SeatSchemeBuilderProps> = ({ selectedFloor, se
         return Array(rows * columns)
             .fill('')
             .map((_, i) => {
-                const seatValue = seats[selectedFloor][i];
+                const seatValue = seats[selectedFloor as 1 | 2 | 3][i]; // Приводим selectedFloor к типу number
                 let content = null;
                 let cellStyle = 'bg-none border-[#B8B8B8]';
 
@@ -87,7 +137,10 @@ const SeatSchemeBuilder: React.FC<SeatSchemeBuilderProps> = ({ selectedFloor, se
                     cellStyle = 'border-[#B8B8B8]';
                 } else if (seatValue === '/') {
                     content = '/';
-                    cellStyle = 'border-[#B8B8B8] text-xl font-bold border flex justify-center items-center rounded-[10px] h-12 w-12'; // Например, другой фон
+                    cellStyle = 'border-[#B8B8B8] text-xl text-[#A0A0A0] font-bold border flex justify-center items-center rounded-[10px] h-12 w-12';
+                } else if (seatValue === '///') {
+                    content = '///';
+                    cellStyle = 'border-[#B8B8B8] text-xl text-[#A0A0A0] font-bold border flex justify-center items-center rounded-[10px] h-12 w-12';
                 } else if (seatValue) {
                     content = seatValue;
                     cellStyle = 'border-[#E32B2B] text-[#E32B2B]';
@@ -107,27 +160,40 @@ const SeatSchemeBuilder: React.FC<SeatSchemeBuilderProps> = ({ selectedFloor, se
 
     return (
         <div>
-            <div className="flex flex-row items-center gap-3">
-                <p>Выбранное действие: {selectedSeat}/</p>
-                <p>Этаж: {selectedFloor}/</p>
-                <p>Посадочных мест: {seatCount}</p>
-                <button
-                    onClick={clearAllSeats}
-                    className="bg-red-500 text-white py-2 px-4 rounded mt-4"
-                >
-                    Стереть все
-                </button>
-            </div>
+            <div className="flex flex-col items-center mt-4 gap-6">
+                <div className="flex flex-row items-center gap-3">
 
-            <div
-                className="grid w-fit gap-2 mt-4"
-                style={{
-                    gridTemplateColumns: `repeat(${columns}, 1fr)`,
-                    gridTemplateRows: `repeat(${rows}, 1fr)`,
-                }}
-            >
-                {renderGridCells()}
+                    <div
+                        className="grid w-fit gap-2"
+                        style={{
+                            gridTemplateColumns: `repeat(${columns}, 1fr)`,
+                            gridTemplateRows: `repeat(${rows}, 1fr)`,
+                        }}
+                    >
+                        {renderGridCells()}
+                    </div>
+
+
+                    <div className="flex flex-col items-center gap-3">
+                        <button onClick={addColumn} className='w-9 h-9 rounded-full bg-[#E23333] flex items-center justify-center'>
+                            <ChooseRow color='#FFFFFF' />
+                        </button>
+                        <button onClick={removeColumn} className="w-9 h-9 rounded-full border border-[#E23333] flex items-center justify-center">
+                            <div className="w-[10px] h-[3px] bg-[#E23333] rounded-[4px]"></div>
+                        </button>
+                    </div>
+                </div>
+
+                <div className="flex flex-row items-center gap-3">
+                    <button onClick={addRow} className='w-9 h-9 rounded-full bg-[#E23333] flex items-center justify-center'>
+                        <ChooseCol color='#FFFFFF' />
+                    </button>
+                    <button onClick={removeRow} className="w-9 h-9 rounded-full border border-[#E23333] flex items-center justify-center">
+                        <div className="w-[10px] h-[3px] bg-[#E23333] rounded-[4px]"></div>
+                    </button>
+                </div>
             </div>
+            <button onClick={clearAllSeats}>clear</button>
         </div>
     );
 };

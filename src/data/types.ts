@@ -130,8 +130,8 @@ export type Stop = {
 };
 export type Routes = {
     id: number;
-    start_city: string;
-    end_city: string;
+    start_city: City;
+    end_city: City;
     total_travel_time: string; // Время в формате "HH:MM:SS"
     created_at: string; // Дата в формате ISO
     stops: Stop[];

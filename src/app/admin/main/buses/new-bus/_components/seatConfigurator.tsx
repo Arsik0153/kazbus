@@ -35,7 +35,7 @@ const SeatConfigurator: React.FC<SeatConfiguratorProps> = ({ options, selectedVa
                             <div className={`text-xl font-bold border flex justify-center items-center rounded-[10px]
                             ${option.icon ? 'h-12 w-24 ' : 'h-12 w-12'}
                                 ${isActive ? 'bg-[#E23333] text-white border-white' : 'text-[#E23333] border-[#A0A0A0]'}`}>
-                                {option.icon ?  React.cloneElement(option.icon as React.ReactElement, { color: isActive ? '#FFFFFF' : '#A0A0A0' }) : option.value}
+                                {option.icon ? React.cloneElement(option.icon as React.ReactElement, { color: isActive ? '#FFFFFF' : '#A0A0A0' }) : option.value}
                             </div>
                         </div>
                     </label>
