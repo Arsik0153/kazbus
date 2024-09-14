@@ -13,11 +13,13 @@ import { sanitizePhone } from '@/utils/helper.';
 import Mail from '@/assets/mail';
 import { loginAction } from '@/app/(mobile)/profile/registration/actions';
 import { useRouter } from 'next/navigation';
+import Checkbox from '@/components/checkbox';
 
 const Login = () => {
     const [step, setStep] = useState(1);
     const [phone, setPhone] = useState<string>('');
     const [otp, setOtp] = useState<string>('');
+    const [isAgree, setIsAgree] = useState<boolean>(false);
     const router = useRouter();
     const { execute: sendOtp, isPending: isOtpLoading } = useServerAction(
         sendOtpAction,
@@ -46,6 +48,9 @@ const Login = () => {
             toast.error(error.err.message);
         },
     });
+
+    const isButtonDisabled = !phone || phone.length < 18 || !isAgree;
+
     const handleNextStep = () => {
         if (phone.length < 18) {
             toast.error('Введите корректный номер телефона');
@@ -91,8 +96,35 @@ const Login = () => {
                                 setPhone(e.target.value);
                             }}
                         />
+                        <div className="mt-">
+                            <Checkbox
+                                label={
+                                    <>
+                                        Нажмите здесь, чтобы принять{' '}
+                                        <Link
+                                            href="/start/terms"
+                                            className="underline"
+                                            rel="prefetch"
+                                        >
+                                            условия соглашения
+                                        </Link>{' '}
+                                        и ознакомиться с нашей{' '}
+                                        <Link
+                                            href="/start/policy"
+                                            className="underline"
+                                            rel="prefetch"
+                                        >
+                                            политикой конфиденциальности
+                                        </Link>
+                                    </>
+                                }
+                                checked={isAgree}
+                                onChange={() => setIsAgree(!isAgree)}
+                            />
+                        </div>
                         <div className="mt-2 w-full">
                             <Button
+                                disabled={isButtonDisabled}
                                 onClick={handleNextStep}
                                 loading={isOtpLoading}
                             >
