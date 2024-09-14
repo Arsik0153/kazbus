@@ -63,6 +63,18 @@ const Booking = (props: Props) => {
                     </p>
                 </div>
                 <Ticket ticket={selectedTicket} />
+                <div className="flex flex-col justify-between gap-2 rounded-lg border mb-2 border-[#D1D1D1] bg-none p-5">
+                    <p className="text-xs font-bold text-[#A0A0A0]">
+                        Пассажир
+                    </p>
+                    <p className="text-base font-medium text-[#4A4A4A]">
+                        Купертино Стив Джобсович
+                    </p>
+                    <p className="text-base font-medium text-[#4A4A4A]">
+                        04040595289782932
+                        {seats.join(', ')}
+                    </p>
+                </div>
                 <div className="flex flex-row justify-between gap-3 rounded-lg border border-[#D1D1D1] bg-none p-5">
                     <p className="text-base font-normal text-[#4A4A4A]">
                         Место
