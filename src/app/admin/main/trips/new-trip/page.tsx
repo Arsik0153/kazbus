@@ -1,51 +1,170 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import ComboBox from '@/app/admin/main/trips/_components/inputCombo';
-import PhaseA from './_components/phaseA';
 import PhaseB from './_components/phaseB';
+import { getTripsAction } from '../action';
+import { useServerActionQuery } from '@/lib/server-action-hooks';
+import { Trips } from '@/data/types';
+import Spinner from '@/components/spinner';
+import { NewTripSchema } from '@/data/schemas';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import ErrorMessage from '@/components/error-message';
+import { z } from 'zod';
 
-
-const NewTrips = () => {
-    const [selections, setSelections] = useState<Record<string, any | null>>({
-        route: null,
-        driver: null,
-        bus: null,
+const NewTrips: React.FC = () => {
+    const { data, isPending } = useServerActionQuery(getTripsAction, {
+        input: undefined,
+        queryKey: ['getTrips'],
     });
 
-    const handleSelectionChange = (name: string, selected: any | null) => {
-        setSelections((prevSelections) => ({
-            ...prevSelections,
-            [name]: selected,
-        }));
+    const [route, setRoute] = useState<{ id: number; name: string } | null>(null);
+    const [driver, setDriver] = useState<{ id: number; name: string } | null>(null);
+    const [bus, setBus] = useState<{ id: number; name: string } | null>(null);
+
+    const {
+        control,
+        formState: { errors },
+        handleSubmit
+    } = useForm<z.output<typeof NewTripSchema>>({
+        resolver: zodResolver(NewTripSchema),
+    });
+
+    const onSubmit = handleSubmit((data) => {
+        console.log('Выбранные данные:', data);
+    });
+
+    const routes = useMemo(() => {
+        return data?.map((trip: Trips) => ({
+            id: trip.route.id,
+            name: `${trip.from_city} - ${trip.to_city}`,
+        })) || [];
+    }, [data]);
+
+    const drivers = useMemo(() => {
+        return data?.map((trip: Trips) => ({
+            id: trip.driver.id,
+            name: `${trip.driver.full_name}`,
+        })) || [];
+    }, [data]);
+
+    const buses = useMemo(() => {
+        return data?.map((trip: Trips) => ({
+            id: trip.bus.id,
+            name: `${trip.bus.model_stamp} (${trip.bus.state_number})`,
+        })) || [];
+    }, [data]);
+
+    const handleOptionSelect = (name: string, selectedItem: { id: number; name: string } | null) => {
+        if (name === 'route') {
+            setRoute(selectedItem);
+        } else if (name === 'driver') {
+            setDriver(selectedItem);
+        } else if (name === 'bus') {
+            setBus(selectedItem);
+        }
     };
 
-    // Проверяем, все ли значения выбраны
-    const allSelected = Object.values(selections).every(value => value !== null);
+    const handleNewItem = (newItem: string) => {
+        console.log('Добавить новый элемент:', newItem);
+    };
+
+    const selectedTrip = useMemo(() => {
+        return data?.find(
+            (trip: Trips) =>
+                trip.route.id === route?.id
+            // &&
+            // trip.bus.id === bus?.id &&
+            // trip.driver.id === driver?.id &&
+        );
+    }, [route, driver, bus, data]);
+
+    if (isPending) {
+        return (
+            <div className="flex justify-center py-11">
+                <Spinner />
+            </div>
+        );
+    }
 
     return (
-        <div className="flex flex-col my-6 gap-4">
+        <form onSubmit={onSubmit} className="flex flex-col my-6 mb-96 gap-4">
             <p className="text-[42px] font-semibold text-[#4A4A4A]">Добавить рейс</p>
             <div className="flex flex-col border bg-white rounded-[20px] px-8 py-10">
-                {/* Комбобоксы старт */}
                 <div className="flex flex-row gap-8 items-start">
                     <div className="flex flex-col gap-4 items-start">
                         <p className="text-2xl font-semibold text-[#4A4A4A]">Выберите маршрут</p>
-                        <ComboBox name="route" placeholder='Маршруты' onSelectionChange={handleSelectionChange} />
+                        <Controller
+                            name="route"
+                            control={control}
+                            render={({ field }) => (
+                                <>
+                                    <ComboBox
+                                        name="route"
+                                        options={routes}
+                                        placeholder="Маршрут"
+                                        onNewItem={handleNewItem}
+                                        onOptionSelect={(name, selected) => {
+                                            handleOptionSelect(name, selected);
+                                            field.onChange(selected); // Передаем весь объект, а не только ID
+                                        }}
+                                    />
+                                    <ErrorMessage message={errors.route?.message} />
+                                </>
+                            )}
+                        />
                     </div>
                     <div className="flex flex-col gap-4 items-start">
                         <p className="text-2xl font-semibold text-[#4A4A4A]">Выберите водителя</p>
-                        <ComboBox name="driver" placeholder='Водители' onSelectionChange={handleSelectionChange} />
+                        <Controller
+                            name="driver"
+                            control={control}
+                            render={({ field }) => (
+                                <>
+                                    <ComboBox
+                                        name="driver"
+                                        options={drivers}
+                                        placeholder="Водители"
+                                        onNewItem={handleNewItem}
+                                        onOptionSelect={(name, selected) => {
+                                            handleOptionSelect(name, selected);
+                                            field.onChange(selected); // Передаем весь объект
+                                        }}
+                                    />
+                                    <ErrorMessage message={errors.driver?.message} />
+                                </>
+                            )}
+                        />
                     </div>
                 </div>
                 <div className="flex flex-col mt-6 gap-4 items-start">
                     <p className="text-2xl font-semibold text-[#4A4A4A]">Выберите автобус</p>
-                    <ComboBox name="bus" placeholder='Автобусы' onSelectionChange={handleSelectionChange} />
+                    <Controller
+                        name="bus"
+                        control={control}
+                        render={({ field }) => (
+                            <>
+                                <ComboBox
+                                    name="bus"
+                                    options={buses}
+                                    placeholder="Автобусы"
+                                    onNewItem={handleNewItem}
+                                    onOptionSelect={(name, selected) => {
+                                        handleOptionSelect(name, selected);
+                                        field.onChange(selected); // Передаем весь объект
+                                    }}
+                                />
+                                <ErrorMessage message={errors.bus?.message} />
+                            </>
+                        )}
+                    />
                 </div>
-                {/* Отображение PhaseA и PhaseB в зависимости от выбора */}
-                {allSelected && <PhaseA />}
-                {allSelected && <PhaseB />}
+
+                {selectedTrip && (
+                    <PhaseB key={`${route?.id}-${driver?.id}-${bus?.id}`} selectedTrip={selectedTrip} />
+                )}
             </div>
-        </div>
+        </form>
     );
 };
 

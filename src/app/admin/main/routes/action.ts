@@ -1,6 +1,6 @@
 'use server';
 
-import { Routes } from '@/data/types';
+import { Route } from '@/data/types';
 import { createServerAction } from 'zsa';
 
 export const getRoutesAction = createServerAction().handler(async () => {
@@ -15,7 +15,7 @@ export const getRoutesAction = createServerAction().handler(async () => {
         throw 'Произошла ошибка при получении списка маршрутов';
     }
 
-    const result = (await response.json()) as Routes[];
+    const result = (await response.json()) as Route[];
 
     return result;
 });

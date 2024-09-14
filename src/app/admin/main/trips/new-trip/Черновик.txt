@@ -1,0 +1,62 @@
+'use client';
+import React, { useState, useMemo } from 'react';
+import ComboBox from '@/app/admin/main/trips/_components/inputCombo';
+import { NewTripSchema } from '@/data/schemas';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import ErrorMessage from '@/components/error-message';
+
+const NewTrips: React.FC = () => {
+    
+    const [route, setRoute] = useState<{ id: number; name: string } | null>(null);
+    const [driver, setDriver] = useState<{ id: number; name: string } | null>(null);
+    const [bus, setBus] = useState<{ id: number; name: string } | null>(null);
+    const {
+        register,
+        formState: { errors },
+        handleSubmit,
+        watch,
+    } = useForm<z.output<typeof NewTripSchema>>({
+        resolver: zodResolver(NewTripSchema),
+    });
+
+    const onSubmit = handleSubmit((data) => {
+        console.log('our data is:', data);
+    });
+
+    return (
+        <form onSubmit={onSubmit} className="flex flex-col my-6 mb-96 gap-4">
+            
+            <ErrorMessage message={errors.route?.message} />
+            <ComboBox
+                // name="route"
+                options={routes}
+                placeholder="Маршрут"
+                onOptionSelect={handleOptionSelect}
+                onNewItem={handleNewItem}
+                onSelectionChange={(name, selected) => handleOptionSelect(name, selected)}
+                {...register('route')}
+            />
+
+
+            <Button variant="secondary" className="mt-16">
+                Сохранить рейс
+            </Button>
+                
+        </form>
+    );
+};
+
+export default NewTrips;
+
+
+{/* <ErrorMessage message={errors.route?.message} />
+                        <ComboBox
+                            name="driver"
+                            options={drivers}
+                            placeholder="Водители"
+                            onOptionSelect={handleOptionSelect}
+                            onNewItem={handleNewItem}
+                            onSelectionChange={(name, selected) => handleOptionSelect(name, selected)}
+                        /> */}

@@ -1,31 +1,75 @@
-import React, { Suspense, useState } from 'react';
+import React, {Suspense, useState } from 'react';
 import InputMini from '@/components/admin/inputMini';
 import Ticket from '@/assets/admin/Ticket';
 import Button from '@/components/button';
 import Clock from '@/assets/admin/Clock';
 import WeekButtons from '@/app/admin/main/trips/new-trip/_components/WeekButtons';
 import Link from 'next/link';
-import Calendar from '@/assets/calendar';
+import { Trips } from '@/data/types';
 import CalendarPC from '@/components/calendar/select-date';
+import dayjs from 'dayjs';
+import { timeToReadable } from '@/utils/helper.';
 
-const PhaseB = () => {
-    const [isWeekly, setIsWeekly] = useState(false); // Состояние для определения типа рейса
+interface PhaseBProps {
+    selectedTrip: Trips;
+    // onDateChange: (fromDate: string | null, toDate: string | null) => void;
+
+}
+
+const PhaseB: React.FC<PhaseBProps> = ({ selectedTrip }) => {
+    const [RouteFrom, setRouteFrom] = useState<string | null>(null);
+    const [Routeto, setRouteto] = useState<string | null>(null);
+    // console.log("Прилетели данные с: ", { selectedTrip });
+    const [isWeekly, setIsWeekly] = useState(false);
 
     const handleButtonClick = (isWeekly: boolean) => {
         setIsWeekly(isWeekly);
     };
-    const handleBirthDateChange = () => {
-        console.log('ewfw');
+
+
+    const handleRouteFromChange = (date: Date | null) => {
+        const formattedDate = date ? dayjs(date).format('YYYY-MM-DD') : '';
+        setRouteFrom(formattedDate);
+        // setValue('date_of_birth', formattedDate);
+        console.log('Дата изменена');
+
+    };
+
+    const handleRouteToChange = (date: Date | null) => {
+        const formattedDate = date ? dayjs(date).format('YYYY-MM-DD') : '';
+        setRouteto(formattedDate);
+        // setValue('license_issue_date', formattedDate);
     };
 
     return (
         <>
-            {/* В - Бишкек старт */}
+            <div className="p-[6px] flex flex-row w-full bg-[#EEF2F6] items-center gap-5 rounded-[5px] mt-11">
+                <div className="w-8 h-8 rounded-full bg-[#E74949] flex items-center justify-center text-white text-lg">
+                    A
+                </div>
+                <p className="text-base font-medium text-[#4A4A4A]">{selectedTrip.from_city}</p>
+            </div>
+
+            <div className="flex flex-col my-[22px] gap-[22px] max-w-72">
+                {selectedTrip.route.stops.map((stop) => (
+                    <p
+                        key={stop.id}
+                        className="flex flex-row items-center justify-between text-base font-medium text-[#4A4A4A] border border-[#A0A0A0] rounded-[10px] p-3"
+                    >
+                        <p>{stop.name} </p>
+                        {/* <p>{timeToReadable(stop.stop_time)} минут</p> */}
+                        <p>{stop.stop_time} минут</p>
+                    </p>
+                ))}
+            </div>
+
             <div className="flex w-full flex-row items-center gap-5 rounded-[5px] bg-[#EEF2F6] p-[6px]">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#E74949] text-lg text-white">
                     В
                 </div>
-                <p className="text-base font-medium text-[#4A4A4A]">Алматы</p>
+                <p className="text-base font-medium text-[#4A4A4A]">{selectedTrip.to_city}</p>
+                {/* <p className="text-base font-medium text-[#4A4A4A]">{selectedTrip.from_city}</p> */}
+
                 <div className="ml-[20%] flex flex-row items-center gap-4 whitespace-nowrap">
                     <p className="whitespace-nowrap text-base font-semibold text-[#4A4A4A]">
                         Цена билета от начальной точки
@@ -38,6 +82,7 @@ const PhaseB = () => {
                     />
                 </div>
             </div>
+
             <div className="mt-14 flex flex-row gap-14">
                 {/* Левая колона старт */}
                 <div className="flex flex-col">
@@ -71,23 +116,23 @@ const PhaseB = () => {
                             Выберите тип рейса
                         </p>
                         <button
-                            className={`w-full rounded-[10px] border p-3 text-base font-medium ${!isWeekly ? 'bg-[#E74949] text-white' : 'text-[#4A4A4A]'}`}
+                            className={`w-full text-nowrap rounded-[10px] border p-3 text-base font-medium ${!isWeekly ? 'bg-[#E74949] text-white' : 'text-[#4A4A4A]'}`}
                             onClick={() => handleButtonClick(false)}
                         >
                             Рейс проводится каждый день
                         </button>
                         <button
-                            className={`w-full rounded-[10px] border p-3 text-base font-medium ${isWeekly ? 'bg-[#E74949] text-white' : 'text-[#4A4A4A]'}`}
+                            className={`w-full text-nowrap rounded-[10px] border p-3 text-base font-medium ${isWeekly ? 'bg-[#E74949] text-white' : 'text-[#4A4A4A]'}`}
                             onClick={() => handleButtonClick(true)}
                         >
                             Рейс проводится несколько раз в неделю
                         </button>
                     </div>
-                    <Link href="/admin/main/trips/start-trip">
+                    {/* <Link href="/admin/main/trips/start-trip"> */}
                         <Button variant="secondary" className="mt-16">
                             Сохранить рейс
                         </Button>
-                    </Link>
+                    {/* </Link> */}
                 </div>
                 {/* Правая колона старт */}
                 <div className="flex flex-col">
@@ -101,8 +146,8 @@ const PhaseB = () => {
                             </p>
                             <Suspense>
                                 <CalendarPC
-                                    value={null}
-                                    onChange={handleBirthDateChange}
+                                    value={RouteFrom ? new Date(RouteFrom) : null}
+                                    onChange={handleRouteFromChange}
                                 />
                             </Suspense>
 
@@ -111,8 +156,9 @@ const PhaseB = () => {
                             </p>
                             <Suspense>
                                 <CalendarPC
-                                    value={null}
-                                    onChange={handleBirthDateChange}
+                                    value={Routeto ? new Date(Routeto) : null}
+                                    onChange={handleRouteToChange}
+                                    
                                 />
                             </Suspense>
                         </div>

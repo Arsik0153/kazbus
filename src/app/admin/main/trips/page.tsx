@@ -9,17 +9,29 @@ import Table from './_components/table';
 import Link from 'next/link';
 import CalendarPC from '@/components/calendar/select-date';
 
+// Пример опций для ComboBox
+const options = [
+    { id: 1, name: 'Маршрут 1' },
+    { id: 2, name: 'Маршрут 2' },
+    { id: 3, name: 'Маршрут 3' }
+];
 
 const Trips = () => {
-    
+    // Хук состояния для хранения выбранного элемента в ComboBox
+    const [selectedOption, setSelectedOption] = useState<any>(null);
+
     const handleSelectionChange = (name: string, selected: any) => {
         console.log(`${name} selected:`, selected);
-        // Добавьте здесь необходимую логику для обработки выбора
+        setSelectedOption(selected);
     };
+
+    const handleNewItem = (name: string) => {
+        console.log(`Добавление нового элемента: ${name}`);
+    };
+
     const handleBirthDateChange = () => {
-        console.log('ewfw');
+        console.log('Дата изменена');
     };
-    
 
     return (
         <div className="mt-6 flex flex-col">
@@ -55,17 +67,16 @@ const Trips = () => {
                     </div>
                     <div className="flex flex-row items-center">
                         <p className="mr-3 text-base font-medium">C</p>
-                        <Suspense>
+                        <Suspense fallback={<div>Loading...</div>}>
                             <CalendarPC
                                 value={null}
                                 onChange={handleBirthDateChange}
                             />
-
                         </Suspense>
                         <p className="ml-[14px] mr-3 text-base font-medium">
                             По
                         </p>
-                        <Suspense>
+                        <Suspense fallback={<div>Loading...</div>}>
                             <CalendarPC
                                 value={null}
                                 onChange={handleBirthDateChange}
@@ -74,8 +85,10 @@ const Trips = () => {
                         <div className="ml-2 flex flex-row items-center gap-2">
                             <ComboBox
                                 name="filterComboBox"
-                                onSelectionChange={handleSelectionChange}
+                                options={options} // Передаем список опций
                                 placeholder="Маршруты"
+                                onOptionSelect={handleSelectionChange}
+                                onNewItem={handleNewItem}
                             />
                             <Button variant="ultrared">Применить</Button>
                         </div>

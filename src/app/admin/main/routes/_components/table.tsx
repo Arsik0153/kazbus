@@ -5,9 +5,11 @@ import Calendar from '@/assets/admin/Calendar'
 import Link from 'next/link';
 import Arrow from '@/assets/admin/Arrow';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
+import { getCitiesAction } from '@/app/(mobile)/main/actions';
 import { getRoutesAction } from '@/app/admin/main/routes/action';
 import Spinner from '@/components/spinner';
 import { dateTimeToReadable } from '@/utils/helper.';
+
 
 const Table = () => {
     const [isActive, setIsActive] = useState(false);
@@ -16,6 +18,10 @@ const Table = () => {
         queryKey: ['getRoutes'],
     });
 
+    const { data: cities } = useServerActionQuery(getCitiesAction, {
+        input: undefined,
+        queryKey: ['cities'],
+    });
     const handleButtonClick = () => {
         setIsActive(!isActive);
         console.log('edit routes activated'); 
@@ -51,18 +57,18 @@ const Table = () => {
                         Дата создания
                     </th>
                     <th className="py-5 text-start leading-[22.4px] uppercase items-start font-bold text-[#A0A0A0] text-[16px]">
-
+                
                     </th>
                 </tr>
                 {data?.map((routes) => (
 
-                    <tr className="bg-[#F1F5F9]" key={routes.start_city}>
+                    <tr className="bg-[#F1F5F9]" key={routes.id}>
                         <td className="pl-6 w-fit max-w-20 rounded-l-[10px]">
                             <div className="flex flex-row items-center gap-[18px] w-fit">
                                 <div className="w-8 h-8 rounded-full bg-[#E74949] flex items-center justify-center text-white text-lg">
                                     A
                                 </div>
-                                <p className='text-base font-medium text-[#4A4A4A]'>{routes.start_city}</p>
+                                <p className='text-base font-medium text-[#4A4A4A]'>{routes.start_city.name}</p>
                             </div>
                         </td>
                         <td className="text-base font-bold text-[#E74949] pr-5">
@@ -73,7 +79,7 @@ const Table = () => {
                                 <div className="w-8 h-8 rounded-full bg-[#E74949] flex items-center justify-center text-white text-lg">
                                     В
                                 </div>
-                                <p className='text-base font-medium text-[#4A4A4A]'>{routes.end_city}</p>
+                                <p className='text-base font-medium text-[#4A4A4A]'>{routes.end_city.name}</p>
                             </div>
 
                         </td>

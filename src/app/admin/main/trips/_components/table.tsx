@@ -18,7 +18,7 @@ const Table: React.FC = () => {
         active: 'Рейс активен,<br />идут продажи',
         not_on_sale: 'Рейс не в<br />продаже',
         cancelled: 'Рейс отменен',
-        scheduled: 'Рейс перенесен<br /> с {start_date}<br /> по {end_date}', // Шаблон строки
+        scheduled: 'Рейс перенесен<br /> с {start_date}<br />по {end_date}', 
     };
 
     // Функция для получения текста статуса
