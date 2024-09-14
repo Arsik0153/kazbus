@@ -5,6 +5,7 @@ import { useServerAction } from 'zsa-react';
 import BackIcon from '@/assets/shared/back-icon';
 import { Steps } from '../types';
 import { useRouter } from 'next/navigation';
+import { useMask } from '@react-input/mask';
 
 type Props = {
     ticked_id: number;
@@ -29,6 +30,21 @@ const Payment = (props: Props) => {
         });
     };
 
+    const cardRef = useMask({
+        mask: '____-____-____-____',
+        replacement: { _: /\d/ },
+    });
+
+    const dateRef = useMask({
+        mask: '__/__',
+        replacement: { _: /\d/ },
+    });
+
+    const cvvRef = useMask({
+        mask: '___',
+        replacement: { _: /\d/ },
+    });
+
     return (
         <>
             <div className="h-full bg-[var(--gray)] px-5">
@@ -50,10 +66,11 @@ const Payment = (props: Props) => {
                         Номер карты
                     </label>
                     <input
-                        type="text"
+                        type="tel"
                         id="cardnumber"
                         className="hide-tabbar mt-2 h-[70px] w-full rounded-[10px] border border-white bg-[#FFFFFF14] px-4 text-white placeholder:text-white focus:outline-none"
                         placeholder="XXXX - XXXX - XXXX - XXXX"
+                        ref={cardRef}
                     />
                     <div className="flex gap-7">
                         <div className="mt-4 flex flex-col gap-2">
@@ -64,10 +81,11 @@ const Payment = (props: Props) => {
                                 Срок действия
                             </label>
                             <input
-                                type="text"
+                                type="tel"
                                 id="date"
                                 className="hide-tabbar h-[70px] w-[120px] rounded-[10px] border border-white bg-[#FFFFFF14] px-4 text-white placeholder:text-white focus:outline-none"
                                 placeholder="MM/YY"
+                                ref={dateRef}
                             />
                         </div>
                         <div className="mt-4 flex flex-col gap-2">
@@ -78,10 +96,11 @@ const Payment = (props: Props) => {
                                 CVV
                             </label>
                             <input
-                                type="text"
+                                type="tel"
                                 id="cvv"
                                 className="hide-tabbar h-[70px] w-[100px] rounded-[10px] border border-white bg-[#FFFFFF14] px-4 text-white placeholder:text-white focus:outline-none"
                                 placeholder="XXX"
+                                ref={cvvRef}
                             />
                         </div>
                     </div>
