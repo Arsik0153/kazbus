@@ -4,6 +4,9 @@ import ShieldKeyhole from '../../../../assets/shield-keyhole';
 import Topbar from '@/components/topbar';
 import { getSession } from '@/lib/auth';
 import { readablePhone } from '@/utils/helper.';
+import Link from 'next/link';
+import TrashCan from '@/assets/trash-can';
+import Door from '@/assets/door';
 
 const AuthorizedProfilePage = async () => {
     const session = await getSession();
@@ -23,7 +26,7 @@ const AuthorizedProfilePage = async () => {
                             {readablePhone(session.user.phone_number)}
                         </div>
                     </div>
-                    <div className="mt-[50px] w-full rounded-[10px] bg-[#F9F9F9] px-4 pb-1 pt-6">
+                    <div className="mt-8 w-full rounded-[10px] bg-[#F9F9F9] px-4 pb-1 pt-6">
                         <div className="pb-[20px] text-[20px] font-bold leading-[22px]">
                             Настройки
                         </div>
@@ -46,7 +49,7 @@ const AuthorizedProfilePage = async () => {
                             <Menu link="/profile/authorized/faq" text="FAQ" />
                             <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
                             <Menu link="#" text="Служба поддержки" />
-                            <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
+                            {/* <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
                             <Menu
                                 link="/profile/authorized/logout/"
                                 text="Выйти из аккаунта"
@@ -55,17 +58,27 @@ const AuthorizedProfilePage = async () => {
                             <Menu
                                 link="/profile/authorized/delete-account/"
                                 text="Удалить аккаунт"
-                            />
+                            /> */}
                         </div>
                     </div>
                 </div>
-                <div className="mb-10 mt-11 pb-[20px]">
+                <div className="mb-10 mt-8 pb-[20px]">
                     <div className="flex w-full flex-row items-center justify-center gap-3 rounded-[50px] bg-[#EFEFEF] p-2">
                         <ShieldKeyhole color="#E74949" />
                         <div className="text-[16px] font-semibold leading-[17.6px] text-[#E74949]">
                             Ваши данные под надежной защитой
                         </div>
                     </div>
+                </div>
+                <div className="flex flex-col gap-2 mb-24">
+                    <Link href='/profile/authorized/logout/' className="flex flex-row items-center justify-center gap-2 p-4 border border-[#E23333] rounded-[10px] ">
+                        <Door width="20" height="20" color='#D21F1F' />
+                        <p className="text-base font-semibold text-[#E23333]">Выйти из аккаунта</p>
+                    </Link>
+                    <Link href='/profile/authorized/delete-account/' className="flex flex-row items-center justify-center gap-2 p-4 border border-[#E23333] rounded-[10px] ">
+                        <TrashCan width="20" height="20" color='#D21F1F' />
+                        <p className="text-base font-semibold text-[#E23333]">Удалить аккаунт</p>
+                    </Link>
                 </div>
             </div>
         </>
