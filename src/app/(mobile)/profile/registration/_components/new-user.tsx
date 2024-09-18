@@ -58,9 +58,9 @@ const NewUser = () => {
             <Input
                 label={'Электронная почта (необязательно)'}
                 id="email"
-                {...register('email')}
+                // {...register('email')}
             />
-            <ErrorMessage message={errors.email?.message} />
+            {/* <ErrorMessage message={errors.email?.message} /> */}
             <p className="mb-3 mt-9 text-xl font-medium text-[#4A4A4A]">
                 Выберите тип документа
             </p>
