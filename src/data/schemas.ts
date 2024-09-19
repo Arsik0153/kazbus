@@ -10,7 +10,7 @@ const ACCEPTED_IMAGE_TYPES = [
 
 export const profileSchema = z.object({
     full_name: z.string().min(5, 'Введите полное ФИО'),
-    email: z.string().email('Введите корректный email').optional(),
+    // email: z.string().email('Введите корректный email').optional(),
     document_type: z
         .string({ message: 'Выберите тип документа' })
         .min(2, 'Выберите тип документа'),
