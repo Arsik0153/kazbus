@@ -21,14 +21,6 @@ type Props = {
     onPassengersSelect: (users: User[]) => void;
 };
 
-// const passenger = {
-//     full_name: 'Максим Максимович',
-//     document_type: 'id',
-//     document_number_or_iin: '123213123312',
-//     birth_date: '12.12.2000',
-//     user_id: 17,
-//     email: 'asdfasdf',
-// };
 
 const SelectPassengers = (props: Props) => {
     const { setStep, onPassengersSelect } = props;
@@ -120,7 +112,7 @@ const SelectPassengers = (props: Props) => {
                     Данные пассажиров
                 </p>
                 <div className="flex flex-col gap-3">
-                    {user && (
+                    {user && user.document_number_or_iin && (
                         <PassengerCard
                             selected={isSelected(user)}
                             user={user}
@@ -131,19 +123,19 @@ const SelectPassengers = (props: Props) => {
                         passengers
                             ?.filter(
                                 (selectedUser) =>
-                                    selectedUser.user_id !== user?.user_id
+                                    selectedUser.user_id !== user?.user_id &&
+                                    selectedUser.document_number_or_iin // Проверка наличия ИИН
                             )
                             .map((selectedUser) => (
                                 <PassengerCard
                                     key={selectedUser.user_id}
                                     selected={isSelected(selectedUser)}
                                     user={selectedUser}
-                                    onClick={() =>
-                                        handlePassengerClick(selectedUser)
-                                    }
+                                    onClick={() => handlePassengerClick(selectedUser)}
                                 />
                             ))}
                 </div>
+
                 <Button
                     variant="ghost"
                     className="mt-6"
