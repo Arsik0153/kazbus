@@ -15,6 +15,7 @@ type Props = React.HTMLAttributes<HTMLDivElement> & {
 
 const PassengerCard = (props: Props) => {
     const { user, selected, ...rest } = props;
+    console.log('PassengerCard user:', user);
 
     return (
         <div
