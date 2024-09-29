@@ -85,7 +85,8 @@ const Directions = () => {
                                 {parseFloat(direction.ticket_price).toFixed(0)}₸
                             </span>
                             <span className="text-xs text-[#A0A0A0]">
-                                Отправление: {direction.departure_time}
+                                Отправление:{' '}
+                                {direction.departure_time.slice(0, 5)}
                             </span>
                         </div>
                         <div className="flex flex-row items-center gap-2 text-xs text-[#A0A0A0]">

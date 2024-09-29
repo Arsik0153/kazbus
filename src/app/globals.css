@@ -36,3 +36,7 @@ a {
 [vaul-drawer] {
     z-index: 1000;
 }
+
+.onevision-widget {
+    z-index: 1000;
+}

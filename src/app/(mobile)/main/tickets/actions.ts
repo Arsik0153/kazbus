@@ -6,8 +6,8 @@ import {
     CombinedBookingSchema,
     profileSchema,
 } from '@/data/schemas';
-import { Ticket } from '@/data/types';
-import { getSession } from '@/lib/auth';
+import { BusSeats, Ticket } from '@/data/types';
+import { getSession, logout, signUp } from '@/lib/auth';
 import { dateToDTO } from '@/utils/helper.';
 import { z } from 'zod';
 import { createServerAction } from 'zsa';
@@ -203,4 +203,83 @@ export const getUserAction = authedProcedure
     .createServerAction()
     .handler(async ({ ctx }) => {
         return ctx.user;
+    });
+
+export const getBusSeatsAction = createServerAction()
+    .input(
+        z.object({
+            trip_id: z.number(),
+        })
+    )
+    .handler(async ({ input }) => {
+        const { trip_id } = input;
+        const session = await getSession();
+
+        if (!session) {
+            throw 'Необходимо авторизоваться';
+        }
+        const response = await fetch(`${process.env.API_URL}/bus-seats/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Token ${session?.user.token}`,
+            },
+            body: JSON.stringify({
+                trip_id,
+            }),
+        });
+
+        if (!response.ok) {
+            throw 'Произошла ошибка при получении списка мест';
+        }
+
+        const result = (await response.json()) as BusSeats;
+
+        return {
+            seats: result.seats.slice(0, 45),
+            bus: result.bus,
+        };
+    });
+
+export const updatePersonalInfoAction = createServerAction()
+    .input(profileSchema)
+    .handler(async ({ input }) => {
+        const session = await getSession();
+        const user = session?.user;
+        if (!user) {
+            throw 'Необходимо авторизоваться';
+        }
+
+        const response = await fetch(
+            `${process.env.API_URL}/accounts/profile/personal-info/`,
+            {
+                method: 'PATCH',
+                body: JSON.stringify({
+                    full_name: input.full_name,
+                    document_type: input.document_type,
+                    document_number_or_iin: input.document_number_or_iin,
+                    birth_date: dateToDTO(input.birth_date),
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Token ${user.token}`,
+                },
+            }
+        );
+        if (!response.ok) {
+            const data = await response.json();
+
+            console.log(data);
+            throw 'Произошла ошибка при изменении данных';
+        }
+
+        await logout();
+
+        await signUp({
+            phone: user.phone_number,
+            token: user.token,
+            user_id: user.user_id,
+        });
+
+        return 'Упешно изменено';
     });

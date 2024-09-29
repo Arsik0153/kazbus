@@ -50,7 +50,10 @@ const SelectPlace = (props: Props) => {
                 <h1 className="mb-5 text-[32px] font-medium text-[#4A4A4A]">
                     Выберите место
                 </h1>
-                <BusLayout onSeatsSelect={handleSeatsSelect} />
+                <BusLayout
+                    trip_id={ticket?.id || 0}
+                    onSeatsSelect={handleSeatsSelect}
+                />
 
                 {seats.length === passengerCountParam && (
                     <div className="fixed bottom-32 left-0 right-0 px-4">

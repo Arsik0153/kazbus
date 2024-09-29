@@ -18,6 +18,7 @@ const MyTicketsPage = () => {
         retryOnMount: true,
         refetchInterval: 1000 * 30,
     });
+    console.log(data);
 
     if (isPending) {
         return (
@@ -74,7 +75,7 @@ const MyTicketsPage = () => {
             <div className="flex flex-col">
                 <div className="flex flex-col pt-5">
                     {data?.map((ticket) => (
-                        <Link href="/my-tickets/qr-tickets" key={ticket.id}>
+                        <Link href={`/my-tickets/${ticket.id}`} key={ticket.id}>
                             <Ticket ticket={ticket} />
                         </Link>
                     ))}

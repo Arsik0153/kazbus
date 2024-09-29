@@ -11,6 +11,8 @@ import { useSearchParams } from 'next/navigation';
 import { Profile } from '@/data/user';
 import CreatePassenger from './create-passenger';
 import Spinner from '@/components/spinner';
+import { getStringByNumber } from '@/utils/helper.';
+import NewUser from './new-user';
 
 export type User = Omit<Profile, 'phone_number' | 'email'> & {
     user_id: number;
@@ -21,22 +23,25 @@ type Props = {
     onPassengersSelect: (users: User[]) => void;
 };
 
-
 const SelectPassengers = (props: Props) => {
     const { setStep, onPassengersSelect } = props;
     const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
-    const { data: user, isPending: isUserPending } = useServerActionQuery(
-        getUserAction,
-        {
-            input: undefined,
-            queryKey: ['user'],
-        }
-    );
-    const { data: passengers, isPending: isPassengersPending } =
-        useServerActionQuery(getMyPassengersAction, {
-            input: undefined,
-            queryKey: ['passengers'],
-        });
+    const {
+        data: user,
+        isPending: isUserPending,
+        refetch,
+    } = useServerActionQuery(getUserAction, {
+        input: undefined,
+        queryKey: ['user'],
+    });
+    const {
+        data: passengers,
+        isPending: isPassengersPending,
+        refetch: refetchPassengers,
+    } = useServerActionQuery(getMyPassengersAction, {
+        input: undefined,
+        queryKey: ['passengers'],
+    });
 
     const [isNewUserFormOpen, setIsNewUserFormOpen] = useState(false);
 
@@ -44,8 +49,13 @@ const SelectPassengers = (props: Props) => {
 
     const passengerCountParam =
         Number(searchParams.get('passenger_count')) || 0;
+    const isPassengerCountEnough =
+        passengers && passengers?.length >= passengerCountParam;
 
     const handlePassengerClick = (user: User) => {
+        if (!isPassengerCountEnough) {
+            return;
+        }
         setSelectedUsers((prevSelected) => {
             const isAlreadySelected = prevSelected.some(
                 (selected) => selected.user_id === user.user_id
@@ -73,6 +83,28 @@ const SelectPassengers = (props: Props) => {
         setIsNewUserFormOpen(false);
     };
 
+    if (!isUserPending && !user?.full_name) {
+        return (
+            <>
+                <Topbar onBack={() => setStep(Steps.SelectPlace)}>
+                    <div className="flex flex-col items-center">
+                        Покупка билета
+                    </div>
+                </Topbar>
+                <div className="flex flex-col px-5">
+                    <div className="flex justify-center gap-3 py-5">
+                        <NewUser
+                            onSuccess={async () => {
+                                await refetch();
+                                await refetchPassengers();
+                            }}
+                        />
+                    </div>
+                </div>
+            </>
+        );
+    }
+
     if (isNewUserFormOpen) {
         return (
             <CreatePassenger
@@ -82,7 +114,7 @@ const SelectPassengers = (props: Props) => {
         );
     }
 
-    if (isUserPending || isPassengersPending) {
+    if (isPassengersPending || isUserPending) {
         return (
             <>
                 <Topbar onBack={() => setStep(Steps.SelectPlace)}>
@@ -112,29 +144,29 @@ const SelectPassengers = (props: Props) => {
                     Данные пассажиров
                 </p>
                 <div className="flex flex-col gap-3">
-                    {user && user.document_number_or_iin && (
-                        <PassengerCard
-                            selected={isSelected(user)}
-                            user={user}
-                            onClick={() => handlePassengerClick(user)}
-                        />
-                    )}
                     {passengers?.length !== 0 &&
-                        passengers
-                            ?.filter(
-                                (selectedUser) =>
-                                    selectedUser.user_id !== user?.user_id &&
-                                    selectedUser.document_number_or_iin // Проверка наличия ИИН
-                            )
-                            .map((selectedUser) => (
-                                <PassengerCard
-                                    key={selectedUser.user_id}
-                                    selected={isSelected(selectedUser)}
-                                    user={selectedUser}
-                                    onClick={() => handlePassengerClick(selectedUser)}
-                                />
-                            ))}
+                        passengers?.map((selectedUser) => (
+                            <PassengerCard
+                                key={selectedUser.user_id}
+                                selected={isSelected(selectedUser)}
+                                user={selectedUser}
+                                onClick={() =>
+                                    handlePassengerClick(selectedUser)
+                                }
+                            />
+                        ))}
                 </div>
+
+                {!isPassengerCountEnough && (
+                    <p className="mx-auto mt-3 w-fit rounded-full border-[1px] bg-[#E23333] px-4 py-2 text-xs font-medium text-white">
+                        Вам нужно добавить хотя-бы{' '}
+                        {passengerCountParam - (passengers?.length || 0)}{' '}
+                        {getStringByNumber(
+                            passengerCountParam - (passengers?.length || 0),
+                            ['пассажира', 'пассажиров', 'пассажиров']
+                        )}
+                    </p>
+                )}
 
                 <Button
                     variant="ghost"

@@ -38,6 +38,7 @@ const TicketPageSuspended = () => {
 
     const handleTicketSelect = (ticket: Ticket) => {
         setSelectedTicket(ticket);
+        console.log(ticket);
         setStep(Steps.SelectPlace);
     };
 
@@ -92,10 +93,19 @@ const TicketPageSuspended = () => {
                     seats={seats}
                     setStep={setStep}
                     selectedTicket={selectedTicket}
+                    passengers={passengers}
                 />
             )}
             {step === Steps.Payment && (
-                <Payment ticked_id={bookingTicketId} setStep={setStep} />
+                <Payment
+                    ticked_id={bookingTicketId}
+                    setStep={setStep}
+                    totalPrice={
+                        selectedTicket?.price
+                            ? Number(selectedTicket.price) * passengers.length
+                            : 0
+                    }
+                />
             )}
         </Suspense>
     );

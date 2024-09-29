@@ -50,6 +50,7 @@ const SelectTicket = (props: Props) => {
             refetchOnWindowFocus: false,
         }
     );
+    console.log(tickets);
 
     const from = tickets?.[0]?.from_point.name;
     const to = tickets?.[0]?.to_point.name;
@@ -118,27 +119,41 @@ const SelectTicket = (props: Props) => {
             <div className="my-5 px-4">
                 <div className="flex flex-wrap gap-1">
                     <label className="cursor-pointer">
-                        <input type="radio" name="options" value="cheap" className="sr-only peer" />
+                        <input
+                            type="radio"
+                            name="options"
+                            value="cheap"
+                            className="peer sr-only"
+                        />
                         <p className="w-fit rounded-full border border-[#A0A0A0] px-5 py-[5px] text-sm font-semibold text-[#A0A0A0] peer-checked:border-[#E74949] peer-checked:text-[#E74949]">
                             Самые дешевые
                         </p>
                     </label>
 
                     <label className="cursor-pointer">
-                        <input type="radio" name="options" value="fast" className="sr-only peer" />
-                        <p className="w-fit rounded-full border border-[#A0A0A0] px-5 py-[5px] text-sm font-semibold text-[#A0A0A0]  peer-checked:border-[#E74949] peer-checked:text-[#E74949]">
+                        <input
+                            type="radio"
+                            name="options"
+                            value="fast"
+                            className="peer sr-only"
+                        />
+                        <p className="w-fit rounded-full border border-[#A0A0A0] px-5 py-[5px] text-sm font-semibold text-[#A0A0A0] peer-checked:border-[#E74949] peer-checked:text-[#E74949]">
                             Быстрые
                         </p>
                     </label>
 
                     <label className="cursor-pointer">
-                        <input type="radio" name="options" value="lying" className="sr-only peer" />
-                        <p className="w-fit rounded-full border border-[#A0A0A0] px-5 py-[5px] text-sm font-semibold text-[#A0A0A0]  peer-checked:border-[#E74949] peer-checked:text-[#E74949]">
+                        <input
+                            type="radio"
+                            name="options"
+                            value="lying"
+                            className="peer sr-only"
+                        />
+                        <p className="w-fit rounded-full border border-[#A0A0A0] px-5 py-[5px] text-sm font-semibold text-[#A0A0A0] peer-checked:border-[#E74949] peer-checked:text-[#E74949]">
                             Лежачие
                         </p>
                     </label>
                 </div>
-
 
                 <div className="mt-3">
                     {tickets?.map((ticket) => (

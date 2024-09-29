@@ -152,3 +152,71 @@ export type Trips = {
     from_city: string;
     to_city: string;
 };
+
+export type Passenger = {
+    place_num: number;
+    place_floor: number;
+    passenger: string;
+};
+
+export type DirectionNew = {
+    id: number;
+    departure_time: string; // Время в формате "HH:MM:SS"
+    start_date: string; // Дата в формате "YYYY-MM-DD"
+    end_date: string; // Дата в формате "YYYY-MM-DD"
+    ticket_price: string; // Цена в виде строки
+    frequency: string;
+    weekdays: Weekdays;
+    status: string;
+    route: {
+        id: number;
+        start_city: Point;
+        end_city: Point;
+        total_travel_time: string;
+        created_at: string; // ISO формат
+        stops: Stop[]; // Empty array in this case
+    };
+    bus: {
+        id: string;
+        name: string;
+        model_stamp: string;
+        state_number: string;
+        VIN: string;
+        count_of_seats: number;
+        have_toilet: boolean;
+        have_wifi: boolean;
+        is_recumbent: boolean;
+        scheme: string | null;
+        floors: number;
+    };
+    driver: {
+        id: number;
+        full_name: string;
+        date_of_birth: string; // Дата рождения водителя в формате "YYYY-MM-DD"
+        picture: string; // Ссылка на картинку
+    };
+    from_city: string;
+    to_city: string;
+    status_description: string;
+};
+
+export type TicketDetailed = {
+    id: number;
+    qr_code: string;
+    direction: DirectionNew;
+    passengers: Passenger[];
+    status: string;
+};
+
+export type BusSeat = {
+    seat_id: number;
+    seat_col: number;
+    seat_row: number;
+    seat_type: 'aisle' | 'passenger' | 'driver';
+    status: 'free' | 'booked';
+};
+
+export type BusSeats = {
+    bus: string;
+    seats: BusSeat[];
+};
