@@ -8,7 +8,6 @@ import { GetRequestData } from '@/data/types';
 import Wifi from '@/assets/wifi';
 import ToiletPaper from '@/assets/toilet-paper';
 import HotelBed from '@/assets/hotel-bed';
-import CitySelector from '@/components/citySelector';
 import { getCitiesAction } from '../main/actions';
 import { useRouter } from 'next/navigation';
 import Skeleton from '@/components/skeleton';

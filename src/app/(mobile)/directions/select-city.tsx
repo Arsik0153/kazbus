@@ -1,10 +1,11 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { cities } from '@/static/city';
 
 const SelectCity = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCity, setSelectedCity] = useState('');
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -13,8 +14,24 @@ const SelectCity = () => {
         setIsOpen(false);
     };
 
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node)
+            ) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     return (
-        <div className="relative z-20">
+        <div className="relative z-20" ref={dropdownRef}>
             <div
                 className="w-fit cursor-pointer rounded-full border border-[#E74949] px-5 py-[5px] text-sm font-semibold text-[#E74949]"
                 onClick={toggleDropdown}
