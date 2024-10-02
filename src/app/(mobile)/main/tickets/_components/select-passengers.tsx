@@ -194,9 +194,9 @@ const SelectPassengersSkeleton = () => {
                         />
                     ))}
                 </div>
-                <Skeleton className="mt-6 h-12 w-full rounded-full" />{' '}
+                <Skeleton className="mt-6 h-12 w-full rounded-[10px]" />{' '}
                 {/* "Добавить другого пассажира" button */}
-                <Skeleton className="mb-6 mt-4 h-12 w-full rounded-full" />{' '}
+                <Skeleton className="mb-6 mt-4 h-12 w-full rounded-[10px]" />{' '}
                 {/* "Продолжить" button */}
             </div>
         </>
