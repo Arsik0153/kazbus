@@ -40,9 +40,3 @@ a {
 .onevision-widget {
     z-index: 1000;
 }
-
-input[type='date']::-webkit-inner-spin-button,
-input[type='date']::-webkit-calendar-picker-indicator {
-    display: none;
-    -webkit-appearance: none;
-}
