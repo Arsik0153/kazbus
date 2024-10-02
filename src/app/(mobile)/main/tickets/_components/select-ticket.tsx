@@ -12,6 +12,7 @@ import Button from '@/components/button';
 import { getTicketsAction } from '../actions';
 import Image from 'next/image';
 import Link from 'next/link';
+import { SelectTicketSkeleton } from './skeleton';
 
 type Props = {
     onTicketSelect: (ticket: TicketT) => void;
@@ -56,16 +57,7 @@ const SelectTicket = (props: Props) => {
     const to = tickets?.[0]?.to_point.name;
 
     if (isPending) {
-        return (
-            <>
-                <Topbar backHref="/main">
-                    <div className="flex flex-col items-center py-6" />
-                </Topbar>
-                <div className="my-5 flex justify-center px-4 py-7">
-                    <Spinner size="md" />
-                </div>
-            </>
-        );
+        return <SelectTicketSkeleton />;
     }
 
     if (!isPending && tickets?.length === 0) {

@@ -7,6 +7,7 @@ import { useServerActionQuery } from '@/lib/server-action-hooks';
 import { getMyTicketsAction } from './actions';
 import Spinner from '@/components/spinner';
 import Image from 'next/image';
+import Skeleton from '@/components/skeleton';
 
 const MyTicketsPage = () => {
     const { data, isPending } = useServerActionQuery(getMyTicketsAction, {
@@ -21,16 +22,7 @@ const MyTicketsPage = () => {
     console.log(data);
 
     if (isPending) {
-        return (
-            <div className="h-full bg-[var(--gray)] px-5">
-                <h1 className="pt-[75px] text-[42px] font-semibold leading-[46.2px] tracking-[-3%] text-[var(--black)]">
-                    Мои билеты
-                </h1>
-                <div className="mt-3 flex flex-wrap justify-center gap-1 py-5">
-                    <Spinner size="md" />
-                </div>
-            </div>
-        );
+        return <MyTicketsPageSkeleton />;
     }
 
     if (!isPending && data?.length === 0) {
@@ -86,6 +78,28 @@ const MyTicketsPage = () => {
                         История покупки билетов
                     </Button>
                 </Link>
+            </div>
+        </div>
+    );
+};
+
+const MyTicketsPageSkeleton = () => {
+    return (
+        <div className="h-full bg-[var(--gray)] px-5">
+            <h1 className="pt-[75px] text-[42px] font-semibold leading-[46.2px] tracking-[-3%] text-[var(--black)]">
+                Мои билеты
+            </h1>
+            <div className="flex flex-col">
+                <div className="flex flex-col pt-5">
+                    {[...Array(3)].map((_, index) => (
+                        <Skeleton
+                            key={index}
+                            className="mb-3 h-[157px] w-full rounded-lg"
+                        />
+                    ))}
+                </div>
+
+                <Skeleton className="mb-10 mt-5 h-[70px] w-full rounded-[10px]" />
             </div>
         </div>
     );

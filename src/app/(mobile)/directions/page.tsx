@@ -11,6 +11,7 @@ import HotelBed from '@/assets/hotel-bed';
 import CitySelector from '@/components/citySelector';
 import { getCitiesAction } from '../main/actions';
 import { useRouter } from 'next/navigation';
+import Skeleton from '@/components/skeleton';
 
 const Directions = () => {
     const router = useRouter();
@@ -38,16 +39,7 @@ const Directions = () => {
     };
 
     if (isPending || isCitiesPending) {
-        return (
-            <div className="h-full bg-[var(--gray)] px-5">
-                <h1 className="pt-[75px] text-[42px] font-semibold leading-[46.2px] tracking-[-3%] text-[var(--black)]">
-                    Популярные направления
-                </h1>
-                <div className="mt-3 flex flex-wrap justify-center gap-1 py-5">
-                    <Spinner size="md" />
-                </div>
-            </div>
-        );
+        return <DirectionsSkeleton />;
     }
     return (
         <div className="h-full bg-[var(--gray)] px-5">
@@ -103,4 +95,30 @@ const Directions = () => {
         </div>
     );
 };
+
+const DirectionsSkeleton = () => {
+    return (
+        <div className="h-full bg-[var(--gray)] px-5">
+            <h1 className="pt-[75px] text-[42px] font-semibold leading-[46.2px] tracking-[-3%] text-[var(--black)]">
+                Популярные направления
+            </h1>
+            <div className="mt-3 flex flex-wrap gap-1">
+                <Skeleton className="h-8 w-32 rounded-full" />{' '}
+                {/* CitySelector placeholder */}
+                <Skeleton className="h-8 w-32 rounded-full" />{' '}
+                {/* "Самые дешевые" placeholder */}
+            </div>
+
+            <div className="mb-10 mt-4 flex flex-col gap-3">
+                {[...Array(5)].map((_, index) => (
+                    <Skeleton
+                        key={index}
+                        className="h-[125px] w-full rounded-[10px]"
+                    />
+                ))}
+            </div>
+        </div>
+    );
+};
+
 export default Directions;

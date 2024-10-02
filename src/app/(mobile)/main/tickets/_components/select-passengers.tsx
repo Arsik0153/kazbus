@@ -13,6 +13,7 @@ import CreatePassenger from './create-passenger';
 import Spinner from '@/components/spinner';
 import { getStringByNumber } from '@/utils/helper.';
 import NewUser from './new-user';
+import Skeleton from '@/components/skeleton';
 
 export type User = Omit<Profile, 'phone_number' | 'email'> & {
     user_id: number;
@@ -115,23 +116,7 @@ const SelectPassengers = (props: Props) => {
     }
 
     if (isPassengersPending || isUserPending) {
-        return (
-            <>
-                <Topbar onBack={() => setStep(Steps.SelectPlace)}>
-                    <div className="flex flex-col items-center">
-                        Покупка билета
-                    </div>
-                </Topbar>
-                <div className="mt-[42px] flex flex-col px-5">
-                    <p className="mb-4 text-[30px] font-medium text-[#4A4A4A]">
-                        Данные пассажиров
-                    </p>
-                    <div className="flex justify-center gap-3 py-5">
-                        <Spinner size="md" />
-                    </div>
-                </div>
-            </>
-        );
+        return <SelectPassengersSkeleton />;
     }
 
     return (
@@ -185,6 +170,34 @@ const SelectPassengers = (props: Props) => {
                         Продолжить
                     </Button>
                 )}
+            </div>
+        </>
+    );
+};
+
+const SelectPassengersSkeleton = () => {
+    return (
+        <>
+            <Topbar>
+                <div className="flex flex-col items-center">
+                    <div className="h-7 w-32" />
+                </div>
+            </Topbar>
+            <div className="mt-[42px] flex flex-col px-5">
+                <Skeleton className="mb-4 h-9 w-64" />{' '}
+                {/* "Данные пассажиров" text */}
+                <div className="flex flex-col gap-3">
+                    {[...Array(1)].map((_, index) => (
+                        <Skeleton
+                            key={index}
+                            className="h-20 w-full rounded-lg"
+                        />
+                    ))}
+                </div>
+                <Skeleton className="mt-6 h-12 w-full rounded-full" />{' '}
+                {/* "Добавить другого пассажира" button */}
+                <Skeleton className="mb-6 mt-4 h-12 w-full rounded-full" />{' '}
+                {/* "Продолжить" button */}
             </div>
         </>
     );

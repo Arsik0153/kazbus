@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { getBusSeatsAction } from '../actions';
 import Spinner from '@/components/spinner';
 import { BusSeat, BusSeats } from '@/data/types';
+import Skeleton from '@/components/skeleton';
 
 type Props = {
     onSeatsSelect: (seats: number[]) => void;
@@ -60,11 +61,7 @@ const BusLayout = (props: Props) => {
     }, [selectedSeats, onSeatsSelect]);
 
     if (isPending) {
-        return (
-            <div className="flex items-center justify-center p-5">
-                <Spinner size="md" />
-            </div>
-        );
+        return <BusLayoutSkeleton />;
     }
 
     if (!seats) {
@@ -142,17 +139,46 @@ const BusLayout = (props: Props) => {
     );
 };
 
-// if (rowIndex % 4 === 0) {
-//     return (
-//         <div className="-mt-4 w-[60px] border-l border-r border-[#A0A0A0] px-2 pt-4">
-//             <Image
-//                 src="/assets/tickets/floor.svg"
-//                 alt="Лестница"
-//                 width={42}
-//                 height={108}
-//             />
-//         </div>
-//     );
-// }
+const BusLayoutSkeleton = () => {
+    return (
+        <>
+            <Skeleton className="mb-3 h-8 w-24" /> {/* "1 этаж" text */}
+            <div className="w-[calc(100vw-32px)] overflow-x-auto">
+                <div className="w-fit">
+                    <div className="mt-3 flex w-full flex-col gap-3 rounded-[10px] border border-[#A0A0A0] p-4">
+                        {[...Array(2)].map((_, rowIndex) => (
+                            <div key={rowIndex} className="flex gap-3">
+                                {[...Array(10)].map((_, seatIndex) => (
+                                    <Skeleton
+                                        key={seatIndex}
+                                        className="h-12 w-12 rounded-[10px]"
+                                    />
+                                ))}
+                            </div>
+                        ))}
+                        <div className="flex gap-3">
+                            {[...Array(10)].map((_, seatIndex) => (
+                                <div
+                                    key={seatIndex}
+                                    className="h-[20px] w-[48px]"
+                                ></div>
+                            ))}
+                        </div>
+                        {[...Array(2)].map((_, rowIndex) => (
+                            <div key={rowIndex} className="flex gap-3">
+                                {[...Array(10)].map((_, seatIndex) => (
+                                    <Skeleton
+                                        key={seatIndex}
+                                        className="h-12 w-12 rounded-[10px]"
+                                    />
+                                ))}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+};
 
 export default BusLayout;

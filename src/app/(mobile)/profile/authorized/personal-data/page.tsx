@@ -19,6 +19,7 @@ import Spinner from '@/components/spinner';
 import { useServerAction } from 'zsa-react';
 import toast from 'react-hot-toast';
 import { InputMask } from '@react-input/mask';
+import PersonalDataSkeleton from './skeleton';
 
 const PersonalDataPage = () => {
     const { data, isLoading, refetch } = useServerActionQuery(
@@ -66,14 +67,7 @@ const PersonalDataPage = () => {
     }, [data, reset]);
 
     if (isLoading) {
-        return (
-            <>
-                <Topbar backHref="/profile">Мои личные данные</Topbar>
-                <div className="flex w-full justify-center py-9">
-                    <Spinner size="md" />
-                </div>
-            </>
-        );
+        return <PersonalDataSkeleton />;
     }
 
     return (
