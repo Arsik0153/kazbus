@@ -73,7 +73,7 @@ const PersonalDataPage = () => {
     return (
         <>
             <Topbar backHref="/profile">Мои личные данные</Topbar>
-            <div className="h-full px-5">
+            <div className="fade-in h-full px-5">
                 <form className="mt-10" onSubmit={onSubmit}>
                     <p className="mb-3 mt-9 text-xl font-medium text-[#4A4A4A]">
                         Тип документа

@@ -124,7 +124,7 @@ const SelectPassengers = (props: Props) => {
             <Topbar onBack={() => setStep(Steps.SelectPlace)}>
                 <div className="flex flex-col items-center">Покупка билета</div>
             </Topbar>
-            <div className="mt-[42px] flex flex-col px-5">
+            <div className="fade-in mt-[42px] flex flex-col px-5">
                 <p className="mb-4 text-[30px] font-medium text-[#4A4A4A]">
                     Данные пассажиров
                 </p>

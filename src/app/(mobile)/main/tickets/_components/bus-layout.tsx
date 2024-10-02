@@ -126,7 +126,7 @@ const BusLayout = (props: Props) => {
         <>
             <p className="text-2xl font-medium text-[#4A4A4A]">1 этаж</p>
 
-            <div className="w-[calc(100vw-32px)] overflow-x-auto">
+            <div className="fade-in w-[calc(100vw-32px)] overflow-x-auto">
                 <div className="w-fit">
                     <div className="mt-3 flex w-full flex-col gap-3 rounded-[10px] border border-[#A0A0A0] p-4">
                         {Array.from({ length: maxRow }, (_, i) => i + 1).map(

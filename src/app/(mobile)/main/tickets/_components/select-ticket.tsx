@@ -109,7 +109,7 @@ const SelectTicket = (props: Props) => {
                 </div>
             </Topbar>
             <div className="my-5 px-4">
-                <div className="flex flex-wrap gap-1">
+                <div className="fade-in flex flex-wrap gap-1">
                     <label className="cursor-pointer">
                         <input
                             type="radio"
@@ -154,6 +154,7 @@ const SelectTicket = (props: Props) => {
                             ticket={ticket}
                             onClick={() => setSelectedTicket(ticket)}
                             selected={selectedTicket?.id === ticket.id}
+                            className="fade-in"
                         />
                     ))}
                 </div>

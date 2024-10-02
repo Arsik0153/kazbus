@@ -24,7 +24,7 @@ const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
     return (
         <>
             <Topbar backHref="/my-tickets">Билет №{params.ticketId}</Topbar>
-            <div className="p-5">
+            <div className="fade-in p-5">
                 <Ticket ticket={data} />
                 <div className="mb-2 flex flex-row justify-between gap-3 rounded-lg border border-[#D1D1D1] bg-none p-5">
                     <p className="text-base font-normal text-[#4A4A4A]">

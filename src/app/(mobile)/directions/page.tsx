@@ -46,7 +46,7 @@ const Directions = () => {
             <h1 className="pt-[75px] text-[42px] font-semibold leading-[46.2px] tracking-[-3%] text-[var(--black)]">
                 Популярные направления
             </h1>
-            <div className="mt-3 flex flex-wrap gap-1">
+            <div className="fade-in mt-3 flex flex-wrap gap-1">
                 <CitySelector />
 
                 <div className="w-fit rounded-full border border-[#A0A0A0] px-5 py-[5px] text-sm font-semibold text-[#A0A0A0]">
@@ -58,7 +58,7 @@ const Directions = () => {
                 {directions?.map((direction: GetRequestData) => (
                     <div
                         key={`${direction.from_city}-${direction.to_city}-${direction.start_date}`}
-                        className="flex flex-col gap-2 rounded-[10px] border border-[#D1D1D1] bg-white p-4"
+                        className="fade-in flex flex-col gap-2 rounded-[10px] border border-[#D1D1D1] bg-white p-4"
                         onClick={() =>
                             handleDirectionClick(
                                 direction.from_city,

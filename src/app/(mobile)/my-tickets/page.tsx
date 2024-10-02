@@ -64,7 +64,7 @@ const MyTicketsPage = () => {
             <h1 className="pt-[75px] text-[42px] font-semibold leading-[46.2px] tracking-[-3%] text-[var(--black)]">
                 Мои билеты
             </h1>
-            <div className="flex flex-col">
+            <div className="fade-in flex flex-col">
                 <div className="flex flex-col pt-5">
                     {data?.map((ticket) => (
                         <Link href={`/my-tickets/${ticket.id}`} key={ticket.id}>
