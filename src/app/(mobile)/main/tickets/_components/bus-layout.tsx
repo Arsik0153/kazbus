@@ -31,7 +31,7 @@ const BusLayout = (props: Props) => {
 
     const isSeatTaken = (seatId: number) => {
         const seat = seats?.seats.find((s) => s.seat_id === seatId);
-        return seat?.status === 'booked';
+        return seat?.status === 'booked' || seat?.status === 'paid';
     };
 
     const handleSeatClick = (seatId: number) => {

@@ -57,7 +57,7 @@ const Booking = (props: Props) => {
     return (
         <>
             <Topbar onBack={() => setStep(Steps.Contacts)}>Оплата</Topbar>
-            <div className="h-full gap-1 px-5">
+            <div className="fade-in h-full gap-1 px-5">
                 <div className="mt-4 flex flex-col gap-3 rounded-lg border border-[#D1D1D1] bg-none p-5">
                     <Clock color="#E74949" />
                     <div className="flex flex-col gap-1">

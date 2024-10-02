@@ -213,7 +213,7 @@ export type BusSeat = {
     seat_col: number;
     seat_row: number;
     seat_type: 'aisle' | 'passenger' | 'driver';
-    status: 'free' | 'booked';
+    status: 'free' | 'booked' | 'paid';
 };
 
 export type BusSeats = {

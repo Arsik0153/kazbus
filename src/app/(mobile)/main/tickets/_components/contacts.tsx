@@ -36,7 +36,7 @@ const Contacts = (props: Props) => {
                 Покупка билета
             </Topbar>
 
-            <div className="px-5">
+            <div className="fade-in px-5">
                 <form className="mt-10 flex flex-col" onSubmit={onSubmit}>
                     <p className="text-3xl font-medium text-[#4A4A4A]">
                         Контактные данные
