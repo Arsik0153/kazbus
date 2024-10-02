@@ -12,6 +12,7 @@ import CitySelector from '@/components/citySelector';
 import { getCitiesAction } from '../main/actions';
 import { useRouter } from 'next/navigation';
 import Skeleton from '@/components/skeleton';
+import SelectCity from './select-city';
 
 const Directions = () => {
     const router = useRouter();
@@ -46,8 +47,8 @@ const Directions = () => {
             <h1 className="pt-[75px] text-[42px] font-semibold leading-[46.2px] tracking-[-3%] text-[var(--black)]">
                 Популярные направления
             </h1>
-            <div className="fade-in mt-3 flex flex-wrap gap-1">
-                <CitySelector />
+            <div className="fade-in relative z-20 mt-3 flex flex-wrap gap-1">
+                <SelectCity />
 
                 <div className="w-fit rounded-full border border-[#A0A0A0] px-5 py-[5px] text-sm font-semibold text-[#A0A0A0]">
                     Самые дешевые
