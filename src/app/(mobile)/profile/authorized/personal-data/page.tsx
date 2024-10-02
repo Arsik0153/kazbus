@@ -18,6 +18,7 @@ import { dateToReadable } from '@/utils/helper.';
 import Spinner from '@/components/spinner';
 import { useServerAction } from 'zsa-react';
 import toast from 'react-hot-toast';
+import { InputMask } from '@react-input/mask';
 
 const PersonalDataPage = () => {
     const { data, isLoading, refetch } = useServerActionQuery(
@@ -107,10 +108,14 @@ const PersonalDataPage = () => {
                             />
                         </div>
                         <div>
-                            <Input
+                            <InputMask
+                                component={Input}
                                 label="Дата рождения"
                                 id="birth_date"
+                                type="tel"
                                 iconLeft={<Calendar color="#E74949" />}
+                                mask="__.__.____"
+                                replacement="_"
                                 {...register('birth_date')}
                             />
                             <ErrorMessage

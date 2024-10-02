@@ -1,3 +1,4 @@
+import { dayjsExt } from '@/lib/dayjs';
 import { z } from 'zod';
 
 const MAX_FILE_SIZE = 1000000;
@@ -19,7 +20,18 @@ export const profileSchema = z.object({
         .min(5, 'Введите номер документа или ИИН'),
     birth_date: z
         .string({ message: 'Введите дату рождения' })
-        .min(5, 'Введите дату рождения'),
+        .min(5, 'Введите дату рождения')
+        .refine(
+            (date) => {
+                const parsedDate = dayjsExt(date, 'DD.MM.YYYY', true);
+                return (
+                    parsedDate.isValid() &&
+                    parsedDate.isBefore(dayjsExt()) &&
+                    parsedDate.isAfter('1900-01-01')
+                );
+            },
+            { message: 'Введите корректную дату рождения в формате ДД.ММ.ГГГГ' }
+        ),
 });
 
 export const editProfileSchema = z.object({
@@ -31,7 +43,18 @@ export const editProfileSchema = z.object({
         .min(5, 'Введите номер документа или ИИН'),
     birth_date: z
         .string({ message: 'Введите дату рождения' })
-        .min(5, 'Введите дату рождения'),
+        .min(5, 'Введите дату рождения')
+        .refine(
+            (date) => {
+                const parsedDate = dayjsExt(date, 'DD.MM.YYYY', true);
+                return (
+                    parsedDate.isValid() &&
+                    parsedDate.isBefore(dayjsExt()) &&
+                    parsedDate.isAfter('1900-01-01')
+                );
+            },
+            { message: 'Введите корректную дату рождения в формате ДД.ММ.ГГГГ' }
+        ),
 });
 
 // export const adminLogin = z.object({
@@ -75,9 +98,7 @@ export const loginSchema = z.object({
         .min(8, 'Пароль должен содержать минимум 8 символов'),
 });
 export const adminLoginSchema = z.object({
-    username: z
-        .string({ message: 'Введите логин' })
-        .min(4, 'Введите логин'),
+    username: z.string({ message: 'Введите логин' }).min(4, 'Введите логин'),
     password: z
         .string({ message: 'Введите пароль' })
         .min(1, 'Пароль должен содержать минимум 1 символов'),
@@ -93,7 +114,18 @@ export const driverSchema = z.object({
     full_name: z.string().min(5, 'Введите полное ФИО'),
     date_of_birth: z
         .string({ message: 'Введите дату рождения' })
-        .min(5, 'Введите дату рождения'),
+        .min(5, 'Введите дату рождения')
+        .refine(
+            (date) => {
+                const parsedDate = dayjsExt(date, 'DD.MM.YYYY', true);
+                return (
+                    parsedDate.isValid() &&
+                    parsedDate.isBefore(dayjsExt()) &&
+                    parsedDate.isAfter('1900-01-01')
+                );
+            },
+            { message: 'Введите корректную дату рождения в формате ДД.ММ.ГГГГ' }
+        ),
     license_number: z
         .string({ message: 'Введите номер водительских прав' })
         .min(5, 'Введите номер водительских прав'),
