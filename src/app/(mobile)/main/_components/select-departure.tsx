@@ -9,6 +9,8 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { City } from '@/data/types';
 import Link from 'next/link';
 import ArrowLeft from '@/assets/shared/arrow-left';
+import { AnimatePresence, motion } from 'framer-motion';
+import { slideAnimation, overlayAnimation } from '@/static/animation';
 
 const SelectDeparture = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -64,10 +66,21 @@ const SelectDeparture = () => {
         }
     }, [fromParam, cities]);
 
-    if (isOpen) {
-        return (
-            <>
-                <div className="fixed inset-0 z-30 h-full min-h-screen w-full overflow-auto bg-[var(--bg)]">
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <motion.div
+                    key="overlay"
+                    className="fixed inset-0 z-20 bg-black"
+                    {...overlayAnimation}
+                />
+            )}
+            {isOpen && (
+                <motion.div
+                    key="select-departure-modal"
+                    className="fixed inset-0 z-30 h-full min-h-screen w-full overflow-hidden bg-[var(--bg)]"
+                    {...slideAnimation}
+                >
                     <Topbar className="mx-0 w-full">
                         <InputFromMain
                             iconLeft={
@@ -107,25 +120,22 @@ const SelectDeparture = () => {
                             </li>
                         ))}
                     </ul>
+                </motion.div>
+            )}
+            <div onClick={() => setIsOpen(true)}>
+                <div className="pointer-events-none">
+                    <Input
+                        label="Откуда вы отправляетесь"
+                        defaultValue={selectedCity}
+                        id="from"
+                        variant="ghost"
+                        iconLeft={<ArrowLeftIcon color="white" />}
+                        hideKeyboardOnFocus={false}
+                        containerClassName="xs:pt-[30px] xs:pb-[16px]"
+                    />
                 </div>
-            </>
-        );
-    }
-
-    return (
-        <div onClick={() => setIsOpen(true)}>
-            <div className="pointer-events-none">
-                <Input
-                    label="Откуда вы отправляетесь"
-                    defaultValue={selectedCity}
-                    id="from"
-                    variant="ghost"
-                    iconLeft={<ArrowLeftIcon color="white" />}
-                    hideKeyboardOnFocus={false}
-                    containerClassName="xs:pt-[30px] xs:pb-[16px]"
-                />
             </div>
-        </div>
+        </AnimatePresence>
     );
 };
 
