@@ -110,6 +110,7 @@ const PersonalDataPage = () => {
                             <Input
                                 label="Дата рождения"
                                 id="birth_date"
+                                type="date"
                                 iconLeft={<Calendar color="#E74949" />}
                                 {...register('birth_date')}
                             />
