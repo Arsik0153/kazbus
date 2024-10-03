@@ -39,6 +39,8 @@ a {
 
 .onevision-widget {
     z-index: 1000;
+    background-color: white;
+    padding: 40px 0;
 }
 
 .fade-in {

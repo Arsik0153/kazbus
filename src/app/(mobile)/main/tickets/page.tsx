@@ -15,7 +15,7 @@ import toast from 'react-hot-toast';
 import Payment from './_components/payment';
 
 const TicketPageSuspended = () => {
-    const [step, setStep] = useState<Steps>(Steps.SelectTicket);
+    const [step, setStep] = useState<Steps>(Steps.Payment);
     const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
     const [seats, setSeats] = useState<number[]>([]);
     const [passengers, setPassengers] = useState<User[]>([]);
