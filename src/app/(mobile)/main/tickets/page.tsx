@@ -13,9 +13,11 @@ import { useServerAction } from 'zsa-react';
 import { createTicketAction } from './actions';
 import toast from 'react-hot-toast';
 import Payment from './_components/payment';
+import { useQueryClient } from '@tanstack/react-query';
 
 const TicketPageSuspended = () => {
-    const [step, setStep] = useState<Steps>(Steps.Payment);
+    const queryClient = useQueryClient();
+    const [step, setStep] = useState<Steps>(Steps.SelectTicket);
     const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
     const [seats, setSeats] = useState<number[]>([]);
     const [passengers, setPassengers] = useState<User[]>([]);
@@ -28,6 +30,18 @@ const TicketPageSuspended = () => {
         useServerAction(createTicketAction, {
             onSuccess: (data) => {
                 console.log(data);
+                queryClient.invalidateQueries({
+                    queryKey: ['tickets'],
+                });
+                queryClient.invalidateQueries({
+                    queryKey: ['bus-seats'],
+                });
+                queryClient.invalidateQueries({
+                    queryKey: ['my-tickets'],
+                });
+                queryClient.invalidateQueries({
+                    queryKey: ['ticket', data.data.ticket_id],
+                });
                 setBookingTicketId(data.data.ticket_id);
                 setStep(Steps.Booking);
             },
@@ -99,7 +113,6 @@ const TicketPageSuspended = () => {
             {step === Steps.Payment && (
                 <Payment
                     ticked_id={bookingTicketId}
-                    setStep={setStep}
                     totalPrice={
                         selectedTicket?.price
                             ? Number(selectedTicket.price) * passengers.length

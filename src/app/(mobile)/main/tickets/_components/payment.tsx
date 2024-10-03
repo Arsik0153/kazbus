@@ -1,11 +1,7 @@
-import Button from '@/components/button';
-import { Ticket } from '@/data/types';
 import { payTicketAction } from '../actions';
 import { useServerAction } from 'zsa-react';
-import BackIcon from '@/assets/shared/back-icon';
 import { Steps } from '../types';
 import { useRouter } from 'next/navigation';
-import { useMask } from '@react-input/mask';
 import { v4 as uuidv4 } from 'uuid';
 import Script from 'next/script';
 import { useState } from 'react';
@@ -13,12 +9,11 @@ import { useQueryClient } from '@tanstack/react-query';
 
 type Props = {
     ticked_id: number;
-    setStep: (step: Steps) => void;
     totalPrice: number;
 };
 
 const Payment = (props: Props) => {
-    const { ticked_id, setStep, totalPrice } = props;
+    const { ticked_id, totalPrice } = props;
     const queryClient = useQueryClient();
     const router = useRouter();
     const { execute } = useServerAction(payTicketAction, {
@@ -28,6 +23,12 @@ const Payment = (props: Props) => {
             });
             queryClient.invalidateQueries({
                 queryKey: ['bus-seats'],
+            });
+            queryClient.invalidateQueries({
+                queryKey: ['my-tickets'],
+            });
+            queryClient.invalidateQueries({
+                queryKey: ['ticket', ticked_id],
             });
             closeWidget();
             router.push('/my-tickets');
@@ -98,21 +99,6 @@ const Payment = (props: Props) => {
         openPaymentWidgetHandler();
     };
 
-    // const cardRef = useMask({
-    //     mask: '____-____-____-____',
-    //     replacement: { _: /\d/ },
-    // });
-
-    // const dateRef = useMask({
-    //     mask: '__/__',
-    //     replacement: { _: /\d/ },
-    // });
-
-    // const cvvRef = useMask({
-    //     mask: '___',
-    //     replacement: { _: /\d/ },
-    // });
-
     return (
         <div>
             <Script
@@ -122,80 +108,6 @@ const Payment = (props: Props) => {
             {isError && <div>Ошибка при оплате</div>}
         </div>
     );
-
-    // return (
-    //     <>
-    //         <div className="h-full bg-[var(--gray)] px-5">
-    //             <button
-    //                 onClick={() => setStep(Steps.Booking)}
-    //                 className="pt-[75px]"
-    //             >
-    //                 <BackIcon color="#4A4A4A" width={17} height={22} />
-    //             </button>
-    //             <h1 className="pt-[25px] text-[42px] font-semibold leading-[46.2px] tracking-[-3%] text-[var(--black)]">
-    //                 Оплата банковской картой
-    //             </h1>
-
-    //             <div className="mt-5 w-full rounded-[10px] bg-[#E23333] px-4 pb-4 pt-8">
-    //                 <label
-    //                     htmlFor="cardnumber"
-    //                     className="font-medium text-white"
-    //                 >
-    //                     Номер карты
-    //                 </label>
-    //                 <input
-    //                     type="tel"
-    //                     id="cardnumber"
-    //                     className="hide-tabbar mt-2 h-[70px] w-full rounded-[10px] border border-white bg-[#FFFFFF14] px-4 text-white placeholder:text-white focus:outline-none"
-    //                     placeholder="XXXX - XXXX - XXXX - XXXX"
-    //                     ref={cardRef}
-    //                 />
-    //                 <div className="flex gap-7">
-    //                     <div className="mt-4 flex flex-col gap-2">
-    //                         <label
-    //                             htmlFor="date"
-    //                             className="font-medium text-white"
-    //                         >
-    //                             Срок действия
-    //                         </label>
-    //                         <input
-    //                             type="tel"
-    //                             id="date"
-    //                             className="hide-tabbar h-[70px] w-[120px] rounded-[10px] border border-white bg-[#FFFFFF14] px-4 text-white placeholder:text-white focus:outline-none"
-    //                             placeholder="MM/YY"
-    //                             ref={dateRef}
-    //                         />
-    //                     </div>
-    //                     <div className="mt-4 flex flex-col gap-2">
-    //                         <label
-    //                             htmlFor="cvv"
-    //                             className="font-medium text-white"
-    //                         >
-    //                             CVV
-    //                         </label>
-    //                         <input
-    //                             type="tel"
-    //                             id="cvv"
-    //                             className="hide-tabbar h-[70px] w-[100px] rounded-[10px] border border-white bg-[#FFFFFF14] px-4 text-white placeholder:text-white focus:outline-none"
-    //                             placeholder="XXX"
-    //                             ref={cvvRef}
-    //                         />
-    //                     </div>
-    //                 </div>
-    //             </div>
-
-    //             <Button
-    //                 className="mt-16"
-    //                 type="button"
-    //                 variant="secondary"
-    //                 onClick={() => handleSubmit()}
-    //                 loading={isPending}
-    //             >
-    //                 Оплатить
-    //             </Button>
-    //         </div>
-    //     </>
-    // );
 };
 
 export default Payment;

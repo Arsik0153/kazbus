@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@/components/button';
 import Download from '../../../../assets/download';
 import Topbar from '@/components/topbar';
@@ -9,12 +9,14 @@ import Ticket from './ticket';
 import Spinner from '@/components/spinner';
 import Menu from '@/components/menu';
 import Skeleton from '@/components/skeleton';
+import Payment from '../../main/tickets/_components/payment';
 
 const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
     const { data, isLoading } = useServerActionQuery(getTicketByIdAction, {
         input: { ticket_id: Number(params.ticketId) },
         queryKey: ['ticket', params.ticketId],
     });
+    const [paymentWidgetOpen, setPaymentWidgetOpen] = useState(false);
     console.log(data);
 
     if (isLoading || !data) {
@@ -55,6 +57,28 @@ const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
                         </div>
                     </div>
                 ))}
+                {data.status === 'Booked' && (
+                    <>
+                        {paymentWidgetOpen && (
+                            <Payment
+                                ticked_id={data.id}
+                                totalPrice={
+                                    data.direction?.ticket_price
+                                        ? Number(data.direction.ticket_price) *
+                                          data.passengers.length
+                                        : 0
+                                }
+                            />
+                        )}
+                        <Button
+                            variant="ghost"
+                            className="border border-[#D21F1F]"
+                            onClick={() => setPaymentWidgetOpen(true)}
+                        >
+                            Оплатить банковской картой
+                        </Button>
+                    </>
+                )}
                 <div className="mt-8 w-full rounded-[10px] bg-[#F9F9F9] px-4 pb-1 pt-6">
                     <div className="pb-[20px] text-[20px] font-bold leading-[22px]">
                         Действия
