@@ -46,7 +46,7 @@ export const editProfileSchema = z.object({
         .min(5, 'Введите дату рождения')
         .refine(
             (date) => {
-                const parsedDate = dayjsExt(date, 'DD.MM.YYYY', true);
+                const parsedDate = dayjsExt(date, 'DD.MM.YYYY');
                 return (
                     parsedDate.isValid() &&
                     parsedDate.isBefore(dayjsExt()) &&
