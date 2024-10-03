@@ -144,7 +144,7 @@ const SelectPassengers = (props: Props) => {
 
                 {!isPassengerCountEnough && (
                     <p className="mx-auto mt-3 w-fit rounded-full border-[1px] bg-[#E23333] px-4 py-2 text-xs font-medium text-white">
-                        Вам нужно добавить хотя-бы{' '}
+                        Вам нужно добавить ещё{' '}
                         {passengerCountParam - (passengers?.length || 0)}{' '}
                         {getStringByNumber(
                             passengerCountParam - (passengers?.length || 0),
