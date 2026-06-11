@@ -28,7 +28,7 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
     return (
         <div
             className={cn(
-                'xs:pb-[19px] xs:pt-[35px] relative w-full rounded-[10px] border border-solid pb-[10px] pt-[24px]',
+                ' relative w-full rounded-[10px] border border-black/60 border-solid ',
                 {
                     'bg-[#ffffff]': variant === 'primary',
                     'bg-none': variant === 'secondary',
@@ -45,7 +45,7 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
             <input
                 id={id}
                 className={cn(
-                    `${hideKeyboardOnFocus ? 'hide-tabbar' : ''} peer w-full bg-transparent pr-8 font-medium text-[var(--black)] placeholder-transparent outline-none transition-all duration-200`,
+                    `${hideKeyboardOnFocus ? 'hide-tabbar' : ''} peer xs:pb-4 xs:pt-5 pb-2.5 pt-6 w-full bg-transparent pr-8 font-medium text-[var(--black)] placeholder-transparent outline-none transition-all duration-200`,
                     {
                         'pl-14': iconLeft,
                         'pl-8': !iconLeft,
