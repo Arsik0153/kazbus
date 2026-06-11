@@ -16,7 +16,7 @@ const BusDriverTripStatusStepper = ({ steps }: Props) => {
                     <div key={step.id} className="flex gap-3">
                         <div className="flex flex-col items-center">
                             <div
-                                className={cn('h-4 w-4 rounded-full border-2', {
+                                className={cn('size-4 min-h-4 min-w-4 rounded-full border-2', {
                                     'border-[#E23333] bg-[#E23333]':
                                         step.state === 'done',
                                     'border-[#E23333] bg-white':
