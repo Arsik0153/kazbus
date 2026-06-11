@@ -1,24 +1,62 @@
 import { Profile } from '@/data/user';
-import { SignJWT, jwtVerify } from 'jose';
+import { JWTPayload, SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
-const secretKey = process.env.SESSION_SECRET;
-const key = new TextEncoder().encode(secretKey);
+type SessionUser = Profile & {
+    user_id: number;
+    token: string;
+};
 
-export async function encrypt(payload: any) {
+type SessionPayload = JWTPayload & {
+    user: SessionUser;
+    expires: string | Date;
+};
+
+const getSessionKey = () => {
+    const secret = process.env.SESSION_SECRET?.trim();
+
+    if (!secret) {
+        return null;
+    }
+
+    return new TextEncoder().encode(secret);
+};
+
+const requireSessionKey = () => {
+    const key = getSessionKey();
+
+    if (!key) {
+        throw new Error('SESSION_SECRET is not configured');
+    }
+
+    return key;
+};
+
+export async function encrypt(payload: SessionPayload) {
     return await new SignJWT(payload)
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
         .setExpirationTime('7 days from now')
-        .sign(key);
+        .sign(requireSessionKey());
 }
 
-export async function decrypt(input: string): Promise<any> {
-    const { payload } = await jwtVerify(input, key, {
-        algorithms: ['HS256'],
-    });
-    return payload;
+export async function decrypt(input: string): Promise<SessionPayload | null> {
+    const key = getSessionKey();
+
+    if (!key || !input) {
+        return null;
+    }
+
+    try {
+        const { payload } = await jwtVerify(input, key, {
+            algorithms: ['HS256'],
+        });
+
+        return payload as SessionPayload;
+    } catch {
+        return null;
+    }
 }
 
 type SignUpCredentials = {
@@ -116,30 +154,45 @@ export async function logout() {
 export async function getSession(): Promise<Session | null> {
     const session = cookies().get('session')?.value;
     if (!session) return null;
-    return await decrypt(session);
+
+    const parsed = await decrypt(session);
+    if (!parsed) return null;
+
+    return {
+        user: parsed.user,
+        expires: String(parsed.expires),
+    };
 }
 
 export async function updateSession(request: NextRequest) {
     const session = request.cookies.get('session')?.value;
     if (!session) return;
 
-    // Refresh the session so it doesn't expire
     const parsed = await decrypt(session);
-    parsed.expires = new Date(Date.now() + 60 * 60 * 1000);
     const res = NextResponse.next();
+
+    if (!parsed) {
+        res.cookies.set({
+            name: 'session',
+            value: '',
+            httpOnly: true,
+            expires: new Date(0),
+        });
+        return res;
+    }
+
+    // Refresh the session so it doesn't expire
+    parsed.expires = new Date(Date.now() + 60 * 60 * 1000).toISOString();
     res.cookies.set({
         name: 'session',
         value: await encrypt(parsed),
         httpOnly: true,
-        expires: parsed.expires,
+        expires: new Date(parsed.expires),
     });
     return res;
 }
 
 export type Session = {
-    user: Profile & {
-        user_id: number;
-        token: string;
-    };
+    user: SessionUser;
     expires: string;
 } | null;
