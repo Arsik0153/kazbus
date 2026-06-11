@@ -67,12 +67,9 @@ const BusSeatMap = ({ rows }: Props) => {
                         Свободные, занятые и резервные места по текущему рейсу.
                     </p>
                 </div>
-                <div className="rounded-[0.625rem] bg-[#F8F8F8] px-3 py-2 text-xs font-semibold text-[#4A4A4A]">
-                    Водитель
-                </div>
             </div>
 
-            <div className="mt-5 rounded-[0.625rem] bg-[#FAFAFA] p-4">
+            <div className="mt-5">
                 <div className="mb-4 flex justify-end">
                     <div className="rounded-[0.625rem] border border-[#D1D1D1] bg-white px-4 py-2 text-xs font-semibold text-[#4A4A4A]">
                         Кабина
@@ -103,7 +100,7 @@ const BusSeatMap = ({ rows }: Props) => {
                 {Object.values(seatStatusMeta).map((item) => (
                     <div
                         key={item.label}
-                        className="flex items-center gap-2 rounded-[0.625rem] bg-[#F8F8F8] px-3 py-2"
+                        className="flex items-center gap-2"
                     >
                         <div
                             className={cn(
@@ -111,7 +108,7 @@ const BusSeatMap = ({ rows }: Props) => {
                                 item.className
                             )}
                         />
-                        <span className="text-xs font-medium text-[#4A4A4A]">
+                        <span className="text-sm font-medium text-[#4A4A4A]">
                             {item.label}
                         </span>
                     </div>

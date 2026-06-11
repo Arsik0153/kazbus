@@ -44,10 +44,15 @@ const passengerStats = [
     },
 ];
 
-const SearchIcon = ({ color = 'white' }: { color?: string }) => (
+const SearchIcon = ({
+    color = 'white',
+    className,
+}: {
+    color?: string;
+    className?: string;
+}) => (
     <svg
-        width="18"
-        height="18"
+        className={cn('h-[18px] w-[18px] shrink-0', className)}
         viewBox="0 0 18 18"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -172,7 +177,7 @@ const BusDriverPassengersPage = () => {
                                     aria-label="Открыть поиск"
                                     className="col-start-3 flex h-6 w-6 items-center justify-center"
                                 >
-                                    <SearchIcon />
+                                    <SearchIcon className="size-6.5" />
                                 </motion.button>
                             )}
                         </AnimatePresence>
