@@ -1,0 +1,72 @@
+export type TripStatus =
+    | 'planned'
+    | 'loading'
+    | 'inTransit'
+    | 'unloading'
+    | 'completed';
+
+export type DriverStatus = 'verified' | 'pending' | 'needsUpdate';
+
+export type DocumentStatus = 'valid' | 'expiring' | 'expired';
+
+export type VehicleType = 'refrigerator' | 'tent' | 'van' | 'flatbed';
+
+export type Driver = {
+    id: number;
+    fullName: string;
+    phone: string;
+    status: DriverStatus;
+    fleet: string;
+    experienceYears: number;
+    assignedVehicleId: number;
+    licenseNumber: string;
+    city: string;
+};
+
+export type Vehicle = {
+    id: number;
+    model: string;
+    plateNumber: string;
+    trailerNumber: string;
+    type: VehicleType;
+    capacityTons: number;
+    fleet: string;
+    year: number;
+};
+
+export type CargoTrip = {
+    id: number;
+    routeLabel: string;
+    fromCity: string;
+    toCity: string;
+    currentStatus: TripStatus;
+    cargoTitle: string;
+    cargoWeightTons: number;
+    cargoVolumeM3: number;
+    pickupPoint: string;
+    dropoffPoint: string;
+    currentPoint: string;
+    distanceKm: number;
+    eta: string;
+    departureDate: string;
+    arrivalDate: string;
+    referenceNumber: string;
+};
+
+export type CargoDocument = {
+    id: number;
+    title: string;
+    number: string;
+    expiresAt: string;
+    status: DocumentStatus;
+    scope: 'driver' | 'vehicle';
+    ownerLabel: string;
+};
+
+export type TripStep = {
+    id: number;
+    title: string;
+    description: string;
+    status: TripStatus;
+    state: 'done' | 'current' | 'upcoming';
+};
