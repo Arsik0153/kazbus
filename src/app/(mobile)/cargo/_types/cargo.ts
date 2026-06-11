@@ -7,7 +7,7 @@ export type TripStatus =
 
 export type DriverStatus = 'verified' | 'pending' | 'needsUpdate';
 
-export type DocumentStatus = 'valid' | 'expiring' | 'expired';
+export type DocumentStatus = 'valid' | 'expiring' | 'expired' | 'missing';
 
 export type VehicleType = 'refrigerator' | 'tent' | 'van' | 'flatbed';
 
@@ -55,12 +55,24 @@ export type CargoTrip = {
 
 export type CargoDocument = {
     id: number;
+    templateId: string;
     title: string;
     number: string;
     expiresAt: string;
     status: DocumentStatus;
     scope: 'driver' | 'vehicle';
     ownerLabel: string;
+};
+
+export type RequiredCargoDocument = {
+    id: string;
+    title: string;
+    description: string;
+    scope: 'driver' | 'vehicle';
+    ownerLabel: string;
+    numberLabel: string;
+    expiryLabel: string;
+    helperText: string;
 };
 
 export type TripStep = {

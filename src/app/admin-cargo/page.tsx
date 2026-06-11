@@ -9,7 +9,7 @@ const AdminCargoPage = () => {
                     Админ-панель
                 </h1>
                 <p className="mt-3 text-sm leading-[17.6px] text-[#A0A0A0]">
-                    Админ-панель грузоперевозок будет добавлена позже.
+                    Раздел управления грузоперевозками Joool Cargo.
                 </p>
             </div>
         </div>

@@ -1,13 +1,62 @@
 import Topbar from '@/components/topbar';
 import DocumentCard from '../_components/DocumentCard';
+import {
+    requiredDriverDocuments,
+    requiredVehicleDocuments,
+} from '../_data/cargo-required-documents';
 import { documentsMock } from '../_data/cargo-driver.mock';
+import type { CargoDocument, RequiredCargoDocument } from '../_types/cargo';
+
+const buildDocumentsWithMissing = (
+    requiredDocuments: RequiredCargoDocument[],
+    existingDocuments: CargoDocument[]
+) => {
+    const documentsByTemplate = new Map(
+        existingDocuments.map((document) => [document.templateId, document])
+    );
+
+    const orderedDocuments = requiredDocuments.map(
+        (requiredDocument, index) => {
+            const existingDocument = documentsByTemplate.get(
+                requiredDocument.id
+            );
+
+            if (existingDocument) {
+                return existingDocument;
+            }
+
+            return {
+                id: -(index + 1),
+                templateId: requiredDocument.id,
+                title: requiredDocument.title,
+                number: '',
+                expiresAt: '',
+                status: 'missing' as const,
+                scope: requiredDocument.scope,
+                ownerLabel: requiredDocument.ownerLabel,
+            };
+        }
+    );
+
+    const extraDocuments = existingDocuments.filter(
+        (document) =>
+            !requiredDocuments.some(
+                (requiredDocument) =>
+                    requiredDocument.id === document.templateId
+            )
+    );
+
+    return [...orderedDocuments, ...extraDocuments];
+};
 
 const CargoDocumentsPage = () => {
-    const driverDocuments = documentsMock.filter(
-        (document) => document.scope === 'driver'
+    const driverDocuments = buildDocumentsWithMissing(
+        requiredDriverDocuments,
+        documentsMock.filter((document) => document.scope === 'driver')
     );
-    const vehicleDocuments = documentsMock.filter(
-        (document) => document.scope === 'vehicle'
+    const vehicleDocuments = buildDocumentsWithMissing(
+        requiredVehicleDocuments,
+        documentsMock.filter((document) => document.scope === 'vehicle')
     );
 
     return (

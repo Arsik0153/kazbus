@@ -579,9 +579,8 @@ const CargoRegistrationPage = () => {
                             </div>
 
                             <div className="rounded-[10px] border border-[#F3CDCD] bg-[#FFF2F2] p-4 text-sm leading-[17.6px] text-[#E74949]">
-                                После завершения регистрации профиль получит
-                                статус проверки. Backend и сохранение данных
-                                пока не подключены.
+                                После завершения регистрации проверьте данные
+                                водителя и машины перед продолжением работы.
                             </div>
                         </div>
                     )}

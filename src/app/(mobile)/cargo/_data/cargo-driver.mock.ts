@@ -89,6 +89,7 @@ export const tripStatuses: TripStep[] = [
 export const documentsMock: CargoDocument[] = [
     {
         id: 1,
+        templateId: 'driver-license',
         title: 'Водительское удостоверение',
         number: '12AB 449212',
         expiresAt: '02.12.2027',
@@ -98,6 +99,7 @@ export const documentsMock: CargoDocument[] = [
     },
     {
         id: 2,
+        templateId: 'medical-certificate',
         title: 'Медицинская справка',
         number: 'MED 004218',
         expiresAt: '28.06.2026',
@@ -107,6 +109,7 @@ export const documentsMock: CargoDocument[] = [
     },
     {
         id: 3,
+        templateId: 'truck-registration',
         title: 'СТС тягача',
         number: 'STS 882190',
         expiresAt: '13.09.2028',
@@ -116,6 +119,7 @@ export const documentsMock: CargoDocument[] = [
     },
     {
         id: 4,
+        templateId: 'insurance-policy',
         title: 'Страховой полис',
         number: 'INS 110482',
         expiresAt: '01.05.2026',

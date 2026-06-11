@@ -17,6 +17,10 @@ const documentStatusMeta: Record<
         label: 'Истек',
         className: 'bg-[#AEAEAE] text-white',
     },
+    missing: {
+        label: 'Не заполнен',
+        className: 'border border-[#D1D1D1] bg-[#F8F8F8] text-[#A0A0A0]',
+    },
 };
 
 type Props = {
@@ -25,6 +29,7 @@ type Props = {
 
 const DocumentCard = ({ document }: Props) => {
     const status = documentStatusMeta[document.status];
+    const isMissing = document.status === 'missing';
 
     return (
         <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-4">
@@ -47,10 +52,21 @@ const DocumentCard = ({ document }: Props) => {
                 </div>
             </div>
             <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-[#4A4A4A]">
-                <span>№ {document.number}</span>
-                <span className="text-[#A0A0A0]">
-                    Действителен до {document.expiresAt}
-                </span>
+                {isMissing ? (
+                    <>
+                        <span>Документ еще не добавлен</span>
+                        <span className="text-[#A0A0A0]">
+                            Заполните реквизиты документа
+                        </span>
+                    </>
+                ) : (
+                    <>
+                        <span>№ {document.number}</span>
+                        <span className="text-[#A0A0A0]">
+                            Действителен до {document.expiresAt}
+                        </span>
+                    </>
+                )}
             </div>
         </div>
     );
