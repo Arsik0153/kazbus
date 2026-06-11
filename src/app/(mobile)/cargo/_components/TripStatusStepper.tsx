@@ -7,8 +7,8 @@ type Props = {
 
 const TripStatusStepper = ({ steps }: Props) => {
     return (
-        <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-5">
-            <h2 className="text-[20px] font-bold leading-[22px] text-[#4A4A4A]">
+        <div className="rounded-[0.625rem] border border-[#D1D1D1] bg-white p-5">
+            <h2 className="leading-5.5 text-xl font-bold text-[#4A4A4A]">
                 Этапы рейса
             </h2>
             <div className="mt-5 flex flex-col gap-4">
@@ -26,12 +26,12 @@ const TripStatusStepper = ({ steps }: Props) => {
                                 })}
                             >
                                 {step.state === 'current' && (
-                                    <div className="m-[3px] h-1.5 w-1.5 rounded-full bg-[#E23333]" />
+                                    <div className="m-0.75 h-1.5 w-1.5 rounded-full bg-[#E23333]" />
                                 )}
                             </div>
                             {index < steps.length - 1 && (
                                 <div
-                                    className={cn('mt-1 h-full w-[2px]', {
+                                    className={cn('mt-1 h-full w-0.5', {
                                         'bg-[#E23333]':
                                             step.state === 'done' ||
                                             step.state === 'current',

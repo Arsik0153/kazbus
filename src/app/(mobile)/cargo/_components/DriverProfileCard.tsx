@@ -29,12 +29,12 @@ const DriverProfileCard = ({ driver, assignedVehicleLabel }: Props) => {
     const status = driverStatusMeta[driver.status];
 
     return (
-        <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-5">
+        <div className="rounded-[0.625rem] border border-[#D1D1D1] bg-white p-5">
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                     <div className="flex items-center gap-2">
                         <User color="#E74949" width={18} height={18} />
-                        <p className="text-[20px] font-bold leading-[22px] text-[#4A4A4A]">
+                        <p className="leading-5.5 text-xl font-bold text-[#4A4A4A]">
                             {driver.fullName}
                         </p>
                     </div>
@@ -44,7 +44,7 @@ const DriverProfileCard = ({ driver, assignedVehicleLabel }: Props) => {
                 </div>
                 <div
                     className={cn(
-                        'shrink-0 rounded-full px-3 py-[6px] text-xs font-semibold leading-[13.2px]',
+                        'leading-3.3 shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold',
                         status.className
                     )}
                 >
@@ -53,7 +53,7 @@ const DriverProfileCard = ({ driver, assignedVehicleLabel }: Props) => {
             </div>
 
             <div className="mt-5 grid grid-cols-2 gap-3">
-                <div className="rounded-[10px] bg-[#F8F8F8] p-3">
+                <div className="rounded-[0.625rem] bg-[#F8F8F8] p-3">
                     <p className="text-xs font-medium text-[#A0A0A0]">
                         Автопарк
                     </p>
@@ -61,13 +61,13 @@ const DriverProfileCard = ({ driver, assignedVehicleLabel }: Props) => {
                         {driver.fleet}
                     </p>
                 </div>
-                <div className="rounded-[10px] bg-[#F8F8F8] p-3">
+                <div className="rounded-[0.625rem] bg-[#F8F8F8] p-3">
                     <p className="text-xs font-medium text-[#A0A0A0]">Стаж</p>
                     <p className="mt-1 text-sm font-semibold text-[#4A4A4A]">
                         {driver.experienceYears} лет
                     </p>
                 </div>
-                <div className="rounded-[10px] bg-[#F8F8F8] p-3">
+                <div className="rounded-[0.625rem] bg-[#F8F8F8] p-3">
                     <p className="text-xs font-medium text-[#A0A0A0]">
                         Удостоверение
                     </p>
@@ -75,7 +75,7 @@ const DriverProfileCard = ({ driver, assignedVehicleLabel }: Props) => {
                         {driver.licenseNumber}
                     </p>
                 </div>
-                <div className="rounded-[10px] bg-[#F8F8F8] p-3">
+                <div className="rounded-[0.625rem] bg-[#F8F8F8] p-3">
                     <p className="text-xs font-medium text-[#A0A0A0]">Машина</p>
                     <p className="mt-1 text-sm font-semibold text-[#4A4A4A]">
                         {assignedVehicleLabel}

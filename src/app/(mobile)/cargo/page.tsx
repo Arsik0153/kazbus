@@ -15,33 +15,33 @@ const CargoPage = () => {
     const driverName = driverMock.fullName.split(' ')[0];
 
     return (
-        <div className="min-h-full bg-[var(--gray)] px-5 pb-28 pt-[75px]">
-            <h1 className="text-[42px] font-semibold leading-[46.2px] tracking-[-3%] text-[#4A4A4A]">
+        <div className="bg-(--gray) pt-18.75 min-h-full px-5 pb-28">
+            <h1 className="text-[2.625rem] font-semibold leading-[2.8875rem] tracking-[-0.03em] text-[#4A4A4A]">
                 Joool Cargo
             </h1>
 
-            <div className="mt-4 rounded-[10px] border border-[#D1D1D1] bg-white p-5">
+            <div className="mt-4 rounded-[0.625rem] border border-[#D1D1D1] bg-white p-5">
                 <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                         <p className="text-sm font-medium text-[#A0A0A0]">
                             Добро пожаловать
                         </p>
-                        <p className="mt-1 text-[28px] font-bold leading-[30.8px] text-[#4A4A4A]">
+                        <p className="mt-1 text-[1.75rem] font-bold leading-[1.925rem] text-[#4A4A4A]">
                             {driverName}
                         </p>
-                        <p className="mt-2 text-sm leading-[17.6px] text-[#A0A0A0]">
+                        <p className="leading-4.4 mt-2 text-sm text-[#A0A0A0]">
                             Ваша cargo-часть работает в том же мобильном shell,
                             что и основное приложение.
                         </p>
                     </div>
-                    <div className="text-nowrap rounded-full border border-[#F3CDCD] bg-[#FFF2F2] px-3 py-[6px] text-xs font-semibold text-[#E74949]">
+                    <div className="text-nowrap rounded-full border border-[#F3CDCD] bg-[#FFF2F2] px-3 py-1.5 text-xs font-semibold text-[#E74949]">
                         В рейсе
                     </div>
                 </div>
             </div>
 
             <div className="mt-5">
-                <h2 className="text-[20px] font-bold leading-[22px] text-[#4A4A4A]">
+                <h2 className="leading-5.5 text-xl font-bold text-[#4A4A4A]">
                     Активный рейс
                 </h2>
                 <div className="mt-3">
@@ -54,7 +54,7 @@ const CargoPage = () => {
             </div>
 
             <div className="mt-5">
-                <h2 className="text-[20px] font-bold leading-[22px] text-[#4A4A4A]">
+                <h2 className="leading-5.5 text-xl font-bold text-[#4A4A4A]">
                     Машина
                 </h2>
                 <div className="mt-3">
@@ -64,7 +64,7 @@ const CargoPage = () => {
 
             <div className="mt-5">
                 <div className="flex items-center justify-between gap-3">
-                    <h2 className="text-[20px] font-bold leading-[22px] text-[#4A4A4A]">
+                    <h2 className="leading-5.5 text-xl font-bold text-[#4A4A4A]">
                         Документы
                     </h2>
                     <span className="text-sm font-medium text-[#A0A0A0]">
@@ -78,8 +78,8 @@ const CargoPage = () => {
                 </div>
             </div>
 
-            {/* <div className="mt-5 rounded-[10px] border border-[#D1D1D1] bg-white px-4 pt-5">
-                <h2 className="pb-4 text-[20px] font-bold leading-[22px] text-[#4A4A4A]">
+            {/* <div className="mt-5 rounded-[0.625rem] border border-[#D1D1D1] bg-white px-4 pt-5">
+                <h2 className="pb-4 text-xl font-bold leading-5.5 text-[#4A4A4A]">
                     Быстрые ссылки
                 </h2>
                 <Menu link="/cargo/trip" text="Текущий рейс" />

@@ -7,17 +7,17 @@ const CargoMapPage = () => {
     return (
         <>
             <Topbar backHref="/cargo">Карта маршрута</Topbar>
-            <div className="min-h-full bg-[var(--gray)] px-5 pb-28 pt-5">
-                <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-4">
-                    <div className="flex h-[280px] items-center justify-center rounded-[10px] border border-dashed border-[#E7B0B0] bg-[linear-gradient(180deg,#FFF7F7_0%,#FFFFFF_100%)] p-6 text-center">
+            <div className="bg-(--gray) min-h-full px-5 pb-28 pt-5">
+                <div className="rounded-[0.625rem] border border-[#D1D1D1] bg-white p-4">
+                    <div className="h-70 bg-linear-[180deg,#FFF7F7_0%,#FFFFFF_100%] flex items-center justify-center rounded-[0.625rem] border border-dashed border-[#E7B0B0] p-6 text-center">
                         <div>
-                            <div className="mx-auto flex size-14 items-center justify-center rounded-[16px] bg-[#E23333]">
+                            <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-[#E23333]">
                                 <Building color="#FFFFFF" />
                             </div>
-                            <p className="mt-4 text-[20px] font-bold leading-[22px] text-[#4A4A4A]">
+                            <p className="leading-5.5 mt-4 text-xl font-bold text-[#4A4A4A]">
                                 Карта маршрута
                             </p>
-                            <p className="mt-2 text-sm leading-[17.6px] text-[#A0A0A0]">
+                            <p className="leading-4.4 mt-2 text-sm text-[#A0A0A0]">
                                 Здесь будет отображаться маршрут и позиция
                                 транспорта
                             </p>
@@ -30,7 +30,7 @@ const CargoMapPage = () => {
                 </div>
 
                 <div className="mt-4 grid grid-cols-2 gap-3">
-                    <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-4">
+                    <div className="rounded-[0.625rem] border border-[#D1D1D1] bg-white p-4">
                         <p className="text-xs font-medium text-[#A0A0A0]">
                             Маршрут
                         </p>
@@ -38,7 +38,7 @@ const CargoMapPage = () => {
                             {activeTripMock.routeLabel}
                         </p>
                     </div>
-                    <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-4">
+                    <div className="rounded-[0.625rem] border border-[#D1D1D1] bg-white p-4">
                         <p className="text-xs font-medium text-[#A0A0A0]">
                             Текущая точка
                         </p>
@@ -46,7 +46,7 @@ const CargoMapPage = () => {
                             {activeTripMock.currentPoint}
                         </p>
                     </div>
-                    <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-4">
+                    <div className="rounded-[0.625rem] border border-[#D1D1D1] bg-white p-4">
                         <p className="text-xs font-medium text-[#A0A0A0]">
                             Расстояние
                         </p>
@@ -54,7 +54,7 @@ const CargoMapPage = () => {
                             {activeTripMock.distanceKm} км
                         </p>
                     </div>
-                    <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-4">
+                    <div className="rounded-[0.625rem] border border-[#D1D1D1] bg-white p-4">
                         <p className="text-xs font-medium text-[#A0A0A0]">
                             Примерное прибытие
                         </p>

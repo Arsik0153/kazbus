@@ -18,7 +18,7 @@ const CargoTripPage = () => {
     return (
         <>
             <Topbar backHref="/cargo">Текущий рейс</Topbar>
-            <div className="min-h-full bg-[var(--gray)] px-5 pb-28 pt-5">
+            <div className="bg-(--gray) min-h-full px-5 pb-28 pt-5">
                 {!activeTrip ? (
                     <EmptyTripState />
                 ) : (
@@ -28,17 +28,17 @@ const CargoTripPage = () => {
                         <CargoInfoCard trip={activeTrip} />
                         <VehicleCard vehicle={vehicleMock} />
 
-                        <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-5">
+                        <div className="rounded-[0.625rem] border border-[#D1D1D1] bg-white p-5">
                             <div className="flex items-center justify-between gap-3">
                                 <div>
                                     <p className="text-sm font-medium text-[#A0A0A0]">
                                         Текущий статус рейса
                                     </p>
-                                    <p className="mt-1 text-[20px] font-bold leading-[22px] text-[#4A4A4A]">
+                                    <p className="leading-5.5 mt-1 text-xl font-bold text-[#4A4A4A]">
                                         В пути
                                     </p>
                                 </div>
-                                <div className="rounded-full bg-[#E23333] px-3 py-[6px] text-xs font-semibold text-white">
+                                <div className="rounded-full bg-[#E23333] px-3 py-1.5 text-xs font-semibold text-white">
                                     Активно
                                 </div>
                             </div>

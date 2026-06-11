@@ -7,7 +7,7 @@ export default function CargoLayout({
 }>) {
     return (
         <>
-            <div className="flex-1 xs:mb-[90px]">{children}</div>
+            <div className="xs:mb-22.5 flex-1">{children}</div>
             <NavBar section="cargo" />
         </>
     );

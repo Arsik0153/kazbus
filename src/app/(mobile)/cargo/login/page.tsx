@@ -13,15 +13,15 @@ const CargoLoginPage = () => {
     return (
         <>
             <Topbar backHref="/cargo">Joool Cargo</Topbar>
-            <div className="min-h-full bg-[var(--gray)] px-5 pb-28 pt-5">
-                <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-5">
+            <div className="bg-(--gray) min-h-full px-5 pb-28 pt-5">
+                <div className="rounded-[0.625rem] border border-[#D1D1D1] bg-white p-5">
                     <p className="text-sm font-bold text-[#E74949]">
                         Joool Cargo
                     </p>
-                    <h1 className="mt-2 text-[32px] font-bold leading-[38.4px] text-[#4A4A4A]">
+                    <h1 className="mt-2 text-[2rem] font-bold leading-[2.4rem] text-[#4A4A4A]">
                         Вход для водителя
                     </h1>
-                    <p className="mt-3 text-sm leading-[17.6px] text-[#A0A0A0]">
+                    <p className="leading-4.4 mt-3 text-sm text-[#A0A0A0]">
                         Введите рабочий номер телефона и код доступа, чтобы
                         открыть ваш профиль водителя.
                     </p>

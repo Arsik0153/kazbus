@@ -32,10 +32,10 @@ const DocumentCard = ({ document }: Props) => {
     const isMissing = document.status === 'missing';
 
     return (
-        <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-4">
+        <div className="rounded-[0.625rem] border border-[#D1D1D1] bg-white p-4">
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                    <p className="text-[16px] font-semibold leading-[17.6px] text-[#4A4A4A]">
+                    <p className="leading-4.4 text-base font-semibold text-[#4A4A4A]">
                         {document.title}
                     </p>
                     <p className="mt-1 text-sm font-medium text-[#A0A0A0]">
@@ -44,7 +44,7 @@ const DocumentCard = ({ document }: Props) => {
                 </div>
                 <div
                     className={cn(
-                        'shrink-0 rounded-full px-3 py-[6px] text-xs font-semibold leading-[13.2px]',
+                        'leading-3.3 shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold',
                         status.className
                     )}
                 >

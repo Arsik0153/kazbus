@@ -62,9 +62,9 @@ const CargoDocumentsPage = () => {
     return (
         <>
             <Topbar backHref="/cargo">Документы</Topbar>
-            <div className="min-h-full bg-[var(--gray)] px-5 pb-28 pt-5">
+            <div className="bg-(--gray) min-h-full px-5 pb-28 pt-5">
                 <div>
-                    <h2 className="text-[20px] font-bold leading-[22px] text-[#4A4A4A]">
+                    <h2 className="leading-5.5 text-xl font-bold text-[#4A4A4A]">
                         Документы водителя
                     </h2>
                     <div className="mt-3 flex flex-col gap-3">
@@ -78,7 +78,7 @@ const CargoDocumentsPage = () => {
                 </div>
 
                 <div className="mt-6">
-                    <h2 className="text-[20px] font-bold leading-[22px] text-[#4A4A4A]">
+                    <h2 className="leading-5.5 text-xl font-bold text-[#4A4A4A]">
                         Документы машины
                     </h2>
                     <div className="mt-3 flex flex-col gap-3">

@@ -57,7 +57,7 @@ const CargoProfilePage = () => {
     return (
         <>
             <Topbar backHref="/cargo">Профиль</Topbar>
-            <div className="min-h-full bg-[var(--gray)] px-5 pb-28 pt-5">
+            <div className="bg-(--gray) min-h-full px-5 pb-28 pt-5">
                 <DriverProfileCard
                     driver={driverMock}
                     assignedVehicleLabel={`${vehicleMock.model} • ${vehicleMock.plateNumber}`}
@@ -67,11 +67,11 @@ const CargoProfilePage = () => {
                     <VehicleCard vehicle={vehicleMock} />
                 </div>
 
-                <div className="mt-4 rounded-[10px] border border-[#D1D1D1] bg-white px-4 pt-5">
-                    <h2 className="pb-2 text-[20px] font-bold leading-[22px] text-[#4A4A4A]">
+                <div className="mt-4 rounded-[0.625rem] border border-[#D1D1D1] bg-white px-4 pt-5">
+                    <h2 className="leading-5.5 pb-2 text-xl font-bold text-[#4A4A4A]">
                         Документы
                     </h2>
-                    <p className="pb-4 text-sm leading-[17.6px] text-[#A0A0A0]">
+                    <p className="leading-4.4 pb-4 text-sm text-[#A0A0A0]">
                         Добавьте обязательные документы водителя и машины для
                         проверки профиля.
                     </p>
@@ -94,8 +94,8 @@ const CargoProfilePage = () => {
                     />
                 </div>
 
-                <div className="mt-4 rounded-[10px] border border-[#D1D1D1] bg-white px-4 pt-5">
-                    <h2 className="pb-4 text-[20px] font-bold leading-[22px] text-[#4A4A4A]">
+                <div className="mt-4 rounded-[0.625rem] border border-[#D1D1D1] bg-white px-4 pt-5">
+                    <h2 className="leading-5.5 pb-4 text-xl font-bold text-[#4A4A4A]">
                         Настройки
                     </h2>
                     <Menu link="#" text="Уведомления" />

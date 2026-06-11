@@ -11,21 +11,21 @@ const AddCargoDocumentsPage = () => {
     return (
         <>
             <Topbar backHref="/cargo/profile">Добавить документы</Topbar>
-            <div className="min-h-full bg-[var(--gray)] px-5 pb-28 pt-5">
-                <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-5">
+            <div className="bg-(--gray) min-h-full px-5 pb-28 pt-5">
+                <div className="rounded-[0.625rem] border border-[#D1D1D1] bg-white p-5">
                     <p className="text-sm font-bold text-[#E74949]">
                         Joool Cargo
                     </p>
-                    <h1 className="mt-2 text-[32px] font-bold leading-[38.4px] text-[#4A4A4A]">
+                    <h1 className="mt-2 text-[2rem] font-bold leading-[2.4rem] text-[#4A4A4A]">
                         Документы на проверку
                     </h1>
-                    <p className="mt-3 text-sm leading-[17.6px] text-[#A0A0A0]">
+                    <p className="leading-4.4 mt-3 text-sm text-[#A0A0A0]">
                         Заполните обязательные документы водителя и транспорта,
                         чтобы профиль был готов к проверке.
                     </p>
 
                     <div className="mt-4 grid grid-cols-2 gap-3">
-                        <div className="rounded-[10px] bg-[#F8F8F8] p-3">
+                        <div className="rounded-[0.625rem] bg-[#F8F8F8] p-3">
                             <p className="text-xs font-medium text-[#A0A0A0]">
                                 Водитель
                             </p>
@@ -33,7 +33,7 @@ const AddCargoDocumentsPage = () => {
                                 {requiredDriverDocuments.length} документа
                             </p>
                         </div>
-                        <div className="rounded-[10px] bg-[#F8F8F8] p-3">
+                        <div className="rounded-[0.625rem] bg-[#F8F8F8] p-3">
                             <p className="text-xs font-medium text-[#A0A0A0]">
                                 Машина
                             </p>
@@ -45,7 +45,7 @@ const AddCargoDocumentsPage = () => {
                 </div>
 
                 <div id="driver-documents" className="mt-5">
-                    <h2 className="text-[20px] font-bold leading-[22px] text-[#4A4A4A]">
+                    <h2 className="leading-5.5 text-xl font-bold text-[#4A4A4A]">
                         Документы водителя
                     </h2>
                     <div className="mt-3 flex flex-col gap-3">
@@ -65,7 +65,7 @@ const AddCargoDocumentsPage = () => {
                 </div>
 
                 <div id="vehicle-documents" className="mt-6">
-                    <h2 className="text-[20px] font-bold leading-[22px] text-[#4A4A4A]">
+                    <h2 className="leading-5.5 text-xl font-bold text-[#4A4A4A]">
                         Документы машины
                     </h2>
                     <div className="mt-3 flex flex-col gap-3">
@@ -84,11 +84,11 @@ const AddCargoDocumentsPage = () => {
                     </div>
                 </div>
 
-                <div className="mt-6 rounded-[10px] border border-[#D1D1D1] bg-white p-5">
+                <div className="mt-6 rounded-[0.625rem] border border-[#D1D1D1] bg-white p-5">
                     <p className="text-sm font-semibold text-[#E74949]">
                         Что дальше
                     </p>
-                    <p className="mt-2 text-sm leading-[17.6px] text-[#A0A0A0]">
+                    <p className="leading-4.4 mt-2 text-sm text-[#A0A0A0]">
                         После заполнения документов вы сможете быстро вернуться
                         к списку документов или в профиль водителя.
                     </p>

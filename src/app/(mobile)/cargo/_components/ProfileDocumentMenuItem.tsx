@@ -44,13 +44,13 @@ const ProfileDocumentMenuItem = ({ link, text, status }: Props) => {
             href={link}
             className="flex items-center justify-between gap-3 py-4"
         >
-            <div className="text-[16px] font-normal leading-[17.6px] text-[#4A4A4A]">
+            <div className="leading-4.4 text-base font-normal text-[#4A4A4A]">
                 {text}
             </div>
             <div className="flex shrink-0 items-center gap-3">
                 <div
                     className={cn(
-                        'rounded-full px-3 py-[6px] text-xs font-semibold leading-[13.2px]',
+                        'leading-3.3 rounded-full px-3 py-1.5 text-xs font-semibold',
                         meta.className
                     )}
                 >

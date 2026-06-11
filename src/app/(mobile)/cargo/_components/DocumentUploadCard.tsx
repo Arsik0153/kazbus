@@ -21,27 +21,27 @@ const DocumentUploadCard = ({
     helperText,
 }: Props) => {
     return (
-        <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-5">
+        <div className="rounded-[0.625rem] border border-[#D1D1D1] bg-white p-5">
             <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#FFF2F2]">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.625rem] bg-[#FFF2F2]">
                         <Upload color="#E74949" />
                     </div>
                     <div className="min-w-0">
-                        <p className="text-[16px] font-semibold leading-[17.6px] text-[#4A4A4A]">
+                        <p className="leading-4.4 text-base font-semibold text-[#4A4A4A]">
                             {title}
                         </p>
-                        <p className="mt-1 text-sm leading-[17.6px] text-[#A0A0A0]">
+                        <p className="leading-4.4 mt-1 text-sm text-[#A0A0A0]">
                             {description}
                         </p>
                     </div>
                 </div>
-                <div className="shrink-0 rounded-full border border-[#F3CDCD] bg-[#FFF2F2] px-3 py-[6px] text-xs font-semibold text-[#E74949]">
+                <div className="shrink-0 rounded-full border border-[#F3CDCD] bg-[#FFF2F2] px-3 py-1.5 text-xs font-semibold text-[#E74949]">
                     Обязательный
                 </div>
             </div>
 
-            <div className="mt-4 rounded-[10px] bg-[#F8F8F8] p-3">
+            <div className="mt-4 rounded-[0.625rem] bg-[#F8F8F8] p-3">
                 <p className="text-xs font-medium text-[#A0A0A0]">Для кого</p>
                 <p className="mt-1 text-sm font-semibold text-[#4A4A4A]">
                     {ownerLabel}
@@ -61,11 +61,11 @@ const DocumentUploadCard = ({
                 />
             </div>
 
-            <div className="mt-4 rounded-[10px] border border-dashed border-[#E7B0B0] bg-[linear-gradient(180deg,#FFF7F7_0%,#FFFFFF_100%)] p-4">
+            <div className="bg-linear-[180deg,#FFF7F7_0%,#FFFFFF_100%] mt-4 rounded-[0.625rem] border border-dashed border-[#E7B0B0] p-4">
                 <p className="text-sm font-semibold text-[#E74949]">
                     Загрузка файла
                 </p>
-                <p className="mt-1 text-sm leading-[17.6px] text-[#A0A0A0]">
+                <p className="leading-4.4 mt-1 text-sm text-[#A0A0A0]">
                     {helperText}
                 </p>
             </div>

@@ -23,16 +23,16 @@ const Button = (props: Props) => {
             disabled={disabled || loading}
             {...rest}
             className={clsx(
-                'xs:py-4 xs:text-[18px] flex w-full items-center justify-center rounded-[10px] px-2 py-5 text-[14px] leading-[19.8px]',
+                'flex w-full items-center justify-center rounded-[0.625rem] px-2 py-5 text-sm leading-[1.2375rem] xs:py-4 xs:text-lg',
                 className,
                 {
-                    'max-h-[80px] w-full border bg-white font-bold text-[#FF2525] active:opacity-70':
+                    'max-h-20 w-full border bg-white font-bold text-[#FF2525] active:opacity-70':
                         variant === 'primary',
-                    'max-h-[72px] w-full bg-[#E23333] border border-white font-semibold text-white hover:bg-[#F16363] active:bg-[#F45A5A]':
+                    'max-h-18 w-full border border-white bg-[#E23333] font-semibold text-white hover:bg-[#F16363] active:bg-[#F45A5A]':
                         variant === 'secondary',
-                    'max-h-[70px] w-full border border-[#D21F1F] bg-inherit font-semibold text-[#E23333]':
+                    'max-h-17.5 w-full border border-[#D21F1F] bg-inherit font-semibold text-[#E23333]':
                         variant === 'ghost',
-                    'max-h-[40px] border bg-[#E32B2B] px-[46px] py-3 text-white hover:bg-[#F16363]':
+                    'px-11.5 max-h-10 border bg-[#E32B2B] py-3 text-white hover:bg-[#F16363]':
                         variant === 'ultrared',
                 }
             )}

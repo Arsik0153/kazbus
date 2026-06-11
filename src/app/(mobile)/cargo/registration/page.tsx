@@ -214,8 +214,8 @@ const CargoRegistrationPage = () => {
     return (
         <>
             <Topbar backHref="/cargo/login">Joool Cargo</Topbar>
-            <div className="min-h-full bg-[var(--gray)] px-5 pb-28 pt-5">
-                <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-5">
+            <div className="bg-(--gray) min-h-full px-5 pb-28 pt-5">
+                <div className="rounded-[0.625rem] border border-[#D1D1D1] bg-white p-5">
                     <div className="flex items-center justify-between gap-3">
                         <p className="text-sm font-bold text-[#E74949]">
                             Joool Cargo
@@ -242,13 +242,13 @@ const CargoRegistrationPage = () => {
                         })}
                     </div>
 
-                    <h1 className="mt-5 text-[32px] font-bold leading-[38.4px] text-[#4A4A4A]">
+                    <h1 className="mt-5 text-[2rem] font-bold leading-[2.4rem] text-[#4A4A4A]">
                         Регистрация водителя
                     </h1>
-                    <p className="mt-2 text-[20px] font-bold leading-[22px] text-[#4A4A4A]">
+                    <p className="leading-5.5 mt-2 text-xl font-bold text-[#4A4A4A]">
                         {stepCopy.title}
                     </p>
-                    <p className="mt-3 text-sm leading-[17.6px] text-[#A0A0A0]">
+                    <p className="leading-4.4 mt-3 text-sm text-[#A0A0A0]">
                         {stepCopy.description}
                     </p>
 
@@ -461,7 +461,7 @@ const CargoRegistrationPage = () => {
 
                     {step === 5 && (
                         <div className="mt-6 flex flex-col gap-4">
-                            <div className="rounded-[10px] bg-[#F8F8F8] p-4">
+                            <div className="rounded-[0.625rem] bg-[#F8F8F8] p-4">
                                 <p className="text-sm font-bold text-[#E74949]">
                                     Водитель
                                 </p>
@@ -517,7 +517,7 @@ const CargoRegistrationPage = () => {
                                 </div>
                             </div>
 
-                            <div className="rounded-[10px] bg-[#F8F8F8] p-4">
+                            <div className="rounded-[0.625rem] bg-[#F8F8F8] p-4">
                                 <p className="text-sm font-bold text-[#E74949]">
                                     Машина
                                 </p>
@@ -578,7 +578,7 @@ const CargoRegistrationPage = () => {
                                 </div>
                             </div>
 
-                            <div className="rounded-[10px] border border-[#F3CDCD] bg-[#FFF2F2] p-4 text-sm leading-[17.6px] text-[#E74949]">
+                            <div className="leading-4.4 rounded-[0.625rem] border border-[#F3CDCD] bg-[#FFF2F2] p-4 text-sm text-[#E74949]">
                                 После завершения регистрации проверьте данные
                                 водителя и машины перед продолжением работы.
                             </div>
