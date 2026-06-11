@@ -1,4 +1,5 @@
 import type {
+    BusDriverHistoryTrip,
     BusDriverProfile,
     BusDriverStat,
     BusDriverTrip,
@@ -152,6 +153,129 @@ export const busPassengersMock: BusPassenger[] = [
         boardingPoint: 'Алматы Сайран',
         destination: 'Тараз',
         fareLabel: 'Стандарт',
+    },
+];
+
+export const busDriverHistoryMock: BusDriverHistoryTrip[] = [
+    {
+        id: 'history-trip-1',
+        routeLabel: 'Алматы - Шымкент',
+        tripDate: '10 июня 2026',
+        departureTime: '21:30',
+        arrivalTime: '08:10',
+        passengerCapacity: 47,
+        boardedPassengers: 43,
+        absentPassengers: 4,
+        passengers: [
+            {
+                id: 'history-1-passenger-1',
+                fullName: 'Аскар Сейдахметов',
+                seatNumber: '3A',
+                status: 'boarded',
+            },
+            {
+                id: 'history-1-passenger-2',
+                fullName: 'Алина Кожахметова',
+                seatNumber: '3B',
+                status: 'boarded',
+            },
+            {
+                id: 'history-1-passenger-3',
+                fullName: 'Диас Темирбек',
+                seatNumber: '6C',
+                status: 'boarded',
+            },
+            {
+                id: 'history-1-passenger-4',
+                fullName: 'Ернар Бекболат',
+                seatNumber: '11A',
+                status: 'missed',
+            },
+            {
+                id: 'history-1-passenger-5',
+                fullName: 'Гульмира Оспанова',
+                seatNumber: '14C',
+                status: 'missed',
+            },
+        ],
+    },
+    {
+        id: 'history-trip-2',
+        routeLabel: 'Шымкент - Тараз',
+        tripDate: '8 июня 2026',
+        departureTime: '09:10',
+        arrivalTime: '13:25',
+        passengerCapacity: 38,
+        boardedPassengers: 31,
+        absentPassengers: 7,
+        passengers: [
+            {
+                id: 'history-2-passenger-1',
+                fullName: 'Сабина Нургалиева',
+                seatNumber: '2D',
+                status: 'boarded',
+            },
+            {
+                id: 'history-2-passenger-2',
+                fullName: 'Нуртас Кусаинов',
+                seatNumber: '5A',
+                status: 'boarded',
+            },
+            {
+                id: 'history-2-passenger-3',
+                fullName: 'Айым Сейтова',
+                seatNumber: '9B',
+                status: 'boarded',
+            },
+            {
+                id: 'history-2-passenger-4',
+                fullName: 'Мадина Жусупова',
+                seatNumber: '8D',
+                status: 'missed',
+            },
+            {
+                id: 'history-2-passenger-5',
+                fullName: 'Руслан Токтаров',
+                seatNumber: '12C',
+                status: 'missed',
+            },
+        ],
+    },
+    {
+        id: 'history-trip-3',
+        routeLabel: 'Тараз - Алматы',
+        tripDate: '6 июня 2026',
+        departureTime: '18:40',
+        arrivalTime: '23:55',
+        passengerCapacity: 47,
+        boardedPassengers: 45,
+        absentPassengers: 2,
+        passengers: [
+            {
+                id: 'history-3-passenger-1',
+                fullName: 'Ермек Жансеитов',
+                seatNumber: '1C',
+                status: 'boarded',
+            },
+            {
+                id: 'history-3-passenger-2',
+                fullName: 'Айгерим Жуматаева',
+                seatNumber: '4B',
+                status: 'boarded',
+            },
+            {
+                id: 'history-3-passenger-3',
+                fullName: 'Данияр Абильдаев',
+                seatNumber: '7A',
+                status: 'boarded',
+            },
+            {
+                id: 'history-3-passenger-4',
+                fullName: 'Лаура Мухитова',
+                seatNumber: '10D',
+                status: 'missed',
+            },
+        ],
     },
 ];
 

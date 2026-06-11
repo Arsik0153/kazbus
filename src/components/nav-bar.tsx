@@ -69,7 +69,7 @@ const CARGO_LINKS: NavItem[] = [
     },
 ];
 
-const getColor = (isActive: boolean) => (isActive ? '#FFF' : '#C8C8C8');
+const getColor = (isActive: boolean) => (isActive ? '#E23333' : '#C8C8C8');
 
 const isRouteActive = (pathname: string, href: string) => {
     if (href === '/cargo') {
@@ -153,19 +153,14 @@ const NavBar = ({ section }: { section: NavSection }) => {
                         <Link
                             key={link.href}
                             href={targetHref}
-                            className={clsx(
-                                'flex min-w-0 flex-1 flex-col items-center gap-2 rounded-[10px] px-[6px] pb-[12px] pt-[8px] xs:px-[12px] xs:pb-[15px] xs:pt-[10px]',
-                                {
-                                    'bg-[#E23333]': isActive,
-                                }
-                            )}
+                            className="flex min-w-0 flex-1 flex-col items-center gap-2 rounded-[10px] px-[6px] pb-[12px] pt-[8px] xs:px-[12px] xs:pb-[15px] xs:pt-[10px]"
                         >
                             <link.icon color={getColor(isActive)} />
                             <div
                                 className={clsx(
                                     'text-center text-[10px] font-medium leading-[11px] xs:text-[12px] xs:leading-[13.2px]',
                                     {
-                                        'text-white': isActive,
+                                        'text-[#E23333]': isActive,
                                         'text-[#C8C8C8]': !isActive,
                                     }
                                 )}

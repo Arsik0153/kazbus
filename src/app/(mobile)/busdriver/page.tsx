@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Menu from '@/components/menu';
 import BusDriverStatsCard from './_components/BusDriverStatsCard';
 import BusDriverTripCard from './_components/BusDriverTripCard';
 import {
@@ -64,7 +63,7 @@ const BusDriverHomePage = () => {
                 </h2>
                 <Menu link="/busdriver/passengers" text="Открыть пассажиров" />
                 <div className="h-px w-full border-t border-[#E9E9E9]" />
-                <Menu link="/busdriver/scanner" text="Перейти к сканеру" />
+                <Menu link="/busdriver/history" text="Открыть историю рейсов" />
                 <div className="h-px w-full border-t border-[#E9E9E9]" />
                 <Menu link="/busdriver/seats" text="Проверить схему мест" />
                 <div className="h-px w-full border-t border-[#E9E9E9]" />

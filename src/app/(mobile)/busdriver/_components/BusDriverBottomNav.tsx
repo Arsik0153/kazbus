@@ -29,13 +29,13 @@ const BUS_DRIVER_LINKS: NavItem[] = [
     },
     {
         href: '/busdriver/passengers',
-        text: 'Пассажиры',
-        icon: (color) => <Coupon color={color} />,
-    },
-    {
-        href: '/busdriver/scanner',
         text: 'Сканер',
         icon: (color) => <ScanIcon color={color} />,
+    },
+    {
+        href: '/busdriver/history',
+        text: 'История',
+        icon: (color) => <Coupon color={color} />,
     },
     {
         href: '/busdriver/profile',
@@ -46,7 +46,8 @@ const BUS_DRIVER_LINKS: NavItem[] = [
 
 const HIDDEN_PATHS = ['/busdriver/login'];
 
-const getNavIconColor = (isActive: boolean) => (isActive ? '#FFF' : '#C8C8C8');
+const getNavIconColor = (isActive: boolean) =>
+    isActive ? '#E23333' : '#C8C8C8';
 
 const isRouteActive = (pathname: string, href: string) => {
     if (href === '/busdriver') {
@@ -128,19 +129,14 @@ const BusDriverBottomNav = () => {
                         <Link
                             key={link.href}
                             href={link.href}
-                            className={cn(
-                                'flex min-w-0 flex-1 flex-col items-center gap-2 rounded-[0.625rem] px-1.5 pb-3 pt-2 xs:px-2 xs:pb-[0.9375rem] xs:pt-2.5',
-                                {
-                                    'bg-[#E23333]': isActive,
-                                }
-                            )}
+                            className="flex min-w-0 flex-1 flex-col items-center gap-2 rounded-[0.625rem] px-1.5 pb-3 pt-2 xs:px-2 xs:pb-[0.9375rem] xs:pt-2.5"
                         >
                             {link.icon(getNavIconColor(isActive))}
                             <span
                                 className={cn(
                                     'xs:leading-3.3 text-center text-[0.625rem] font-medium leading-[0.6875rem] xs:text-xs',
                                     {
-                                        'text-white': isActive,
+                                        'text-[#E23333]': isActive,
                                         'text-[#C8C8C8]': !isActive,
                                     }
                                 )}

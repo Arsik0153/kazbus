@@ -112,3 +112,41 @@ export const IssueIcon = ({
         </svg>
     );
 };
+
+export const HistoryIcon = ({
+    color = '#E23333',
+    width = 20,
+    height = 20,
+    ...rest
+}: IconProps) => {
+    return (
+        <svg
+            width={width}
+            height={height}
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            {...rest}
+        >
+            <path
+                d="M10 3.25C6.27208 3.25 3.25 6.27208 3.25 10C3.25 13.7279 6.27208 16.75 10 16.75C13.7279 16.75 16.75 13.7279 16.75 10C16.75 6.27208 13.7279 3.25 10 3.25Z"
+                stroke={color}
+                strokeWidth="1.8"
+            />
+            <path
+                d="M10 6.5V10L12.75 11.75"
+                stroke={color}
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+            <path
+                d="M3.25 5.25V1.75M3.25 1.75H6.75M3.25 1.75L5.5 4"
+                stroke={color}
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+};

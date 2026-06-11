@@ -35,10 +35,10 @@ const BusDriverTripPage = () => {
                     </h2>
                     <Menu
                         link="/busdriver/passengers"
-                        text="Открыть список пассажиров"
+                        text="Пассажиры и проверка билетов"
                     />
                     <div className="h-px w-full border-t border-[#E9E9E9]" />
-                    <Menu link="/busdriver/scanner" text="Сканировать билет" />
+                    <Menu link="/busdriver/history" text="История рейсов" />
                     <div className="h-px w-full border-t border-[#E9E9E9]" />
                     <Menu
                         link="/busdriver/seats"

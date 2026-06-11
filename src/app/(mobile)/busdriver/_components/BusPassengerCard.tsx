@@ -21,13 +21,13 @@ const passengerStatusMeta: Record<
 
 type Props = {
     passenger: BusPassenger;
+    onClick?: () => void;
 };
 
-const BusPassengerCard = ({ passenger }: Props) => {
+const BusPassengerCard = ({ passenger, onClick }: Props) => {
     const status = passengerStatusMeta[passenger.boardingStatus];
-
-    return (
-        <div className="rounded-[0.625rem] border border-[#D1D1D1] bg-white p-5">
+    const content = (
+        <>
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                     <p className="leading-5.5 text-xl font-bold text-[#4A4A4A]">
@@ -54,7 +54,9 @@ const BusPassengerCard = ({ passenger }: Props) => {
                         {passenger.seatNumber}
                     </p>
                 </div>
-                <div className="rounded-[0.625rem] bg-[#F8F8F8] p-3">
+                <div
+                    className="rounded-[0.625rem] bg-[#F8F8F8] p-3"
+                >
                     <p className="text-xs font-medium text-[#A0A0A0]">Тариф</p>
                     <p className="mt-1 text-sm font-semibold text-[#4A4A4A]">
                         {passenger.fareLabel}
@@ -74,6 +76,24 @@ const BusPassengerCard = ({ passenger }: Props) => {
                     <span className="font-medium">{passenger.destination}</span>
                 </p>
             </div>
+        </>
+    );
+
+    if (onClick) {
+        return (
+            <button
+                type="button"
+                onClick={onClick}
+                className="w-full rounded-[0.625rem] border border-[#D1D1D1] bg-white p-5 text-left transition-colors active:bg-[#FCFCFC]"
+            >
+                {content}
+            </button>
+        );
+    }
+
+    return (
+        <div className="rounded-[0.625rem] border border-[#D1D1D1] bg-white p-5">
+            {content}
         </div>
     );
 };

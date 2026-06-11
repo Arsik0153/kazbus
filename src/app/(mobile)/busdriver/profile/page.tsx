@@ -26,6 +26,8 @@ const BusDriverProfilePage = () => {
                 <div className="h-px w-full border-t border-[#E9E9E9]" />
                 <Menu link="/busdriver/passengers" text="Список пассажиров" />
                 <div className="h-px w-full border-t border-[#E9E9E9]" />
+                <Menu link="/busdriver/history" text="История рейсов" />
+                <div className="h-px w-full border-t border-[#E9E9E9]" />
                 <Menu link="/busdriver/issues" text="Нештатные ситуации" />
                 <div className="h-px w-full border-t border-[#E9E9E9]" />
                 <Menu link="/busdriver/login" text="Сменить аккаунт" />

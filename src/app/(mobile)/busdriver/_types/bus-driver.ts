@@ -74,6 +74,30 @@ export type BusPassenger = {
     fareLabel: string;
 };
 
+export type BusDriverHistoryPassengerStatus = Exclude<
+    PassengerBoardingStatus,
+    'waiting'
+>;
+
+export type BusDriverHistoryPassenger = {
+    id: string;
+    fullName: string;
+    seatNumber: string;
+    status: BusDriverHistoryPassengerStatus;
+};
+
+export type BusDriverHistoryTrip = {
+    id: string;
+    routeLabel: string;
+    tripDate: string;
+    departureTime: string;
+    arrivalTime: string;
+    passengerCapacity: number;
+    boardedPassengers: number;
+    absentPassengers: number;
+    passengers: BusDriverHistoryPassenger[];
+};
+
 export type BusSeat = {
     id: string;
     label: string;
