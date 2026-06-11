@@ -9,6 +9,8 @@ export type DriverStatus = 'verified' | 'pending' | 'needsUpdate';
 
 export type DocumentStatus = 'valid' | 'expiring' | 'expired' | 'missing';
 
+export type DocumentFormMode = 'create' | 'edit';
+
 export type VehicleType = 'refrigerator' | 'tent' | 'van' | 'flatbed';
 
 export type Driver = {

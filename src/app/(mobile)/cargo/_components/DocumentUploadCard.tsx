@@ -1,5 +1,8 @@
 import Upload from '@/assets/admin/Upload';
 import Input from '@/components/input';
+import { cn } from '@/utils/cn';
+import { documentStatusMeta } from '../_utils/document-utils';
+import type { DocumentFormMode, DocumentStatus } from '../_types/cargo';
 
 type Props = {
     id: string;
@@ -9,6 +12,11 @@ type Props = {
     numberLabel: string;
     expiryLabel: string;
     helperText: string;
+    mode: DocumentFormMode;
+    status: DocumentStatus;
+    defaultNumber?: string;
+    defaultExpiry?: string;
+    isSelected?: boolean;
 };
 
 const DocumentUploadCard = ({
@@ -19,9 +27,25 @@ const DocumentUploadCard = ({
     numberLabel,
     expiryLabel,
     helperText,
+    mode,
+    status,
+    defaultNumber,
+    defaultExpiry,
+    isSelected = false,
 }: Props) => {
+    const statusBadge = documentStatusMeta[status];
+    const isEditMode = mode === 'edit';
+
     return (
-        <div className="rounded-[0.625rem] border border-[#D1D1D1] bg-white p-5">
+        <div
+            id={`document-${id}`}
+            className={cn(
+                'scroll-mt-28 rounded-[0.625rem] border border-[#D1D1D1] bg-white p-5',
+                {
+                    'border-[#E74949] ring-1 ring-[#F3CDCD]': isSelected,
+                }
+            )}
+        >
             <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 gap-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[0.625rem] bg-[#FFF2F2]">
@@ -36,8 +60,13 @@ const DocumentUploadCard = ({
                         </p>
                     </div>
                 </div>
-                <div className="shrink-0 rounded-full border border-[#F3CDCD] bg-[#FFF2F2] px-3 py-1.5 text-xs font-semibold text-[#E74949]">
-                    Обязательный
+                <div
+                    className={cn(
+                        'shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold',
+                        statusBadge.className
+                    )}
+                >
+                    {statusBadge.label}
                 </div>
             </div>
 
@@ -48,25 +77,42 @@ const DocumentUploadCard = ({
                 </p>
             </div>
 
+            <div className="mt-4 rounded-[0.625rem] bg-[#FFF7F7] p-3">
+                <p className="text-sm font-semibold text-[#E74949]">
+                    {isEditMode
+                        ? 'Редактирование документа'
+                        : 'Заполнение документа'}
+                </p>
+                <p className="leading-4.4 mt-1 text-sm text-[#A0A0A0]">
+                    {isEditMode
+                        ? 'Проверьте текущие реквизиты и обновите их, если данные изменились.'
+                        : 'Добавьте реквизиты документа, чтобы профиль прошел проверку.'}
+                </p>
+            </div>
+
             <div className="mt-4 flex flex-col gap-2">
                 <Input
                     id={`${id}-number`}
                     label={numberLabel}
                     placeholder={numberLabel}
+                    defaultValue={defaultNumber}
                 />
                 <Input
                     id={`${id}-expiry`}
                     label={expiryLabel}
                     placeholder={expiryLabel}
+                    defaultValue={defaultExpiry}
                 />
             </div>
 
             <div className="bg-linear-[180deg,#FFF7F7_0%,#FFFFFF_100%] mt-4 rounded-[0.625rem] border border-dashed border-[#E7B0B0] p-4">
                 <p className="text-sm font-semibold text-[#E74949]">
-                    Загрузка файла
+                    {isEditMode ? 'Обновление файла' : 'Загрузка файла'}
                 </p>
                 <p className="leading-4.4 mt-1 text-sm text-[#A0A0A0]">
-                    {helperText}
+                    {isEditMode
+                        ? `Если документ обновился, загрузите свежую версию. ${helperText}`
+                        : helperText}
                 </p>
             </div>
         </div>

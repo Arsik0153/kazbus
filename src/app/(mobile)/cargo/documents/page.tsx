@@ -5,49 +5,10 @@ import {
     requiredVehicleDocuments,
 } from '../_data/cargo-required-documents';
 import { documentsMock } from '../_data/cargo-driver.mock';
-import type { CargoDocument, RequiredCargoDocument } from '../_types/cargo';
-
-const buildDocumentsWithMissing = (
-    requiredDocuments: RequiredCargoDocument[],
-    existingDocuments: CargoDocument[]
-) => {
-    const documentsByTemplate = new Map(
-        existingDocuments.map((document) => [document.templateId, document])
-    );
-
-    const orderedDocuments = requiredDocuments.map(
-        (requiredDocument, index) => {
-            const existingDocument = documentsByTemplate.get(
-                requiredDocument.id
-            );
-
-            if (existingDocument) {
-                return existingDocument;
-            }
-
-            return {
-                id: -(index + 1),
-                templateId: requiredDocument.id,
-                title: requiredDocument.title,
-                number: '',
-                expiresAt: '',
-                status: 'missing' as const,
-                scope: requiredDocument.scope,
-                ownerLabel: requiredDocument.ownerLabel,
-            };
-        }
-    );
-
-    const extraDocuments = existingDocuments.filter(
-        (document) =>
-            !requiredDocuments.some(
-                (requiredDocument) =>
-                    requiredDocument.id === document.templateId
-            )
-    );
-
-    return [...orderedDocuments, ...extraDocuments];
-};
+import {
+    buildDocumentsWithMissing,
+    getDocumentFormHref,
+} from '../_utils/document-utils';
 
 const CargoDocumentsPage = () => {
     const driverDocuments = buildDocumentsWithMissing(
@@ -72,6 +33,7 @@ const CargoDocumentsPage = () => {
                             <DocumentCard
                                 key={document.id}
                                 document={document}
+                                href={getDocumentFormHref(document)}
                             />
                         ))}
                     </div>
@@ -86,6 +48,7 @@ const CargoDocumentsPage = () => {
                             <DocumentCard
                                 key={document.id}
                                 document={document}
+                                href={getDocumentFormHref(document)}
                             />
                         ))}
                     </div>
