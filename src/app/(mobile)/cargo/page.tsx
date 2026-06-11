@@ -78,7 +78,7 @@ const CargoPage = () => {
                 </div>
             </div>
 
-            <div className="mt-5 rounded-[10px] border border-[#D1D1D1] bg-white px-4 pt-5">
+            {/* <div className="mt-5 rounded-[10px] border border-[#D1D1D1] bg-white px-4 pt-5">
                 <h2 className="pb-4 text-[20px] font-bold leading-[22px] text-[#4A4A4A]">
                     Быстрые ссылки
                 </h2>
@@ -89,7 +89,7 @@ const CargoPage = () => {
                 <Menu link="/cargo/documents" text="Документы" />
                 <div className="h-px w-full border-t border-[#E9E9E9]" />
                 <Menu link="/cargo/profile" text="Профиль" />
-            </div>
+            </div> */}
         </div>
     );
 };
