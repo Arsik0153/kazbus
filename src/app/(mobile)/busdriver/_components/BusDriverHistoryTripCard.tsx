@@ -1,42 +1,19 @@
 import Calendar from '@/assets/calendar';
 import Clock from '@/assets/red-clock';
-import { cn } from '@/utils/cn';
-import type {
-    BusDriverHistoryPassenger,
-    BusDriverHistoryTrip,
-} from '../_types/bus-driver';
-
-const passengerStatusMeta: Record<
-    BusDriverHistoryPassenger['status'],
-    { badgeClassName: string; label: string }
-> = {
-    boarded: {
-        badgeClassName: 'bg-[#F3F8EB] text-[#6A9F32]',
-        label: 'Был на рейсе',
-    },
-    missed: {
-        badgeClassName: 'bg-[#FFF3F3] text-[#D95C5C]',
-        label: 'Не пришел',
-    },
-};
+import type { BusDriverHistoryTrip } from '../_types/bus-driver';
 
 type Props = {
     trip: BusDriverHistoryTrip;
+    onClick?: () => void;
 };
 
-const BusDriverHistoryTripCard = ({ trip }: Props) => {
+const BusDriverHistoryTripCard = ({ trip, onClick }: Props) => {
     const occupancyRate = Math.round(
         (trip.boardedPassengers / trip.passengerCapacity) * 100
     );
-    const boardedPassengers = trip.passengers.filter(
-        (passenger) => passenger.status === 'boarded'
-    );
-    const missedPassengers = trip.passengers.filter(
-        (passenger) => passenger.status === 'missed'
-    );
 
-    return (
-        <div className="rounded-[0.875rem] border border-[#D1D1D1] bg-white p-5">
+    const content = (
+        <>
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                     <p className="text-xl font-bold leading-[1.4rem] text-[#4A4A4A]">
@@ -102,83 +79,27 @@ const BusDriverHistoryTripCard = ({ trip }: Props) => {
                 </div>
             </div>
 
-            <div className="mt-5 space-y-4">
-                <div>
-                    <p className="text-sm font-semibold text-[#4A4A4A]">
-                        Были на рейсе
-                    </p>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                        {boardedPassengers.map((passenger) => (
-                            <div
-                                key={passenger.id}
-                                className="rounded-[0.75rem] border border-[#E8E8E8] bg-[#FBFBFB] px-3 py-2"
-                            >
-                                <p className="text-xs font-semibold text-[#4A4A4A]">
-                                    {passenger.fullName}
-                                </p>
-                                <div className="mt-1 flex items-center gap-2 text-[0.6875rem] font-medium text-[#A0A0A0]">
-                                    <span>Место {passenger.seatNumber}</span>
-                                    <span
-                                        className={cn(
-                                            'rounded-full px-2 py-0.5',
-                                            passengerStatusMeta[
-                                                passenger.status
-                                            ].badgeClassName
-                                        )}
-                                    >
-                                        {
-                                            passengerStatusMeta[
-                                                passenger.status
-                                            ].label
-                                        }
-                                    </span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+            <p className="mt-4 text-sm font-medium text-[#A0A0A0]">
+                Нажмите, чтобы посмотреть пассажиров и детали этого рейса.
+            </p>
+        </>
+    );
 
-                <div>
-                    <p className="text-sm font-semibold text-[#4A4A4A]">
-                        Не были на рейсе
-                    </p>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                        {missedPassengers.length === 0 ? (
-                            <div className="rounded-[0.75rem] bg-[#F8F8F8] px-3 py-2 text-xs font-medium text-[#A0A0A0]">
-                                Все пассажиры прибыли на посадку
-                            </div>
-                        ) : (
-                            missedPassengers.map((passenger) => (
-                                <div
-                                    key={passenger.id}
-                                    className="rounded-[0.75rem] border border-[#F4D3D3] bg-[#FFF9F9] px-3 py-2"
-                                >
-                                    <p className="text-xs font-semibold text-[#4A4A4A]">
-                                        {passenger.fullName}
-                                    </p>
-                                    <div className="mt-1 flex items-center gap-2 text-[0.6875rem] font-medium text-[#A0A0A0]">
-                                        <span>Место {passenger.seatNumber}</span>
-                                        <span
-                                            className={cn(
-                                                'rounded-full px-2 py-0.5',
-                                                passengerStatusMeta[
-                                                    passenger.status
-                                                ].badgeClassName
-                                            )}
-                                        >
-                                            {
-                                                passengerStatusMeta[
-                                                    passenger.status
-                                                ].label
-                                            }
-                                        </span>
-                                    </div>
-                                </div>
-                            ))
-                        )}
-                    </div>
-                </div>
-            </div>
+    if (onClick) {
+        return (
+            <button
+                type="button"
+                onClick={onClick}
+                className="w-full rounded-[0.875rem] border border-[#D1D1D1] bg-white p-5 text-left transition-colors active:bg-[#FCFCFC]"
+            >
+                {content}
+            </button>
+        );
+    }
+
+    return (
+        <div className="rounded-[0.875rem] border border-[#D1D1D1] bg-white p-5">
+            {content}
         </div>
     );
 };
