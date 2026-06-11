@@ -1,3 +1,4 @@
+import Building from '@/assets/building';
 import Topbar from '@/components/topbar';
 import RouteCard from '../_components/RouteCard';
 import { activeTripMock } from '../_data/cargo-driver.mock';
@@ -10,7 +11,9 @@ const CargoMapPage = () => {
                 <div className="rounded-[10px] border border-[#D1D1D1] bg-white p-4">
                     <div className="flex h-[280px] items-center justify-center rounded-[10px] border border-dashed border-[#E7B0B0] bg-[linear-gradient(180deg,#FFF7F7_0%,#FFFFFF_100%)] p-6 text-center">
                         <div>
-                            <div className="mx-auto h-12 w-12 rounded-full bg-[#E23333]" />
+                            <div className="mx-auto flex size-14 items-center justify-center rounded-[16px] bg-[#E23333]">
+                                <Building color="#FFFFFF" />
+                            </div>
                             <p className="mt-4 text-[20px] font-bold leading-[22px] text-[#4A4A4A]">
                                 Карта маршрута
                             </p>
