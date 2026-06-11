@@ -23,7 +23,7 @@ const Button = (props: Props) => {
             disabled={disabled || loading}
             {...rest}
             className={clsx(
-                'xs:py-6 xs:text-[18px] flex w-full items-center justify-center rounded-[10px] px-2 py-5 text-[14px] leading-[19.8px]',
+                'xs:py-4 xs:text-[18px] flex w-full items-center justify-center rounded-[10px] px-2 py-5 text-[14px] leading-[19.8px]',
                 className,
                 {
                     'max-h-[80px] w-full border bg-white font-bold text-[#FF2525] active:opacity-70':
