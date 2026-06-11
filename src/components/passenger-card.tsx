@@ -6,7 +6,7 @@ import { dateToReadable } from '@/utils/helper.';
 import { Profile } from '@/data/user';
 import { documentTypes } from '@/static/constants';
 import { cn } from '@/utils/cn';
-import { User } from '@/app/(mobile)/main/tickets/_components/select-passengers';
+import { User } from '@/app/(mobile)/bus/main/tickets/_components/select-passengers';
 
 type Props = React.HTMLAttributes<HTMLDivElement> & {
     user: User;

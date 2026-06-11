@@ -11,7 +11,7 @@ import { useServerAction } from 'zsa-react';
 import { sendOtpAction } from '../actions';
 import { sanitizePhone } from '@/utils/helper.';
 import Mail from '@/assets/mail';
-import { loginAction } from '@/app/(mobile)/profile/registration/actions';
+import { loginAction } from '@/app/(mobile)/bus/profile/registration/actions';
 import { useRouter } from 'next/navigation';
 import Checkbox from '@/components/checkbox';
 
@@ -34,7 +34,7 @@ const Login = () => {
     );
     const { execute, isPending } = useServerAction(loginAction, {
         onSuccess: () => {
-            router.push('/main?passenger_count=1');
+            router.push('/bus/main?passenger_count=1');
         },
         onError: (error) => {
             console.log(error);

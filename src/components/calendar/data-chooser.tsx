@@ -3,7 +3,7 @@ import { dayjsExt } from '@/lib/dayjs';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
 import { Dayjs } from 'dayjs';
 import React from 'react';
-import { getDatesAction } from '@/app/(mobile)/main/actions';
+import { getDatesAction } from '@/app/(mobile)/bus/main/actions';
 import { AvailableDate } from '@/data/types';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import './scrollbar-hide.css';

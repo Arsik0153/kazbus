@@ -6,7 +6,7 @@ import Start from './start';
 const StartPage = async () => {
     const session = await getSession();
     if (session) {
-        redirect('/main?passenger_count=1');
+        redirect('/bus/main?passenger_count=1');
     }
 
     return (

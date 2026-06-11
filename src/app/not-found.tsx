@@ -6,7 +6,7 @@ const NotFoundPage = () => {
         <div className="flex h-screen w-full flex-col items-center justify-center">
             <h1 className="text-lg">Страница не найдена</h1>
             <Link
-                href="/main"
+                href="/bus/main?passenger_count=1"
                 className="mt-4 text-lg text-[var(--accent)] underline underline-offset-2"
             >
                 Вернуться на главную

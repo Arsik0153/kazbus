@@ -8,38 +8,85 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import clsx from 'clsx';
 import { cn } from '@/utils/cn';
+import RouteFill from '@/assets/route-fill';
 
-const getColor = (pathname: string, url: string) => {
-    return url.startsWith(pathname) ? '#FFF' : '#C8C8C8';
+type NavSection = 'bus' | 'cargo';
+
+type NavItem = {
+    href: string;
+    icon: React.ComponentType<{ color?: string }>;
+    text: string;
 };
 
-const LINKS = [
+const BUS_LINKS: NavItem[] = [
     {
-        href: '/main',
+        href: '/bus/main',
         icon: Bus,
         text: 'Поиск',
     },
     {
-        href: '/directions',
+        href: '/bus/directions',
         icon: Building,
         text: 'Направления',
     },
     {
-        href: '/my-tickets',
+        href: '/bus/my-tickets',
         icon: Coupon,
         text: 'Мои билеты',
     },
     {
-        href: '/profile',
+        href: '/bus/profile',
         icon: User,
         text: 'Профиль',
     },
 ];
 
-const NavBar = () => {
+const CARGO_LINKS: NavItem[] = [
+    {
+        href: '/cargo',
+        icon: Bus,
+        text: 'Главная',
+    },
+    {
+        href: '/cargo/trip',
+        icon: RouteFill,
+        text: 'Рейс',
+    },
+    {
+        href: '/cargo/map',
+        icon: Building,
+        text: 'Карта',
+    },
+    {
+        href: '/cargo/documents',
+        icon: Coupon,
+        text: 'Документы',
+    },
+    {
+        href: '/cargo/profile',
+        icon: User,
+        text: 'Профиль',
+    },
+];
+
+const getColor = (isActive: boolean) => (isActive ? '#FFF' : '#C8C8C8');
+
+const isRouteActive = (pathname: string, href: string) => {
+    if (href === '/cargo') {
+        return pathname === href;
+    }
+
+    return pathname.startsWith(href);
+};
+
+const NavBar = ({ section }: { section: NavSection }) => {
     const pathname = usePathname();
     const [isTabbarHidden, setIsTabbarHidden] = useState(false);
     const [hideGap, setHideGap] = React.useState(false);
+    const links = section === 'cargo' ? CARGO_LINKS : BUS_LINKS;
+    const shouldHideForPath =
+        section === 'cargo' &&
+        (pathname === '/cargo/login' || pathname === '/cargo/registration');
 
     useEffect(() => {
         const gap = !!localStorage.getItem('hideGap');
@@ -78,52 +125,56 @@ const NavBar = () => {
         };
     }, []);
 
+    if (shouldHideForPath) {
+        return null;
+    }
+
     return (
         <div
             className={`fixed bottom-0 z-10 w-full rounded-t-[10px] bg-white ${isTabbarHidden && 'pointer-events-none opacity-0'}`}
         >
             <div
                 className={cn(
-                    'xs:px-[15px] flex w-full items-center justify-between px-[8px]',
+                    'flex w-full items-center justify-between px-[8px] xs:px-[15px]',
                     {
-                        'xs:pb-[10px] xs:pt-[8px] pb-[5px] pt-[5px]': hideGap,
+                        'pb-[5px] pt-[5px] xs:pb-[10px] xs:pt-[8px]': hideGap,
                         'pb-[20px] pt-[10px]': !hideGap,
                     }
                 )}
             >
-                {LINKS.map((link) => (
-                    <Link
-                        key={link.href}
-                        href={
-                            link.href === '/main'
-                                ? '/main?passenger_count=1'
-                                : link.href
-                        }
-                        className={clsx(
-                            'xs:px-[13px] xs:pb-[15px] xs:pt-[10px] flex flex-col items-center gap-2 text-nowrap rounded-[10px] px-[10px] pb-[12px] pt-[8px]',
-                            {
-                                'bg-[#E23333]': pathname.startsWith(link.href),
-                            }
-                        )}
-                    >
-                        <link.icon color={getColor(link.href, pathname)} />
-                        <div
+                {links.map((link) => {
+                    const isActive = isRouteActive(pathname, link.href);
+                    const targetHref =
+                        link.href === '/bus/main'
+                            ? '/bus/main?passenger_count=1'
+                            : link.href;
+
+                    return (
+                        <Link
+                            key={link.href}
+                            href={targetHref}
                             className={clsx(
-                                'text-center text-[12px] font-medium leading-[13.2px]',
+                                'flex min-w-0 flex-1 flex-col items-center gap-2 rounded-[10px] px-[6px] pb-[12px] pt-[8px] xs:px-[12px] xs:pb-[15px] xs:pt-[10px]',
                                 {
-                                    'text-white': pathname.startsWith(
-                                        link.href
-                                    ),
-                                    'text-[#C8C8C8]': !pathname.startsWith(
-                                        link.href
-                                    ),
+                                    'bg-[#E23333]': isActive,
                                 }
                             )}
                         >
-                            {link.text}
-                        </div>
-                    </Link>
-                ))}
+                            <link.icon color={getColor(isActive)} />
+                            <div
+                                className={clsx(
+                                    'text-center text-[10px] font-medium leading-[11px] xs:text-[12px] xs:leading-[13.2px]',
+                                    {
+                                        'text-white': isActive,
+                                        'text-[#C8C8C8]': !isActive,
+                                    }
+                                )}
+                            >
+                                {link.text}
+                            </div>
+                        </Link>
+                    );
+                })}
             </div>
         </div>
     );
