@@ -1,7 +1,7 @@
 const AdminCargoPage = () => {
     return (
-        <div className="flex min-h-screen items-center justify-center bg-[var(--gray)] p-5">
-            <div className="w-full max-w-[420px] rounded-[10px] border border-[#D1D1D1] bg-white p-6">
+        <div className="flex min-h-screen items-center justify-center bg-(--gray) p-5">
+            <div className="w-full max-w-105 rounded-[10px] border border-[#D1D1D1] bg-white p-6">
                 <p className="text-sm font-bold text-[#E74949]">
                     Joool Cargo Admin
                 </p>
