@@ -45,14 +45,14 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
             <input
                 id={id}
                 className={cn(
-                    `${hideKeyboardOnFocus ? 'hide-tabbar' : ''} peer xs:pb-4 xs:pt-5 pb-2.5 pt-6 w-full bg-transparent pr-8 font-medium text-[var(--black)] placeholder-transparent outline-none transition-all duration-200`,
+                    `${hideKeyboardOnFocus ? 'hide-tabbar' : ''} peer xs:pb-4 xs:pt-5 pb-2.5 pt-6 w-full bg-transparent pr-8 font-medium text-(--black) placeholder-transparent outline-none transition-all duration-200`,
                     {
                         'pl-14': iconLeft,
                         'pl-8': !iconLeft,
                         'opacity-50': loading,
                     },
                     {
-                        'text-[var(--black)]': variant === 'primary',
+                        'text-(--black)': variant === 'primary',
                         'bg-none': variant === 'secondary',
                         'text-white peer-focus:text-white peer-[:not(:placeholder-shown)]:text-white':
                             variant === 'ghost',
@@ -75,7 +75,7 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
                         'left-8': !iconLeft,
                     },
                     {
-                        'text-[var(--black)]': variant === 'primary',
+                        'text-(--black)': variant === 'primary',
                         'bg-none': variant === 'secondary',
                         'text-white peer-focus:text-[rgba(255,255,255,0.8)] peer-[:not(:placeholder-shown)]:text-[rgba(255,255,255,0.8)]':
                             variant === 'ghost',
