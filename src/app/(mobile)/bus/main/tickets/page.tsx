@@ -112,12 +112,8 @@ const TicketPageSuspended = () => {
             )}
             {step === Steps.Payment && (
                 <Payment
-                    ticked_id={bookingTicketId}
-                    totalPrice={
-                        selectedTicket?.price
-                            ? Number(selectedTicket.price) * passengers.length
-                            : 0
-                    }
+                    ticketId={bookingTicketId}
+                    onBack={() => setStep(Steps.Booking)}
                 />
             )}
         </Suspense>

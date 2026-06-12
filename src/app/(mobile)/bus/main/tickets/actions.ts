@@ -213,16 +213,10 @@ export const getBusSeatsAction = createServerAction()
     )
     .handler(async ({ input }) => {
         const { trip_id } = input;
-        const session = await getSession();
-
-        if (!session) {
-            throw 'Необходимо авторизоваться';
-        }
         const response = await fetch(`${process.env.API_URL}/bus-seats/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Token ${session?.user.token}`,
             },
             body: JSON.stringify({
                 trip_id,
@@ -236,7 +230,7 @@ export const getBusSeatsAction = createServerAction()
         const result = (await response.json()) as BusSeats;
 
         return {
-            seats: result.seats.slice(0, 45),
+            seats: result.seats,
             bus: result.bus,
         };
     });
