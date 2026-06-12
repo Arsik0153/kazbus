@@ -125,7 +125,7 @@ const BusDriverTripStatusStepper = ({
                                     onClick={() =>
                                         onStepChange(currentStepIndex + 1)
                                     }
-                                    className="mt-4 w-full rounded-[0.75rem] bg-[#E23333] px-4 py-3 text-sm font-semibold text-white active:bg-[#D92727]"
+                                    className="mt-4 w-full rounded-xl bg-[#E23333] px-4 py-3 text-sm font-semibold text-white active:bg-[#D92727]"
                                 >
                                     Перевести в «{nextStep.title}»
                                 </button>
@@ -136,7 +136,7 @@ const BusDriverTripStatusStepper = ({
                                     <button
                                         type="button"
                                         onClick={onCompleteTrip}
-                                        className="mt-4 w-full rounded-[0.75rem] bg-[#E23333] px-4 py-3 text-sm font-semibold text-white active:bg-[#D92727]"
+                                        className="mt-4 w-full rounded-xl bg-[#E23333] px-4 py-3 text-sm font-semibold text-white active:bg-[#D92727]"
                                     >
                                         Завершить рейс
                                     </button>

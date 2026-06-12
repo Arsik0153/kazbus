@@ -47,7 +47,7 @@ const renderSeatCell = (seat: BusSeat | null, key: string) => {
                 {seat.label}
             </span>
             {seat.passengerName && (
-                <span className="mt-1 line-clamp-2 text-[0.5625rem] leading-[0.6875rem]">
+                <span className="mt-1 line-clamp-2 text-[0.5625rem] leading-2.75">
                     {seat.passengerName}
                 </span>
             )}

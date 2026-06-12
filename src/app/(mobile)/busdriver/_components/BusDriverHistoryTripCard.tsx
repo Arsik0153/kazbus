@@ -53,7 +53,7 @@ const BusDriverHistoryTripCard = ({ trip, onClick }: Props) => {
             </div>
 
             <div className="mt-5 grid grid-cols-3 gap-3">
-                <div className="rounded-[0.75rem] bg-[#F8F8F8] p-3">
+                <div className="rounded-xl bg-[#F8F8F8] p-3">
                     <p className="text-xs font-medium text-[#A0A0A0]">
                         На рейсе
                     </p>
@@ -61,7 +61,7 @@ const BusDriverHistoryTripCard = ({ trip, onClick }: Props) => {
                         {trip.boardedPassengers}
                     </p>
                 </div>
-                <div className="rounded-[0.75rem] bg-[#F8F8F8] p-3">
+                <div className="rounded-xl bg-[#F8F8F8] p-3">
                     <p className="text-xs font-medium text-[#A0A0A0]">
                         Не пришли
                     </p>
@@ -69,7 +69,7 @@ const BusDriverHistoryTripCard = ({ trip, onClick }: Props) => {
                         {trip.absentPassengers}
                     </p>
                 </div>
-                <div className="rounded-[0.75rem] bg-[#F8F8F8] p-3">
+                <div className="rounded-xl bg-[#F8F8F8] p-3">
                     <p className="text-xs font-medium text-[#A0A0A0]">
                         Вместимость
                     </p>

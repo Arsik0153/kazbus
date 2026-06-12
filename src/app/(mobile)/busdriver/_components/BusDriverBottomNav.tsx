@@ -114,9 +114,9 @@ const BusDriverBottomNav = () => {
         >
             <div
                 className={cn(
-                    'flex w-full items-center justify-between px-2 xs:px-[0.9375rem]',
+                    'flex w-full items-center justify-between px-2 xs:px-3.75',
                     {
-                        'pb-[0.3125rem] pt-[0.3125rem] xs:pb-[0.625rem] xs:pt-2':
+                        'pb-1.253125rem] xs:pb-2.5 xs:pt-2':
                             hideGap,
                         'pb-5 pt-2.5': !hideGap,
                     }
@@ -129,12 +129,12 @@ const BusDriverBottomNav = () => {
                         <Link
                             key={link.href}
                             href={link.href}
-                            className="flex min-w-0 flex-1 flex-col items-center gap-2 rounded-[0.625rem] px-1.5 pb-3 pt-2 xs:px-2 xs:pb-[0.9375rem] xs:pt-2.5"
+                            className="flex min-w-0 flex-1 flex-col items-center gap-2 rounded-[0.625rem] px-1.5 pb-3 pt-2 xs:px-2 xs:pb-3.752.5"
                         >
                             {link.icon(getNavIconColor(isActive))}
                             <span
                                 className={cn(
-                                    'xs:leading-3.3 text-center text-[0.625rem] font-medium leading-[0.6875rem] xs:text-xs',
+                                    'xs:leading-3.3 text-center text-[0.625rem] font-medium leading-2.75 xs:text-xs',
                                     {
                                         'text-[#E23333]': isActive,
                                         'text-[#C8C8C8]': !isActive,

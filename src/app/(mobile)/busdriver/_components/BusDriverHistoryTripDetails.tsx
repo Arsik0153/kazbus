@@ -82,7 +82,7 @@ const BusDriverHistoryTripDetails = ({ trip }: Props) => {
             </div>
 
             <div className="grid grid-cols-3 gap-3">
-                <div className="rounded-[0.75rem] bg-[#F8F8F8] p-3">
+                <div className="rounded-xl bg-[#F8F8F8] p-3">
                     <p className="text-xs font-medium text-[#A0A0A0]">
                         На рейсе
                     </p>
@@ -90,7 +90,7 @@ const BusDriverHistoryTripDetails = ({ trip }: Props) => {
                         {trip.boardedPassengers}
                     </p>
                 </div>
-                <div className="rounded-[0.75rem] bg-[#F8F8F8] p-3">
+                <div className="rounded-xl bg-[#F8F8F8] p-3">
                     <p className="text-xs font-medium text-[#A0A0A0]">
                         Не пришли
                     </p>
@@ -98,7 +98,7 @@ const BusDriverHistoryTripDetails = ({ trip }: Props) => {
                         {trip.absentPassengers}
                     </p>
                 </div>
-                <div className="rounded-[0.75rem] bg-[#F8F8F8] p-3">
+                <div className="rounded-xl bg-[#F8F8F8] p-3">
                     <p className="text-xs font-medium text-[#A0A0A0]">
                         Вместимость
                     </p>
@@ -117,7 +117,7 @@ const BusDriverHistoryTripDetails = ({ trip }: Props) => {
                         {boardedPassengers.map((passenger) => (
                             <div
                                 key={passenger.id}
-                                className="rounded-[0.75rem] border border-[#E8E8E8] bg-[#FBFBFB] px-3 py-2"
+                                className="rounded-xl border border-[#E8E8E8] bg-[#FBFBFB] px-3 py-2"
                             >
                                 <p className="text-xs font-semibold text-[#4A4A4A]">
                                     {passenger.fullName}
@@ -150,14 +150,14 @@ const BusDriverHistoryTripDetails = ({ trip }: Props) => {
                     </p>
                     <div className="mt-3 flex flex-wrap gap-2">
                         {missedPassengers.length === 0 ? (
-                            <div className="rounded-[0.75rem] bg-[#F8F8F8] px-3 py-2 text-xs font-medium text-[#A0A0A0]">
+                            <div className="rounded-xl bg-[#F8F8F8] px-3 py-2 text-xs font-medium text-[#A0A0A0]">
                                 Все пассажиры прибыли на посадку
                             </div>
                         ) : (
                             missedPassengers.map((passenger) => (
                                 <div
                                     key={passenger.id}
-                                    className="rounded-[0.75rem] border border-[#F4D3D3] bg-[#FFF9F9] px-3 py-2"
+                                    className="rounded-xl border border-[#F4D3D3] bg-[#FFF9F9] px-3 py-2"
                                 >
                                     <p className="text-xs font-semibold text-[#4A4A4A]">
                                         {passenger.fullName}

@@ -23,7 +23,7 @@ const SearchIcon = ({
     className?: string;
 }) => (
     <svg
-        className={cn('h-[18px] w-[18px] shrink-0', className)}
+        className={cn('h-4.5 w-4.5 shrink-0', className)}
         viewBox="0 0 18 18"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -200,14 +200,14 @@ const BusDriverPassengersPage = () => {
         <>
             <div
                 className={cn(
-                    'relative w-full overflow-hidden rounded-b-[10px] bg-gradient-to-b from-[#E32828] to-[#E13535] px-5 pb-[26px]',
+                    'relative w-full overflow-hidden rounded-b-[10px] bg-linear-to-b from-[#E32828] to-[#E13535] px-5 pb-6.5',
                     {
-                        'pt-[26px]': hideGap,
-                        'pt-[65px]': !hideGap,
+                        'pt-6.5': hideGap,
+                        'pt-16.25': !hideGap,
                     }
                 )}
             >
-                <div className="relative h-[52px]">
+                <div className="relative h-13">
                     <div className="grid h-full grid-cols-[1.5rem_minmax(0,1fr)_1.5rem] items-center gap-4">
                         <div className="col-start-1 flex h-6 w-6 items-center justify-center">
                             {isSearchOpen ? (
@@ -301,7 +301,7 @@ const BusDriverPassengersPage = () => {
                                 style={{ transformOrigin: 'right center' }}
                                 className="absolute inset-y-0 left-10 right-0 min-w-0"
                             >
-                                <div className="flex h-[52px] items-center gap-3 rounded-full bg-[#F0F3F8] px-4">
+                                <div className="flex h-13 items-center gap-3 rounded-full bg-[#F0F3F8] px-4">
                                     <SearchIcon color="#4A4A4A" />
                                     <input
                                         ref={searchInputRef}
@@ -416,7 +416,7 @@ const BusDriverPassengersPage = () => {
             >
                 <Drawer.Portal>
                     <Drawer.Overlay className="fixed inset-0 z-40 bg-black/40" />
-                    <Drawer.Content className="fixed bottom-0 left-0 right-0 z-50 mt-24 flex max-h-[85vh] flex-col rounded-t-[1rem] bg-white">
+                    <Drawer.Content className="fixed bottom-0 left-0 right-0 z-50 mt-24 flex max-h-[85vh] flex-col rounded-t-2xl bg-white">
                         {selectedPassenger && (
                             <div className="overflow-y-auto px-5 pb-8 pt-4">
                                 <div className="mx-auto mb-5 h-1.5 w-12 rounded-full bg-[#D6D6D6]" />

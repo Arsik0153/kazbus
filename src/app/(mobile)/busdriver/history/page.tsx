@@ -91,7 +91,7 @@ const BusDriverHistoryPage = () => {
             >
                 <Drawer.Portal>
                     <Drawer.Overlay className="fixed inset-0 z-40 bg-black/40" />
-                    <Drawer.Content className="fixed bottom-0 left-0 right-0 z-50 mt-24 flex max-h-[88vh] flex-col rounded-t-[1rem] bg-white">
+                    <Drawer.Content className="fixed bottom-0 left-0 right-0 z-50 mt-24 flex max-h-[88vh] flex-col rounded-t-2xl bg-white">
                         {selectedTrip && (
                             <div className="overflow-y-auto px-5 pb-8 pt-4">
                                 <div className="mx-auto mb-5 h-1.5 w-12 rounded-full bg-[#D6D6D6]" />

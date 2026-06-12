@@ -135,10 +135,10 @@ const NavBar = ({ section }: { section: NavSection }) => {
         >
             <div
                 className={cn(
-                    'flex w-full items-center justify-between px-[8px] xs:px-[15px]',
+                    'flex w-full items-center justify-between px-2 xs:px-3.75',
                     {
-                        'pb-[5px] pt-[5px] xs:pb-[10px] xs:pt-[8px]': hideGap,
-                        'pb-[20px] pt-[10px]': !hideGap,
+                        'pb-1.25 pt-1.25 xs:pb-2.5 xs:pt-2': hideGap,
+                        'pb-5 pt-2.5': !hideGap,
                     }
                 )}
             >
@@ -153,12 +153,12 @@ const NavBar = ({ section }: { section: NavSection }) => {
                         <Link
                             key={link.href}
                             href={targetHref}
-                            className="flex min-w-0 flex-1 flex-col items-center gap-2 rounded-[10px] px-[6px] pb-[12px] pt-[8px] xs:px-[12px] xs:pb-[15px] xs:pt-[10px]"
+                            className="flex min-w-0 flex-1 flex-col items-center gap-2 rounded-[10px] px-1.5 pb-3 pt-2 xs:px-3 xs:pb-3.75 xs:pt-2.5"
                         >
                             <link.icon color={getColor(isActive)} />
                             <div
                                 className={clsx(
-                                    'text-center text-[10px] font-medium leading-[11px] xs:text-[12px] xs:leading-[13.2px]',
+                                    'text-center text-[10px] font-medium leading-2.75 xs:text-[12px] xs:leading-[13.2px]',
                                     {
                                         'text-[#E23333]': isActive,
                                         'text-[#C8C8C8]': !isActive,
