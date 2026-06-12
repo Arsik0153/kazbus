@@ -10,7 +10,11 @@ import {
     busDriverStatsMock,
     busDriverTripMock,
 } from '../_data/bus-driver.mock';
-import type { BusDriverTrip, BusDriverTripStep } from '../_types/bus-driver';
+import type {
+    BusDriverTrip,
+    BusDriverTripStep,
+    BusTripStepState,
+} from '../_types/bus-driver';
 
 const tripPageStats = busDriverStatsMock.slice(0, 3);
 
@@ -32,17 +36,23 @@ const buildTripSteps = (
     steps: BusDriverTripStep[],
     currentStepIndex: number,
     isCompleted: boolean
-) =>
-    steps.map((step, index) => ({
-        ...step,
-        state: isCompleted
-            ? 'done'
-            : index < currentStepIndex
-              ? 'done'
-              : index === currentStepIndex
-                ? 'current'
-                : 'upcoming',
-    }));
+): BusDriverTripStep[] =>
+    steps.map((step, index) => {
+        let state: BusTripStepState;
+
+        if (isCompleted || index < currentStepIndex) {
+            state = 'done';
+        } else if (index === currentStepIndex) {
+            state = 'current';
+        } else {
+            state = 'upcoming';
+        }
+
+        return {
+            ...step,
+            state,
+        };
+    });
 
 const BusDriverTripPage = () => {
     const [trip, setTrip] = useState(busDriverTripMock);

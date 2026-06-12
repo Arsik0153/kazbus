@@ -87,6 +87,10 @@ const BusDriverPassengersPage = () => {
     const [draftStatus, setDraftStatus] =
         useState<PassengerBoardingStatus>('waiting');
     const searchInputRef = useRef<HTMLInputElement>(null);
+    const sectionTransition = {
+        duration: 0.28,
+        ease: [0.22, 1, 0.36, 1] as const,
+    };
 
     useEffect(() => {
         const gap = !!localStorage.getItem('hideGap');
@@ -189,6 +193,8 @@ const BusDriverPassengersPage = () => {
         toast.success(`Статус для ${selectedPassenger.fullName} обновлен`);
         setSelectedPassengerId(null);
     };
+
+    const isSearchActive = isSearchOpen;
 
     return (
         <>
@@ -317,25 +323,59 @@ const BusDriverPassengersPage = () => {
                     </AnimatePresence>
                 </div>
             </div>
-            <div className="bg-(--gray) min-h-full px-5 pb-28 pt-5">
-                <QRCodeScannerPlaceholder />
+            <motion.div
+                layout
+                transition={sectionTransition}
+                className="bg-(--gray) min-h-full px-5 pb-28 pt-5"
+            >
+                <AnimatePresence initial={false}>
+                    {!isSearchActive && (
+                        <motion.div
+                            key="passenger-top-sections"
+                            initial={{ opacity: 0, y: -24, height: 0 }}
+                            animate={{
+                                opacity: 1,
+                                y: 0,
+                                height: 'auto',
+                            }}
+                            exit={{ opacity: 0, y: -24, height: 0 }}
+                            transition={sectionTransition}
+                            className="overflow-hidden"
+                        >
+                            <QRCodeScannerPlaceholder />
 
-                <div className="mt-5 grid grid-cols-3 gap-3">
-                    {passengerStats.map((stat) => (
-                        <BusDriverStatsCard key={stat.id} stat={stat} />
-                    ))}
-                </div>
+                            <div className="mt-5 grid grid-cols-3 gap-3">
+                                {passengerStats.map((stat) => (
+                                    <BusDriverStatsCard
+                                        key={stat.id}
+                                        stat={stat}
+                                    />
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
-                <div className="mb-3 mt-8 flex items-center justify-between gap-3">
+                <motion.div
+                    layout
+                    transition={sectionTransition}
+                    className={cn(
+                        'mb-3 flex items-center justify-between gap-3',
+                        {
+                            'mt-8': !isSearchActive,
+                            'mt-0': isSearchActive,
+                        }
+                    )}
+                >
                     <h2 className="text-xl font-bold leading-[1.4rem] text-[#4A4A4A]">
                         Список пассажиров
                     </h2>
                     {/* <p className="text-xs font-medium text-[#A0A0A0]">
                         {filteredPassengers.length} из {busPassengersMock.length}
                     </p> */}
-                </div>
+                </motion.div>
 
-                <div>
+                <motion.div layout transition={sectionTransition}>
                     {passengers.length === 0 ? (
                         <EmptyPassengersState
                             title="Список пассажиров пока пуст"
@@ -345,6 +385,14 @@ const BusDriverPassengersPage = () => {
                         <EmptyPassengersState
                             title="Ничего не найдено"
                             description="Попробуйте изменить запрос: можно искать по имени, билету или месту."
+                            icon={
+                                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#F3F5F8]">
+                                    <SearchIcon
+                                        color="#7E8A98"
+                                        className="h-7 w-7"
+                                    />
+                                </div>
+                            }
                         />
                     ) : (
                         <div className="flex flex-col gap-3">
@@ -359,8 +407,8 @@ const BusDriverPassengersPage = () => {
                             ))}
                         </div>
                     )}
-                </div>
-            </div>
+                </motion.div>
+            </motion.div>
 
             <Drawer.Root
                 open={!!selectedPassenger}
