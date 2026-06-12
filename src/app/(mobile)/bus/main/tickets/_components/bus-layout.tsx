@@ -18,14 +18,16 @@ const BusLayout = (props: Props) => {
     const { onSeatsSelect, trip_id } = props;
     const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
     const searchParams = useSearchParams();
-    const { data: seats, isPending } = useServerActionQuery(getBusSeatsAction, {
+    const {
+        data: seats,
+        isPending,
+        isError,
+    } = useServerActionQuery(getBusSeatsAction, {
         input: {
             trip_id,
         },
         queryKey: ['bus-seats', trip_id],
     });
-    console.log(seats);
-
     const passengerCountParam =
         Number(searchParams.get('passenger_count')) || 0;
 
@@ -64,21 +66,27 @@ const BusLayout = (props: Props) => {
         return <BusLayoutSkeleton />;
     }
 
-    if (!seats) {
-        return <div>No seat data available</div>;
+    if (isError || !seats) {
+        return (
+            <div className="rounded-[10px] bg-red-50 p-4 text-[#E23333]">
+                Не удалось загрузить места. Вернитесь к списку рейсов и
+                попробуйте снова.
+            </div>
+        );
     }
 
-    const maxRow = Math.max(...seats.seats.map((seat) => seat.seat_row));
-    const maxCol = Math.max(...seats.seats.map((seat) => seat.seat_col));
+    const rows = Array.from(
+        new Set(seats.seats.map((seat) => seat.seat_row))
+    ).sort((a, b) => a - b);
 
-    const renderSeat = (seat: BusSeat, rowIndex: number) => {
+    const renderSeat = (seat: BusSeat) => {
         if (seat.seat_type === 'aisle') {
-            return <div className="h-[20px] w-[48px]"></div>;
+            return <div className="h-5 w-12 shrink-0" />;
         }
 
         if (seat.seat_type === 'driver') {
             return (
-                <div className="flex w-[48px] items-center justify-center rounded-[10px] border border-[#A0A0A0]">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[10px] border border-[#A0A0A0]">
                     <Image
                         src="/assets/tickets/driver.svg"
                         alt="Водительское место"
@@ -91,9 +99,10 @@ const BusLayout = (props: Props) => {
 
         return (
             <button
+                type="button"
                 onClick={() => handleSeatClick(seat.seat_id)}
                 className={cn(
-                    'flex h-12 w-12 items-center justify-center rounded-[10px] border border-[#E74949] p-3 text-[20px] font-bold text-[#E74949]',
+                    'flex h-12 w-12 shrink-0 items-center justify-center rounded-[10px] border border-[#E74949] p-3 text-[20px] font-bold text-[#E74949]',
                     {
                         'bg-[#E74949] text-white': isSeatSelected(seat.seat_id),
                         'border-[#A0A0A0] text-[#A0A0A0]': isSeatTaken(
@@ -109,13 +118,13 @@ const BusLayout = (props: Props) => {
 
     const renderRow = (rowNum: number) => {
         return (
-            <div key={rowNum} className="flex gap-3">
+            <div key={rowNum} className="flex flex-row flex-nowrap gap-3">
                 {seats.seats
                     .filter((seat) => seat.seat_row === rowNum)
                     .sort((a, b) => a.seat_col - b.seat_col)
                     .map((seat) => (
                         <React.Fragment key={seat.seat_id}>
-                            {renderSeat(seat, rowNum)}
+                            {renderSeat(seat)}
                         </React.Fragment>
                     ))}
             </div>
@@ -129,9 +138,7 @@ const BusLayout = (props: Props) => {
             <div className="fade-in w-[calc(100vw-32px)] overflow-x-auto">
                 <div className="w-fit">
                     <div className="mt-3 flex w-full flex-col gap-3 rounded-[10px] border border-[#A0A0A0] p-4">
-                        {Array.from({ length: maxRow }, (_, i) => i + 1).map(
-                            renderRow
-                        )}
+                        {rows.map(renderRow)}
                     </div>
                 </div>
             </div>

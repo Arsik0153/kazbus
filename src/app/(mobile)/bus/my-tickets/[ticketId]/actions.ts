@@ -39,3 +39,42 @@ export const getTicketByIdAction = createServerAction()
 
         return result;
     });
+
+export const downloadTicketPdfAction = createServerAction()
+    .input(
+        z.object({
+            ticket_id: z.number(),
+        })
+    )
+    .handler(async ({ input }) => {
+        const session = await getSession();
+
+        if (!session) {
+            throw 'Необходимо авторизоваться';
+        }
+
+        const response = await fetch(
+            `${process.env.API_URL}/books/tickets/${input.ticket_id}/pdf/`,
+            {
+                headers: {
+                    Authorization: `Token ${session.user.token}`,
+                },
+                cache: 'no-store',
+            }
+        );
+
+        if (!response.ok) {
+            console.log(response);
+            const result = await response.json();
+            console.log(result);
+
+            throw 'Не удалось сформировать билет';
+        }
+
+        const pdf = await response.arrayBuffer();
+
+        return {
+            base64: Buffer.from(pdf).toString('base64'),
+            filename: `jol-ticket-${input.ticket_id}.pdf`,
+        };
+    });

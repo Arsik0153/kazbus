@@ -3,13 +3,15 @@ import React, { useState } from 'react';
 import Button from '@/components/button';
 import Download from '@/assets/download';
 import Topbar from '@/components/topbar';
-import { getTicketByIdAction } from './actions';
+import { downloadTicketPdfAction, getTicketByIdAction } from './actions';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
 import Ticket from './ticket';
 import Spinner from '@/components/spinner';
 import Menu from '@/components/menu';
 import Skeleton from '@/components/skeleton';
 import Payment from '../../main/tickets/_components/payment';
+import { useServerAction } from 'zsa-react';
+import toast from 'react-hot-toast';
 
 const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
     const { data, isLoading } = useServerActionQuery(getTicketByIdAction, {
@@ -17,10 +19,42 @@ const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
         queryKey: ['ticket', params.ticketId],
     });
     const [paymentWidgetOpen, setPaymentWidgetOpen] = useState(false);
+    const { execute: downloadTicket, isPending: isTicketDownloading } =
+        useServerAction(downloadTicketPdfAction, {
+            onSuccess: ({ data: pdf }) => {
+                const binary = window.atob(pdf.base64);
+                const bytes = Uint8Array.from(binary, (char) =>
+                    char.charCodeAt(0)
+                );
+                const url = URL.createObjectURL(
+                    new Blob([bytes], { type: 'application/pdf' })
+                );
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = pdf.filename;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                URL.revokeObjectURL(url);
+            },
+            onError: (error) => {
+                toast.error(error.err.message || 'Не удалось скачать билет');
+            },
+        });
     console.log(data);
 
     if (isLoading || !data) {
         return <MyTicketPageSkeleton ticketId={params.ticketId} />;
+    }
+
+    if (paymentWidgetOpen) {
+        return (
+            <Payment
+                ticketId={data.id}
+                onBack={() => setPaymentWidgetOpen(false)}
+                onSuccess={() => setPaymentWidgetOpen(false)}
+            />
+        );
     }
 
     return (
@@ -58,34 +92,41 @@ const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
                     </div>
                 ))}
                 {data.status === 'Booked' && (
-                    <>
-                        {paymentWidgetOpen && (
-                            <Payment
-                                ticked_id={data.id}
-                                totalPrice={
-                                    data.direction?.ticket_price
-                                        ? Number(data.direction.ticket_price) *
-                                          data.passengers.length
-                                        : 0
-                                }
-                            />
-                        )}
-                        <Button
-                            variant="ghost"
-                            className="border border-[#D21F1F]"
-                            onClick={() => setPaymentWidgetOpen(true)}
-                        >
-                            Оплатить банковской картой
-                        </Button>
-                    </>
+                    <Button
+                        variant="ghost"
+                        className="border border-[#D21F1F]"
+                        onClick={() => setPaymentWidgetOpen(true)}
+                    >
+                        Оплатить банковской картой
+                    </Button>
                 )}
                 <div className="mt-8 w-full rounded-[10px] bg-[#F9F9F9] px-4 pb-1 pt-6">
                     <div className="pb-[20px] text-[20px] font-bold leading-[22px]">
                         Действия
                     </div>
                     <div className="flex flex-col">
-                        <Menu link="#" text="Скачать билет" />
-                        <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
+                        {data.status === 'Payed' && (
+                            <>
+                                <button
+                                    type="button"
+                                    disabled={isTicketDownloading}
+                                    onClick={() =>
+                                        downloadTicket({
+                                            ticket_id: data.id,
+                                        })
+                                    }
+                                    className="flex flex-row items-center justify-between py-4 text-left disabled:opacity-50"
+                                >
+                                    <span className="flex items-center gap-3 text-[16px] font-normal leading-[17.6px]">
+                                        Скачать билет
+                                    </span>
+                                    {isTicketDownloading && (
+                                        <Spinner size="sm" color="#E74949" />
+                                    )}
+                                </button>
+                                <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
+                            </>
+                        )}
                         <Menu link="#" text="Оформить возврат" />
                         <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
                         <Menu link="#" text="Изменить данные пассажира" />

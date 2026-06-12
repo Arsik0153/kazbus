@@ -1,112 +1,167 @@
-import { payTicketAction } from '../actions';
-import { useServerAction } from 'zsa-react';
-import { Steps } from '../types';
-import { useRouter } from 'next/navigation';
-import { v4 as uuidv4 } from 'uuid';
-import Script from 'next/script';
-import { useState } from 'react';
+'use client';
+
+import BackIcon from '@/assets/shared/back-icon';
+import Button from '@/components/button';
 import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+import { useServerAction } from 'zsa-react';
+import { payTicketAction } from '../actions';
 
 type Props = {
-    ticked_id: number;
-    totalPrice: number;
+    ticketId: number;
+    onBack: () => void;
+    onSuccess?: () => void;
 };
 
-const Payment = (props: Props) => {
-    const { ticked_id, totalPrice } = props;
+const digitsOnly = (value: string, maxLength: number) =>
+    value.replace(/\D/g, '').slice(0, maxLength);
+
+const Payment = ({ ticketId, onBack, onSuccess }: Props) => {
     const queryClient = useQueryClient();
     const router = useRouter();
-    const { execute } = useServerAction(payTicketAction, {
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ['tickets'],
-            });
-            queryClient.invalidateQueries({
-                queryKey: ['bus-seats'],
-            });
-            queryClient.invalidateQueries({
-                queryKey: ['my-tickets'],
-            });
-            queryClient.invalidateQueries({
-                queryKey: ['ticket', ticked_id],
-            });
-            closeWidget();
-            router.push('/bus/my-tickets');
+    const [cardNumber, setCardNumber] = useState('');
+    const [expiry, setExpiry] = useState('');
+    const [cvv, setCvv] = useState('');
+
+    const { execute, isPending } = useServerAction(payTicketAction, {
+        onSuccess: async () => {
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ['tickets'] }),
+                queryClient.invalidateQueries({ queryKey: ['bus-seats'] }),
+                queryClient.invalidateQueries({ queryKey: ['my-tickets'] }),
+                queryClient.invalidateQueries({ queryKey: ['ticket'] }),
+            ]);
+
+            toast.success('Билет оплачен');
+
+            if (onSuccess) {
+                onSuccess();
+                return;
+            }
+
+            router.push(`/bus/my-tickets/${ticketId}`);
         },
         onError: (data) => {
-            console.log(data);
+            toast.error(data.err.message || 'Не удалось оплатить билет');
         },
     });
-    const [isError, setIsError] = useState(false);
 
-    const closeWidget = () => {
-        // @ts-ignore
-        const widget = document.getElementById('onevision-widget');
-        if (widget) {
-            widget.style.display = 'none';
-        }
+    const formattedCardNumber = cardNumber
+        .replace(/(\d{4})(?=\d)/g, '$1 - ')
+        .padEnd(16, '');
+    const isFormValid =
+        cardNumber.length === 16 && expiry.length === 4 && cvv.length === 3;
+
+    const handleExpiryChange = (value: string) => {
+        const digits = digitsOnly(value, 4);
+        setExpiry(digits);
     };
 
-    const handleWidgetOpen = () => {
-        function openPaymentWidgetHandler() {
-            // @ts-ignore
-            openPaymentWidget(
-                {
-                    api_key: '9693c689-92b7-4b22-865d-4765a1523916', // Ваш API ключ
-                    amount: totalPrice, // Сумма платежа (например, 1000 KZT)
-                    currency: 'KZT', // Валюта платежа
-                    order_id: uuidv4(), // Уникальный ID заказа
-                    description: 'Покупка билета', // Описание платежа
-                    payment_type: 'pay', // Тип платежа
-                    payment_method: 'ecom', // Способ оплаты
-                    items: [
-                        {
-                            merchant_id: '527868da-6fa5-4850-91ff-6ee7d3a67029', // ID продавца
-                            service_id: 'eca0ac74-e61d-49bd-85a1-d30f9e4e15c5', // ID услуги
-                            merchant_name: 'Example', // Название продавца
-                            name: 'Билет', // Название товара
-                            quantity: 1, // Количество товаров
-                            amount_one_pcs: totalPrice, // Цена за штуку
-                            amount_sum: totalPrice, // Общая сумма
-                        },
-                    ],
-                    user_id: '1223345', // Уникальный идентификатор пользователя
-                    email: 'example@gmail.com', // E-mail плательщика
-                    phone: '+77777777777', // Телефон плательщика
-                    // success_url: 'http://example.com/success', // URL успешной оплаты
-                    // failure_url: 'http://example.com/failure', // URL неуспешной оплаты
-                    // callback_url: 'http://example.com/callback', // URL для callback
-                    payment_lifetime: 3600, // Время жизни платежа в секундах
-                    create_recurrent_profile: false, // Создание рекуррентного профиля
-                    recurrent_profile_lifetime: 0, // Срок действия рекуррентного профиля
-                    lang: 'ru', // Язык интерфейса
-                    extra_params: {},
-                    payment_gateway_host: 'https://api.onevisionpay.com/', // Хост платежного API
-                    payment_widget_host: 'https://widget.onevisionpay.com', // Хост виджета
-                },
-                (success: any) => {
-                    console.log(success);
-                    execute({
-                        ticket_id: ticked_id,
-                    });
-                },
-                (error: any) => {
-                    console.log(error);
-                    setIsError(true);
-                }
-            );
+    const handleSubmit = () => {
+        if (!isFormValid || isPending) {
+            return;
         }
-        openPaymentWidgetHandler();
+
+        execute({ ticket_id: ticketId });
     };
 
     return (
-        <div>
-            <Script
-                src="https://widget.onevisionpay.com"
-                onReady={() => handleWidgetOpen()}
-            />
-            {isError && <div>Ошибка при оплате</div>}
-        </div>
+        <main className="fade-in flex min-h-[calc(100dvh-80px)] flex-col bg-white px-5 pb-8 pt-7 text-[#4A4A4A]">
+            <button
+                type="button"
+                aria-label="Назад"
+                onClick={onBack}
+                className="mb-7 flex h-10 w-10 items-center justify-start"
+            >
+                <BackIcon color="#4A4A4A" width={17} height={22} />
+            </button>
+
+            <h1 className="max-w-[330px] text-[50px] font-semibold leading-[1.04] tracking-[-0.04em]">
+                Оплата банковской картой
+            </h1>
+
+            <div className="mt-6 rounded-[10px] bg-[#EC3033] p-4 text-white">
+                <label
+                    htmlFor="card-number"
+                    className="mb-2 block text-base font-medium"
+                >
+                    Номер карты
+                </label>
+                <input
+                    id="card-number"
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="cc-number"
+                    value={formattedCardNumber.trimEnd()}
+                    placeholder="XXXX  -  XXXX  -  XXXX  -  XXXX"
+                    onChange={(event) =>
+                        setCardNumber(digitsOnly(event.target.value, 16))
+                    }
+                    className="h-[70px] w-full rounded-[10px] border border-white bg-transparent px-5 text-center text-lg font-medium text-white outline-none placeholder:text-white"
+                />
+
+                <div className="mt-3 grid grid-cols-[1.2fr_1fr] gap-5">
+                    <div>
+                        <label
+                            htmlFor="card-expiry"
+                            className="mb-2 block text-base font-medium"
+                        >
+                            Срок действия
+                        </label>
+                        <input
+                            id="card-expiry"
+                            type="text"
+                            inputMode="numeric"
+                            autoComplete="cc-exp"
+                            value={
+                                expiry.length > 2
+                                    ? `${expiry.slice(0, 2)}/${expiry.slice(2)}`
+                                    : expiry
+                            }
+                            placeholder="__/__"
+                            onChange={(event) =>
+                                handleExpiryChange(event.target.value)
+                            }
+                            className="h-[70px] w-full rounded-[10px] border border-white bg-transparent px-4 text-center text-2xl font-medium text-white outline-none placeholder:text-white"
+                        />
+                    </div>
+
+                    <div>
+                        <label
+                            htmlFor="card-cvv"
+                            className="mb-2 block text-base font-medium"
+                        >
+                            CVV
+                        </label>
+                        <input
+                            id="card-cvv"
+                            type="password"
+                            inputMode="numeric"
+                            autoComplete="cc-csc"
+                            value={cvv}
+                            placeholder="•••"
+                            onChange={(event) =>
+                                setCvv(digitsOnly(event.target.value, 3))
+                            }
+                            className="h-[70px] w-full rounded-[10px] border border-white bg-transparent px-4 text-center text-2xl font-medium tracking-[0.3em] text-white outline-none placeholder:text-white"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <Button
+                type="button"
+                variant="secondary"
+                loading={isPending}
+                disabled={!isFormValid}
+                onClick={handleSubmit}
+                className="mt-auto min-h-[72px] bg-[#EC3033]"
+            >
+                Оплатить
+            </Button>
+        </main>
     );
 };
 
