@@ -32,7 +32,7 @@ const BusDriverHistoryTripCard = ({ trip, onClick }: Props) => {
                         </div>
                     </div>
                 </div>
-                <div className="rounded-full bg-[#FFF4F4] px-3 py-1.5 text-xs font-semibold text-[#E23333]">
+                <div className="rounded-full text-nowrap bg-[#FFF4F4] px-3 py-1.5 text-xs font-semibold text-[#E23333]">
                     {occupancyRate}% заполнено
                 </div>
             </div>

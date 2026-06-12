@@ -1,6 +1,7 @@
 import Menu from '@/components/menu';
 import BusDriverProfileCard from '../_components/BusDriverProfileCard';
 import { busDriverProfileMock, busVehicleMock } from '../_data/bus-driver.mock';
+import Link from 'next/link';
 
 const BusDriverProfilePage = () => {
     return (
@@ -20,13 +21,7 @@ const BusDriverProfilePage = () => {
                 <h2 className="leading-5.5 pb-4 text-xl font-bold text-[#4A4A4A]">
                     Рабочее меню
                 </h2>
-                <Menu link="/busdriver/trip" text="Текущий рейс" />
-                <div className="h-px w-full border-t border-[#E9E9E9]" />
                 <Menu link="/busdriver/vehicle" text="Закрепленный автобус" />
-                <div className="h-px w-full border-t border-[#E9E9E9]" />
-                <Menu link="/busdriver/passengers" text="Список пассажиров" />
-                <div className="h-px w-full border-t border-[#E9E9E9]" />
-                <Menu link="/busdriver/history" text="История рейсов" />
                 <div className="h-px w-full border-t border-[#E9E9E9]" />
                 <Menu link="/busdriver/issues" text="Нештатные ситуации" />
                 <div className="h-px w-full border-t border-[#E9E9E9]" />
@@ -38,9 +33,9 @@ const BusDriverProfilePage = () => {
                 <p className="leading-5.5 mt-2 text-xl font-bold text-[#4A4A4A]">
                     Смена Южный маршрут
                 </p>
-                <p className="mt-2 text-sm font-medium text-[#E74949]">
+                <Link className="pt-3 text-sm font-medium text-[#E74949]" href="tel:+77018882010">
                     +7 701 888 20 10
-                </p>
+                </Link>
             </div>
         </div>
     );

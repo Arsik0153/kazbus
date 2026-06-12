@@ -32,7 +32,7 @@ const historyStats = [
     },
     {
         id: 'history-occupancy',
-        label: 'Средняя загрузка',
+        label: 'Ср. загрузка',
         value: `${averageOccupancy}%`,
         description: 'по завершенным рейсам',
         tone: 'success' as const,
@@ -60,7 +60,7 @@ const BusDriverHistoryPage = () => {
                     ))}
                 </div>
 
-                <div className="mt-5 rounded-[0.875rem] border border-[#D1D1D1] bg-white p-5">
+                <div className="mt-5 ">
                     <h2 className="text-xl font-bold leading-[1.4rem] text-[#4A4A4A]">
                         Последние поездки
                     </h2>

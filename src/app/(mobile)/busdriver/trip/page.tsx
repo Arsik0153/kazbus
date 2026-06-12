@@ -28,7 +28,7 @@ const BusDriverTripPage = () => {
                         steps={busDriverTripMock.steps}
                     />
                 </div>
-
+{/* 
                 <div className="mt-4 rounded-[0.625rem] border border-[#D1D1D1] bg-white px-4 pt-5">
                     <h2 className="leading-5.5 pb-4 text-xl font-bold text-[#4A4A4A]">
                         Инструменты рейса
@@ -48,7 +48,7 @@ const BusDriverTripPage = () => {
                     <Menu link="/busdriver/vehicle" text="Данные автобуса" />
                     <div className="h-px w-full border-t border-[#E9E9E9]" />
                     <Menu link="/busdriver/issues" text="Сообщить о ситуации" />
-                </div>
+                </div> */}
             </div>
         </>
     );

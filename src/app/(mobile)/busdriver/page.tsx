@@ -36,26 +36,26 @@ const BusDriverHomePage = () => {
 
             <div className="mt-5">
                 <div className="flex items-center justify-between gap-3">
-                    <h2 className="leading-5.5 text-xl font-bold text-[#4A4A4A]">
+                    <h2 className="leading-5.5 pb-3 text-xl font-bold text-[#4A4A4A]">
                         Активный рейс
                     </h2>
-                    <Link
+                    
+                </div>
+                <Link
                         href="/busdriver/trip"
-                        className="text-sm font-semibold text-[#E23333]"
+
                     >
-                        Открыть
-                    </Link>
-                </div>
-                <div className="mt-3">
+
                     <BusDriverTripCard trip={busDriverTripMock} />
-                </div>
+                </Link>
+
             </div>
 
-            <div className="mt-5 grid grid-cols-2 gap-3">
+            {/* <div className="mt-5 grid grid-cols-2 gap-3">
                 {busDriverStatsMock.map((stat) => (
                     <BusDriverStatsCard key={stat.id} stat={stat} />
                 ))}
-            </div>
+            </div> */}
 
             {/* <div className="mt-5 rounded-[0.625rem] border border-[#D1D1D1] bg-white px-4 pt-5">
                 <h2 className="leading-5.5 pb-4 text-xl font-bold text-[#4A4A4A]">
