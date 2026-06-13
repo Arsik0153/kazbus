@@ -98,10 +98,15 @@ export const loginSchema = z.object({
         .min(8, 'Пароль должен содержать минимум 8 символов'),
 });
 export const adminLoginSchema = z.object({
-    username: z.string({ message: 'Введите логин' }).min(4, 'Введите логин'),
+    username: z
+        .string({ message: 'Введите логин' })
+        .trim()
+        .min(1, 'Введите логин')
+        .max(150, 'Логин слишком длинный'),
     password: z
         .string({ message: 'Введите пароль' })
-        .min(1, 'Пароль должен содержать минимум 1 символов'),
+        .min(1, 'Введите пароль')
+        .max(128, 'Пароль слишком длинный'),
 });
 
 export const bookTicketSchema = z.object({

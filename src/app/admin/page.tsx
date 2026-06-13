@@ -11,20 +11,10 @@ import { adminLoginSchema } from '@/data/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { sanitizePhone } from '@/utils/helper.';
-import { useRouter } from 'next/navigation';
 
 const LoginPage = () => {
     const { execute, isPending } = useServerAction(loginAction, {
-        onSuccess: () => {
-            console.log('success');
-            // После успешного входа перенаправляем на /admin/main/
-            router.push('/admin/main/');
-        },
         onError: (error) => {
-            // Проверка типа ошибки и вывод сообщения
-            console.log('unsuccess');
-
             const message = error?.err?.message || 'Произошла ошибка';
             toast.error(message);
         },
@@ -38,22 +28,20 @@ const LoginPage = () => {
         resolver: zodResolver(adminLoginSchema),
     });
 
-    const router = useRouter(); 
-
     const onSubmit = handleSubmit((data) => {
         execute({
-            username: (data.username),
+            username: data.username,
             password: data.password,
         });
     });
 
     return (
-        <div className="flex items-start justify-center min-h-screen overflow-y-hidden bg-[#E32B2B]">
+        <div className="flex min-h-screen items-start justify-center overflow-y-hidden bg-[#E32B2B]">
             <Image
                 src={'/Ellipse.svg'}
                 width={622}
                 height={750}
-                className='absolute top-0 left-0'
+                className="absolute left-0 top-0"
                 alt={''}
             />
 
@@ -61,38 +49,34 @@ const LoginPage = () => {
                 src={'/Ellipse.svg'}
                 width={622}
                 height={750}
-                className='absolute top-0 right-0'
+                className="absolute right-0 top-0"
                 alt={''}
             />
-            <div className="flex flex-col items-center mt-12">
-                <Image
-                    src={'/logo.svg'}
-                    width={80}
-                    height={80}
-                    alt={'Logo'}
-                />
-                <div className="flex flex-col gap-4 bg-white px-6 pt-11 pb-8 rounded-[20px] shadow-md w-full max-w-[340px]">
-                    <h2 className="text-4xl font-bold text-center text-[#E32B2B]">Авторизация таксопарка</h2>
-                    <form onSubmit={onSubmit} className='flex flex-col gap-2'>
+            <div className="mt-12 flex flex-col items-center">
+                <Image src={'/logo.svg'} width={80} height={80} alt={'Logo'} />
+                <div className="flex w-full max-w-[340px] flex-col gap-4 rounded-[20px] bg-white px-6 pb-8 pt-11 shadow-md">
+                    <h2 className="text-center text-4xl font-bold text-[#E32B2B]">
+                        Авторизация таксопарка
+                    </h2>
+                    <form onSubmit={onSubmit} className="flex flex-col gap-2">
                         <Input
-                            label='Введите ваш логин'
-                            id="AdminLogin"
+                            label="Введите ваш логин"
+                            id="username"
+                            autoComplete="username"
                             {...register('username')}
                         />
                         <ErrorMessage message={errors.username?.message} />
 
                         <Input
-                            label='Введите ваш пароль'
-                            id="AdminPassword"
+                            label="Введите ваш пароль"
+                            id="password"
                             type="password"
+                            autoComplete="current-password"
                             {...register('password')}
                         />
                         <ErrorMessage message={errors.password?.message} />
 
-                        <Button
-                            variant='secondary'
-                            loading={isPending}
-                        >
+                        <Button variant="secondary" loading={isPending}>
                             Войти в таксопарк
                         </Button>
                     </form>
