@@ -93,7 +93,7 @@ const Ticket = ({ ticket, selected = false, ...rest }: TicketProps) => {
                     </div>
                 </div>
                 <div className="flex flex-row items-center justify-between">
-                    <div className="flex flex-row gap-4">
+                    <div className="flex justify-between w-full">
                         <div className="flex flex-row gap-3">
                             <div className="flex flex-col">
                                 <div
