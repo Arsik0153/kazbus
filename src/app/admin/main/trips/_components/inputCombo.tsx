@@ -28,7 +28,11 @@ interface ComboBoxProps {
     onSelectionChange?: (name: string, selected: Person | null) => void;
 }
 
-function ComboBox({ name, placeholder = 'Выберите нужный вариант', onSelectionChange = () => {} }: ComboBoxProps) {
+function ComboBox({
+    name,
+    placeholder = 'Выберите нужный вариант',
+    onSelectionChange = () => {},
+}: ComboBoxProps) {
     const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
     const [query, setQuery] = useState('');
 
@@ -54,7 +58,13 @@ function ComboBox({ name, placeholder = 'Выберите нужный вари�
         <div className="relative">
             <Combobox
                 value={selectedPerson}
-                onChange={(person: Person) => {
+                onChange={(person: Person | null) => {
+                    if (!person) {
+                        setSelectedPerson(null);
+                        onSelectionChange(name, null);
+                        return;
+                    }
+
                     if (person.id === -1) {
                         // Если пользователь выбрал опцию добавления нового города
                         const newPerson = { id: cruise.length + 1, name: query };
