@@ -5,7 +5,6 @@ import {
     AlertCircle,
     CheckCircle2,
     Clock3,
-    MessageCircle,
     Paperclip,
     Phone,
     Search,
@@ -215,20 +214,14 @@ const SupportPage = () => {
 
     return (
         <div className="mt-6 flex flex-col pb-10">
-            <div className="flex flex-row items-start justify-between gap-6">
-                <div>
-                    <h1 className="text-[42px] font-semibold text-[#4A4A4A]">
-                        Служба поддержки
-                    </h1>
-                    <p className="mt-2 text-base text-[#7A7A7A]">
-                        Единый экран для обработки обращений пассажиров,
-                        водителей и диспетчеров.
-                    </p>
-                </div>
-                <Button size="lg" className="px-8 text-base">
-                    <MessageCircle />
-                    Создать тикет
-                </Button>
+            <div>
+                <h1 className="text-[42px] font-semibold text-[#4A4A4A]">
+                    Служба поддержки
+                </h1>
+                <p className="mt-2 text-base text-[#7A7A7A]">
+                    Единый экран для обработки обращений пассажиров, водителей и
+                    диспетчеров.
+                </p>
             </div>
 
             <div className="mt-6 grid grid-cols-3 gap-4">
