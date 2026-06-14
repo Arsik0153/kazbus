@@ -112,9 +112,9 @@ const DriversTable = ({ drivers }: Props) => {
                                         : 'Неактивен'}
                                 </span>
                             </td>
-                            <td className="rounded-r-[10px] py-4 pr-6">
+                            <td className="rounded-r-[10px] py-4 pr-6 align-middle">
                                 {confirmingDriverId === driver.id ? (
-                                    <div className="flex justify-end gap-2">
+                                    <div className="flex items-center justify-end gap-2">
                                         <Button
                                             variant="ghost"
                                             onClick={() =>
@@ -143,7 +143,7 @@ const DriversTable = ({ drivers }: Props) => {
                                         </Button>
                                     </div>
                                 ) : (
-                                    <div className="flex justify-end gap-2">
+                                    <div className="flex items-center justify-end gap-2">
                                         <Button
                                             asChild
                                             variant="outline"
@@ -176,8 +176,8 @@ const DriversTable = ({ drivers }: Props) => {
                                             <Power
                                                 className={
                                                     driver.is_active
-                                                        ? 'text-[#E74949]'
-                                                        : 'text-green-600'
+                                                        ? 'text-green-600'
+                                                        : 'text-[#E74949]'
                                                 }
                                             />
                                         </Button>
