@@ -1,7 +1,7 @@
 import { dayjsExt } from '@/lib/dayjs';
 import { z } from 'zod';
 
-const MAX_FILE_SIZE = 1000000;
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES = [
     'image/jpeg',
     'image/jpg',
@@ -115,42 +115,95 @@ export const bookTicketSchema = z.object({
     place_floor: z.number(),
 });
 
-export const driverSchema = z.object({
-    full_name: z.string().min(5, 'Введите полное ФИО'),
-    date_of_birth: z
-        .string({ message: 'Введите дату рождения' })
-        .min(5, 'Введите дату рождения')
-        .refine(
-            (date) => {
-                const parsedDate = dayjsExt(date, 'DD.MM.YYYY', true);
-                return (
-                    parsedDate.isValid() &&
-                    parsedDate.isBefore(dayjsExt()) &&
-                    parsedDate.isAfter('1900-01-01')
-                );
-            },
-            { message: 'Введите корректную дату рождения в формате ДД.ММ.ГГГГ' }
-        ),
-    license_number: z
-        .string({ message: 'Введите номер водительских прав' })
-        .min(5, 'Введите номер водительских прав'),
-    license_issue_date: z
-        .string({ message: 'Введите дату выдачи водительских прав' })
-        .min(5, 'Введите дату выдачи водительских прав'),
-    picture: z
-        .instanceof(File, {
-            message: 'Выберите изображение',
-        })
-        .refine((file: File) => file?.size, 'Выберите изображение')
-        .refine(
-            (file) => file?.size <= MAX_FILE_SIZE,
-            `Максимальный вес фото - 5MB.`
-        )
-        .refine(
-            (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
-            'Неверный формат файла'
-        ),
-});
+export const driverSchema = z
+    .object({
+        full_name: z
+            .string({
+                required_error: 'Введите полное ФИО',
+                invalid_type_error: 'Введите полное ФИО',
+            })
+            .trim()
+            .min(5, 'Введите полное ФИО')
+            .max(150, 'ФИО слишком длинное'),
+        date_of_birth: z
+            .string({
+                required_error: 'Выберите дату рождения',
+                invalid_type_error: 'Выберите дату рождения',
+            })
+            .min(1, 'Выберите дату рождения')
+            .refine(
+                (date) => {
+                    if (!date) return true;
+
+                    const parsedDate = dayjsExt(date, 'YYYY-MM-DD', true);
+                    return (
+                        parsedDate.isValid() &&
+                        !parsedDate.isAfter(dayjsExt(), 'day') &&
+                        parsedDate.isAfter('1900-01-01', 'day')
+                    );
+                },
+                { message: 'Выберите корректную дату рождения' }
+            ),
+        license_number: z
+            .string({
+                required_error: 'Введите номер водительских прав',
+                invalid_type_error: 'Введите номер водительских прав',
+            })
+            .trim()
+            .min(5, 'Введите номер водительских прав')
+            .max(50, 'Номер водительских прав слишком длинный'),
+        license_issue_date: z
+            .string({
+                required_error: 'Выберите дату выдачи водительских прав',
+                invalid_type_error: 'Выберите дату выдачи водительских прав',
+            })
+            .min(1, 'Выберите дату выдачи водительских прав')
+            .refine(
+                (date) => {
+                    if (!date) return true;
+
+                    const parsedDate = dayjsExt(date, 'YYYY-MM-DD', true);
+                    return (
+                        parsedDate.isValid() &&
+                        !parsedDate.isAfter(dayjsExt(), 'day')
+                    );
+                },
+                { message: 'Выберите корректную дату выдачи' }
+            ),
+        picture: z
+            .instanceof(File, {
+                message: 'Выберите изображение',
+            })
+            .refine(
+                (file) => file.size <= MAX_FILE_SIZE,
+                'Максимальный размер фото — 5 MB'
+            )
+            .refine(
+                (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+                'Допустимы изображения JPEG, PNG или WebP'
+            )
+            .optional(),
+    })
+    .superRefine((data, context) => {
+        const birthDate = dayjsExt(data.date_of_birth, 'YYYY-MM-DD', true);
+        const licenseDate = dayjsExt(
+            data.license_issue_date,
+            'YYYY-MM-DD',
+            true
+        );
+
+        if (
+            birthDate.isValid() &&
+            licenseDate.isValid() &&
+            !licenseDate.isAfter(birthDate, 'day')
+        ) {
+            context.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['license_issue_date'],
+                message: 'Дата выдачи должна быть позже даты рождения',
+            });
+        }
+    });
 
 const PassengerSchema = z.object({
     passenger: z.number().nullable(),
