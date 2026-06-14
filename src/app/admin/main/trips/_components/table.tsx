@@ -1,6 +1,9 @@
 'use client';
 
+import Link from 'next/link';
+
 import Pulse from '@/components/admin/pulse';
+import { Button } from '@/components/ui/button';
 import { Trips } from '@/data/types';
 
 type Props = {
@@ -61,6 +64,7 @@ const TripsTable = ({ trips }: Props) => {
                         <th className="py-5 text-left text-sm font-bold uppercase text-[#A0A0A0]">
                             Статус
                         </th>
+                        <th aria-label="Действия" />
                     </tr>
                 </thead>
                 <tbody>
@@ -93,6 +97,15 @@ const TripsTable = ({ trips }: Props) => {
                                             'Неизвестный статус'}
                                     </span>
                                 </div>
+                            </td>
+                            <td className="py-4 pr-6 text-right">
+                                <Button asChild variant="outline">
+                                    <Link
+                                        href={`/admin/main/trips/${trip.id}/passengers`}
+                                    >
+                                        Пассажиры
+                                    </Link>
+                                </Button>
                             </td>
                         </tr>
                     ))}

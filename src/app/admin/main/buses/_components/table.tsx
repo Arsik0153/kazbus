@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import { Bus } from '@/data/types';
 import { Button } from '@/components/ui/button';
 
@@ -55,9 +57,19 @@ const BusesTable = ({ buses }: Props) => {
                                 </p>
                             </td>
                             <td className="rounded-r-[10px] py-4 pr-6 text-right">
-                                <Button variant="outline" disabled>
-                                    Редактирование скоро
-                                </Button>
+                                {bus.id ? (
+                                    <Button asChild variant="outline">
+                                        <Link
+                                            href={`/admin/main/buses/${bus.id}/edit`}
+                                        >
+                                            Открыть карточку
+                                        </Link>
+                                    </Button>
+                                ) : (
+                                    <Button variant="outline" disabled>
+                                        Нет ID для редактирования
+                                    </Button>
+                                )}
                             </td>
                         </tr>
                     ))}

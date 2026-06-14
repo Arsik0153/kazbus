@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import Arrow from '@/assets/admin/Arrow';
 import Calendar from '@/assets/admin/Calendar';
 import Clock from '@/assets/admin/Clock';
@@ -85,8 +87,12 @@ const RoutesTable = ({ routes }: Props) => {
                                 </div>
                             </td>
                             <td className="rounded-r-[10px] py-4 pr-6 text-right">
-                                <Button variant="outline" disabled>
-                                    Редактирование скоро
+                                <Button asChild variant="outline">
+                                    <Link
+                                        href={`/admin/main/routes/${route.id}/edit`}
+                                    >
+                                        Открыть карточку
+                                    </Link>
                                 </Button>
                             </td>
                         </tr>
