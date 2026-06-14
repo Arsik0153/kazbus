@@ -2,13 +2,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Calendar from '@/assets/calendar';
 import DataChooser from '@/components/calendar/data-chooser';
-import clsx from 'clsx';
+import { cn } from '@/utils/cn';
+import { ClassValue } from 'clsx';
+import { dayjsExt } from '@/lib/dayjs';
 
 type SelectDateProps = {
     placeholder?: string;
     variant?: 'primary' | 'secondary';
-    value: Date | null; // Change the type to Date | null
-    onChange: (date: Date | null) => void; // Change the type to match
+    value: Date | null;
+    onChange: (date: Date | null) => void;
+    inputClassName?: ClassValue;
 };
 
 const SelectDate: React.FC<SelectDateProps> = ({
@@ -16,11 +19,12 @@ const SelectDate: React.FC<SelectDateProps> = ({
     variant = 'primary',
     onChange,
     value,
+    inputClassName,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const dataChooserRef = useRef<HTMLDivElement | null>(null);
+    const containerRef = useRef<HTMLDivElement | null>(null);
 
-    const handleSelectDate = (date: Date) => { // Change to handle Date type
+    const handleSelectDate = (date: Date) => {
         onChange(date);
         setIsOpen(false);
     };
@@ -28,8 +32,8 @@ const SelectDate: React.FC<SelectDateProps> = ({
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
-                dataChooserRef.current &&
-                !dataChooserRef.current.contains(event.target as Node)
+                containerRef.current &&
+                !containerRef.current.contains(event.target as Node)
             ) {
                 setIsOpen(false);
             }
@@ -41,45 +45,59 @@ const SelectDate: React.FC<SelectDateProps> = ({
         };
     }, []);
 
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            setIsOpen((prev) => !prev);
+        } else if (event.key === 'Escape') {
+            setIsOpen(false);
+        }
+    };
+
+    const displayValue = value ? dayjsExt(value).format('DD.MM.YYYY') : '';
+
     return (
         <div
-            className={clsx('relative', {
+            ref={containerRef}
+            className={cn('relative', {
                 'w-fit': variant === 'primary',
                 'w-full': variant === 'secondary',
             })}
+            onKeyDown={handleKeyDown}
         >
             <div
-                className={clsx('relative cursor-pointer', {
+                className={cn('relative cursor-pointer', {
                     'w-fit': variant === 'primary',
                     'w-full': variant === 'secondary',
                 })}
+                onClick={() => setIsOpen((prev) => !prev)}
             >
                 <input
                     placeholder={placeholder || '__ - __ - ____'}
                     type="text"
                     name="birthday"
-                    value={value ? value.toLocaleDateString() : ''} // Format Date to string
-                    className={clsx(
-                        'rounded-[10px] border py-3 pr-3 text-base font-medium focus:outline-none',
+                    value={displayValue}
+                    readOnly
+                    className={cn(
+                        'w-full rounded-[10px] border py-3 pr-3 text-base font-medium focus:outline-none cursor-pointer',
                         {
                             'max-w-[141px] border-[#A0A0A0] pl-10 text-[#4A4A4A]':
                                 variant === 'primary',
-                            'w-full border border-[#4A4A4A] py-5 pl-12':
+                            'border-[#4A4A4A] py-5 pl-12':
                                 variant === 'secondary',
-                        }
+                        },
+                        inputClassName
                     )}
-                    onChange={(e) => onChange(new Date(e.target.value))} // Convert string to Date
                 />
                 <div
-                    className={clsx(
-                        'absolute left-0 top-0 cursor-pointer p-[16px]',
+                    className={cn(
+                        'absolute left-0 top-0 p-[16px] pointer-events-none',
                         {
                             'p-[16px]': variant === 'primary',
-                            'p-[25px] pl-[20px] pt-[26px]':
+                            'p-[25px] pl-[20px] pt-[21px]':
                                 variant === 'secondary',
                         }
                     )}
-                    onClick={() => setIsOpen(!isOpen)}
                 >
                     <Calendar
                         color="#E74949"
@@ -90,12 +108,11 @@ const SelectDate: React.FC<SelectDateProps> = ({
             </div>
 
             {isOpen && (
-                <div ref={dataChooserRef}>
-                    <DataChooser handleSelectDate={handleSelectDate} />
-                </div>
+                <DataChooser handleSelectDate={handleSelectDate} />
             )}
         </div>
     );
 };
 
 export default SelectDate;
+

@@ -1,9 +1,12 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter_Tight } from 'next/font/google';
+import { Inter_Tight, Inter } from 'next/font/google';
 import './globals.css';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import ReactQueryProvider from '@/lib/react-query';
 import { Toaster } from 'react-hot-toast';
+import { cn } from "@/lib/utils";
+
+const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
 const interTight = Inter_Tight({ subsets: ['latin', 'cyrillic'] });
 
@@ -27,7 +30,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
+        <html lang="en" className={cn("font-sans", inter.variable)}>
             <body className={interTight.className}>
                 <ReactQueryProvider>
                     <Toaster containerClassName="mt-10" />
