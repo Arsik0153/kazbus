@@ -1,104 +1,43 @@
-import React from 'react'
-import Trip from '@/components/trip';
-import Button from '@/components/button';
 import Link from 'next/link';
 
-const StartTrip = () => {
-    return (
-        <div className='flex flex-col my-6'>
-            <p className="text-[42px] font-semibold text-[#4A4A4A]">Запуск рейса</p>
-            <div className="flex flex-wrap gap-5 mt-6 mb-11">
-                <Trip
-                    status="none"
-                    town_one="Алматы"
-                    town_two="Кокшетау"
-                    departure="12:00"
-                    arrive="16:40"
-                    departure_date="8 мая"
-                    tickets={112}
-                    arriving_date={'9 мая'}
-                    passenger_amount={5}
-                    ticket_amount={12450}
-                    taxi_park='wdwedqw'
-                />
-                <Trip
-                    status="none"
-                    town_one="Алматы"
-                    town_two="Кокшетау"
-                    departure="12:00"
-                    arrive="16:40"
-                    departure_date="8 мая"
-                    tickets={112}
-                    arriving_date={'9 мая'}
-                    passenger_amount={5}
-                    ticket_amount={12450}
-                    taxi_park='wdwedqw'
-                />
-                <Trip
-                    status="none"
-                    town_one="Алматы"
-                    town_two="Кокшетау"
-                    departure="12:00"
-                    arrive="16:40"
-                    departure_date="8 мая"
-                    tickets={112}
-                    arriving_date={'9 мая'}
-                    passenger_amount={5}
-                    ticket_amount={12450}
-                    taxi_park='wdwedqw'
-                />
-                <Trip
-                    status="none"
-                    town_one="Алматы"
-                    town_two="Кокшетау"
-                    departure="12:00"
-                    arrive="16:40"
-                    departure_date="8 мая"
-                    tickets={112}
-                    arriving_date={'9 мая'}
-                    passenger_amount={5}
-                    ticket_amount={12450}
-                    taxi_park='wdwedqw'
-                />
-                <Trip
-                    status="none"
-                    town_one="Алматы"
-                    town_two="Кокшетау"
-                    departure="12:00"
-                    arrive="16:40"
-                    departure_date="8 мая"
-                    tickets={112}
-                    arriving_date={'9 мая'}
-                    passenger_amount={5}
-                    ticket_amount={12450}
-                    taxi_park='wdwedqw'
-                />
-                <Trip
-                    status="none"
-                    town_one="Алматы"
-                    town_two="Кокшетау"
-                    departure="12:00"
-                    arrive="16:40"
-                    departure_date="8 мая"
-                    tickets={112}
-                    arriving_date={'9 мая'}
-                    passenger_amount={5}
-                    ticket_amount={12450}
-                    taxi_park='wdwedqw'
-                />
-                
-            </div>
-            <div className="flex flex-row gap-2 items-center w-3/5">
-                <Link href='/admin/main/trips'>
-                    <Button variant='secondary'>Запустить рейс в продажу</Button>
-                </Link>
-                <Link href='/admin/main/trips'>
-                    <Button variant='primary'>Просто сохранить рейс</Button>
-                </Link>
+import { Button } from '@/components/ui/button';
 
+const StartTripPage = () => {
+    return (
+        <div className="mt-6 flex flex-col gap-4">
+            <h1 className="text-[42px] font-semibold text-[#4A4A4A]">
+                Запуск рейса
+            </h1>
+            <div className="rounded-[20px] bg-white px-8 py-12">
+                <div className="max-w-3xl">
+                    <p className="text-3xl font-semibold text-[#4A4A4A]">
+                        Checklist публикации будет подключен после расширения API
+                    </p>
+                    <p className="mt-4 text-base font-medium text-[#A0A0A0]">
+                        Текущий экран запуска рейса раньше был чисто демо и не
+                        выполнял реального действия. Чтобы не вводить
+                        пользователя в заблуждение, экран временно переведен в
+                        честное состояние ожидания backend-поддержки.
+                    </p>
+                    <p className="mt-4 text-base font-medium text-[#A0A0A0]">
+                        После готовности API здесь появится проверка готовности
+                        рейса: наличие автобуса, водителя, цены, конфликтов по
+                        времени и итоговая публикация рейса.
+                    </p>
+                    <div className="mt-8 flex gap-3">
+                        <Button asChild size="lg">
+                            <Link href="/admin/main/trips">
+                                Вернуться к списку рейсов
+                            </Link>
+                        </Button>
+                        <Button asChild size="lg" variant="outline">
+                            <Link href="/admin/main">На дашборд</Link>
+                        </Button>
+                    </div>
+                </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default StartTrip;
+export default StartTripPage;

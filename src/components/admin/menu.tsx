@@ -84,24 +84,24 @@ const Menu = () => {
                     <ul>
                         <p className="font-bold text-base text-[#FFFFFF] opacity-40">Информация</p>
 
-                        <li className={`${getBackgroundColor(pathname, '/admin/main/anal')} rounded-lg`}>
-                            <Link href="/admin/main/anal" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
+                        <li className={`${getBackgroundColor(pathname, '/admin/main/analytics')} rounded-lg`}>
+                            <Link href="/admin/main/analytics" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
                                 <div className='flex items-center gap-3'>
                                     <Anal color="#fff" width={20} height={20} />
                                     <span>Аналитика</span>
                                 </div>
-                                {pathname === '/admin/main/anal' && (
+                                {pathname === '/admin/main/analytics' && (
                                     <ArrowRight color="#fff" width={12} height={12} />
                                 )}
                             </Link>
                         </li>
-                        <li className={`${getBackgroundColor(pathname, '/admin/main/payments')} rounded-lg`}>
-                            <Link href="/admin/main/payments" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
+                        <li className={`${getBackgroundColor(pathname, '/admin/main/payouts')} rounded-lg`}>
+                            <Link href="/admin/main/payouts" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
                                 <div className='flex items-center gap-3'>
                                     <Coin color="#fff" width={20} height={20} />
                                     <span>Выплаты</span>
                                 </div>
-                                {pathname === '/admin/main/payments' && (
+                                {pathname === '/admin/main/payouts' && (
                                     <ArrowRight color="#fff" width={12} height={12} />
                                 )}
                             </Link>

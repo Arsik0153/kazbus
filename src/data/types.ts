@@ -122,12 +122,19 @@ export type Driver = {
 };
 
 export type Bus = {
+    id?: string;
+    name?: string;
+    stamp?: string | null;
+    model?: string | null;
     model_stamp: string;
     state_number: string;
+    VIN?: string;
     count_of_seats: number;
     have_toilet: boolean;
     have_wifi: boolean;
     is_recumbent: boolean;
+    floors?: number | null;
+    scheme?: string | null;
 };
 
 export type Stop = {
@@ -138,8 +145,8 @@ export type Stop = {
 };
 export type Routes = {
     id: number;
-    start_city: string;
-    end_city: string;
+    start_city: Point;
+    end_city: Point;
     total_travel_time: string; // Время в формате "HH:MM:SS"
     created_at: string; // Дата в формате ISO
     stops: Stop[];
@@ -155,10 +162,12 @@ export type Trips = {
     weekdays: Weekdays;
     status: string;
     route: Routes;
-    bus: Bus;
-    driver: number; // ID водителя
+    bus: Bus | null;
+    driver: Driver | null;
     from_city: string;
     to_city: string;
+    status_description?: string;
+    come_to_point?: string;
 };
 
 export type Passenger = {

@@ -1,112 +1,100 @@
 'use client';
-import React, { useState } from 'react'
-import Clock from '@/assets/admin/Clock'
-import Calendar from '@/assets/admin/Calendar'
-import Link from 'next/link';
+
 import Arrow from '@/assets/admin/Arrow';
-import { useServerActionQuery } from '@/lib/server-action-hooks';
-import { getRoutesAction } from '@/app/admin/main/routes/action';
-import Spinner from '@/components/spinner';
+import Calendar from '@/assets/admin/Calendar';
+import Clock from '@/assets/admin/Clock';
+import { Button } from '@/components/ui/button';
+import { Routes } from '@/data/types';
 import { dateTimeToReadable } from '@/utils/helper.';
 
-const Table = () => {
-    const [isActive, setIsActive] = useState(false);
-    const { data, isPending } = useServerActionQuery(getRoutesAction, {
-        input: undefined,
-        queryKey: ['getRoutes'],
-    });
+type Props = {
+    routes: Routes[];
+};
 
-    const handleButtonClick = () => {
-        setIsActive(!isActive);
-        console.log('edit routes activated'); 
-    };
-    if (isPending) {
-        return (
-            <div className="flex justify-center py-11">
-                <Spinner />
-            </div>
-        );
-    }
-    console.log(data);
+const RoutesTable = ({ routes }: Props) => {
     return (
-        <table className=" rounded-[20px] bg-white w-full px-5 pb-3 mb-28 items-center justify-center mt-[17px] border-separate border-spacing-y-2">
-            <tbody>
-                <tr className="w-full py-[6px]">
-                    <th className="py-5 px-6 w-fit text-start leading-[22.4px] uppercase items-start font-bold text-[#A0A0A0] text-[16px]">
-                        Маршрут
-                    </th>
-                    <th className="py-5 text-start leading-[22.4px] uppercase items-start font-bold text-[#A0A0A0] text-[16px]">
-
-                    </th>
-                    <th className="py-5 text-start leading-[22.4px] uppercase items-start font-bold text-[#A0A0A0] text-[16px]">
-
-                    </th>
-                    <th className="py-5 text-start leading-[22.4px] uppercase items-start font-bold text-[#A0A0A0] text-[16px]">
-                        остановки
-                    </th>
-                    <th className="py-5 text-start leading-[22.4px] uppercase items-start font-bold text-[#A0A0A0] text-[16px]">
-                        Время пути
-                    </th>
-                    <th className="py-5 text-start leading-[22.4px] uppercase items-start font-bold text-[#A0A0A0] text-[16px]">
-                        Дата создания
-                    </th>
-                    <th className="py-5 text-start leading-[22.4px] uppercase items-start font-bold text-[#A0A0A0] text-[16px]">
-
-                    </th>
-                </tr>
-                {data?.map((routes) => (
-
-                    <tr className="bg-[#F1F5F9]" key={routes.start_city}>
-                        <td className="pl-6 w-fit max-w-20 rounded-l-[10px]">
-                            <div className="flex flex-row items-center gap-[18px] w-fit">
-                                <div className="w-8 h-8 rounded-full bg-[#E74949] flex items-center justify-center text-white text-lg">
-                                    A
-                                </div>
-                                <p className='text-base font-medium text-[#4A4A4A]'>{routes.start_city}</p>
-                            </div>
-                        </td>
-                        <td className="text-base font-bold text-[#E74949] pr-5">
-                            <Arrow color='#4A4A4A' width={26} height={0} />
-                        </td>
-                        <td className="text-base font-medium">
-                            <div className="flex flex-row items-center gap-[18px]">
-                                <div className="w-8 h-8 rounded-full bg-[#E74949] flex items-center justify-center text-white text-lg">
-                                    В
-                                </div>
-                                <p className='text-base font-medium text-[#4A4A4A]'>{routes.end_city}</p>
-                            </div>
-
-                        </td>
-                        <td className="text-base font-semibold text-[#4A4A4A]">
-                            {routes.stops.length}
-                        </td>
-                        <td>
-                            <div className="flex flex-row gap-2 items-center">
-                                <Clock color='#E74949' width={16} height={16} />
-                                <p className="text-base font-semibold text-[#E74949]">{routes.total_travel_time}</p>
-                            </div>
-                        </td>
-                        <td>
-                            <div className="flex flex-row gap-2 items-center">
-                                <Calendar color='#E74949' width={16} height={16} />
-                                <p className="text-base font-semibold text-[#4A4A4A]">
-                                    {dateTimeToReadable(routes.created_at)}
-                                    </p>
-                            </div>
-                        </td>
-                        <td className=" py-4 pr-6 rounded-r-[10px]">
-
-                            <Link href='/admin/main/routes/new-route'>
-                                <button className='py-3 ml-auto px-8 flex items-center justify-center rounded-[10px] border border-[#E74949] text-sm font-semibold text-[#E74949] hover:bg-[#F16363] hover:text-white duration-150' onClick={handleButtonClick}>
-                                    Редактировать
-                                </button>
-                            </Link>
-                        </td>
+        <div className="mb-28 mt-[17px] overflow-hidden rounded-[20px] bg-white px-5 pb-3">
+            <table className="w-full border-separate border-spacing-y-2">
+                <thead>
+                    <tr>
+                        <th className="py-5 text-left text-sm font-bold uppercase text-[#A0A0A0]">
+                            Маршрут
+                        </th>
+                        <th className="py-5 text-left text-sm font-bold uppercase text-[#A0A0A0]">
+                            Остановки
+                        </th>
+                        <th className="py-5 text-left text-sm font-bold uppercase text-[#A0A0A0]">
+                            Время в пути
+                        </th>
+                        <th className="py-5 text-left text-sm font-bold uppercase text-[#A0A0A0]">
+                            Создан
+                        </th>
+                        <th aria-label="Действия" />
                     </tr>
-                ))}
-            </tbody>
-        </table>
-    )
-}
+                </thead>
+                <tbody>
+                    {routes.map((route) => (
+                        <tr className="bg-[#F1F5F9]" key={route.id}>
+                            <td className="rounded-l-[10px] py-4 pl-6">
+                                <div className="flex items-center gap-4">
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#E74949] text-lg text-white">
+                                        A
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <p className="font-medium text-[#4A4A4A]">
+                                            {route.start_city.name}
+                                        </p>
+                                        <Arrow
+                                            color="#4A4A4A"
+                                            width={26}
+                                            height={0}
+                                        />
+                                        <p className="font-medium text-[#4A4A4A]">
+                                            {route.end_city.name}
+                                        </p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <p className="font-semibold text-[#4A4A4A]">
+                                    {route.stops.length}
+                                </p>
+                            </td>
+                            <td>
+                                <div className="flex items-center gap-2">
+                                    <Clock
+                                        color="#E74949"
+                                        width={16}
+                                        height={16}
+                                    />
+                                    <p className="font-semibold text-[#E74949]">
+                                        {route.total_travel_time}
+                                    </p>
+                                </div>
+                            </td>
+                            <td>
+                                <div className="flex items-center gap-2">
+                                    <Calendar
+                                        color="#E74949"
+                                        width={16}
+                                        height={16}
+                                    />
+                                    <p className="font-semibold text-[#4A4A4A]">
+                                        {dateTimeToReadable(route.created_at)}
+                                    </p>
+                                </div>
+                            </td>
+                            <td className="rounded-r-[10px] py-4 pr-6 text-right">
+                                <Button variant="outline" disabled>
+                                    Редактирование скоро
+                                </Button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
+};
 
-export default Table;
+export default RoutesTable;

@@ -14,7 +14,15 @@ const adminUserSchema = z.object({
 
 const staffLoginResponseSchema = z.object({
     token: z.string().min(1),
-    user: adminUserSchema,
+    user: adminUserSchema.optional(),
+});
+
+const adminUserProfileSchema = z.object({
+    id: z.number().int().positive(),
+    profile: z.object({
+        full_name: z.string().nullable().optional(),
+        phone_number: z.string().nullable().optional(),
+    }),
 });
 
 const adminSessionPayloadSchema = z.object({
@@ -78,6 +86,43 @@ export async function getAdminSessionFromRequest(request: NextRequest) {
     );
 }
 
+async function loadAdminUser(apiUrl: string, token: string, fallbackUsername: string) {
+    const profileResponse = await fetch(`${apiUrl}/accounts/user-profile`, {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`,
+        },
+        cache: 'no-store',
+    });
+
+    if (!profileResponse.ok) {
+        return {
+            id: 1,
+            username: fallbackUsername,
+            full_name: null,
+        } satisfies AdminUser;
+    }
+
+    const profileResult = adminUserProfileSchema.safeParse(
+        await profileResponse.json()
+    );
+
+    if (!profileResult.success) {
+        return {
+            id: 1,
+            username: fallbackUsername,
+            full_name: null,
+        } satisfies AdminUser;
+    }
+
+    return {
+        id: profileResult.data.id,
+        username:
+            profileResult.data.profile.phone_number ?? fallbackUsername ?? null,
+        full_name: profileResult.data.profile.full_name ?? null,
+    } satisfies AdminUser;
+}
+
 export async function loginAdmin(credentials: AdminCredentials) {
     const apiUrl = process.env.API_URL?.replace(/\/$/, '');
 
@@ -116,10 +161,14 @@ export async function loginAdmin(credentials: AdminCredentials) {
         throw new Error('Сервис авторизации вернул некорректный ответ');
     }
 
+    const user =
+        result.data.user ??
+        (await loadAdminUser(apiUrl, result.data.token, credentials.username));
+
     const session: AdminSession = {
         type: 'admin',
         token: result.data.token,
-        user: result.data.user,
+        user,
     };
     const expires = new Date(
         Date.now() + ADMIN_SESSION_DURATION_SECONDS * 1000
@@ -141,21 +190,8 @@ export async function loginAdmin(credentials: AdminCredentials) {
 }
 
 export async function logoutAdmin() {
-    const session = await getAdminSession();
-
-    if (session) {
-        try {
-            await fetch(`${process.env.API_URL}/accounts/delete-user/`, {
-                method: 'POST',
-                headers: {
-                    Authorization: `Token ${session.token}`,
-                },
-                cache: 'no-store',
-            });
-        } catch {
-            // Local logout must still succeed when the API is unavailable.
-        }
-    }
+    // TODO: Switch to a dedicated backend logout endpoint when the contract is available.
+    // We intentionally do not call delete-user here because logout must not remove accounts.
 
     cookies().set(ADMIN_SESSION_COOKIE, '', {
         httpOnly: true,

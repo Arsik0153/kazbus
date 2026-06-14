@@ -1,91 +1,76 @@
 'use client';
-import React, { Suspense, useState } from 'react';
-import Button from '@/components/button';
-import Plus from '@/assets/admin/Plus';
-import Edit from '@/assets/admin/Edit';
-import Filter from '@/assets/admin/Filter';
-import ComboBox from './_components/inputCombo';
-import Table from './_components/table';
+
 import Link from 'next/link';
-import CalendarPC from '@/components/calendar/select-date';
 
+import Plus from '@/assets/admin/Plus';
+import AdminStateCard from '@/components/admin/state-card';
+import Spinner from '@/components/spinner';
+import { Button } from '@/components/ui/button';
+import { useServerActionQuery } from '@/lib/server-action-hooks';
 
-const Trips = () => {
-    
-    const handleSelectionChange = (name: string, selected: any) => {
-        console.log(`${name} selected:`, selected);
-        // Добавьте здесь необходимую логику для обработки выбора
-    };
-    const handleBirthDateChange = () => {
-        console.log('ewfw');
-    };
-    
+import Table from './_components/table';
+import { getTripsAction } from './action';
+
+const TripsPage = () => {
+    const { data, isPending, error, refetch } = useServerActionQuery(
+        getTripsAction,
+        {
+            input: undefined,
+            queryKey: ['getTrips'],
+        }
+    );
 
     return (
         <div className="mt-6 flex flex-col">
-            <div className="flex flex-row justify-between">
-                <p className="text-[42px] font-semibold text-[#4A4A4A]">
+            <div className="flex flex-row items-center justify-between">
+                <h1 className="text-[42px] font-semibold text-[#4A4A4A]">
                     Рейсы
-                </p>
-                <div className="flex flex-row gap-3">
-                    <Link
-                        href="/admin/main/trips/new-trip"
-                        className="flex flex-row items-center justify-center gap-[10px] rounded-[10px] bg-[#E32B2B] px-12 py-[14px] text-base font-semibold text-[#FBFBFB] duration-150 hover:bg-[#F16363] hover:text-white"
-                    >
-                        <Plus color="#fff" width={20} height={20} />
-                        Запустить рейс
-                    </Link>
-                    <Link
-                        href=""
-                        className="flex flex-row items-center justify-center gap-[10px] rounded-[10px] border bg-white px-11 py-[14px] text-base font-semibold text-[#E32B2B] duration-150 hover:border-[#F16363]"
-                    >
-                        <Edit color="#E32B2B" width={20} height={20} />
-                        Редактировать несколько рейсов
-                    </Link>
+                </h1>
+                <div className="flex gap-3">
+                    <Button asChild size="lg" className="px-8 text-base">
+                        <Link href="/admin/main/trips/new-trip">
+                            <Plus color="#fff" width={20} height={20} />
+                            Создать рейс
+                        </Link>
+                    </Button>
+                    <Button size="lg" variant="outline" disabled>
+                        Массовое редактирование скоро
+                    </Button>
                 </div>
             </div>
 
-            <div className="mb-20 mt-3 flex flex-col rounded-[20px] border bg-[#FFFFFF] p-6">
-                <div className="flex flex-row justify-between rounded-[10px] border px-3 py-3">
-                    <div className="ml-2 flex flex-row items-center gap-[5px]">
-                        <Filter color="#E32B2B" width={20} height={20} />
-                        <p className="text-base font-semibold text-[#E32B2B]">
-                            Фильтр
-                        </p>
-                    </div>
-                    <div className="flex flex-row items-center">
-                        <p className="mr-3 text-base font-medium">C</p>
-                        <Suspense>
-                            <CalendarPC
-                                value={null}
-                                onChange={handleBirthDateChange}
-                            />
-
-                        </Suspense>
-                        <p className="ml-[14px] mr-3 text-base font-medium">
-                            По
-                        </p>
-                        <Suspense>
-                            <CalendarPC
-                                value={null}
-                                onChange={handleBirthDateChange}
-                            />
-                        </Suspense>
-                        <div className="ml-2 flex flex-row items-center gap-2">
-                            <ComboBox
-                                name="filterComboBox"
-                                onSelectionChange={handleSelectionChange}
-                                placeholder="Маршруты"
-                            />
-                            <Button variant="ultrared">Применить</Button>
-                        </div>
-                    </div>
+            {isPending ? (
+                <div className="flex justify-center py-24">
+                    <Spinner />
                 </div>
-
-                <Table />
-            </div>
+            ) : error ? (
+                <AdminStateCard
+                    title="Не удалось загрузить рейсы"
+                    description="Повторите попытку позже или проверьте доступность backend."
+                    action={
+                        <Button variant="outline" onClick={() => refetch()}>
+                            Повторить
+                        </Button>
+                    }
+                />
+            ) : data && data.length > 0 ? (
+                <Table trips={data} />
+            ) : (
+                <AdminStateCard
+                    title="Рейсы еще не созданы"
+                    description="Создайте первый рейс и запустите его в продажу, когда backend-контракт будет полностью готов."
+                    action={
+                        <Button asChild size="lg" className="px-8 text-base">
+                            <Link href="/admin/main/trips/new-trip">
+                                <Plus color="#fff" width={20} height={20} />
+                                Создать рейс
+                            </Link>
+                        </Button>
+                    }
+                />
+            )}
         </div>
     );
 };
 
-export default Trips;
+export default TripsPage;

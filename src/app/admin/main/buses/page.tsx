@@ -1,62 +1,71 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import Plus from '@/assets/admin/Plus';
-import Table from '@/app/admin/main/buses/_components/table';
+
 import Link from 'next/link';
-import { useServerActionQuery } from '@/lib/server-action-hooks';
-import { getBusesAction } from './actions';
+
+import Plus from '@/assets/admin/Plus';
+import AdminStateCard from '@/components/admin/state-card';
 import Spinner from '@/components/spinner';
+import { Button } from '@/components/ui/button';
+import { useServerActionQuery } from '@/lib/server-action-hooks';
 
-const Buses = () => {
-    const { data, isPending } = useServerActionQuery(getBusesAction, {
-        input: undefined,
-        queryKey: ['getBuses'],
-    });
-    const [buses, setBuses] = useState<any[]>([]);
+import Table from './_components/table';
+import { getBusesAction } from './actions';
 
-    useEffect(() => {
-        if (data) {
-            setBuses(data);
+const BusesPage = () => {
+    const { data, isPending, error, refetch } = useServerActionQuery(
+        getBusesAction,
+        {
+            input: undefined,
+            queryKey: ['getBuses'],
         }
-    }, [data]);
-
-    if (isPending) {
-        return (
-            <div className="flex justify-center py-11">
-                <Spinner />
-            </div>
-        );
-    }
+    );
 
     return (
-        <div className="flex flex-col mt-6">
-            <div className="flex flex-row justify-between">
-                <p className="text-[42px] font-semibold text-[#4A4A4A]">Автобусы</p>
-                <div className="flex flex-row gap-3">
+        <div className="mt-6 flex flex-col">
+            <div className="flex flex-row items-center justify-between">
+                <h1 className="text-[42px] font-semibold text-[#4A4A4A]">
+                    Автобусы
+                </h1>
+                <Button asChild size="lg" className="px-8 text-base">
                     <Link href="/admin/main/buses/new-bus">
-                        <p className="flex py-[14px] px-12 flex-row hover:bg-[#F16363] duration-100 rounded-[10px] gap-[10px] items-center justify-center bg-[#E32B2B] text-base font-semibold text-[#FBFBFB]">
-                            <Plus color="#fff" width={20} height={20} />
-                            Добавить автобус
-                        </p>
+                        <Plus color="#fff" width={20} height={20} />
+                        Добавить автобус
                     </Link>
-                </div>
+                </Button>
             </div>
 
-            {buses.length > 0 ? (
-                <Table />
-            ) : (
-                <div className="flex flex-col rounded-[20px] bg-white w-full py-[108px] items-center justify-center gap-4 mt-[14px]">
-                    <p className="text-[36px] font-semibold text-center text-[#4A4A4A]">Автобусы еще не <br /> зарегистрированы в системе</p>
-                    <Link href="/admin/main/buses/new-bus">
-                        <p className="flex py-[14px] px-12 flex-row hover:bg-[#F16363] duration-100 rounded-[10px] gap-[10px] items-center justify-center bg-[#E32B2B] text-base font-semibold text-[#FBFBFB]">
-                            <Plus color="#fff" width={20} height={20} />
-                            Добавить автобус
-                        </p>
-                    </Link>
+            {isPending ? (
+                <div className="flex justify-center py-24">
+                    <Spinner />
                 </div>
+            ) : error ? (
+                <AdminStateCard
+                    title="Не удалось загрузить автобусы"
+                    description="Проверьте доступ к API или повторите попытку еще раз."
+                    action={
+                        <Button variant="outline" onClick={() => refetch()}>
+                            Повторить
+                        </Button>
+                    }
+                />
+            ) : data && data.length > 0 ? (
+                <Table buses={data} />
+            ) : (
+                <AdminStateCard
+                    title="Автобусы еще не добавлены"
+                    description="Добавьте первый автобус, чтобы потом назначать его на рейсы."
+                    action={
+                        <Button asChild size="lg" className="px-8 text-base">
+                            <Link href="/admin/main/buses/new-bus">
+                                <Plus color="#fff" width={20} height={20} />
+                                Добавить автобус
+                            </Link>
+                        </Button>
+                    }
+                />
             )}
         </div>
     );
 };
 
-export default Buses;
+export default BusesPage;

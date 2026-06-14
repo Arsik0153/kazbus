@@ -1,89 +1,45 @@
-'use client';
-import React, { useState } from 'react';
-import ComboBox from '@/app/admin/main/trips/_components/inputCombo';
-import PhaseA from './_components/phaseA';
-import PhaseB from './_components/phaseB';
+import Link from 'next/link';
+
 import { Button } from '@/components/ui/button';
-import { DatePicker } from '@/components/ui/date-picker';
-import { BaseCombobox } from '@/components/base/combobox';
-import { Input } from '@/components/ui/input';
 
-const NewTrips = () => {
-    const [selections, setSelections] = useState<Record<string, any | null>>({
-        route: null,
-        driver: null,
-        bus: null,
-    });
-
-    const handleSelectionChange = (name: string, selected: any | null) => {
-        setSelections((prevSelections) => ({
-            ...prevSelections,
-            [name]: selected,
-        }));
-    };
-
-    // Проверяем, все ли значения выбраны
-    const allSelected = Object.values(selections).every(
-        (value) => value !== null
-    );
-
+const NewTripPage = () => {
     return (
-        <div className="my-6 flex flex-col gap-4">
-            <p className="text-2xl font-semibold text-[#4A4A4A]">
-                Добавить рейс
-            </p>
-            <div className="flex flex-col rounded-[20px] border bg-white px-8 py-10">
-                {/* Комбобоксы старт */}
-                <div className="flex flex-row items-start gap-8">
-                    <div className="flex flex-col items-start gap-1">
-                        <p className="text-lg font-semibold text-[#4A4A4A]">
-                            Выберите маршрут
-                        </p>
-                        <BaseCombobox
-                            options={[
-                                { value: '1', label: 'Кокшетау - Астана' },
-                                { value: '2', label: 'Кокшетау - Алматы' },
-                            ]}
-                        />
-                    </div>
-                    <div className="flex flex-col items-start gap-1">
-                        <p className="text-lg font-semibold text-[#4A4A4A]">
-                            Выберите водителя
-                        </p>
-                        <BaseCombobox
-                            options={[
-                                { value: '1', label: 'Кокшетау - Астана' },
-                                { value: '2', label: 'Кокшетау - Алматы' },
-                            ]}
-                        />
-                    </div>
-                </div>
-                <div className="mt-6 flex flex-col items-start gap-1">
-                    <p className="text-lg font-semibold text-[#4A4A4A]">
-                        Выберите автобус
+        <div className="mt-6 flex flex-col gap-4">
+            <h1 className="text-[42px] font-semibold text-[#4A4A4A]">
+                Создать рейс
+            </h1>
+            <div className="rounded-[20px] bg-white px-8 py-12">
+                <div className="max-w-3xl">
+                    <p className="text-3xl font-semibold text-[#4A4A4A]">
+                        Создание рейса будет включено после стабилизации
+                        backend-контракта
                     </p>
-                    <BaseCombobox
-                        className="w-fit"
-                        options={[
-                            { value: '1', label: 'Кокшетау - Астана' },
-                            { value: '2', label: 'Кокшетау - Алматы' },
-                        ]}
-                    />
+                    <p className="mt-4 text-base font-medium text-[#A0A0A0]">
+                        В текущем API список рейсов доступен, но контракт на
+                        создание еще не гарантирует корректную привязку всех
+                        обязательных продуктовых полей, прежде всего маршрута и
+                        полного сценария публикации.
+                    </p>
+                    <p className="mt-4 text-base font-medium text-[#A0A0A0]">
+                        Поэтому кабинет пока не показывает псевдо-рабочую форму.
+                        После согласования backend полей здесь будет подключена
+                        стабильная форма с реальными маршрутами, автобусами и
+                        водителями.
+                    </p>
+                    <div className="mt-8 flex gap-3">
+                        <Button asChild size="lg">
+                            <Link href="/admin/main/trips">
+                                Вернуться к списку рейсов
+                            </Link>
+                        </Button>
+                        <Button asChild size="lg" variant="outline">
+                            <Link href="/admin/main">На дашборд</Link>
+                        </Button>
+                    </div>
                 </div>
-                <Button
-                    size="xl"
-                    variant="default"
-                    className="mt-4 w-fit px-12"
-                >
-                    Сохранить водителя
-                </Button>
-
-                {/* Отображение PhaseA и PhaseB в зависимости от выбора */}
-                {allSelected && <PhaseA />}
-                {allSelected && <PhaseB />}
             </div>
         </div>
     );
 };
 
-export default NewTrips;
+export default NewTripPage;

@@ -205,6 +205,78 @@ export const driverSchema = z
         }
     });
 
+export const busSeatSchema = z.object({
+    seat_id: z.number().int().nonnegative(),
+    seat_col: z.number().int().nonnegative(),
+    seat_row: z.number().int().nonnegative(),
+    seat_type: z.enum(['aisle', 'passenger', 'driver']),
+});
+
+export const busSchema = z
+    .object({
+        name: z
+            .string({ required_error: 'Введите внутреннее название автобуса' })
+            .trim()
+            .min(1, 'Введите внутреннее название автобуса')
+            .max(255, 'Название слишком длинное'),
+        stamp: z
+            .string({ required_error: 'Введите марку автобуса' })
+            .trim()
+            .min(1, 'Введите марку автобуса')
+            .max(255, 'Марка слишком длинная'),
+        model: z
+            .string({ required_error: 'Введите модель автобуса' })
+            .trim()
+            .min(1, 'Введите модель автобуса')
+            .max(255, 'Модель слишком длинная'),
+        state_number: z
+            .string({ required_error: 'Введите государственный номер' })
+            .trim()
+            .min(1, 'Введите государственный номер')
+            .max(10, 'Государственный номер слишком длинный'),
+        VIN: z
+            .string({ required_error: 'Введите VIN' })
+            .trim()
+            .min(1, 'Введите VIN')
+            .max(17, 'VIN не должен быть длиннее 17 символов'),
+        count_of_seats: z.coerce
+            .number({
+                required_error: 'Введите количество мест',
+                invalid_type_error: 'Введите количество мест',
+            })
+            .int('Количество мест должно быть целым числом')
+            .positive('Количество мест должно быть больше 0'),
+        floors: z.coerce
+            .number({
+                required_error: 'Выберите количество этажей',
+                invalid_type_error: 'Выберите количество этажей',
+            })
+            .int()
+            .refine((value) => value === 1 || value === 2, {
+                message: 'Количество этажей должно быть 1 или 2',
+            }),
+        have_toilet: z.boolean().default(false),
+        have_wifi: z.boolean().default(false),
+        is_recumbent: z.boolean().default(false),
+        seats: z
+            .array(busSeatSchema)
+            .min(1, 'Настройте схему автобуса хотя бы с одним местом'),
+    })
+    .superRefine((data, context) => {
+        const passengerSeats = data.seats.filter(
+            (seat) => seat.seat_type === 'passenger'
+        ).length;
+
+        if (passengerSeats !== data.count_of_seats) {
+            context.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['seats'],
+                message:
+                    'Количество пассажирских мест в схеме должно совпадать с указанным количеством мест',
+            });
+        }
+    });
+
 const PassengerSchema = z.object({
     passenger: z.number().nullable(),
     place_num: z.number(),

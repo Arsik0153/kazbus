@@ -41,7 +41,7 @@ const LoginPage = () => {
                 src={'/Ellipse.svg'}
                 width={622}
                 height={750}
-                className="absolute left-0 top-0"
+                className="pointer-events-none absolute left-0 top-0"
                 alt={''}
             />
 
@@ -49,14 +49,14 @@ const LoginPage = () => {
                 src={'/Ellipse.svg'}
                 width={622}
                 height={750}
-                className="absolute right-0 top-0"
+                className="pointer-events-none absolute right-0 top-0"
                 alt={''}
             />
-            <div className="mt-12 flex flex-col items-center">
+            <div className="relative z-10 mt-12 flex flex-col items-center">
                 <Image src={'/logo.svg'} width={80} height={80} alt={'Logo'} />
                 <div className="flex w-full max-w-[340px] flex-col gap-4 rounded-[20px] bg-white px-6 pb-8 pt-11 shadow-md">
                     <h2 className="text-center text-4xl font-bold text-[#E32B2B]">
-                        Авторизация таксопарка
+                        Авторизация автопарка
                     </h2>
                     <form onSubmit={onSubmit} className="flex flex-col gap-2">
                         <Input
@@ -76,8 +76,12 @@ const LoginPage = () => {
                         />
                         <ErrorMessage message={errors.password?.message} />
 
-                        <Button variant="secondary" loading={isPending}>
-                            Войти в таксопарк
+                        <Button
+                            type="submit"
+                            variant="secondary"
+                            loading={isPending}
+                        >
+                            Войти в кабинет
                         </Button>
                     </form>
                 </div>
