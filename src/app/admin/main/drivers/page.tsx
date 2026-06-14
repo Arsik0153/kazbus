@@ -1,57 +1,68 @@
 'use client';
-import React from 'react';
-import Plus from '@/assets/admin/Plus';
-import Table from '@/app/admin/main/drivers/_components/table';
+
 import Link from 'next/link';
+import { Plus } from 'lucide-react';
+import DriversTable from './_components/table';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
 import { getDriversAction } from './actions';
 import Spinner from '@/components/spinner';
+import { Button } from '@/components/ui/button';
 
-const Buses = () => {
-    const { data, isPending } = useServerActionQuery(getDriversAction, {
-        input: undefined,
-        queryKey: ['getDrivers'],
-    });
-
-    if (isPending) {
-        return (
-            <div className="flex justify-center py-11">
-                <Spinner />
-            </div>
-        );
-    }
+const DriversPage = () => {
+    const { data, isPending, error, refetch } = useServerActionQuery(
+        getDriversAction,
+        {
+            input: undefined,
+            queryKey: ['getDrivers'],
+        }
+    );
 
     return (
-        <div className="flex flex-col mt-6">
-            <div className="flex flex-row justify-between">
-                <p className="text-[42px] font-semibold text-[#4A4A4A]">Водители</p>
-                <div className="flex flex-row gap-3">
+        <div className="mt-6 flex flex-col">
+            <div className="flex flex-row items-center justify-between">
+                <h1 className="text-[42px] font-semibold text-[#4A4A4A]">
+                    Водители
+                </h1>
+                <Button asChild size="lg" className="px-8 text-base">
                     <Link href="/admin/main/drivers/new-driver">
-                        <p className="flex py-[14px] px-12 flex-row hover:bg-[#F16363] duration-100 rounded-[10px] gap-[10px] items-center justify-center bg-[#E32B2B] text-base font-semibold text-[#FBFBFB]">
-                            <Plus color="#fff" width={20} height={20} />
-                            Добавить водителя
-                        </p>
+                        <Plus />
+                        Добавить водителя
                     </Link>
-                </div>
+                </Button>
             </div>
 
-            {data && data.length > 0 ? (
-                <Table />
-            ) : (
-                <div className="flex flex-col rounded-[20px] bg-white w-full py-[108px] items-center justify-center gap-4 mt-[14px]">
-                    <p className="text-[36px] font-semibold text-center text-[#4A4A4A]">
-                        Водители не <br /> зарегистрированы в системе
+            {isPending ? (
+                <div className="flex justify-center py-24">
+                    <Spinner />
+                </div>
+            ) : error ? (
+                <div className="mt-4 flex flex-col items-center gap-4 rounded-[20px] bg-white py-24">
+                    <p className="text-xl font-semibold text-[#4A4A4A]">
+                        Не удалось загрузить водителей
                     </p>
-                    <Link href="/admin/main/drivers/new-driver">
-                        <p className="flex py-[14px] px-12 flex-row hover:bg-[#F16363] duration-100 rounded-[10px] gap-[10px] items-center justify-center bg-[#E32B2B] text-base font-semibold text-[#FBFBFB]">
-                            <Plus color="#fff" width={20} height={20} />
+                    <Button variant="outline" onClick={() => refetch()}>
+                        Повторить
+                    </Button>
+                </div>
+            ) : data && data.length > 0 ? (
+                <DriversTable drivers={data} />
+            ) : (
+                <div className="mt-[14px] flex w-full flex-col items-center justify-center gap-4 rounded-[20px] bg-white py-[108px]">
+                    <p className="text-center text-[36px] font-semibold text-[#4A4A4A]">
+                        Водители ещё не
+                        <br />
+                        зарегистрированы в системе
+                    </p>
+                    <Button asChild size="lg" className="px-8 text-base">
+                        <Link href="/admin/main/drivers/new-driver">
+                            <Plus />
                             Добавить водителя
-                        </p>
-                    </Link>
+                        </Link>
+                    </Button>
                 </div>
             )}
         </div>
     );
 };
 
-export default Buses;
+export default DriversPage;

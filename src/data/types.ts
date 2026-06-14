@@ -109,8 +109,16 @@ export type GetRequestData = {
 };
 
 export type Driver = {
+    id: number;
+    picture: string | null;
     full_name: string;
     date_of_birth: string;
+    license_number: string;
+    license_issue_date: string;
+    is_active: boolean;
+    trip_count: number;
+    created_at: string;
+    updated_at: string;
 };
 
 export type Bus = {
