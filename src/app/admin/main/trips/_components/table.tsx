@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { Pencil } from 'lucide-react';
 
 import Pulse from '@/components/admin/pulse';
 import { Button } from '@/components/ui/button';
@@ -110,12 +111,28 @@ const TripsTable = ({ trips }: Props) => {
                                     </span>
                                 </div>
                             </td>
-                            <td className="py-4 pr-6 text-right">
-                                <Button asChild variant="outline">
-                                    <Link href={`/admin/main/trips/${trip.id}`}>
-                                        Подробнее
-                                    </Link>
-                                </Button>
+                            <td className="py-4 pr-6">
+                                <div className="flex items-center justify-end gap-2">
+                                    <Button asChild variant="outline">
+                                        <Link
+                                            href={`/admin/main/trips/${trip.id}`}
+                                        >
+                                            Подробнее
+                                        </Link>
+                                    </Button>
+                                    <Button
+                                        asChild
+                                        variant="outline"
+                                        size="icon-lg"
+                                        aria-label="Редактировать рейс"
+                                    >
+                                        <Link
+                                            href={`/admin/main/trips/${trip.id}/edit`}
+                                        >
+                                            <Pencil />
+                                        </Link>
+                                    </Button>
+                                </div>
                             </td>
                         </tr>
                     ))}

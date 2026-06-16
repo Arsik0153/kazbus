@@ -1,13 +1,9 @@
 import { notFound } from 'next/navigation';
 
-import type { Trips } from '@/data/types';
 import { adminFetch } from '@/lib/admin-api';
 
 import TripDetailsView from '../_components/trip-details-view';
-import {
-    getCurrentTripRunDetails,
-    getTripHistoryRuns,
-} from '../_data/trip-details';
+import type { AdminTripDetailsResponse } from '../_data/trip-details';
 
 type Props = {
     params: {
@@ -15,33 +11,33 @@ type Props = {
     };
 };
 
-async function getTrip(tripId: string) {
-    const response = await adminFetch('/trip/trips/');
+async function getTripDetails(tripId: string) {
+    const response = await adminFetch(`/trip/trips/${tripId}/admin-details/`);
 
-    if (!response.ok) {
-        throw new Error('Не удалось загрузить рейс');
+    if (response.status === 404) {
+        return null;
     }
 
-    const trips = (await response.json()) as Trips[];
+    if (!response.ok) {
+        throw new Error('Не удалось загрузить детали рейса');
+    }
 
-    return trips.find((trip) => String(trip.id) === tripId) ?? null;
+    return (await response.json()) as AdminTripDetailsResponse;
 }
 
 export default async function AdminTripDetailsPage({ params }: Props) {
-    const trip = await getTrip(params.tripId);
+    const details = await getTripDetails(params.tripId);
 
-    if (!trip) {
+    if (!details) {
         notFound();
     }
 
-    const historyRuns = getTripHistoryRuns(trip);
-    const currentRun = getCurrentTripRunDetails(trip);
-
     return (
         <TripDetailsView
-            trip={trip}
-            run={currentRun}
-            historyRuns={historyRuns}
+            trip={details.trip}
+            run={details.current_run}
+            historyRuns={details.history_runs}
+            summary={details.summary}
             mode="current"
         />
     );

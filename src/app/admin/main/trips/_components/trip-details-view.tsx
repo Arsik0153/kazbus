@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import type {
     AdminTripPassengerStatus,
     AdminTripRunDetails,
+    AdminTripSummary,
     AdminTripStepState,
 } from '../_data/trip-details';
 
@@ -23,6 +24,7 @@ type Props = {
     trip: Trips;
     run: AdminTripRunDetails;
     historyRuns: AdminTripRunDetails[];
+    summary: AdminTripSummary;
     mode: 'current' | 'history';
 };
 
@@ -78,48 +80,20 @@ function getMissingPassengers(run: AdminTripRunDetails) {
     return run.passengers.filter((passenger) => passenger.status !== 'boarded');
 }
 
-function getAverageOccupancy(historyRuns: AdminTripRunDetails[]) {
-    if (historyRuns.length === 0) {
-        return 0;
-    }
-
-    const totalOccupancy = historyRuns.reduce((sum, historyRun) => {
-        return (
-            sum +
-            (getBoardedPassengers(historyRun).length /
-                historyRun.passengerCapacity) *
-                100
-        );
-    }, 0);
-
-    return Math.round(totalOccupancy / historyRuns.length);
-}
-
-function getTotalRevenue(historyRuns: AdminTripRunDetails[], trip: Trips) {
-    const ticketPrice = Number(trip.ticket_price) || 0;
-
-    return historyRuns.reduce(
-        (sum, historyRun) =>
-            sum + getBoardedPassengers(historyRun).length * ticketPrice,
-        0
-    );
-}
-
-const TripDetailsView = ({ trip, run, historyRuns, mode }: Props) => {
+const TripDetailsView = ({ trip, run, summary, mode }: Props) => {
     const boardedPassengers = getBoardedPassengers(run);
     const missingPassengers = getMissingPassengers(run);
-    const totalPassengers = run.passengers.length;
-    const averageOccupancy = getAverageOccupancy(historyRuns);
-    const totalRevenue = getTotalRevenue(historyRuns, trip);
+    const averageOccupancy = summary.average_occupancy;
+    const totalRevenue = Number(summary.revenue) || 0;
 
     const metrics = [
         {
             label: 'Общее число пассажиров',
-            value: String(totalPassengers),
+            value: String(summary.total_passengers),
             hint:
                 mode === 'current'
-                    ? 'в текущем manifest-е'
-                    : 'в завершенной поездке',
+                    ? 'по всем поездкам рейса'
+                    : 'по истории этого рейса',
         },
         {
             label: 'Средняя загруженность автобуса',
@@ -162,7 +136,7 @@ const TripDetailsView = ({ trip, run, historyRuns, mode }: Props) => {
                         </h1>
                         <p className="mt-3 text-base font-medium text-[#A0A0A0]">
                             {run.tripDate}, {run.departureTime} -{' '}
-                            {run.arrivalTime}. Автобус:{' '}
+                            {run.arrivalTime || 'не указано'}. Автобус:{' '}
                             {trip.bus?.state_number || 'не назначен'}. Водитель:{' '}
                             {trip.driver?.full_name || 'не назначен'}.
                         </p>
@@ -206,7 +180,7 @@ const TripDetailsView = ({ trip, run, historyRuns, mode }: Props) => {
                             Пассажиров: {boardedPassengers.length}
                         </p>
                         <p className="mt-2 text-base font-medium text-[#A0A0A0]">
-                            Не пришли: {missingPassengers.length}
+                            Ещё не пришли: {missingPassengers.length}
                         </p>
                     </div>
                     <div className="rounded-[18px] bg-[#FFF8F8] px-5 py-5">
@@ -216,7 +190,7 @@ const TripDetailsView = ({ trip, run, historyRuns, mode }: Props) => {
                         </p>
                         <p className="mt-2 text-2xl font-semibold text-[#4A4A4A]">
                             {formatCurrency(
-                                boardedPassengers.length *
+                                run.passengers.length *
                                     (Number(trip.ticket_price) || 0)
                             )}
                         </p>

@@ -90,6 +90,34 @@ export const saveTripAction = createServerAction()
         return (await response.json()) as Trips;
     });
 
+export const updateTripAction = createServerAction()
+    .input(
+        z.object({
+            tripId: z.number().int().positive(),
+            values: tripSchema,
+        })
+    )
+    .handler(async ({ input }) => {
+        const response = await adminFetch(`/trip/trips/${input.tripId}/`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                ...input.values,
+                ticket_price: input.values.ticket_price.toFixed(2),
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(
+                await getAdminApiError(response, 'Не удалось обновить рейс')
+            );
+        }
+
+        return (await response.json()) as Trips;
+    });
+
 export type TripFormValues = z.output<typeof tripSchema>;
 
 // export const payTicketAction = createServerAction()

@@ -7,34 +7,66 @@ import type { Trips } from '@/data/types';
 import { adminFetch } from '@/lib/admin-api';
 
 import TripHistoryRuns from '../../_components/trip-history-runs';
-import { getTripHistoryRuns } from '../../_data/trip-details';
+import type { AdminTripRunDetails } from '../../_data/trip-details';
 
 type Props = {
     params: {
         tripId: string;
     };
+    searchParams?: {
+        date?: string;
+    };
 };
 
 async function getTrip(tripId: string) {
-    const response = await adminFetch('/trip/trips/');
+    const response = await adminFetch(`/trip/trips/${tripId}/`);
+
+    if (response.status === 404) {
+        return null;
+    }
 
     if (!response.ok) {
         throw new Error('Не удалось загрузить рейс');
     }
 
-    const trips = (await response.json()) as Trips[];
-
-    return trips.find((trip) => String(trip.id) === tripId) ?? null;
+    return (await response.json()) as Trips;
 }
 
-export default async function AdminTripHistoryPage({ params }: Props) {
-    const trip = await getTrip(params.tripId);
+async function getHistoryRuns(tripId: string, date?: string) {
+    const searchParams = new URLSearchParams();
 
-    if (!trip) {
-        notFound();
+    if (date) {
+        searchParams.set('date', date);
     }
 
-    const historyRuns = getTripHistoryRuns(trip);
+    const query = searchParams.toString();
+    const response = await adminFetch(
+        `/trip/trips/${tripId}/runs/${query ? `?${query}` : ''}`
+    );
+
+    if (response.status === 404) {
+        return null;
+    }
+
+    if (!response.ok) {
+        throw new Error('Не удалось загрузить историю рейса');
+    }
+
+    return (await response.json()) as AdminTripRunDetails[];
+}
+
+export default async function AdminTripHistoryPage({
+    params,
+    searchParams,
+}: Props) {
+    const [trip, historyRuns] = await Promise.all([
+        getTrip(params.tripId),
+        getHistoryRuns(params.tripId, searchParams?.date),
+    ]);
+
+    if (!trip || !historyRuns) {
+        notFound();
+    }
 
     return (
         <div className="mt-6 flex flex-col gap-5 pb-20">
@@ -54,7 +86,11 @@ export default async function AdminTripHistoryPage({ params }: Props) {
                 </p>
             </div>
 
-            <TripHistoryRuns tripId={trip.id} historyRuns={historyRuns} />
+            <TripHistoryRuns
+                tripId={trip.id}
+                historyRuns={historyRuns}
+                selectedDateIso={searchParams?.date}
+            />
         </div>
     );
 }

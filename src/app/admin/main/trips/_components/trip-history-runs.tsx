@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { CalendarDays, LayoutGrid, List, X } from 'lucide-react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import AdminSectionCard from '@/components/admin/section-card';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,7 @@ type ViewMode = 'cards' | 'table';
 type Props = {
     tripId: number;
     historyRuns: AdminTripRunDetails[];
+    selectedDateIso?: string;
 };
 
 function getRunStats(historyRun: AdminTripRunDetails) {
@@ -23,9 +25,12 @@ function getRunStats(historyRun: AdminTripRunDetails) {
         (passenger) => passenger.status === 'boarded'
     ).length;
     const missedPassengers = historyRun.passengers.length - boardedPassengers;
-    const occupancyRate = Math.round(
-        (boardedPassengers / historyRun.passengerCapacity) * 100
-    );
+    const occupancyRate =
+        historyRun.passengerCapacity > 0
+            ? Math.round(
+                  (boardedPassengers / historyRun.passengerCapacity) * 100
+              )
+            : 0;
 
     return {
         boardedPassengers,
@@ -42,27 +47,49 @@ function toDateIso(date: Date) {
     return `${year}-${month}-${day}`;
 }
 
-const TripHistoryRuns = ({ tripId, historyRuns }: Props) => {
-    const [viewMode, setViewMode] = useState<ViewMode>('cards');
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+function parseDateIso(dateIso?: string) {
+    if (!dateIso) {
+        return null;
+    }
 
-    const filteredRuns = useMemo(() => {
-        if (!selectedDate) {
-            return historyRuns;
+    const [year, month, day] = dateIso.split('-').map(Number);
+
+    if (!year || !month || !day) {
+        return null;
+    }
+
+    return new Date(year, month - 1, day);
+}
+
+const TripHistoryRuns = ({
+    tripId,
+    historyRuns,
+    selectedDateIso,
+}: Props) => {
+    const [viewMode, setViewMode] = useState<ViewMode>('cards');
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+    const selectedDate = parseDateIso(selectedDateIso);
+
+    const updateDateFilter = (date: Date | null) => {
+        const nextSearchParams = new URLSearchParams(searchParams.toString());
+
+        if (date) {
+            nextSearchParams.set('date', toDateIso(date));
+        } else {
+            nextSearchParams.delete('date');
         }
 
-        const selectedDateIso = toDateIso(selectedDate);
-
-        return historyRuns.filter(
-            (historyRun) => historyRun.dateIso === selectedDateIso
-        );
-    }, [historyRuns, selectedDate]);
+        const query = nextSearchParams.toString();
+        router.replace(query ? `${pathname}?${query}` : pathname);
+    };
 
     const sectionAction = (
         <div className="flex flex-wrap items-center justify-end gap-3">
             <DatePicker
                 value={selectedDate}
-                onChange={(date) => setSelectedDate(date ?? null)}
+                onChange={(date) => updateDateFilter(date ?? null)}
                 placeholder="Фильтр по дате"
                 className="min-w-[210px]"
             />
@@ -71,7 +98,7 @@ const TripHistoryRuns = ({ tripId, historyRuns }: Props) => {
                     type="button"
                     variant="outline"
                     size="lg"
-                    onClick={() => setSelectedDate(null)}
+                    onClick={() => updateDateFilter(null)}
                 >
                     <X data-icon="inline-start" />
                     Сбросить
@@ -108,18 +135,22 @@ const TripHistoryRuns = ({ tripId, historyRuns }: Props) => {
             description="Откройте поездку, чтобы увидеть пассажиров, статусы, выручку и происшествия."
             action={sectionAction}
         >
-            {filteredRuns.length === 0 ? (
+            {historyRuns.length === 0 ? (
                 <div className="rounded-[18px] bg-[#F8FAFC] px-5 py-12 text-center">
                     <p className="text-lg font-semibold text-[#4A4A4A]">
-                        За выбранную дату рейсов нет
+                        {selectedDate
+                            ? 'За выбранную дату рейсов нет'
+                            : 'Проведенных рейсов пока нет'}
                     </p>
                     <p className="mt-2 text-sm font-medium text-[#A0A0A0]">
-                        Сбросьте фильтр или выберите другую дату.
+                        {selectedDate
+                            ? 'Сбросьте фильтр или выберите другую дату.'
+                            : 'Когда водитель начнет поездки, они появятся здесь.'}
                     </p>
                 </div>
             ) : viewMode === 'cards' ? (
                 <div className="grid grid-cols-3 gap-4">
-                    {filteredRuns.map((historyRun) => {
+                    {historyRuns.map((historyRun) => {
                         const {
                             boardedPassengers,
                             missedPassengers,
@@ -194,7 +225,7 @@ const TripHistoryRuns = ({ tripId, historyRuns }: Props) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredRuns.map((historyRun) => {
+                            {historyRuns.map((historyRun) => {
                                 const {
                                     boardedPassengers,
                                     missedPassengers,

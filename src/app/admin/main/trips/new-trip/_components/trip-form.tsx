@@ -27,6 +27,7 @@ import {
     getTripFormOptionsAction,
     saveTripAction,
     TripFormValues,
+    updateTripAction,
 } from '../../action';
 
 const weekdayOptions = [
@@ -66,9 +67,16 @@ const defaultValues: TripFormValues = {
 const selectClassName =
     'border-input bg-background ring-offset-background flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50';
 
-const TripForm = () => {
+type Props = {
+    mode?: 'create' | 'edit';
+    tripId?: number;
+    initialValues?: TripFormValues;
+};
+
+const TripForm = ({ mode = 'create', tripId, initialValues }: Props) => {
     const router = useRouter();
     const queryClient = useQueryClient();
+    const isEditMode = mode === 'edit';
 
     const {
         data: options,
@@ -97,6 +105,23 @@ const TripForm = () => {
         }
     );
 
+    const { execute: updateTrip, isPending: isUpdating } = useServerAction(
+        updateTripAction,
+        {
+            onSuccess: async () => {
+                await queryClient.invalidateQueries({
+                    queryKey: ['getTrips'],
+                });
+                toast.success('Рейс обновлен');
+                router.push('/admin/main/trips');
+                router.refresh();
+            },
+            onError: ({ err }) => {
+                toast.error(err.message || 'Не удалось обновить рейс');
+            },
+        }
+    );
+
     const {
         register,
         watch,
@@ -106,7 +131,7 @@ const TripForm = () => {
     } = useForm<TripFormValues>({
         resolver: zodResolver(tripSchema),
         mode: 'onChange',
-        defaultValues,
+        defaultValues: initialValues ?? defaultValues,
     });
 
     const frequency = watch('frequency');
@@ -143,12 +168,22 @@ const TripForm = () => {
     }, [isAlwaysActive, setValue]);
 
     const onSubmit = handleSubmit((data) => {
-        saveTrip({
+        const values = {
             ...data,
             start_date: data.is_always_active ? null : data.start_date,
             end_date: data.is_always_active ? null : data.end_date,
             weekdays: data.frequency === 'daily' ? allWeekdays : data.weekdays,
-        });
+        };
+
+        if (isEditMode && tripId) {
+            updateTrip({
+                tripId,
+                values,
+            });
+            return;
+        }
+
+        saveTrip(values);
     });
 
     const routes = options?.routes ?? [];
@@ -178,7 +213,7 @@ const TripForm = () => {
                     <ArrowLeft />
                 </Button>
                 <h1 className="text-2xl font-semibold text-[#4A4A4A]">
-                    Создать рейс
+                    {isEditMode ? 'Редактировать рейс' : 'Создать рейс'}
                 </h1>
             </div>
 
@@ -470,10 +505,10 @@ const TripForm = () => {
                         type="submit"
                         size="lg"
                         className="px-8 text-base"
-                        disabled={isSaving || !hasRequiredOptions}
+                        disabled={isSaving || isUpdating || !hasRequiredOptions}
                     >
-                        {isSaving ? <Spinner /> : <Save />}
-                        Сохранить рейс
+                        {isSaving || isUpdating ? <Spinner /> : <Save />}
+                        {isEditMode ? 'Обновить рейс' : 'Сохранить рейс'}
                     </Button>
                     <Button asChild type="button" size="lg" variant="outline">
                         <Link href="/admin/main/trips">Отмена</Link>
