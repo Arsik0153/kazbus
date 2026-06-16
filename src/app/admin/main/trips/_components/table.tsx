@@ -112,10 +112,8 @@ const TripsTable = ({ trips }: Props) => {
                             </td>
                             <td className="py-4 pr-6 text-right">
                                 <Button asChild variant="outline">
-                                    <Link
-                                        href={`/admin/main/trips/${trip.id}/passengers`}
-                                    >
-                                        Пассажиры
+                                    <Link href={`/admin/main/trips/${trip.id}`}>
+                                        Подробнее
                                     </Link>
                                 </Button>
                             </td>
