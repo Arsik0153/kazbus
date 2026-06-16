@@ -16,6 +16,7 @@ export type BusSeatDraft = {
 
 type SchemeProps = {
     floorCount: 1 | 2;
+    initialSeats?: BusSeatDraft[];
     onChange: (seats: BusSeatDraft[]) => void;
     errorMessage?: string;
 };
@@ -27,9 +28,31 @@ const createEmptyFloor = () =>
         .fill(null)
         .map(() => Array(9).fill(null)) as CellContent[][];
 
+const createFloorFromSeats = (seats: BusSeatDraft[]) => {
+    if (seats.length === 0) {
+        return createEmptyFloor();
+    }
+
+    const rowCount = Math.max(5, ...seats.map((seat) => seat.seat_row));
+    const columnCount = Math.max(9, ...seats.map((seat) => seat.seat_col));
+    const floor = Array(rowCount)
+        .fill(null)
+        .map(() => Array(columnCount).fill(null)) as CellContent[][];
+
+    seats.forEach((seat) => {
+        floor[seat.seat_row - 1][seat.seat_col - 1] =
+            seat.seat_type === 'passenger'
+                ? seat.seat_id
+                : seat.seat_type === 'driver'
+                  ? 'driver'
+                  : 'aisle';
+    });
+
+    return floor;
+};
+
 const toSeatDrafts = (floors: CellContent[][][]) => {
     const result: BusSeatDraft[] = [];
-    let seatId = 1;
 
     floors.forEach((floor) => {
         for (let col = 0; col < floor[0].length; col += 1) {
@@ -38,7 +61,7 @@ const toSeatDrafts = (floors: CellContent[][][]) => {
 
                 if (cell !== null) {
                     result.push({
-                        seat_id: seatId,
+                        seat_id: typeof cell === 'number' ? cell : 0,
                         seat_col: col + 1,
                         seat_row: row + 1,
                         seat_type:
@@ -48,7 +71,6 @@ const toSeatDrafts = (floors: CellContent[][][]) => {
                                   ? 'aisle'
                                   : 'passenger',
                     });
-                    seatId += 1;
                 }
             }
         }
@@ -59,10 +81,10 @@ const toSeatDrafts = (floors: CellContent[][][]) => {
 
 const renumberPassengerSeats = (floors: CellContent[][][]) => {
     let seatNumber = 1;
-    const columnCount = floors[0]?.[0]?.length ?? 0;
 
     return floors.map((floor) => {
         const updatedFloor: CellContent[][] = [];
+        const columnCount = floor[0]?.length ?? 0;
 
         for (let col = 0; col < columnCount; col += 1) {
             const updatedColumn: CellContent[] = [];
@@ -87,11 +109,18 @@ const renumberPassengerSeats = (floors: CellContent[][][]) => {
     });
 };
 
-const Scheme = ({ floorCount, onChange, errorMessage }: SchemeProps) => {
+const Scheme = ({
+    floorCount,
+    initialSeats,
+    onChange,
+    errorMessage,
+}: SchemeProps) => {
     const [editMode, setEditMode] = useState<'seats' | 'driver' | 'aisle'>(
         'seats'
     );
-    const [floors, setFloors] = useState<CellContent[][][]>([createEmptyFloor()]);
+    const [floors, setFloors] = useState<CellContent[][][]>([
+        initialSeats ? createFloorFromSeats(initialSeats) : createEmptyFloor(),
+    ]);
 
     useEffect(() => {
         setFloors((currentFloors) => {

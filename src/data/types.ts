@@ -135,6 +135,12 @@ export type Bus = {
     is_recumbent: boolean;
     floors?: number | null;
     scheme?: string | null;
+    seats?: Array<{
+        seat_id: number;
+        seat_col: number;
+        seat_row: number;
+        seat_type: 'aisle' | 'passenger' | 'driver';
+    }>;
 };
 
 export type Stop = {

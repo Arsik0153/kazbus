@@ -223,12 +223,12 @@ export const busSchema = z
             .string({ required_error: 'Введите марку автобуса' })
             .trim()
             .min(1, 'Введите марку автобуса')
-            .max(255, 'Марка слишком длинная'),
+            .max(50, 'Марка слишком длинная'),
         model: z
             .string({ required_error: 'Введите модель автобуса' })
             .trim()
             .min(1, 'Введите модель автобуса')
-            .max(255, 'Модель слишком длинная'),
+            .max(50, 'Модель слишком длинная'),
         state_number: z
             .string({ required_error: 'Введите государственный номер' })
             .trim()
@@ -237,8 +237,7 @@ export const busSchema = z
         VIN: z
             .string({ required_error: 'Введите VIN' })
             .trim()
-            .min(1, 'Введите VIN')
-            .max(17, 'VIN не должен быть длиннее 17 символов'),
+            .length(17, 'VIN должен содержать 17 символов'),
         count_of_seats: z.coerce
             .number({
                 required_error: 'Введите количество мест',
