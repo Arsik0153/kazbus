@@ -3,6 +3,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Building2, FileText, MapPinned } from 'lucide-react';
 import Anal from '@/assets/admin/anal';
 import BusFront from '@/assets/admin/BusFront';
 import Coin from '@/assets/admin/Coin';
@@ -12,8 +13,12 @@ import Support from '@/assets/admin/Support';
 import User from '@/assets/admin/User';
 import ArrowRight from '@/assets/admin/Arrow-right';
 
+const isActivePath = (pathname: string, url: string) => {
+    return pathname === url || pathname.startsWith(`${url}/`);
+};
+
 const getBackgroundColor = (pathname: string, url: string) => {
-    return pathname === url ? 'bg-[#FF6868]' : 'bg-transparent';
+    return isActivePath(pathname, url) ? 'bg-[#FF6868]' : 'bg-transparent';
 };
 
 const Menu = () => {
@@ -42,7 +47,7 @@ const Menu = () => {
                                     <Route color="#fff" width={20} height={20} />
                                     <span>Рейсы</span>
                                 </div>
-                                {pathname === '/admin/main/trips' && (
+                                {isActivePath(pathname, '/admin/main/trips') && (
                                     <ArrowRight color="#fff" width={12} height={12} />
                                 )}
                             </Link>
@@ -53,7 +58,7 @@ const Menu = () => {
                                     <BusFront color="#fff" width={20} height={20} />
                                     <span>Автобусы</span>
                                 </div>
-                                {pathname === '/admin/main/buses' && (
+                                {isActivePath(pathname, '/admin/main/buses') && (
                                     <ArrowRight color="#fff" width={12} height={12} />
                                 )}
                             </Link>
@@ -64,7 +69,7 @@ const Menu = () => {
                                     <User color="#fff" width={20} height={20} />
                                     <span>Водители</span>
                                 </div>
-                                {pathname === '/admin/main/drivers' && (
+                                {isActivePath(pathname, '/admin/main/drivers') && (
                                     <ArrowRight color="#fff" width={12} height={12} />
                                 )}
                             </Link>
@@ -75,7 +80,44 @@ const Menu = () => {
                                     <Direction color="#fff" width={20} height={20} />
                                     <span>Маршруты</span>
                                 </div>
-                                {pathname === '/admin/main/routes' && (
+                                {isActivePath(pathname, '/admin/main/routes') && (
+                                    <ArrowRight color="#fff" width={12} height={12} />
+                                )}
+                            </Link>
+                        </li>
+                    </ul>
+                    <ul>
+                        <p className="font-bold text-base text-[#FFFFFF] opacity-40">Компания</p>
+
+                        <li className={`${getBackgroundColor(pathname, '/admin/main/company')} rounded-lg`}>
+                            <Link href="/admin/main/company" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
+                                <div className='flex items-center gap-3'>
+                                    <Building2 className="h-5 w-5" />
+                                    <span>Профиль компании</span>
+                                </div>
+                                {isActivePath(pathname, '/admin/main/company') && (
+                                    <ArrowRight color="#fff" width={12} height={12} />
+                                )}
+                            </Link>
+                        </li>
+                        <li className={`${getBackgroundColor(pathname, '/admin/main/documents')} rounded-lg`}>
+                            <Link href="/admin/main/documents" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
+                                <div className='flex items-center gap-3'>
+                                    <FileText className="h-5 w-5" />
+                                    <span>Документы</span>
+                                </div>
+                                {isActivePath(pathname, '/admin/main/documents') && (
+                                    <ArrowRight color="#fff" width={12} height={12} />
+                                )}
+                            </Link>
+                        </li>
+                        <li className={`${getBackgroundColor(pathname, '/admin/main/monitoring')} rounded-lg`}>
+                            <Link href="/admin/main/monitoring" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
+                                <div className='flex items-center gap-3'>
+                                    <MapPinned className="h-5 w-5" />
+                                    <span>Мониторинг</span>
+                                </div>
+                                {isActivePath(pathname, '/admin/main/monitoring') && (
                                     <ArrowRight color="#fff" width={12} height={12} />
                                 )}
                             </Link>
@@ -84,24 +126,24 @@ const Menu = () => {
                     <ul>
                         <p className="font-bold text-base text-[#FFFFFF] opacity-40">Информация</p>
 
-                        <li className={`${getBackgroundColor(pathname, '/admin/main/anal')} rounded-lg`}>
-                            <Link href="/admin/main/anal" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
+                        <li className={`${getBackgroundColor(pathname, '/admin/main/analytics')} rounded-lg`}>
+                            <Link href="/admin/main/analytics" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
                                 <div className='flex items-center gap-3'>
                                     <Anal color="#fff" width={20} height={20} />
                                     <span>Аналитика</span>
                                 </div>
-                                {pathname === '/admin/main/anal' && (
+                                {isActivePath(pathname, '/admin/main/analytics') && (
                                     <ArrowRight color="#fff" width={12} height={12} />
                                 )}
                             </Link>
                         </li>
-                        <li className={`${getBackgroundColor(pathname, '/admin/main/payments')} rounded-lg`}>
-                            <Link href="/admin/main/payments" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
+                        <li className={`${getBackgroundColor(pathname, '/admin/main/payouts')} rounded-lg`}>
+                            <Link href="/admin/main/payouts" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
                                 <div className='flex items-center gap-3'>
                                     <Coin color="#fff" width={20} height={20} />
                                     <span>Выплаты</span>
                                 </div>
-                                {pathname === '/admin/main/payments' && (
+                                {isActivePath(pathname, '/admin/main/payouts') && (
                                     <ArrowRight color="#fff" width={12} height={12} />
                                 )}
                             </Link>
@@ -114,7 +156,7 @@ const Menu = () => {
                                     <Support color="#fff" width={20} height={20} />
                                     <span>Служба поддержки</span>
                                 </div>
-                                {pathname === '/admin/main/support' && (
+                                {isActivePath(pathname, '/admin/main/support') && (
                                     <ArrowRight color="#fff" width={12} height={12} />
                                 )}
                             </Link>

@@ -1,153 +1,336 @@
 'use client';
-import React, { useState } from 'react';
-import ComboBox from '../../trips/_components/inputCombo';
-import MaskedInput from 'react-text-mask';
-import InputMask from 'react-input-mask';
-import YesOrNo from './_components/yesOrNo';
-import Button from '@/components/button';
-import Link from 'next/link';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ArrowLeft } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { z } from 'zod';
+import { useServerAction } from 'zsa-react';
+
 import Floors from '@/app/admin/main/buses/new-bus/_components/floors';
 import Scheme from '@/app/admin/main/buses/new-bus/_components/scheme';
+import { busSchema } from '@/data/schemas';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
-const NewBus = () => {
-    const [selectedFloor, setSelectedFloor] = useState<1 | 2 | 3 | null>(null);
-    const [seatCount, setSeatCount] = useState<number | string>(''); // Состояние для хранения количества мест
+import { createBusAction } from '../actions';
+
+type BusFormValues = z.output<typeof busSchema>;
+
+const defaultValues: BusFormValues = {
+    name: '',
+    stamp: '',
+    model: '',
+    state_number: '',
+    VIN: '',
+    count_of_seats: 36,
+    floors: 1,
+    have_toilet: false,
+    have_wifi: false,
+    is_recumbent: false,
+    seats: [],
+};
+
+const NewBusPage = () => {
+    const router = useRouter();
+    const queryClient = useQueryClient();
+    const {
+        register,
+        watch,
+        setValue,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<BusFormValues>({
+        resolver: zodResolver(busSchema),
+        mode: 'onChange',
+        defaultValues,
+    });
+
+    const { execute, isPending } = useServerAction(createBusAction, {
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ['getBuses'] });
+            toast.success('Автобус сохранен');
+            router.push('/admin/main/buses');
+            router.refresh();
+        },
+        onError: ({ err }) => {
+            toast.error(err.message || 'Не удалось сохранить автобус');
+        },
+    });
+
+    useEffect(() => {
+        register('floors');
+        register('have_toilet');
+        register('have_wifi');
+        register('is_recumbent');
+        register('seats');
+    }, [register]);
+
+    const floorCount: 1 | 2 = watch('floors') === 2 ? 2 : 1;
+    const countOfSeats = Number(watch('count_of_seats')) || 0;
+    const haveWifi = watch('have_wifi');
+    const haveToilet = watch('have_toilet');
+    const isRecumbent = watch('is_recumbent');
+
+    const onSubmit = handleSubmit((data) => {
+        execute(data);
+    });
 
     return (
-        <div className="mb-96 mt-6 flex flex-col">
-            <p className="text-[42px] font-semibold text-[#4A4A4A]">
-                Добавить автобус
-            </p>
-
-            <div className="mt-[14px] flex flex-col rounded-[20px] bg-white px-8 py-10">
-                <p className="text-2xl font-semibold text-[#4A4A4A]">
-                    Введите название автобуса
-                </p>
-                <div className="mt-4 flex flex-col items-start gap-4">
-                    <ComboBox name="bus-name" placeholder="Введите название" />
-                </div>
-                <p className="mt-9 text-2xl font-semibold text-[#4A4A4A]">
-                    Информация о ТС
-                </p>
-                <div className="mt-7 flex flex-row gap-6">
-                    <div className="flex flex-col gap-4">
-                        <div className="flex flex-col gap-3">
-                            <p className="text-base font-medium text-[#4A4A4A]">
-                                Марка
-                            </p>
-                            <ComboBox
-                                name="brand"
-                                placeholder="Введите марку"
-                            />
-                        </div>
-                        <div className="flex flex-col gap-3">
-                            <p className="text-base font-medium text-[#4A4A4A]">
-                                VIN
-                            </p>
-                            <InputMask
-                                mask={[
-                                    /\d/,
-                                    /\d/,
-                                    /\d/,
-                                    ' ',
-                                    /[A-Za-z]/,
-                                    /[A-Za-z]/,
-                                    /[A-Za-z]/,
-                                    ' ',
-                                    /\d/,
-                                    /\d/,
-                                ]}
-                                placeholder="XXX XXX XXX XXX XXX XX"
-                                className="w-full rounded-[10px] border border-[#A0A0A0] p-5 pb-[12px] pt-[12px] text-base font-medium text-[#4A4A4A] focus:outline-none"
-                                maxLength={17} // Ограничение длины ввода
-                                maskChar="_" // Используем символ подчеркивания
-                            />
-                        </div>
-                    </div>
-                    <div className="flex flex-col gap-4">
-                        <div className="flex flex-col gap-3">
-                            <p className="text-base font-medium text-[#4A4A4A]">
-                                Модель
-                            </p>
-                            <ComboBox
-                                name="model"
-                                placeholder="Введите модель"
-                            />
-                        </div>
-                        <div className="flex flex-col gap-3">
-                            <p className="text-base font-medium text-[#4A4A4A]">
-                                Количество посадочных мест
-                            </p>
-                            <InputMask
-                                mask="99"
-                                placeholder="Количество мест"
-                                onChange={(e) => setSeatCount(e.target.value)} // Обновление состояния при вводе
-                                className="w-full rounded-[10px] border border-[#A0A0A0] p-5 pb-[12px] pt-[12px] text-base font-medium text-[#4A4A4A] focus:outline-none"
-                            />
-                        </div>
-                    </div>
-                    <div className="flex flex-col gap-4">
-                        <div className="flex flex-col gap-3">
-                            <p className="text-base font-medium text-[#4A4A4A]">
-                                Гос.номер
-                            </p>
-                            <MaskedInput
-                                mask={[
-                                    /\d/,
-                                    /\d/,
-                                    /\d/,
-                                    ' ',
-                                    /[A-Za-z]/,
-                                    /[A-Za-z]/,
-                                    /[A-Za-z]/,
-                                    ' ',
-                                    /\d/,
-                                    /\d/,
-                                ]}
-                                placeholder="XXX AAA XX"
-                                className="w-full rounded-[10px] border border-[#A0A0A0] p-5 pb-[12px] pt-[12px] text-base font-medium text-[#4A4A4A] focus:outline-none"
-                                guide={false}
-                            />
-                        </div>
-                        <div className="flex flex-col gap-3">
-                            <p className="text-base font-medium text-[#4A4A4A]">
-                                Выберите кол-во этажей на автобусе
-                            </p>
-                            <Floors
-                                selected={selectedFloor}
-                                onSelect={setSelectedFloor}
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <p className="mt-9 text-2xl font-semibold text-[#4A4A4A]">
-                    Свойства автобуса
-                </p>
-                <div className="mt-7 flex flex-row gap-8">
-                    <div className="mb-[42px] flex flex-col gap-3">
-                        <p className="text-base font-medium text-[#4A4A4A]">
-                            Есть ли Wi-Fi?
-                        </p>
-                        <YesOrNo />
-                    </div>
-                    <div className="flex flex-col gap-3">
-                        <p className="text-base font-medium text-[#4A4A4A]">
-                            Есть ли био-туалет?
-                        </p>
-                        <YesOrNo />
-                    </div>
-                    <div className="flex flex-col gap-3">
-                        <p className="text-base font-medium text-[#4A4A4A]">
-                            Автобус с лежачими местами?
-                        </p>
-                        <YesOrNo />
-                    </div>
-                </div>
-                <Scheme seatCount={Number(seatCount)} />
+        <form className="mt-6 flex flex-col" onSubmit={onSubmit} noValidate>
+            <div className="flex items-center gap-3">
+                <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-lg"
+                    aria-label="Вернуться к списку автобусов"
+                    onClick={() => router.push('/admin/main/buses')}
+                >
+                    <ArrowLeft />
+                </Button>
+                <h1 className="text-2xl font-semibold text-[#4A4A4A]">
+                    Добавить автобус
+                </h1>
             </div>
-        </div>
+
+            <div className="mb-28 mt-[14px] flex flex-col rounded-[20px] bg-white px-8 py-10">
+                <div className="grid w-full max-w-[980px] grid-cols-2 gap-5">
+                    <Field className="gap-2" data-invalid={Boolean(errors.name)}>
+                        <FieldLabel
+                            htmlFor="name"
+                            className="text-lg font-semibold text-[#4A4A4A]"
+                        >
+                            Внутреннее название
+                        </FieldLabel>
+                        <Input
+                            id="name"
+                            placeholder="Например, Jol Express 1"
+                            aria-invalid={Boolean(errors.name)}
+                            {...register('name')}
+                        />
+                        <FieldError errors={[errors.name]} />
+                    </Field>
+
+                    <Field className="gap-2" data-invalid={Boolean(errors.stamp)}>
+                        <FieldLabel
+                            htmlFor="stamp"
+                            className="text-lg font-semibold text-[#4A4A4A]"
+                        >
+                            Марка
+                        </FieldLabel>
+                        <Input
+                            id="stamp"
+                            placeholder="Например, Yutong"
+                            aria-invalid={Boolean(errors.stamp)}
+                            {...register('stamp')}
+                        />
+                        <FieldError errors={[errors.stamp]} />
+                    </Field>
+
+                    <Field className="gap-2" data-invalid={Boolean(errors.model)}>
+                        <FieldLabel
+                            htmlFor="model"
+                            className="text-lg font-semibold text-[#4A4A4A]"
+                        >
+                            Модель
+                        </FieldLabel>
+                        <Input
+                            id="model"
+                            placeholder="Например, ZK6122H9"
+                            aria-invalid={Boolean(errors.model)}
+                            {...register('model')}
+                        />
+                        <FieldError errors={[errors.model]} />
+                    </Field>
+
+                    <Field
+                        className="gap-2"
+                        data-invalid={Boolean(errors.state_number)}
+                    >
+                        <FieldLabel
+                            htmlFor="state_number"
+                            className="text-lg font-semibold text-[#4A4A4A]"
+                        >
+                            Государственный номер
+                        </FieldLabel>
+                        <Input
+                            id="state_number"
+                            placeholder="Например, 777 JOL 02"
+                            aria-invalid={Boolean(errors.state_number)}
+                            {...register('state_number')}
+                        />
+                        <FieldError errors={[errors.state_number]} />
+                    </Field>
+
+                    <Field className="gap-2" data-invalid={Boolean(errors.VIN)}>
+                        <FieldLabel
+                            htmlFor="VIN"
+                            className="text-lg font-semibold text-[#4A4A4A]"
+                        >
+                            VIN
+                        </FieldLabel>
+                        <Input
+                            id="VIN"
+                            placeholder="17 символов"
+                            aria-invalid={Boolean(errors.VIN)}
+                            {...register('VIN')}
+                        />
+                        <FieldError errors={[errors.VIN]} />
+                    </Field>
+
+                    <Field
+                        className="gap-2"
+                        data-invalid={Boolean(errors.count_of_seats)}
+                    >
+                        <FieldLabel
+                            htmlFor="count_of_seats"
+                            className="text-lg font-semibold text-[#4A4A4A]"
+                        >
+                            Количество пассажирских мест
+                        </FieldLabel>
+                        <Input
+                            id="count_of_seats"
+                            type="number"
+                            min={1}
+                            aria-invalid={Boolean(errors.count_of_seats)}
+                            {...register('count_of_seats')}
+                        />
+                        <FieldError errors={[errors.count_of_seats]} />
+                    </Field>
+                </div>
+
+                <div className="mt-10 max-w-[980px]">
+                    <Field className="gap-3" data-invalid={Boolean(errors.floors)}>
+                        <FieldLabel className="text-lg font-semibold text-[#4A4A4A]">
+                            Количество этажей
+                        </FieldLabel>
+                        <Floors
+                            selected={floorCount}
+                            onSelect={(value) =>
+                                setValue('floors', value, {
+                                    shouldValidate: true,
+                                    shouldDirty: true,
+                                })
+                            }
+                        />
+                        <FieldError errors={[errors.floors]} />
+                    </Field>
+                </div>
+
+                <div className="mt-10 max-w-[980px]">
+                    <p className="text-lg font-semibold text-[#4A4A4A]">
+                        Свойства автобуса
+                    </p>
+                    <div className="mt-4 grid grid-cols-3 gap-4">
+                        <label className="flex items-center gap-3 rounded-[14px] border border-[#D7DCE2] px-4 py-4">
+                            <input
+                                type="checkbox"
+                                checked={haveWifi}
+                                onChange={(event) =>
+                                    setValue('have_wifi', event.target.checked, {
+                                        shouldDirty: true,
+                                    })
+                                }
+                            />
+                            <span className="font-medium text-[#4A4A4A]">
+                                Wi-Fi
+                            </span>
+                        </label>
+                        <label className="flex items-center gap-3 rounded-[14px] border border-[#D7DCE2] px-4 py-4">
+                            <input
+                                type="checkbox"
+                                checked={haveToilet}
+                                onChange={(event) =>
+                                    setValue(
+                                        'have_toilet',
+                                        event.target.checked,
+                                        {
+                                            shouldDirty: true,
+                                        }
+                                    )
+                                }
+                            />
+                            <span className="font-medium text-[#4A4A4A]">
+                                Туалет
+                            </span>
+                        </label>
+                        <label className="flex items-center gap-3 rounded-[14px] border border-[#D7DCE2] px-4 py-4">
+                            <input
+                                type="checkbox"
+                                checked={isRecumbent}
+                                onChange={(event) =>
+                                    setValue(
+                                        'is_recumbent',
+                                        event.target.checked,
+                                        {
+                                            shouldDirty: true,
+                                        }
+                                    )
+                                }
+                            />
+                            <span className="font-medium text-[#4A4A4A]">
+                                Лежачие места
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <div className="mt-10 rounded-[16px] bg-[#FFF4E5] px-5 py-4">
+                    <p className="text-sm font-semibold text-[#4A4A4A]">
+                        Ограничение текущего backend-контракта
+                    </p>
+                    <p className="mt-2 text-sm text-[#6B7280]">
+                        Поле техосмотра еще не поддерживается endpoint-ом
+                        `/buses/`. Как только backend начнет принимать
+                        `inspection_date`, форма будет расширена без смены
+                        пользовательского сценария.
+                    </p>
+                </div>
+
+                <div className="mt-10 max-w-[980px]">
+                    <Scheme
+                        floorCount={floorCount}
+                        onChange={(seats) =>
+                            setValue('seats', seats, {
+                                shouldValidate: true,
+                                shouldDirty: true,
+                            })
+                        }
+                        errorMessage={errors.seats?.message}
+                    />
+                    <p className="mt-3 text-sm text-[#A0A0A0]">
+                        Пассажирских мест в схеме: {watch('seats').filter((seat) => seat.seat_type === 'passenger').length} из{' '}
+                        {countOfSeats}
+                    </p>
+                </div>
+
+                <div className="mt-14 flex max-w-[500px] gap-3">
+                    <Button
+                        type="submit"
+                        size="xl"
+                        className="flex-1"
+                        disabled={isPending}
+                    >
+                        {isPending ? 'Сохранение...' : 'Сохранить автобус'}
+                    </Button>
+                    <Button
+                        type="button"
+                        size="xl"
+                        variant="outline"
+                        className="px-8"
+                        disabled={isPending}
+                        onClick={() => router.push('/admin/main/buses')}
+                    >
+                        Отмена
+                    </Button>
+                </div>
+            </div>
+        </form>
     );
 };
 
-export default NewBus;
+export default NewBusPage;

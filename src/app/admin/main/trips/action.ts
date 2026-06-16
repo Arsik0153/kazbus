@@ -1,23 +1,22 @@
 'use server';
 
 import { Trips } from '@/data/types';
+import { adminFetch, getAdminApiError } from '@/lib/admin-api';
 import { createServerAction } from 'zsa';
 
 export const getTripsAction = createServerAction().handler(async () => {
-    const response = await fetch(`${process.env.API_URL}/trip/trips/`, {
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
+    const response = await adminFetch('/trip/trips/');
 
     if (!response.ok) {
-        console.log(response);
-        throw 'Произошла ошибка при получении списка рейсов';
+        throw new Error(
+            await getAdminApiError(
+                response,
+                'Не удалось получить список рейсов'
+            )
+        );
     }
 
-    const result = (await response.json()) as Trips[];
-
-    return result;
+    return (await response.json()) as Trips[];
 });
 
 

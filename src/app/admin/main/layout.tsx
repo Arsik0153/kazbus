@@ -3,6 +3,7 @@ import BusFront from '@/assets/admin/BusFront';
 import Pulse from '@/components/admin/pulse';
 import Exit from '@/assets/admin/Exit';
 import { getAdminSession } from '@/lib/admin-auth';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { logoutAction } from '../action';
 
@@ -41,9 +42,12 @@ export default async function RootLayout({
                         </div>
                     </div>
                     <div className="flex flex-row items-center gap-6">
-                        <span className="text-base font-medium text-white">
+                        <Link
+                            href="/admin/main/company"
+                            className="text-base font-medium text-white underline-offset-4 hover:underline"
+                        >
                             Редактировать данные
-                        </span>
+                        </Link>
                         <form action={logoutAction}>
                             <button
                                 type="submit"
