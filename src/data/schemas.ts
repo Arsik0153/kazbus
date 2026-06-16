@@ -332,6 +332,125 @@ export const routeSchema = z
         }
     });
 
+const tripDateSchema = z
+    .string()
+    .trim()
+    .nullable()
+    .transform((date) => (date === '' ? null : date))
+    .refine(
+        (date) => date === null || dayjsExt(date, 'YYYY-MM-DD', true).isValid(),
+        'Выберите корректную дату'
+    );
+
+const tripTimeSchema = z
+    .string({ required_error: 'Введите время выезда' })
+    .trim()
+    .regex(
+        /^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/,
+        'Введите время в формате ЧЧ:ММ'
+    )
+    .transform((time) => (time.length === 5 ? `${time}:00` : time));
+
+const tripWeekdaysSchema = z.object({
+    Monday: z.boolean().default(false),
+    Tuesday: z.boolean().default(false),
+    Wednesday: z.boolean().default(false),
+    Thursday: z.boolean().default(false),
+    Friday: z.boolean().default(false),
+    Saturday: z.boolean().default(false),
+    Sunday: z.boolean().default(false),
+});
+
+export const tripSchema = z
+    .object({
+        route: z.coerce
+            .number({
+                required_error: 'Выберите маршрут',
+                invalid_type_error: 'Выберите маршрут',
+            })
+            .int('Выберите маршрут')
+            .positive('Выберите маршрут'),
+        bus: z
+            .string({
+                required_error: 'Выберите автобус',
+                invalid_type_error: 'Выберите автобус',
+            })
+            .trim()
+            .min(1, 'Выберите автобус'),
+        driver: z.coerce
+            .number({
+                required_error: 'Выберите водителя',
+                invalid_type_error: 'Выберите водителя',
+            })
+            .int('Выберите водителя')
+            .positive('Выберите водителя'),
+        departure_time: tripTimeSchema,
+        is_always_active: z.boolean().default(false),
+        start_date: tripDateSchema,
+        end_date: tripDateSchema,
+        ticket_price: z.coerce
+            .number({
+                required_error: 'Введите цену билета',
+                invalid_type_error: 'Введите цену билета',
+            })
+            .positive('Цена билета должна быть больше 0'),
+        frequency: z.enum(['daily', 'weekly'], {
+            required_error: 'Выберите периодичность рейса',
+        }),
+        weekdays: tripWeekdaysSchema,
+        status: z.enum(['active', 'not_on_sale', 'cancelled', 'scheduled'], {
+            required_error: 'Выберите статус рейса',
+        }),
+    })
+    .superRefine((data, context) => {
+        if (data.is_always_active) {
+            return;
+        }
+
+        if (!data.start_date) {
+            context.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['start_date'],
+                message: 'Выберите дату начала или включите постоянный рейс',
+            });
+        }
+
+        if (!data.end_date) {
+            context.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['end_date'],
+                message:
+                    'Выберите дату окончания или включите постоянный рейс',
+            });
+        }
+
+        const startDate = dayjsExt(data.start_date, 'YYYY-MM-DD', true);
+        const endDate = dayjsExt(data.end_date, 'YYYY-MM-DD', true);
+
+        if (
+            startDate.isValid() &&
+            endDate.isValid() &&
+            endDate.isBefore(startDate, 'day')
+        ) {
+            context.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['end_date'],
+                message: 'Дата окончания не может быть раньше даты начала',
+            });
+        }
+
+        if (
+            data.frequency === 'weekly' &&
+            !Object.values(data.weekdays).some(Boolean)
+        ) {
+            context.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['weekdays'],
+                message: 'Выберите хотя бы один день отправления',
+            });
+        }
+    });
+
 const PassengerSchema = z.object({
     passenger: z.number().nullable(),
     place_num: z.number(),

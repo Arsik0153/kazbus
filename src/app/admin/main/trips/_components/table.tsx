@@ -43,6 +43,18 @@ const renderWeekdays = (weekdays: Trips['weekdays']) => {
         .join(' ');
 };
 
+const renderTripPeriod = (trip: Trips) => {
+    if (trip.is_always_active) {
+        return 'Постоянный рейс';
+    }
+
+    if (!trip.start_date || !trip.end_date) {
+        return 'Без периода';
+    }
+
+    return `${trip.start_date} - ${trip.end_date}`;
+};
+
 const TripsTable = ({ trips }: Props) => {
     return (
         <div className="mb-20 mt-4 overflow-hidden rounded-[20px] bg-white px-5 pb-3">
@@ -77,7 +89,7 @@ const TripsTable = ({ trips }: Props) => {
                                 {trip.from_city} - {trip.to_city}
                             </td>
                             <td className="text-[#4A4A4A]">
-                                {trip.start_date} - {trip.end_date}
+                                {renderTripPeriod(trip)}
                             </td>
                             <td className="text-[#4A4A4A]">
                                 {renderWeekdays(trip.weekdays)}

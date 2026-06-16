@@ -95,8 +95,9 @@ export type Route = {
 
 export type GetRequestData = {
     departure_time: string;
-    start_date: string;
-    end_date: string;
+    is_always_active: boolean;
+    start_date: string | null;
+    end_date: string | null;
     ticket_price: string;
     frequency: string;
     weekdays: Weekdays;
@@ -161,8 +162,9 @@ export type Routes = {
 export type Trips = {
     id: number;
     departure_time: string; // Время в формате "HH:MM:SS"
-    start_date: string; // Дата в формате "YYYY-MM-DD"
-    end_date: string; // Дата в формате "YYYY-MM-DD"
+    is_always_active: boolean;
+    start_date: string | null; // Дата в формате "YYYY-MM-DD"
+    end_date: string | null; // Дата в формате "YYYY-MM-DD"
     ticket_price: string; // Цена в виде строки
     frequency: string;
     weekdays: Weekdays;
@@ -185,8 +187,9 @@ export type Passenger = {
 export type DirectionNew = {
     id: number;
     departure_time: string; // Время в формате "HH:MM:SS"
-    start_date: string; // Дата в формате "YYYY-MM-DD"
-    end_date: string; // Дата в формате "YYYY-MM-DD"
+    is_always_active: boolean;
+    start_date: string | null; // Дата в формате "YYYY-MM-DD"
+    end_date: string | null; // Дата в формате "YYYY-MM-DD"
     ticket_price: string; // Цена в виде строки
     frequency: string;
     weekdays: Weekdays;

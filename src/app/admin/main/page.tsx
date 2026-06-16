@@ -44,16 +44,28 @@ function getStatusLabel(status: string) {
 function getUpcomingTrips(trips: Trips[]) {
     return [...trips]
         .sort((left, right) => {
+            if (left.is_always_active !== right.is_always_active) {
+                return left.is_always_active ? -1 : 1;
+            }
+
             const leftDate = new Date(
-                `${left.start_date}T${left.departure_time}`
+                `${left.start_date ?? '9999-12-31'}T${left.departure_time}`
             ).getTime();
             const rightDate = new Date(
-                `${right.start_date}T${right.departure_time}`
+                `${right.start_date ?? '9999-12-31'}T${right.departure_time}`
             ).getTime();
 
             return leftDate - rightDate;
         })
         .slice(0, 5);
+}
+
+function getTripDepartureLabel(trip: Trips) {
+    if (trip.is_always_active) {
+        return `Постоянно ${trip.departure_time}`;
+    }
+
+    return `${trip.start_date ?? 'Без даты'} ${trip.departure_time}`;
 }
 
 export default async function AdminMainPage() {
@@ -67,8 +79,11 @@ export default async function AdminMainPage() {
     const activeTripsToday = trips.filter(
         (trip) =>
             trip.status === 'active' &&
-            trip.start_date <= today &&
-            trip.end_date >= today
+            (trip.is_always_active ||
+                (Boolean(trip.start_date) &&
+                    Boolean(trip.end_date) &&
+                    trip.start_date! <= today &&
+                    trip.end_date! >= today))
     );
     const activeDrivers = drivers.filter((driver) => driver.is_active !== false);
     const inactiveDrivers = drivers.filter(
@@ -200,7 +215,7 @@ export default async function AdminMainPage() {
                                                 {trip.from_city} - {trip.to_city}
                                             </td>
                                             <td className="px-4 py-4 text-[#4A4A4A]">
-                                                {trip.start_date} {trip.departure_time}
+                                                {getTripDepartureLabel(trip)}
                                             </td>
                                             <td className="px-4 py-4 text-[#4A4A4A]">
                                                 {trip.bus?.name ||
