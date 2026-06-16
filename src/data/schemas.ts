@@ -277,6 +277,62 @@ export const busSchema = z
         }
     });
 
+const durationSchema = z
+    .string({ required_error: 'Введите время' })
+    .trim()
+    .regex(
+        /^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/,
+        'Введите время в формате ЧЧ:ММ:СС'
+    );
+
+const routeCitySchema = z.object({
+    name: z
+        .string({ required_error: 'Введите город' })
+        .trim()
+        .min(2, 'Введите город')
+        .max(255, 'Город слишком длинный'),
+    region: z
+        .string({ required_error: 'Введите регион' })
+        .trim()
+        .min(2, 'Введите регион')
+        .max(255, 'Регион слишком длинный'),
+});
+
+export const routeStopSchema = z.object({
+    id: z.number().int().positive().optional(),
+    name: z
+        .string({ required_error: 'Введите название остановки' })
+        .trim()
+        .min(2, 'Введите название остановки')
+        .max(255, 'Название остановки слишком длинное'),
+    travel_time_from_start: durationSchema,
+    stop_time: durationSchema,
+});
+
+export const routeSchema = z
+    .object({
+        start_city: routeCitySchema,
+        end_city: routeCitySchema,
+        total_travel_time: durationSchema,
+        stops: z.array(routeStopSchema).default([]),
+    })
+    .superRefine((data, context) => {
+        const sameCity =
+            data.start_city.name.toLowerCase() ===
+                data.end_city.name.toLowerCase() &&
+            data.start_city.region.toLowerCase() ===
+                data.end_city.region.toLowerCase();
+
+        if (sameCity) {
+            context.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['end_city', 'name'],
+                message:
+                    'Город прибытия должен отличаться от города отправления',
+            });
+        }
+    });
+
 const PassengerSchema = z.object({
     passenger: z.number().nullable(),
     place_num: z.number(),
