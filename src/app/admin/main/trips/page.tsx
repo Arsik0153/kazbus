@@ -33,9 +33,6 @@ const TripsPage = () => {
                             Создать рейс
                         </Link>
                     </Button>
-                    <Button size="lg" variant="outline" disabled>
-                        Массовое редактирование скоро
-                    </Button>
                 </div>
             </div>
 

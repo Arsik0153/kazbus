@@ -85,7 +85,9 @@ export default async function AdminMainPage() {
                     trip.start_date! <= today &&
                     trip.end_date! >= today))
     );
-    const activeDrivers = drivers.filter((driver) => driver.is_active !== false);
+    const activeDrivers = drivers.filter(
+        (driver) => driver.is_active !== false
+    );
     const inactiveDrivers = drivers.filter(
         (driver) => driver.is_active === false
     );
@@ -101,7 +103,6 @@ export default async function AdminMainPage() {
         {
             label: 'Автобусы в системе',
             value: String(buses.length),
-            hint: 'Backend пока не отдает отдельный operational status автобуса',
         },
         {
             label: 'Активные водители',
@@ -212,7 +213,8 @@ export default async function AdminMainPage() {
                                             className="border-t border-[#EEF2F6]"
                                         >
                                             <td className="px-4 py-4 font-semibold text-[#4A4A4A]">
-                                                {trip.from_city} - {trip.to_city}
+                                                {trip.from_city} -{' '}
+                                                {trip.to_city}
                                             </td>
                                             <td className="px-4 py-4 text-[#4A4A4A]">
                                                 {getTripDepartureLabel(trip)}
@@ -271,9 +273,9 @@ export default async function AdminMainPage() {
                                 Ограничение текущего API
                             </p>
                             <p className="mt-2 text-sm font-medium text-[#4A4A4A]">
-                                Метрики по выручке, проданным билетам, техосмотру
-                                и загрузке автобусов появятся после расширения
-                                backend-контракта.
+                                Метрики по выручке, проданным билетам,
+                                техосмотру и загрузке автобусов появятся после
+                                расширения backend-контракта.
                             </p>
                         </div>
                     </div>

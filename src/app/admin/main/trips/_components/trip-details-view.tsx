@@ -127,7 +127,7 @@ const TripDetailsView = ({ trip, run, historyRuns, mode }: Props) => {
             hint: 'по истории этого рейса',
         },
         {
-            label: 'Денег принес',
+            label: 'Общий доход',
             value: formatCurrency(totalRevenue),
             hint: 'по завершенным поездкам',
         },
@@ -163,14 +163,14 @@ const TripDetailsView = ({ trip, run, historyRuns, mode }: Props) => {
                         <p className="mt-3 text-base font-medium text-[#A0A0A0]">
                             {run.tripDate}, {run.departureTime} -{' '}
                             {run.arrivalTime}. Автобус:{' '}
-                            {trip.bus?.state_number || 'не назначен'}.
-                            Водитель: {trip.driver?.full_name || 'не назначен'}.
+                            {trip.bus?.state_number || 'не назначен'}. Водитель:{' '}
+                            {trip.driver?.full_name || 'не назначен'}.
                         </p>
                     </div>
                     {mode === 'current' ? (
-                        <Button asChild size="lg" className="px-6">
+                        <Button asChild size="lg" className="py-2! px-6">
                             <Link href={`/admin/main/trips/${trip.id}/history`}>
-                                <History data-icon="inline-start" />
+                                <History />
                                 История
                             </Link>
                         </Button>
@@ -198,30 +198,21 @@ const TripDetailsView = ({ trip, run, historyRuns, mode }: Props) => {
             </div>
 
             <AdminSectionCard
-                title={
-                    mode === 'current'
-                        ? 'Что происходит прямо сейчас'
-                        : 'Итог поездки'
-                }
-                description={`${boardedPassengers.length} человек на рейсе, еще ${missingPassengers.length} человек не пришло на рейс.`}
+                title={mode === 'current' ? 'Сейчас' : 'Итог поездки'}
             >
                 <div className="grid grid-cols-[1.2fr_1fr] gap-4">
                     <div className="rounded-[18px] bg-[#F8FAFC] px-5 py-5">
-                        <p className="text-sm font-bold uppercase text-[#A0A0A0]">
-                            Прямо сейчас
-                        </p>
                         <p className="mt-3 text-2xl font-semibold text-[#4A4A4A]">
-                            На этом рейсе {boardedPassengers.length} человек
+                            Пассажиров: {boardedPassengers.length}
                         </p>
                         <p className="mt-2 text-base font-medium text-[#A0A0A0]">
-                            Еще {missingPassengers.length} человек не пришло на
-                            рейс.
+                            Не пришли: {missingPassengers.length}
                         </p>
                     </div>
                     <div className="rounded-[18px] bg-[#FFF8F8] px-5 py-5">
                         <WalletCards className="text-[#E74949]" />
                         <p className="mt-3 text-sm font-bold uppercase text-[#A0A0A0]">
-                            Выручка этой поездки
+                            Выручка
                         </p>
                         <p className="mt-2 text-2xl font-semibold text-[#4A4A4A]">
                             {formatCurrency(
@@ -233,10 +224,7 @@ const TripDetailsView = ({ trip, run, historyRuns, mode }: Props) => {
                 </div>
             </AdminSectionCard>
 
-            <AdminSectionCard
-                title="Пассажиры"
-                description="Все пассажиры рейса с билетами, местами и статусами посадки."
-            >
+            <AdminSectionCard title="Пассажиры">
                 <div className="overflow-hidden rounded-[18px] border border-[#E2E8F0]">
                     <table className="w-full border-separate border-spacing-0">
                         <thead>
@@ -302,10 +290,7 @@ const TripDetailsView = ({ trip, run, historyRuns, mode }: Props) => {
                 </div>
             </AdminSectionCard>
 
-            <AdminSectionCard
-                title="Статусы текущей поездки"
-                description="Эти этапы задает водитель автобуса у себя в приложении."
-            >
+            <AdminSectionCard title="Статусы текущей поездки">
                 <div className="grid grid-cols-5 gap-3">
                     {run.steps.map((step) => {
                         const meta = stepStateMeta[step.state];

@@ -39,6 +39,7 @@ export type AdminTripIncident = {
 
 export type AdminTripRunDetails = {
     id: string;
+    dateIso: string;
     tripDate: string;
     routeLabel: string;
     departureTime: string;
@@ -197,6 +198,7 @@ function mapPassengersForHistory(
 export function getCurrentTripRunDetails(trip: Trips): AdminTripRunDetails {
     return {
         id: `current-${trip.id}`,
+        dateIso: '2026-06-16',
         tripDate: 'Сегодня',
         routeLabel: getRouteLabel(trip),
         departureTime: trip.departure_time.slice(0, 5),
@@ -218,6 +220,7 @@ export function getTripHistoryRuns(trip: Trips): AdminTripRunDetails[] {
     return [
         {
             id: 'history-1',
+            dateIso: '2026-06-15',
             tripDate: '15 июня 2026',
             routeLabel,
             departureTime,
@@ -231,6 +234,7 @@ export function getTripHistoryRuns(trip: Trips): AdminTripRunDetails[] {
         },
         {
             id: 'history-2',
+            dateIso: '2026-06-13',
             tripDate: '13 июня 2026',
             routeLabel,
             departureTime,
@@ -254,6 +258,7 @@ export function getTripHistoryRuns(trip: Trips): AdminTripRunDetails[] {
         },
         {
             id: 'history-3',
+            dateIso: '2026-06-11',
             tripDate: '11 июня 2026',
             routeLabel,
             departureTime,
