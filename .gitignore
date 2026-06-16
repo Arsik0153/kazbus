@@ -39,3 +39,7 @@ next-env.d.ts
 .env
 .env.local
 .env.prod
+
+/.agents
+skills-lock.json
+AGENTS.md
