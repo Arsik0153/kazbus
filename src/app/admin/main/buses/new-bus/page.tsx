@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -79,6 +79,16 @@ const NewBusPage = () => {
     const onSubmit = handleSubmit((data) => {
         execute(data);
     });
+
+    const handleSchemeChange = useCallback(
+        (seats: BusFormValues['seats']) => {
+            setValue('seats', seats, {
+                shouldValidate: true,
+                shouldDirty: true,
+            });
+        },
+        [setValue]
+    );
 
     return (
         <form className="mt-6 flex flex-col" onSubmit={onSubmit} noValidate>
@@ -294,12 +304,7 @@ const NewBusPage = () => {
                 <div className="mt-10 max-w-[980px]">
                     <Scheme
                         floorCount={floorCount}
-                        onChange={(seats) =>
-                            setValue('seats', seats, {
-                                shouldValidate: true,
-                                shouldDirty: true,
-                            })
-                        }
+                        onChange={handleSchemeChange}
                         errorMessage={errors.seats?.message}
                     />
                     <p className="mt-3 text-sm text-[#A0A0A0]">
