@@ -22,13 +22,26 @@ const severityMeta: Record<
 
 type Props = {
     option: BusIssueOption;
+    selected?: boolean;
+    onSelect?: (option: BusIssueOption) => void;
 };
 
-const BusIssueOptionCard = ({ option }: Props) => {
+const BusIssueOptionCard = ({ option, selected = false, onSelect }: Props) => {
     const severity = severityMeta[option.severity];
+    const Component = onSelect ? 'button' : 'div';
 
     return (
-        <div className="rounded-[0.625rem] border border-[#D1D1D1] bg-white p-5">
+        <Component
+            type={onSelect ? 'button' : undefined}
+            onClick={onSelect ? () => onSelect(option) : undefined}
+            className={cn(
+                'w-full rounded-[0.625rem] border bg-white p-5 text-left duration-150',
+                selected
+                    ? 'border-[#E23333] shadow-[0_0_0_2px_rgba(226,51,51,0.08)]'
+                    : 'border-[#D1D1D1]',
+                onSelect && 'active:scale-[0.99]'
+            )}
+        >
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                     <div className="flex items-center gap-2">
@@ -54,7 +67,7 @@ const BusIssueOptionCard = ({ option }: Props) => {
             <div className="mt-4 rounded-[0.625rem] bg-[#F8F8F8] px-4 py-3 text-sm font-medium text-[#4A4A4A]">
                 {option.helperText}
             </div>
-        </div>
+        </Component>
     );
 };
 

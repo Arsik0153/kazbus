@@ -14,174 +14,29 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-
-type TicketStatus = 'new' | 'inProgress' | 'closed';
-type TicketPriority = 'high' | 'medium' | 'low';
-
-type SupportTicket = {
-    id: string;
-    userName: string;
-    userPhone: string;
-    subject: string;
-    preview: string;
-    category: string;
-    status: TicketStatus;
-    priority: TicketPriority;
-    createdAt: string;
-    lastMessageAt: string;
-    assignedTo: string;
-    trip: string;
-    messages: {
-        author: 'user' | 'support';
-        text: string;
-        time: string;
-    }[];
-};
-
-const statusLabel: Record<TicketStatus, string> = {
-    new: 'Новый',
-    inProgress: 'В работе',
-    closed: 'Закрыт',
-};
-
-const priorityLabel: Record<TicketPriority, string> = {
-    high: 'Высокий',
-    medium: 'Средний',
-    low: 'Низкий',
-};
-
-const tickets: SupportTicket[] = [
-    {
-        id: 'TK-1024',
-        userName: 'Айгерим Нурланова',
-        userPhone: '+7 701 233 44 55',
-        subject: 'Не пришёл билет после оплаты',
-        preview:
-            'Оплатила билет Алматы — Астана, деньги списались, но билет не появился в приложении.',
-        category: 'Оплата',
-        status: 'new',
-        priority: 'high',
-        createdAt: 'Сегодня, 10:42',
-        lastMessageAt: '2 мин назад',
-        assignedTo: 'Не назначен',
-        trip: 'Алматы → Астана, 18:30',
-        messages: [
-            {
-                author: 'user',
-                text: 'Здравствуйте! Я оплатила билет, но он не появился в моих поездках.',
-                time: '10:42',
-            },
-            {
-                author: 'user',
-                text: 'Чек Kaspi есть, могу отправить скриншот.',
-                time: '10:45',
-            },
-        ],
-    },
-    {
-        id: 'TK-1023',
-        userName: 'Ербол Садыков',
-        userPhone: '+7 777 019 18 21',
-        subject: 'Водитель не отвечает на звонки',
-        preview:
-            'Пассажир ждёт посадку, водитель не берёт трубку, нужно уточнить статус рейса.',
-        category: 'Рейс',
-        status: 'inProgress',
-        priority: 'medium',
-        createdAt: 'Сегодня, 09:18',
-        lastMessageAt: '18 мин назад',
-        assignedTo: 'Алина',
-        trip: 'Шымкент → Алматы, 11:00',
-        messages: [
-            {
-                author: 'user',
-                text: 'Я на автовокзале, автобус не могу найти. Водитель не отвечает.',
-                time: '09:18',
-            },
-            {
-                author: 'support',
-                text: 'Ербол, здравствуйте. Проверяем рейс и свяжемся с диспетчером.',
-                time: '09:20',
-            },
-        ],
-    },
-    {
-        id: 'TK-1022',
-        userName: 'Динара Ахметова',
-        userPhone: '+7 705 555 88 10',
-        subject: 'Нужно вернуть билет',
-        preview:
-            'Пассажир хочет отменить поездку и узнать сроки возврата средств на карту.',
-        category: 'Возврат',
-        status: 'inProgress',
-        priority: 'low',
-        createdAt: 'Вчера, 17:04',
-        lastMessageAt: '1 ч назад',
-        assignedTo: 'Марат',
-        trip: 'Караганда → Павлодар, 08:15',
-        messages: [
-            {
-                author: 'user',
-                text: 'Добрый день. Я заболела, хочу вернуть билет на завтра.',
-                time: '17:04',
-            },
-            {
-                author: 'support',
-                text: 'Отправили инструкцию по возврату. Деньги поступят по правилам банка.',
-                time: '17:11',
-            },
-        ],
-    },
-    {
-        id: 'TK-1021',
-        userName: 'Руслан Омаров',
-        userPhone: '+7 708 741 36 90',
-        subject: 'Ошибка в имени пассажира',
-        preview:
-            'В билете допущена опечатка в фамилии, пассажир просит исправить данные.',
-        category: 'Профиль',
-        status: 'closed',
-        priority: 'low',
-        createdAt: '12 июн, 14:20',
-        lastMessageAt: 'Вчера',
-        assignedTo: 'Алина',
-        trip: 'Астана → Костанай, 07:40',
-        messages: [
-            {
-                author: 'user',
-                text: 'В билете фамилия написана с ошибкой. Можно исправить?',
-                time: '14:20',
-            },
-            {
-                author: 'support',
-                text: 'Исправили данные пассажира. Новый билет доступен в приложении.',
-                time: '14:34',
-            },
-        ],
-    },
-];
-
-const statusStyles: Record<TicketStatus, string> = {
-    new: 'bg-[#FFE8E8] text-[#E32B2B]',
-    inProgress: 'bg-[#FFF3D7] text-[#B7791F]',
-    closed: 'bg-[#DCFCE7] text-[#15803D]',
-};
-
-const priorityStyles: Record<TicketPriority, string> = {
-    high: 'bg-[#FFE8E8] text-[#E32B2B]',
-    medium: 'bg-[#E8F1FF] text-[#2563EB]',
-    low: 'bg-[#EEF2F7] text-[#64748B]',
-};
+import {
+    supportPriorityLabel,
+    supportPriorityStyles,
+    supportRoleLabel,
+    supportStatusLabel,
+    supportStatusStyles,
+    supportTicketsMock,
+} from '@/features/support/mock';
+import type { SupportTicketStatus } from '@/features/support/types';
 
 const SupportPage = () => {
-    const [selectedTicketId, setSelectedTicketId] = useState(tickets[0].id);
-    const [statusFilter, setStatusFilter] = useState<TicketStatus | 'all'>('all');
+    const [selectedTicketId, setSelectedTicketId] = useState(
+        supportTicketsMock[0].id
+    );
+    const [statusFilter, setStatusFilter] = useState<
+        SupportTicketStatus | 'all'
+    >('all');
     const [search, setSearch] = useState('');
 
     const filteredTickets = useMemo(() => {
         const normalizedSearch = search.trim().toLowerCase();
 
-        return tickets.filter((ticket) => {
+        return supportTicketsMock.filter((ticket) => {
             const matchesStatus =
                 statusFilter === 'all' || ticket.status === statusFilter;
             const matchesSearch =
@@ -192,6 +47,7 @@ const SupportPage = () => {
                     ticket.userPhone,
                     ticket.subject,
                     ticket.category,
+                    supportRoleLabel[ticket.requesterRole],
                 ]
                     .join(' ')
                     .toLowerCase()
@@ -204,12 +60,17 @@ const SupportPage = () => {
     const selectedTicket =
         filteredTickets.find((ticket) => ticket.id === selectedTicketId) ||
         filteredTickets[0] ||
-        tickets[0];
+        supportTicketsMock[0];
 
     const counters = {
-        new: tickets.filter((ticket) => ticket.status === 'new').length,
-        inProgress: tickets.filter((ticket) => ticket.status === 'inProgress').length,
-        closed: tickets.filter((ticket) => ticket.status === 'closed').length,
+        new: supportTicketsMock.filter((ticket) => ticket.status === 'new')
+            .length,
+        inProgress: supportTicketsMock.filter(
+            (ticket) => ticket.status === 'inProgress'
+        ).length,
+        closed: supportTicketsMock.filter(
+            (ticket) => ticket.status === 'closed'
+        ).length,
     };
 
     return (
@@ -227,7 +88,7 @@ const SupportPage = () => {
             <div className="mt-6 grid grid-cols-3 gap-4">
                 <div className="rounded-[20px] bg-white p-5">
                     <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold uppercase text-[#A0A0A0]">
+                        <span className="text-sm font-semibold text-[#A0A0A0] uppercase">
                             Новые
                         </span>
                         <AlertCircle className="h-5 w-5 text-[#E32B2B]" />
@@ -241,7 +102,7 @@ const SupportPage = () => {
                 </div>
                 <div className="rounded-[20px] bg-white p-5">
                     <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold uppercase text-[#A0A0A0]">
+                        <span className="text-sm font-semibold text-[#A0A0A0] uppercase">
                             В работе
                         </span>
                         <Clock3 className="h-5 w-5 text-[#B7791F]" />
@@ -255,7 +116,7 @@ const SupportPage = () => {
                 </div>
                 <div className="rounded-[20px] bg-white p-5">
                     <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold uppercase text-[#A0A0A0]">
+                        <span className="text-sm font-semibold text-[#A0A0A0] uppercase">
                             Закрытые
                         </span>
                         <CheckCircle2 className="h-5 w-5 text-[#15803D]" />
@@ -272,7 +133,7 @@ const SupportPage = () => {
             <div className="mt-5 grid min-h-[640px] grid-cols-[420px_minmax(0,1fr)] gap-5">
                 <div className="rounded-[20px] bg-white p-5">
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#A0A0A0]" />
+                        <Search className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-[#A0A0A0]" />
                         <Input
                             value={search}
                             onChange={(event) => setSearch(event.target.value)}
@@ -282,12 +143,14 @@ const SupportPage = () => {
                     </div>
 
                     <div className="mt-4 flex flex-wrap gap-2">
-                        {([
-                            ['all', 'Все'],
-                            ['new', 'Новые'],
-                            ['inProgress', 'В работе'],
-                            ['closed', 'Закрытые'],
-                        ] as const).map(([value, label]) => (
+                        {(
+                            [
+                                ['all', 'Все'],
+                                ['new', 'Новые'],
+                                ['inProgress', 'В работе'],
+                                ['closed', 'Закрытые'],
+                            ] as const
+                        ).map(([value, label]) => (
                             <button
                                 key={value}
                                 type="button"
@@ -325,9 +188,9 @@ const SupportPage = () => {
                                         </h2>
                                     </div>
                                     <span
-                                        className={`rounded-full px-3 py-1 text-xs font-semibold ${statusStyles[ticket.status]}`}
+                                        className={`rounded-full px-3 py-1 text-xs font-semibold ${supportStatusStyles[ticket.status]}`}
                                     >
-                                        {statusLabel[ticket.status]}
+                                        {supportStatusLabel[ticket.status]}
                                     </span>
                                 </div>
                                 <p className="mt-2 line-clamp-2 text-sm text-[#64748B]">
@@ -352,7 +215,13 @@ const SupportPage = () => {
                         <div className="flex items-start justify-between gap-4">
                             <div>
                                 <p className="text-sm font-semibold text-[#A0A0A0]">
-                                    {selectedTicket.id} · {selectedTicket.category}
+                                    {selectedTicket.id} ·{' '}
+                                    {selectedTicket.category} ·{' '}
+                                    {
+                                        supportRoleLabel[
+                                            selectedTicket.requesterRole
+                                        ]
+                                    }
                                 </p>
                                 <h2 className="mt-1 text-[28px] font-semibold text-[#4A4A4A]">
                                     {selectedTicket.subject}
@@ -360,29 +229,40 @@ const SupportPage = () => {
                             </div>
                             <div className="flex gap-2">
                                 <span
-                                    className={`rounded-full px-3 py-2 text-sm font-semibold ${priorityStyles[selectedTicket.priority]}`}
+                                    className={`rounded-full px-3 py-2 text-sm font-semibold ${supportPriorityStyles[selectedTicket.priority]}`}
                                 >
-                                    {priorityLabel[selectedTicket.priority]}
+                                    {
+                                        supportPriorityLabel[
+                                            selectedTicket.priority
+                                        ]
+                                    }
                                 </span>
                                 <span
-                                    className={`rounded-full px-3 py-2 text-sm font-semibold ${statusStyles[selectedTicket.status]}`}
+                                    className={`rounded-full px-3 py-2 text-sm font-semibold ${supportStatusStyles[selectedTicket.status]}`}
                                 >
-                                    {statusLabel[selectedTicket.status]}
+                                    {supportStatusLabel[selectedTicket.status]}
                                 </span>
                             </div>
                         </div>
 
                         <div className="mt-5 grid grid-cols-4 gap-3">
                             <div className="rounded-[14px] bg-[#F8FAFC] p-3">
-                                <p className="text-xs font-semibold uppercase text-[#A0A0A0]">
-                                    Клиент
+                                <p className="text-xs font-semibold text-[#A0A0A0] uppercase">
+                                    Отправитель
                                 </p>
                                 <p className="mt-1 font-semibold text-[#4A4A4A]">
                                     {selectedTicket.userName}
                                 </p>
+                                <p className="text-xs font-medium text-[#A0A0A0]">
+                                    {
+                                        supportRoleLabel[
+                                            selectedTicket.requesterRole
+                                        ]
+                                    }
+                                </p>
                             </div>
                             <div className="rounded-[14px] bg-[#F8FAFC] p-3">
-                                <p className="text-xs font-semibold uppercase text-[#A0A0A0]">
+                                <p className="text-xs font-semibold text-[#A0A0A0] uppercase">
                                     Телефон
                                 </p>
                                 <p className="mt-1 flex items-center gap-2 font-semibold text-[#4A4A4A]">
@@ -391,7 +271,7 @@ const SupportPage = () => {
                                 </p>
                             </div>
                             <div className="rounded-[14px] bg-[#F8FAFC] p-3">
-                                <p className="text-xs font-semibold uppercase text-[#A0A0A0]">
+                                <p className="text-xs font-semibold text-[#A0A0A0] uppercase">
                                     Рейс
                                 </p>
                                 <p className="mt-1 font-semibold text-[#4A4A4A]">
@@ -399,7 +279,7 @@ const SupportPage = () => {
                                 </p>
                             </div>
                             <div className="rounded-[14px] bg-[#F8FAFC] p-3">
-                                <p className="text-xs font-semibold uppercase text-[#A0A0A0]">
+                                <p className="text-xs font-semibold text-[#A0A0A0] uppercase">
                                     Ответственный
                                 </p>
                                 <p className="mt-1 font-semibold text-[#4A4A4A]">
@@ -422,7 +302,9 @@ const SupportPage = () => {
                                             : 'bg-white text-[#4A4A4A]'
                                     }`}
                                 >
-                                    <p className="text-sm leading-6">{message.text}</p>
+                                    <p className="text-sm leading-6">
+                                        {message.text}
+                                    </p>
                                     <p
                                         className={`mt-2 text-xs ${
                                             message.author === 'support'
