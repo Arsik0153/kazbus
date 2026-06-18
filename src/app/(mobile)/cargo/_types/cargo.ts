@@ -46,7 +46,9 @@ export type CargoTrip = {
     cargoWeightTons: number;
     cargoVolumeM3: number;
     pickupPoint: string;
+    pickupAddress: string;
     dropoffPoint: string;
+    dropoffAddress: string;
     currentPoint: string;
     distanceKm: number;
     eta: string;

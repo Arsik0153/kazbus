@@ -70,6 +70,9 @@ const DriverTripCard = ({ trip }: Props) => {
                     <p className="mt-1 text-xs text-[#A0A0A0]">
                         {trip.pickupPoint}
                     </p>
+                    <p className="mt-2 text-xs font-medium leading-4 text-[#4A4A4A]">
+                        {trip.pickupAddress}
+                    </p>
                 </div>
                 <div className="rounded-[0.625rem] bg-[#F8F8F8] p-3">
                     <p className="text-xs font-medium text-[#A0A0A0]">Куда</p>
@@ -78,6 +81,9 @@ const DriverTripCard = ({ trip }: Props) => {
                     </p>
                     <p className="mt-1 text-xs text-[#A0A0A0]">
                         {trip.dropoffPoint}
+                    </p>
+                    <p className="mt-2 text-xs font-medium leading-4 text-[#4A4A4A]">
+                        {trip.dropoffAddress}
                     </p>
                 </div>
             </div>
