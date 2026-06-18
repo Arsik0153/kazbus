@@ -72,6 +72,61 @@ export const busDriverTripMock: BusDriverTrip = {
     ],
 };
 
+export const busDriverNextTripMock: BusDriverTrip = {
+    id: 'trip-103',
+    referenceNumber: 'KB-1025',
+    routeLabel: 'Шымкент - Алматы',
+    fromCity: 'Шымкент',
+    toCity: 'Алматы',
+    departureDate: '12 июня 2026',
+    departureTime: '10:40',
+    arrivalTime: '21:25',
+    boardingWindow: '09:55 - 10:30',
+    platform: 'Платформа 2',
+    nextStop: 'Тараз',
+    currentStatus: 'preTrip',
+    passengerCapacity: 47,
+    boardedPassengers: 0,
+    freeSeats: 47,
+    steps: [
+        {
+            id: 'arrival',
+            title: 'Проверка автобуса',
+            description: 'Осмотрите салон, багажный отсек и документы.',
+            state: 'current',
+        },
+        {
+            id: 'boarding',
+            title: 'Подача на платформу',
+            description: 'Подайте автобус на платформу до начала посадки.',
+            state: 'upcoming',
+        },
+        {
+            id: 'departure',
+            title: 'Посадка пассажиров',
+            description: 'Проверьте билеты и багаж перед отправлением.',
+            state: 'upcoming',
+        },
+        {
+            id: 'enroute',
+            title: 'В пути',
+            description: 'Контроль остановок по маршруту Шымкент - Алматы.',
+            state: 'upcoming',
+        },
+        {
+            id: 'arrival-finish',
+            title: 'Прибытие',
+            description: 'Высадка пассажиров и закрытие рейса.',
+            state: 'upcoming',
+        },
+    ],
+};
+
+export const busDriverTripsMock: BusDriverTrip[] = [
+    busDriverTripMock,
+    busDriverNextTripMock,
+];
+
 export const busDriverStatsMock: BusDriverStat[] = [
     {
         id: 'checked',

@@ -1,22 +1,53 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Topbar from '@/components/topbar';
 import BusDriverStatsCard from '../_components/BusDriverStatsCard';
 import BusDriverTripCard from '../_components/BusDriverTripCard';
 import BusDriverTripStatusStepper from '../_components/BusDriverTripStatusStepper';
 import {
-    busDriverStatsMock,
     busDriverTripMock,
+    busDriverTripsMock,
 } from '../_data/bus-driver.mock';
 import type {
+    BusDriverStat,
     BusDriverTrip,
     BusDriverTripStep,
     BusTripStepState,
 } from '../_types/bus-driver';
 
-const tripPageStats = busDriverStatsMock.slice(0, 3);
+const buildTripPageStats = (trip: BusDriverTrip): BusDriverStat[] => {
+    const waitingPassengers = Math.max(
+        trip.passengerCapacity - trip.boardedPassengers - trip.freeSeats,
+        0
+    );
+
+    return [
+        {
+            id: 'checked',
+            label: 'Проверено',
+            value: String(trip.boardedPassengers),
+            description: 'билетов сканировано',
+            tone: 'brand',
+        },
+        {
+            id: 'waiting',
+            label: 'Ожидают',
+            value: String(waitingPassengers),
+            description: 'пассажиров к посадке',
+            tone: 'neutral',
+        },
+        {
+            id: 'free-seats',
+            label: 'Свободно',
+            value: String(trip.freeSeats),
+            description: 'мест в салоне',
+            tone: 'success',
+        },
+    ];
+};
 
 const getTripStatusByStepId = (
     stepId: BusDriverTripStep['id']
@@ -55,10 +86,25 @@ const buildTripSteps = (
     });
 
 const BusDriverTripPage = () => {
-    const [trip, setTrip] = useState(busDriverTripMock);
-    const [isTripCompleted, setIsTripCompleted] = useState(
-        busDriverTripMock.currentStatus === 'completed'
+    const searchParams = useSearchParams();
+    const tripId = searchParams.get('tripId');
+    const selectedTrip = useMemo(
+        () =>
+            busDriverTripsMock.find(
+                (availableTrip) => availableTrip.id === tripId
+            ) ?? busDriverTripMock,
+        [tripId]
     );
+    const [trip, setTrip] = useState(selectedTrip);
+    const [isTripCompleted, setIsTripCompleted] = useState(
+        selectedTrip.currentStatus === 'completed'
+    );
+    const tripPageStats = buildTripPageStats(trip);
+
+    useEffect(() => {
+        setTrip(selectedTrip);
+        setIsTripCompleted(selectedTrip.currentStatus === 'completed');
+    }, [selectedTrip]);
 
     const handleStepChange = (stepIndex: number) => {
         const selectedStep = trip.steps[stepIndex];

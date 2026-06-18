@@ -1,9 +1,8 @@
 import Link from 'next/link';
-import BusDriverStatsCard from './_components/BusDriverStatsCard';
 import BusDriverTripCard from './_components/BusDriverTripCard';
 import {
+    busDriverNextTripMock,
     busDriverProfileMock,
-    busDriverStatsMock,
     busDriverTripMock,
 } from './_data/bus-driver.mock';
 
@@ -39,23 +38,24 @@ const BusDriverHomePage = () => {
                     <h2 className="leading-5.5 pb-3 text-xl font-bold text-[#4A4A4A]">
                         Активный рейс
                     </h2>
-                    
                 </div>
-                <Link
-                        href="/busdriver/trip"
-
-                    >
-
+                <Link href={`/busdriver/trip?tripId=${busDriverTripMock.id}`}>
                     <BusDriverTripCard trip={busDriverTripMock} />
                 </Link>
-
             </div>
 
-            {/* <div className="mt-5 grid grid-cols-2 gap-3">
-                {busDriverStatsMock.map((stat) => (
-                    <BusDriverStatsCard key={stat.id} stat={stat} />
-                ))}
-            </div> */}
+            <div className="mt-5">
+                <div className="flex items-center justify-between gap-3">
+                    <h2 className="leading-5.5 pb-3 text-xl font-bold text-[#4A4A4A]">
+                        Следующий запланированный рейс
+                    </h2>
+                </div>
+                <Link
+                    href={`/busdriver/trip?tripId=${busDriverNextTripMock.id}`}
+                >
+                    <BusDriverTripCard trip={busDriverNextTripMock} />
+                </Link>
+            </div>
 
             {/* <div className="mt-5 rounded-[0.625rem] border border-[#D1D1D1] bg-white px-4 pt-5">
                 <h2 className="leading-5.5 pb-4 text-xl font-bold text-[#4A4A4A]">
