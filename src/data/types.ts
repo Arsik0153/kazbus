@@ -16,8 +16,10 @@ export type Ticket = {
         name: string;
     };
     from_bus_station: {
-        id: number;
+        id: number | null;
         name: string;
+        latitude: string;
+        longitude: string;
     };
     from_date: string;
     from_time: string;
@@ -26,8 +28,10 @@ export type Ticket = {
         name: string;
     };
     to_bus_station: {
-        id: number;
+        id: number | null;
         name: string;
+        latitude: string;
+        longitude: string;
     };
     to_date: string;
     to_time: string;
@@ -49,9 +53,11 @@ export type Point = {
 };
 
 export type BusStation = {
-    id: number;
+    id: number | null;
     name: string;
-    point: Point;
+    point?: Point;
+    latitude?: string;
+    longitude?: string;
 };
 
 type Weekdays = {
@@ -147,13 +153,22 @@ export type Bus = {
 export type Stop = {
     id: number;
     name: string;
+    address: string;
+    latitude: string;
+    longitude: string;
     travel_time_from_start: string; // Время в формате "HH:MM:SS"
     stop_time: string; // Время в формате "HH:MM:SS"
 };
 export type Routes = {
     id: number;
     start_city: Point;
+    start_address: string;
+    start_latitude: string;
+    start_longitude: string;
     end_city: Point;
+    end_address: string;
+    end_latitude: string;
+    end_longitude: string;
     total_travel_time: string; // Время в формате "HH:MM:SS"
     created_at: string; // Дата в формате ISO
     stops: Stop[];

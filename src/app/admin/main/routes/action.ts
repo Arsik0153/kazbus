@@ -10,6 +10,24 @@ const routeIdSchema = z.object({
     routeId: z.number().int().positive(),
 });
 
+const geocodeAddressSchema = z.object({
+    address: z.string().trim().min(3).max(255),
+    city: z.string().trim().max(255).optional(),
+    region: z.string().trim().max(255).optional(),
+});
+
+const geocodingResultSchema = z.object({
+    display_name: z.string().min(1),
+    latitude: z.string().min(1),
+    longitude: z.string().min(1),
+});
+
+export type GeocodingResult = {
+    display_name: string;
+    latitude: string;
+    longitude: string;
+};
+
 const saveRouteSchema = z.intersection(
     routeSchema,
     z.object({
@@ -44,6 +62,31 @@ export const getRouteAction = createServerAction()
         }
 
         return (await response.json()) as Routes;
+    });
+
+export const geocodeAddressAction = createServerAction()
+    .input(geocodeAddressSchema)
+    .handler(async ({ input }) => {
+        const query = new URLSearchParams({ address: input.address });
+        if (input.city) query.set('city', input.city);
+        if (input.region) query.set('region', input.region);
+
+        const response = await adminFetch(`/trip_v2/geocode/?${query}`);
+        if (!response.ok) {
+            throw new Error(
+                await getAdminApiError(response, 'Не удалось найти адрес')
+            );
+        }
+
+        const payload: unknown = await response.json().catch(() => null);
+        const parsedPayload = z.array(geocodingResultSchema).safeParse(payload);
+        if (!parsedPayload.success || parsedPayload.data.length === 0) {
+            throw new Error(
+                'Сервис поиска вернул некорректный ответ. Повторите поиск.'
+            );
+        }
+
+        return parsedPayload.data;
     });
 
 export const saveRouteAction = createServerAction()

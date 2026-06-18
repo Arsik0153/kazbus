@@ -75,17 +75,27 @@ const RoutesTable = ({ routes }: Props) => {
                                         A
                                     </div>
                                     <div className="flex items-center gap-3">
-                                        <p className="font-medium text-[#4A4A4A]">
-                                            {route.start_city.name}
-                                        </p>
+                                        <div>
+                                            <p className="font-medium text-[#4A4A4A]">
+                                                {route.start_city.name}
+                                            </p>
+                                            <p className="text-sm text-[#A0A0A0]">
+                                                {route.start_address}
+                                            </p>
+                                        </div>
                                         <Arrow
                                             color="#4A4A4A"
                                             width={26}
                                             height={0}
                                         />
-                                        <p className="font-medium text-[#4A4A4A]">
-                                            {route.end_city.name}
-                                        </p>
+                                        <div>
+                                            <p className="font-medium text-[#4A4A4A]">
+                                                {route.end_city.name}
+                                            </p>
+                                            <p className="text-sm text-[#A0A0A0]">
+                                                {route.end_address}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </td>

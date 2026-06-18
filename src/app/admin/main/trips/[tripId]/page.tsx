@@ -36,8 +36,6 @@ export default async function AdminTripDetailsPage({ params }: Props) {
         <TripDetailsView
             trip={details.trip}
             run={details.current_run}
-            historyRuns={details.history_runs}
-            summary={details.summary}
             mode="current"
         />
     );
