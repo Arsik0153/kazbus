@@ -1,15 +1,27 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { InputMask } from '@react-input/mask';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Plus, Save, Trash2 } from 'lucide-react';
+import {
+    ArrowLeft,
+    LoaderCircle,
+    Plus,
+    Save,
+    Search,
+    Trash2,
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useServerAction } from 'zsa-react';
 import { z } from 'zod';
 
+import {
+    BaseCombobox,
+    type ComboboxOption,
+} from '@/components/base/combobox';
 import Spinner from '@/components/spinner';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,7 +33,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { routeSchema } from '@/data/schemas';
 
-import { getRouteAction, saveRouteAction } from '../action';
+import {
+    type GeocodingResult,
+    geocodeAddressAction,
+    getRouteAction,
+    saveRouteAction,
+} from '../action';
+import RoutePointMap from './route-point-map';
 
 type RouteFormValues = z.output<typeof routeSchema>;
 
@@ -34,31 +52,145 @@ const defaultValues: RouteFormValues = {
         name: '',
         region: '',
     },
+    start_address: '',
+    start_latitude: '',
+    start_longitude: '',
     end_city: {
         name: '',
         region: '',
     },
-    total_travel_time: '00:00:00',
+    end_address: '',
+    end_latitude: '',
+    end_longitude: '',
+    total_travel_time: '',
     stops: [],
 };
 
 const emptyStop = {
     name: '',
-    travel_time_from_start: '00:00:00',
-    stop_time: '00:05:00',
+    address: '',
+    latitude: '',
+    longitude: '',
+    travel_time_from_start: '',
+    stop_time: '',
+};
+
+const formString = (value: unknown) => (typeof value === 'string' ? value : '');
+
+const durationToTimeInputValue = (value: unknown) => {
+    const duration = formString(value);
+    return duration.length >= 5 ? duration.slice(0, 5) : duration;
+};
+
+const timeInputValueToDuration = (value: string) =>
+    value.length === 5 ? `${value}:00` : value;
+
+type AddressGeocodingComboboxProps = {
+    id: string;
+    value: string;
+    placeholder: string;
+    results: GeocodingResult[];
+    isActive: boolean;
+    isLoading: boolean;
+    isInvalid: boolean;
+    searchLabel: string;
+    onChange: (value: string) => void;
+    onSearch: () => void;
+    onSelect: (result: GeocodingResult) => void;
+};
+
+const getGeocodingOptionValue = (result: GeocodingResult) =>
+    `${result.latitude}:${result.longitude}`;
+
+const AddressGeocodingCombobox = ({
+    id,
+    value,
+    placeholder,
+    results,
+    isActive,
+    isLoading,
+    isInvalid,
+    searchLabel,
+    onChange,
+    onSearch,
+    onSelect,
+}: AddressGeocodingComboboxProps) => {
+    const options: ComboboxOption[] = isActive
+        ? results.map((result) => ({
+              value: getGeocodingOptionValue(result),
+              label: result.display_name,
+          }))
+        : [];
+
+    return (
+        <BaseCombobox
+            id={id}
+            options={options}
+            value={null}
+            inputValue={value}
+            onInputValueChange={onChange}
+            onValueChange={(_, option) => {
+                if (!option) {
+                    return;
+                }
+
+                const selectedResult = results.find(
+                    (result) => getGeocodingOptionValue(result) === option.value
+                );
+
+                if (selectedResult) {
+                    onSelect(selectedResult);
+                }
+            }}
+            placeholder={placeholder}
+            emptyText={
+                isActive
+                    ? 'Ничего не найдено'
+                    : 'Нажмите поиск, чтобы загрузить варианты'
+            }
+            ariaInvalid={isInvalid}
+            endAddon={
+                <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-xs"
+                    aria-label={searchLabel}
+                    disabled={isLoading}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={onSearch}
+                >
+                    {isLoading ? (
+                        <LoaderCircle className="animate-spin" />
+                    ) : (
+                        <Search />
+                    )}
+                </Button>
+            }
+            contentClassName="max-h-80"
+            listClassName="[&_button]:whitespace-normal [&_button]:pr-8"
+        />
+    );
 };
 
 const RouteForm = ({ routeId }: Props) => {
     const router = useRouter();
     const queryClient = useQueryClient();
     const isEditing = Boolean(routeId);
+    const [geocodingTarget, setGeocodingTarget] = useState<string | null>(null);
+    const [geocodingResults, setGeocodingResults] = useState<GeocodingResult[]>(
+        []
+    );
+    const geocodingTargetRef = useRef<string | null>(null);
 
     const {
         control,
         register,
         formState: { errors },
         handleSubmit,
+        getValues,
         reset,
+        setValue,
+        watch,
     } = useForm<RouteFormValues>({
         resolver: zodResolver(routeSchema),
         mode: 'onChange',
@@ -80,14 +212,23 @@ const RouteForm = ({ routeId }: Props) => {
                         name: data.start_city.name,
                         region: data.start_city.region,
                     },
+                    start_address: formString(data.start_address),
+                    start_latitude: formString(data.start_latitude),
+                    start_longitude: formString(data.start_longitude),
                     end_city: {
                         name: data.end_city.name,
                         region: data.end_city.region,
                     },
+                    end_address: formString(data.end_address),
+                    end_latitude: formString(data.end_latitude),
+                    end_longitude: formString(data.end_longitude),
                     total_travel_time: data.total_travel_time,
                     stops: data.stops.map((stop) => ({
                         id: stop.id,
                         name: stop.name,
+                        address: formString(stop.address),
+                        latitude: formString(stop.latitude),
+                        longitude: formString(stop.longitude),
                         travel_time_from_start: stop.travel_time_from_start,
                         stop_time: stop.stop_time,
                     })),
@@ -118,6 +259,133 @@ const RouteForm = ({ routeId }: Props) => {
             },
         }
     );
+
+    const { execute: geocodeAddress, isPending: isGeocoding } = useServerAction(
+        geocodeAddressAction,
+        {
+            onSuccess: ({ data }) => {
+                if (!Array.isArray(data) || data.length === 0) {
+                    toast.error(
+                        'Сервис вернул некорректный ответ. Повторите поиск.'
+                    );
+                    closeGeocodingResults();
+                    return;
+                }
+                setGeocodingResults(data);
+            },
+            onError: ({ err }) => {
+                toast.error(err.message || 'Не удалось найти адрес');
+                geocodingTargetRef.current = null;
+                setGeocodingTarget(null);
+                setGeocodingResults([]);
+            },
+        }
+    );
+
+    const closeGeocodingResults = () => {
+        geocodingTargetRef.current = null;
+        setGeocodingTarget(null);
+        setGeocodingResults([]);
+    };
+
+    const handleSelectGeocodingResult = (result: GeocodingResult) => {
+        const target = geocodingTargetRef.current;
+        if (target === 'start') {
+            setValue('start_address', result.display_name, {
+                shouldDirty: true,
+                shouldValidate: true,
+            });
+            setValue('start_latitude', result.latitude, {
+                shouldDirty: true,
+                shouldValidate: true,
+            });
+            setValue('start_longitude', result.longitude, {
+                shouldDirty: true,
+                shouldValidate: true,
+            });
+        } else if (target === 'end') {
+            setValue('end_address', result.display_name, {
+                shouldDirty: true,
+                shouldValidate: true,
+            });
+            setValue('end_latitude', result.latitude, {
+                shouldDirty: true,
+                shouldValidate: true,
+            });
+            setValue('end_longitude', result.longitude, {
+                shouldDirty: true,
+                shouldValidate: true,
+            });
+        } else if (target?.startsWith('stop-')) {
+            const index = Number(target.slice(5));
+            setValue(`stops.${index}.address`, result.display_name, {
+                shouldDirty: true,
+                shouldValidate: true,
+            });
+            setValue(`stops.${index}.latitude`, result.latitude, {
+                shouldDirty: true,
+                shouldValidate: true,
+            });
+            setValue(`stops.${index}.longitude`, result.longitude, {
+                shouldDirty: true,
+                shouldValidate: true,
+            });
+        }
+
+        toast.success('Точка выбрана');
+        closeGeocodingResults();
+    };
+
+    const handleGeocode = (target: 'start' | 'end' | number) => {
+        if (isGeocoding) {
+            return;
+        }
+
+        setGeocodingResults([]);
+
+        if (target === 'start') {
+            const address = formString(getValues('start_address')).trim();
+            if (address.length < 3) {
+                toast.error('Сначала введите адрес отправления');
+                return;
+            }
+            geocodingTargetRef.current = 'start';
+            setGeocodingTarget('start');
+            geocodeAddress({
+                address,
+                city: formString(getValues('start_city.name')),
+            });
+            return;
+        }
+
+        if (target === 'end') {
+            const address = formString(getValues('end_address')).trim();
+            if (address.length < 3) {
+                toast.error('Сначала введите адрес прибытия');
+                return;
+            }
+            geocodingTargetRef.current = 'end';
+            setGeocodingTarget('end');
+            geocodeAddress({
+                address,
+                city: formString(getValues('end_city.name')),
+                region: formString(getValues('end_city.region')),
+            });
+            return;
+        }
+
+        const address = formString(getValues(`stops.${target}.address`)).trim();
+        if (address.length < 3) {
+            toast.error('Сначала введите адрес остановки');
+            return;
+        }
+        geocodingTargetRef.current = `stop-${target}`;
+        setGeocodingTarget(`stop-${target}`);
+        geocodeAddress({
+            address,
+            city: formString(getValues(`stops.${target}.name`)),
+        });
+    };
 
     useEffect(() => {
         if (!routeId) {
@@ -175,7 +443,12 @@ const RouteForm = ({ routeId }: Props) => {
                                 id="start_city_name"
                                 placeholder="Например, Алматы"
                                 aria-invalid={Boolean(errors.start_city?.name)}
-                                {...register('start_city.name')}
+                                {...register('start_city.name', {
+                                    onChange: () => {
+                                        setValue('start_latitude', '');
+                                        setValue('start_longitude', '');
+                                    },
+                                })}
                             />
                             <FieldError errors={[errors.start_city?.name]} />
                         </Field>
@@ -194,10 +467,71 @@ const RouteForm = ({ routeId }: Props) => {
                                 aria-invalid={Boolean(
                                     errors.start_city?.region
                                 )}
-                                {...register('start_city.region')}
+                                {...register('start_city.region', {
+                                    onChange: () => {
+                                        setValue('start_latitude', '');
+                                        setValue('start_longitude', '');
+                                    },
+                                })}
                             />
                             <FieldError errors={[errors.start_city?.region]} />
                         </Field>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-6">
+                        <Field
+                            className="col-span-2"
+                            data-invalid={Boolean(errors.start_address)}
+                        >
+                            <FieldLabel htmlFor="start_address">
+                                Адрес отправления
+                            </FieldLabel>
+                            <Controller
+                                control={control}
+                                name="start_address"
+                                render={({ field }) => (
+                                    <AddressGeocodingCombobox
+                                        id="start_address"
+                                        value={formString(field.value)}
+                                        placeholder="Например, Автовокзал Сайран"
+                                        results={geocodingResults}
+                                        isActive={geocodingTarget === 'start'}
+                                        isLoading={
+                                            isGeocoding &&
+                                            geocodingTarget === 'start'
+                                        }
+                                        isInvalid={Boolean(
+                                            errors.start_address
+                                        )}
+                                        searchLabel="Найти координаты адреса отправления"
+                                        onChange={(value) => {
+                                            field.onChange(value);
+                                            setValue('start_latitude', '');
+                                            setValue('start_longitude', '');
+                                        }}
+                                        onSearch={() => handleGeocode('start')}
+                                        onSelect={
+                                            handleSelectGeocodingResult
+                                        }
+                                    />
+                                )}
+                            />
+                            <FieldError errors={[errors.start_address]} />
+                            <RoutePointMap
+                                title="Точка отправления на карте"
+                                latitude={watch('start_latitude')}
+                                longitude={watch('start_longitude')}
+                            />
+                        </Field>
+                        <input type="hidden" {...register('start_latitude')} />
+                        <input type="hidden" {...register('start_longitude')} />
+                        <FieldError
+                            className="col-span-2"
+                            errors={[
+                                errors.start_latitude,
+                                errors.start_longitude,
+                            ]}
+                        />
                     </div>
 
                     <div className="grid grid-cols-2 gap-6">
@@ -212,7 +546,12 @@ const RouteForm = ({ routeId }: Props) => {
                                 id="end_city_name"
                                 placeholder="Например, Астана"
                                 aria-invalid={Boolean(errors.end_city?.name)}
-                                {...register('end_city.name')}
+                                {...register('end_city.name', {
+                                    onChange: () => {
+                                        setValue('end_latitude', '');
+                                        setValue('end_longitude', '');
+                                    },
+                                })}
                             />
                             <FieldError errors={[errors.end_city?.name]} />
                         </Field>
@@ -227,10 +566,66 @@ const RouteForm = ({ routeId }: Props) => {
                                 id="end_city_region"
                                 placeholder="Например, Акмолинская область"
                                 aria-invalid={Boolean(errors.end_city?.region)}
-                                {...register('end_city.region')}
+                                {...register('end_city.region', {
+                                    onChange: () => {
+                                        setValue('end_latitude', '');
+                                        setValue('end_longitude', '');
+                                    },
+                                })}
                             />
                             <FieldError errors={[errors.end_city?.region]} />
                         </Field>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-6">
+                        <Field
+                            className="col-span-2"
+                            data-invalid={Boolean(errors.end_address)}
+                        >
+                            <FieldLabel htmlFor="end_address">
+                                Адрес прибытия
+                            </FieldLabel>
+                            <Controller
+                                control={control}
+                                name="end_address"
+                                render={({ field }) => (
+                                    <AddressGeocodingCombobox
+                                        id="end_address"
+                                        value={formString(field.value)}
+                                        placeholder="Например, Автовокзал Сапаржай"
+                                        results={geocodingResults}
+                                        isActive={geocodingTarget === 'end'}
+                                        isLoading={
+                                            isGeocoding &&
+                                            geocodingTarget === 'end'
+                                        }
+                                        isInvalid={Boolean(errors.end_address)}
+                                        searchLabel="Найти координаты адреса прибытия"
+                                        onChange={(value) => {
+                                            field.onChange(value);
+                                            setValue('end_latitude', '');
+                                            setValue('end_longitude', '');
+                                        }}
+                                        onSearch={() => handleGeocode('end')}
+                                        onSelect={
+                                            handleSelectGeocodingResult
+                                        }
+                                    />
+                                )}
+                            />
+                            <FieldError errors={[errors.end_address]} />
+                            <RoutePointMap
+                                title="Точка прибытия на карте"
+                                latitude={watch('end_latitude')}
+                                longitude={watch('end_longitude')}
+                            />
+                        </Field>
+                        <input type="hidden" {...register('end_latitude')} />
+                        <input type="hidden" {...register('end_longitude')} />
+                        <FieldError
+                            className="col-span-2"
+                            errors={[errors.end_latitude, errors.end_longitude]}
+                        />
                     </div>
 
                     <Field
@@ -243,11 +638,36 @@ const RouteForm = ({ routeId }: Props) => {
                         >
                             Общее время в пути
                         </FieldLabel>
-                        <Input
-                            id="total_travel_time"
-                            placeholder="08:30:00"
-                            aria-invalid={Boolean(errors.total_travel_time)}
-                            {...register('total_travel_time')}
+                        <Controller
+                            control={control}
+                            name="total_travel_time"
+                            render={({ field }) => (
+                                <InputMask
+                                    component={Input}
+                                    id="total_travel_time"
+                                    type="text"
+                                    inputMode="numeric"
+                                    mask="__:__"
+                                    replacement={{ _: /\d/ }}
+                                    placeholder="24:00"
+                                    value={durationToTimeInputValue(
+                                        field.value
+                                    )}
+                                    aria-invalid={Boolean(
+                                        errors.total_travel_time
+                                    )}
+                                    onChange={(event) =>
+                                        field.onChange(
+                                            timeInputValueToDuration(
+                                                event.target.value
+                                            )
+                                        )
+                                    }
+                                    onBlur={field.onBlur}
+                                    name={field.name}
+                                    ref={field.ref}
+                                />
+                            )}
                         />
                         <FieldError errors={[errors.total_travel_time]} />
                     </Field>
@@ -280,7 +700,7 @@ const RouteForm = ({ routeId }: Props) => {
                             {fields.map((field, index) => (
                                 <div
                                     key={field.fieldId}
-                                    className="grid grid-cols-[1fr_190px_170px_auto] items-start gap-4 rounded-[14px] bg-[#F8FAFC] p-4"
+                                    className="grid grid-cols-[minmax(180px,1fr)_minmax(280px,1.6fr)_auto] items-start gap-4 rounded-[14px] bg-[#F8FAFC] p-4"
                                 >
                                     {typeof field.id === 'number' ? (
                                         <input
@@ -306,7 +726,21 @@ const RouteForm = ({ routeId }: Props) => {
                                             aria-invalid={Boolean(
                                                 errors.stops?.[index]?.name
                                             )}
-                                            {...register(`stops.${index}.name`)}
+                                            {...register(
+                                                `stops.${index}.name`,
+                                                {
+                                                    onChange: () => {
+                                                        setValue(
+                                                            `stops.${index}.latitude`,
+                                                            ''
+                                                        );
+                                                        setValue(
+                                                            `stops.${index}.longitude`,
+                                                            ''
+                                                        );
+                                                    },
+                                                }
+                                            )}
                                         />
                                         <FieldError
                                             errors={[
@@ -314,6 +748,106 @@ const RouteForm = ({ routeId }: Props) => {
                                             ]}
                                         />
                                     </Field>
+                                    <Field
+                                        data-invalid={Boolean(
+                                            errors.stops?.[index]?.address
+                                        )}
+                                    >
+                                        <FieldLabel
+                                            htmlFor={`stop_${index}_address`}
+                                        >
+                                            Адрес
+                                        </FieldLabel>
+                                        <Controller
+                                            control={control}
+                                            name={`stops.${index}.address`}
+                                            render={({ field }) => (
+                                                <AddressGeocodingCombobox
+                                                    id={`stop_${index}_address`}
+                                                    value={formString(
+                                                        field.value
+                                                    )}
+                                                    placeholder="Например, Автовокзал Караганда"
+                                                    results={geocodingResults}
+                                                    isActive={
+                                                        geocodingTarget ===
+                                                        `stop-${index}`
+                                                    }
+                                                    isLoading={
+                                                        isGeocoding &&
+                                                        geocodingTarget ===
+                                                            `stop-${index}`
+                                                    }
+                                                    isInvalid={Boolean(
+                                                        errors.stops?.[index]
+                                                            ?.address
+                                                    )}
+                                                    searchLabel={`Найти координаты остановки ${index + 1}`}
+                                                    onChange={(value) => {
+                                                        field.onChange(value);
+                                                        setValue(
+                                                            `stops.${index}.latitude`,
+                                                            ''
+                                                        );
+                                                        setValue(
+                                                            `stops.${index}.longitude`,
+                                                            ''
+                                                        );
+                                                    }}
+                                                    onSearch={() =>
+                                                        handleGeocode(index)
+                                                    }
+                                                    onSelect={
+                                                        handleSelectGeocodingResult
+                                                    }
+                                                />
+                                            )}
+                                        />
+                                        <FieldError
+                                            errors={[
+                                                errors.stops?.[index]?.address,
+                                            ]}
+                                        />
+                                        <RoutePointMap
+                                            title={`Остановка ${index + 1} на карте`}
+                                            latitude={watch(
+                                                `stops.${index}.latitude`
+                                            )}
+                                            longitude={watch(
+                                                `stops.${index}.longitude`
+                                            )}
+                                        />
+                                    </Field>
+                                    <input
+                                        type="hidden"
+                                        {...register(
+                                            `stops.${index}.latitude`
+                                        )}
+                                    />
+                                    <input
+                                        type="hidden"
+                                        {...register(
+                                            `stops.${index}.longitude`
+                                        )}
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon-lg"
+                                        className="mt-7"
+                                        aria-label="Удалить остановку"
+                                        disabled={isGeocoding}
+                                        onClick={() => remove(index)}
+                                    >
+                                        <Trash2 />
+                                    </Button>
+                                    <FieldError
+                                        className="col-span-full"
+                                        errors={[
+                                            errors.stops?.[index]?.latitude,
+                                            errors.stops?.[index]?.longitude,
+                                        ]}
+                                    />
                                     <Field
                                         data-invalid={Boolean(
                                             errors.stops?.[index]
@@ -325,15 +859,37 @@ const RouteForm = ({ routeId }: Props) => {
                                         >
                                             От старта
                                         </FieldLabel>
-                                        <Input
-                                            id={`stop_${index}_travel`}
-                                            placeholder="02:15:00"
-                                            aria-invalid={Boolean(
-                                                errors.stops?.[index]
-                                                    ?.travel_time_from_start
-                                            )}
-                                            {...register(
-                                                `stops.${index}.travel_time_from_start`
+                                        <Controller
+                                            control={control}
+                                            name={`stops.${index}.travel_time_from_start`}
+                                            render={({ field }) => (
+                                                <InputMask
+                                                    component={Input}
+                                                    id={`stop_${index}_travel`}
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    mask="__:__"
+                                                    replacement={{ _: /\d/ }}
+                                                    placeholder="02:15"
+                                                    value={durationToTimeInputValue(
+                                                        field.value
+                                                    )}
+                                                    aria-invalid={Boolean(
+                                                        errors.stops?.[index]
+                                                            ?.travel_time_from_start
+                                                    )}
+                                                    onChange={(event) =>
+                                                        field.onChange(
+                                                            timeInputValueToDuration(
+                                                                event.target
+                                                                    .value
+                                                            )
+                                                        )
+                                                    }
+                                                    onBlur={field.onBlur}
+                                                    name={field.name}
+                                                    ref={field.ref}
+                                                />
                                             )}
                                         />
                                         <FieldError
@@ -353,14 +909,37 @@ const RouteForm = ({ routeId }: Props) => {
                                         >
                                             Стоянка
                                         </FieldLabel>
-                                        <Input
-                                            id={`stop_${index}_parking`}
-                                            placeholder="00:10:00"
-                                            aria-invalid={Boolean(
-                                                errors.stops?.[index]?.stop_time
-                                            )}
-                                            {...register(
-                                                `stops.${index}.stop_time`
+                                        <Controller
+                                            control={control}
+                                            name={`stops.${index}.stop_time`}
+                                            render={({ field }) => (
+                                                <InputMask
+                                                    component={Input}
+                                                    id={`stop_${index}_parking`}
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    mask="__:__"
+                                                    replacement={{ _: /\d/ }}
+                                                    placeholder="00:10"
+                                                    value={durationToTimeInputValue(
+                                                        field.value
+                                                    )}
+                                                    aria-invalid={Boolean(
+                                                        errors.stops?.[index]
+                                                            ?.stop_time
+                                                    )}
+                                                    onChange={(event) =>
+                                                        field.onChange(
+                                                            timeInputValueToDuration(
+                                                                event.target
+                                                                    .value
+                                                            )
+                                                        )
+                                                    }
+                                                    onBlur={field.onBlur}
+                                                    name={field.name}
+                                                    ref={field.ref}
+                                                />
                                             )}
                                         />
                                         <FieldError
@@ -370,16 +949,6 @@ const RouteForm = ({ routeId }: Props) => {
                                             ]}
                                         />
                                     </Field>
-                                    <Button
-                                        type="button"
-                                        variant="ghost"
-                                        size="icon-lg"
-                                        className="mt-7"
-                                        aria-label="Удалить остановку"
-                                        onClick={() => remove(index)}
-                                    >
-                                        <Trash2 />
-                                    </Button>
                                 </div>
                             ))}
                         </div>

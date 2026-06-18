@@ -22,39 +22,53 @@ export type BaseComboboxProps = {
     options: readonly ComboboxOption[];
     value?: string | null;
     defaultValue?: string | null;
+    inputValue?: string;
     onValueChange?: (
         value: string | null,
         option: ComboboxOption | null
     ) => void;
+    onInputValueChange?: (value: string) => void;
+    id?: string;
     placeholder?: string;
     emptyText?: string;
     disabled?: boolean;
     clearable?: boolean;
     name?: string;
     required?: boolean;
+    ariaInvalid?: boolean;
     className?: string;
+    inputClassName?: string;
     contentClassName?: string;
     listClassName?: string;
+    endAddon?: React.ReactNode;
 };
 
 export function BaseCombobox({
     options,
     value,
     defaultValue = null,
+    inputValue,
     onValueChange,
+    onInputValueChange,
+    id,
     placeholder = 'Выберите значение',
     emptyText = 'Ничего не найдено',
     disabled = false,
     clearable = false,
     name,
     required,
+    ariaInvalid,
     className,
+    inputClassName,
     contentClassName,
     listClassName,
+    endAddon,
 }: BaseComboboxProps) {
-    const inputId = React.useId();
+    const generatedInputId = React.useId();
+    const inputId = id ?? generatedInputId;
     const listboxId = React.useId();
     const isControlled = value !== undefined;
+    const isInputControlled = inputValue !== undefined;
     const [internalValue, setInternalValue] = React.useState(defaultValue);
     const [open, setOpen] = React.useState(false);
     const [query, setQuery] = React.useState<string | null>(null);
@@ -116,9 +130,14 @@ export function BaseCombobox({
             setQuery(null);
             setOpen(false);
             setActiveIndex(-1);
+
+            if (isInputControlled) {
+                onInputValueChange?.(option?.label ?? '');
+            }
+
             onValueChange?.(nextValue, option);
         },
-        [isControlled, onValueChange]
+        [isControlled, isInputControlled, onInputValueChange, onValueChange]
     );
 
     const openList = React.useCallback(() => {
@@ -168,7 +187,15 @@ export function BaseCombobox({
         }
     };
 
-    const inputValue = query ?? selectedOption?.label ?? '';
+    const visibleInputValue =
+        inputValue ?? query ?? selectedOption?.label ?? '';
+
+    React.useEffect(() => {
+        if (isInputControlled && options.length > 0) {
+            setOpen(true);
+            setActiveIndex(getNextEnabledIndex(-1, 1));
+        }
+    }, [getNextEnabledIndex, isInputControlled, options.length]);
 
     return (
         <Popover
@@ -194,12 +221,13 @@ export function BaseCombobox({
                                 ? `${listboxId}-option-${activeIndex}`
                                 : undefined
                         }
-                        value={inputValue}
+                        value={visibleInputValue}
                         placeholder={placeholder}
                         disabled={disabled}
                         required={required}
+                        aria-invalid={ariaInvalid}
                         autoComplete="off"
-                        className="h-12 pr-16"
+                        className={cn('h-12 pr-16', inputClassName)}
                         onFocus={(event) => {
                             openList();
                             event.currentTarget.select();
@@ -207,6 +235,14 @@ export function BaseCombobox({
                         onClick={openList}
                         onChange={(event) => {
                             const nextQuery = event.target.value;
+
+                            if (isInputControlled) {
+                                onInputValueChange?.(nextQuery);
+                                onValueChange?.(null, null);
+                                setOpen(true);
+                                setActiveIndex(-1);
+                                return;
+                            }
 
                             if (
                                 nextQuery.trim() === '' &&
@@ -237,6 +273,7 @@ export function BaseCombobox({
                     />
 
                     <div className="absolute inset-y-0 right-1 flex items-center">
+                        {endAddon}
                         {clearable && selectedOption && (
                             <Button
                                 type="button"

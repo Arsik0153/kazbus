@@ -29,7 +29,7 @@ const SelectDeparture = () => {
     const handleCitySelect = (city: City) => {
         setSelectedCity(city.name);
         setIsOpen(false);
-        updateSearchQuery({ to: String(city.id) });
+        updateSearchQuery({ to: String(city.id), date: null });
     };
 
     const filteredCities =

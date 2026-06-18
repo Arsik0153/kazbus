@@ -1,7 +1,6 @@
 import { dayjsExt } from '@/lib/dayjs';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
 import { Dayjs } from 'dayjs';
-import React from 'react';
 import { getDatesAction } from '../actions';
 import { AvailableDate } from '@/data/types';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -14,9 +13,10 @@ const generateMonths = () => {
 const renderDays = (
     month: Dayjs,
     handleDayClick: (day: Dayjs) => void,
-    data: AvailableDate[]
+    pricesByDate: Map<string, string>,
+    selectedDate: string | null
 ) => {
-    const today = dayjsExt();
+    const today = dayjsExt().startOf('day');
     const startOfMonth = month.startOf('month');
     const endOfMonth = month.endOf('month');
     const startDayOfWeek = startOfMonth.day() === 0 ? 7 : startOfMonth.day();
@@ -36,31 +36,37 @@ const renderDays = (
         date.isBefore(endOfMonth) || date.isSame(endOfMonth, 'day');
         date = date.add(1, 'day')
     ) {
+        const dateString = date.format('YYYY-MM-DD');
         const isPast = date.isBefore(today, 'day');
-        const price = getPriceForDate(date, data);
+        const price = pricesByDate.get(dateString);
+        const isAvailable = !isPast && price !== undefined;
+        const isSelected = selectedDate === dateString;
         days.push(
-            <div
-                key={date.format('YYYY-MM-DD')}
-                className={`flex h-14 items-start justify-center ${
-                    isPast ? 'cursor-not-allowed' : 'cursor-pointer'
+            <button
+                type="button"
+                key={dateString}
+                className={`flex h-14 items-start justify-center rounded-lg ${
+                    isSelected ? 'bg-[#FFF1F1]' : ''
+                } ${isAvailable ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+                onClick={() => handleDayClick(date)}
+                disabled={!isAvailable}
+                aria-label={`${date.format('D MMMM')}${
+                    price ? `, от ${formatPrice(price)}` : ', рейсов нет'
                 }`}
-                onClick={() => !isPast && handleDayClick(date)}
             >
                 <div
-                    className={`flex flex-col items-center ${isPast ? 'opacity-50' : ''}`}
+                    className={`flex flex-col items-center ${!isAvailable ? 'opacity-40' : ''}`}
                 >
                     <div
-                        className={`text-[22px] font-medium ${
-                            isPast ? 'opacity-50' : 'text-[var(--black)]'
-                        }`}
+                        className={`text-[22px] font-medium ${isSelected ? 'text-[#E74949]' : 'text-[var(--black)]'}`}
                     >
                         {date.date()}
                     </div>
                     <div className="text-xs text-[#E74949]">
-                        {price !== null && `${parseFloat(price).toString()}`}
+                        {price ? formatPrice(price) : null}
                     </div>
                 </div>
-            </div>
+            </button>
         );
     }
 
@@ -70,23 +76,23 @@ const renderDays = (
 const renderMonth = (
     month: Dayjs,
     handleDayClick: (day: Dayjs) => void,
-    data: AvailableDate[]
+    pricesByDate: Map<string, string>,
+    selectedDate: string | null
 ) => (
     <div key={month.format('YYYY-MM')} className="mb-5">
         <div className="my-4 flex items-center justify-center text-2xl font-bold capitalize text-[#E74949]">
             {month.format('MMMM')}
         </div>
         <div className="grid grid-cols-7 gap-y-2">
-            {renderDays(month, handleDayClick, data)}
+            {renderDays(month, handleDayClick, pricesByDate, selectedDate)}
         </div>
     </div>
 );
 
-const getPriceForDate = (date: Dayjs, data: AvailableDate[]) => {
-    const dateString = date.format('YYYY-MM-DD');
-    const dateData = data?.find((item) => item.date === dateString);
-    return dateData ? dateData.price : null;
-};
+const formatPrice = (price: string) =>
+    `${new Intl.NumberFormat('ru-KZ', { maximumFractionDigits: 0 }).format(
+        Number(price)
+    )} ₸`;
 
 type Props = {
     handleSelectDate: () => void;
@@ -102,14 +108,37 @@ const DatePicker = (props: Props) => {
 
     const fromParam = searchParams.get('from');
     const toParam = searchParams.get('to');
+    const selectedDate = searchParams.get('date');
+    const passengerCount = Number(searchParams.get('passenger_count')) || 1;
+    const dateFrom = dayjsExt().startOf('day').format('YYYY-MM-DD');
+    const dateTo = dayjsExt()
+        .add(2, 'month')
+        .endOf('month')
+        .format('YYYY-MM-DD');
+    const hasRoute = Boolean(Number(fromParam) && Number(toParam));
 
-    const { data } = useServerActionQuery(getDatesAction, {
+    const { data, isPending, error } = useServerActionQuery(getDatesAction, {
         input: {
             from: Number(fromParam),
             to: Number(toParam),
+            passengerCount,
+            dateFrom,
+            dateTo,
         },
-        queryKey: ['getDates', fromParam, toParam],
+        queryKey: [
+            'getDates',
+            fromParam,
+            toParam,
+            passengerCount,
+            dateFrom,
+            dateTo,
+        ],
+        enabled: hasRoute,
     });
+
+    const pricesByDate = new Map(
+        (data || []).map((item: AvailableDate) => [item.date, item.price])
+    );
 
     const handleDayClick = (day: Dayjs) => {
         handleSelectDate();
@@ -134,8 +163,28 @@ const DatePicker = (props: Props) => {
 
     return (
         <div className="h-[calc(100vh-274px)] overflow-y-scroll px-5">
-            {months.map((month) =>
-                renderMonth(month, handleDayClick, data || [])
+            {!hasRoute ? (
+                <p className="py-8 text-center text-sm text-[#A0A0A0]">
+                    Сначала выберите города отправления и прибытия.
+                </p>
+            ) : isPending ? (
+                <p className="py-8 text-center text-sm text-[#A0A0A0]">
+                    Загружаем доступные даты…
+                </p>
+            ) : error ? (
+                <p className="py-8 text-center text-sm text-[#E74949]">
+                    Не удалось загрузить даты. Попробуйте открыть календарь
+                    снова.
+                </p>
+            ) : (
+                months.map((month) =>
+                    renderMonth(
+                        month,
+                        handleDayClick,
+                        pricesByDate,
+                        selectedDate
+                    )
+                )
             )}
         </div>
     );

@@ -280,8 +280,8 @@ const durationSchema = z
     .string({ required_error: 'Введите время' })
     .trim()
     .regex(
-        /^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/,
-        'Введите время в формате ЧЧ:ММ:СС'
+        /^\d{1,3}:[0-5]\d:[0-5]\d$/,
+        'Введите длительность в формате ЧЧ:ММ'
     );
 
 const routeCitySchema = z.object({
@@ -297,6 +297,30 @@ const routeCitySchema = z.object({
         .max(255, 'Регион слишком длинный'),
 });
 
+const routeAddressSchema = z
+    .string({ required_error: 'Введите адрес точки' })
+    .trim()
+    .min(2, 'Введите адрес точки')
+    .max(255, 'Адрес слишком длинный');
+
+const coordinateSchema = (label: string, min: number, max: number) =>
+    z
+        .string({ required_error: `Введите ${label}` })
+        .trim()
+        .min(1, `Введите ${label}`)
+        .regex(
+            /^-?\d{1,3}([.,]\d{1,6})?$/,
+            `${label} должна содержать не более 6 знаков после запятой`
+        )
+        .transform((value) => value.replace(',', '.'))
+        .refine((value) => {
+            const coordinate = Number(value);
+            return coordinate >= min && coordinate <= max;
+        }, `${label} должна быть от ${min} до ${max}`);
+
+const latitudeSchema = coordinateSchema('Широта', -90, 90);
+const longitudeSchema = coordinateSchema('Долгота', -180, 180);
+
 export const routeStopSchema = z.object({
     id: z.number().int().positive().optional(),
     name: z
@@ -304,6 +328,9 @@ export const routeStopSchema = z.object({
         .trim()
         .min(2, 'Введите название остановки')
         .max(255, 'Название остановки слишком длинное'),
+    address: routeAddressSchema,
+    latitude: latitudeSchema,
+    longitude: longitudeSchema,
     travel_time_from_start: durationSchema,
     stop_time: durationSchema,
 });
@@ -311,7 +338,13 @@ export const routeStopSchema = z.object({
 export const routeSchema = z
     .object({
         start_city: routeCitySchema,
+        start_address: routeAddressSchema,
+        start_latitude: latitudeSchema,
+        start_longitude: longitudeSchema,
         end_city: routeCitySchema,
+        end_address: routeAddressSchema,
+        end_latitude: latitudeSchema,
+        end_longitude: longitudeSchema,
         total_travel_time: durationSchema,
         stops: z.array(routeStopSchema).default([]),
     })
@@ -419,8 +452,7 @@ export const tripSchema = z
             context.addIssue({
                 code: z.ZodIssueCode.custom,
                 path: ['end_date'],
-                message:
-                    'Выберите дату окончания или включите постоянный рейс',
+                message: 'Выберите дату окончания или включите постоянный рейс',
             });
         }
 

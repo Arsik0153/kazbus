@@ -16,15 +16,12 @@ import { cn } from '@/lib/utils';
 import type {
     AdminTripPassengerStatus,
     AdminTripRunDetails,
-    AdminTripSummary,
     AdminTripStepState,
 } from '../_data/trip-details';
 
 type Props = {
     trip: Trips;
     run: AdminTripRunDetails;
-    historyRuns: AdminTripRunDetails[];
-    summary: AdminTripSummary;
     mode: 'current' | 'history';
 };
 
@@ -80,32 +77,9 @@ function getMissingPassengers(run: AdminTripRunDetails) {
     return run.passengers.filter((passenger) => passenger.status !== 'boarded');
 }
 
-const TripDetailsView = ({ trip, run, summary, mode }: Props) => {
+const TripDetailsView = ({ trip, run, mode }: Props) => {
     const boardedPassengers = getBoardedPassengers(run);
     const missingPassengers = getMissingPassengers(run);
-    const averageOccupancy = summary.average_occupancy;
-    const totalRevenue = Number(summary.revenue) || 0;
-
-    const metrics = [
-        {
-            label: 'Общее число пассажиров',
-            value: String(summary.total_passengers),
-            hint:
-                mode === 'current'
-                    ? 'по всем поездкам рейса'
-                    : 'по истории этого рейса',
-        },
-        {
-            label: 'Средняя загруженность автобуса',
-            value: `${averageOccupancy}%`,
-            hint: 'по истории этого рейса',
-        },
-        {
-            label: 'Общий доход',
-            value: formatCurrency(totalRevenue),
-            hint: 'по завершенным поездкам',
-        },
-    ];
 
     return (
         <div className="mt-6 flex flex-col gap-5 pb-20">
@@ -137,8 +111,28 @@ const TripDetailsView = ({ trip, run, summary, mode }: Props) => {
                         <p className="mt-3 text-base font-medium text-[#A0A0A0]">
                             {run.tripDate}, {run.departureTime} -{' '}
                             {run.arrivalTime || 'не указано'}. Автобус:{' '}
-                            {trip.bus?.state_number || 'не назначен'}. Водитель:{' '}
-                            {trip.driver?.full_name || 'не назначен'}.
+                            {trip.bus?.id ? (
+                                <Link
+                                    href={`/admin/main/buses/${trip.bus.id}/edit`}
+                                    className="font-semibold text-[#4A4A4A] underline decoration-[#A0A0A0] underline-offset-4 transition-colors hover:text-[#E74949]"
+                                >
+                                    {trip.bus.state_number}
+                                </Link>
+                            ) : (
+                                'не назначен'
+                            )}
+                            . Водитель:{' '}
+                            {trip.driver?.id ? (
+                                <Link
+                                    href={`/admin/main/drivers/${trip.driver.id}/edit`}
+                                    className="font-semibold text-[#4A4A4A] underline decoration-[#A0A0A0] underline-offset-4 transition-colors hover:text-[#E74949]"
+                                >
+                                    {trip.driver.full_name}
+                                </Link>
+                            ) : (
+                                'не назначен'
+                            )}
+                            .
                         </p>
                     </div>
                     {mode === 'current' ? (
@@ -150,25 +144,6 @@ const TripDetailsView = ({ trip, run, summary, mode }: Props) => {
                         </Button>
                     ) : null}
                 </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-5">
-                {metrics.map((metric) => (
-                    <div
-                        key={metric.label}
-                        className="rounded-[20px] bg-white px-6 py-6"
-                    >
-                        <p className="text-sm font-bold uppercase text-[#A0A0A0]">
-                            {metric.label}
-                        </p>
-                        <p className="mt-3 text-3xl font-semibold text-[#E74949]">
-                            {metric.value}
-                        </p>
-                        <p className="mt-2 text-sm font-medium text-[#A0A0A0]">
-                            {metric.hint}
-                        </p>
-                    </div>
-                ))}
             </div>
 
             <AdminSectionCard

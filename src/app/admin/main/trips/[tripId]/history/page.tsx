@@ -7,7 +7,11 @@ import type { Trips } from '@/data/types';
 import { adminFetch } from '@/lib/admin-api';
 
 import TripHistoryRuns from '../../_components/trip-history-runs';
-import type { AdminTripRunDetails } from '../../_data/trip-details';
+import TripHistorySummary from '../../_components/trip-history-summary';
+import type {
+    AdminTripRunDetails,
+    AdminTripSummary,
+} from '../../_data/trip-details';
 
 type Props = {
     params: {
@@ -55,16 +59,49 @@ async function getHistoryRuns(tripId: string, date?: string) {
     return (await response.json()) as AdminTripRunDetails[];
 }
 
+function getSummary(
+    trip: Trips,
+    historyRuns: AdminTripRunDetails[]
+): AdminTripSummary {
+    const capacity = trip.bus?.count_of_seats || 0;
+    const totalPassengers = historyRuns.reduce(
+        (sum, run) => sum + run.passengers.length,
+        0
+    );
+    const averageOccupancy =
+        capacity > 0 && historyRuns.length > 0
+            ? Math.round(
+                  historyRuns.reduce(
+                      (sum, run) =>
+                          sum + (run.passengers.length / capacity) * 100,
+                      0
+                  ) / historyRuns.length
+              )
+            : 0;
+
+    return {
+        total_passengers: totalPassengers,
+        average_occupancy: averageOccupancy,
+        revenue: (totalPassengers * (Number(trip.ticket_price) || 0)).toFixed(
+            2
+        ),
+    };
+}
+
 export default async function AdminTripHistoryPage({
     params,
     searchParams,
 }: Props) {
-    const [trip, historyRuns] = await Promise.all([
+    const allHistoryRunsPromise = getHistoryRuns(params.tripId);
+    const [trip, historyRuns, allHistoryRuns] = await Promise.all([
         getTrip(params.tripId),
-        getHistoryRuns(params.tripId, searchParams?.date),
+        searchParams?.date
+            ? getHistoryRuns(params.tripId, searchParams.date)
+            : allHistoryRunsPromise,
+        allHistoryRunsPromise,
     ]);
 
-    if (!trip || !historyRuns) {
+    if (!trip || !historyRuns || !allHistoryRuns) {
         notFound();
     }
 
@@ -73,8 +110,7 @@ export default async function AdminTripHistoryPage({
             <div className="rounded-[20px] bg-white px-8 py-8">
                 <Button asChild variant="outline">
                     <Link href={`/admin/main/trips/${trip.id}`}>
-                        <ArrowLeft data-icon="inline-start" />
-                        К рейсу
+                        <ArrowLeft data-icon="inline-start" />К рейсу
                     </Link>
                 </Button>
                 <h1 className="mt-5 text-[42px] font-semibold leading-tight text-[#4A4A4A]">
@@ -85,6 +121,8 @@ export default async function AdminTripHistoryPage({
                     этого маршрута.
                 </p>
             </div>
+
+            <TripHistorySummary summary={getSummary(trip, allHistoryRuns)} />
 
             <TripHistoryRuns
                 tripId={trip.id}

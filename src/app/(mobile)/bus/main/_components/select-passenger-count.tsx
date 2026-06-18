@@ -13,7 +13,9 @@ const SelectPassengerCount = () => {
     const passengerCountParam =
         Number(searchParams.get('passenger_count')) || 0;
 
-    const [adultPassengers, setAdultPassengers] = useState(1);
+    const [adultPassengers, setAdultPassengers] = useState(
+        passengerCountParam || 1
+    );
     const [childPassengers, setChildPassengers] = useState(0);
 
     const totalPassengers = adultPassengers + childPassengers;
@@ -53,8 +55,13 @@ const SelectPassengerCount = () => {
             router.push(updatedPath);
         };
 
-        updateSearchQuery({ passenger_count: String(totalPassengers) });
-    }, [pathname, router, searchParams, totalPassengers]);
+        if (passengerCountParam !== totalPassengers) {
+            updateSearchQuery({
+                passenger_count: String(totalPassengers),
+                date: null,
+            });
+        }
+    }, [passengerCountParam, pathname, router, searchParams, totalPassengers]);
 
     return (
         <Drawer.Root>

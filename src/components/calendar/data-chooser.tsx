@@ -1,11 +1,7 @@
 'use client';
 import { dayjsExt } from '@/lib/dayjs';
-import { useServerActionQuery } from '@/lib/server-action-hooks';
 import { Dayjs } from 'dayjs';
 import React from 'react';
-import { getDatesAction } from '@/app/(mobile)/bus/main/actions';
-import { AvailableDate } from '@/data/types';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import './scrollbar-hide.css';
 
 const generateMonths = () => {
@@ -13,11 +9,7 @@ const generateMonths = () => {
     return [today, today.add(1, 'month'), today.add(2, 'month')];
 };
 
-const renderDays = (
-    month: Dayjs,
-    handleDayClick: (day: Dayjs) => void,
-    data: AvailableDate[]
-) => {
+const renderDays = (month: Dayjs, handleDayClick: (day: Dayjs) => void) => {
     const today = dayjsExt();
     const startOfMonth = month.startOf('month');
     const endOfMonth = month.endOf('month');
@@ -39,7 +31,6 @@ const renderDays = (
         date = date.add(1, 'day')
     ) {
         const isPast = date.isBefore(today, 'day');
-        const price = getPriceForDate(date, data);
         days.push(
             <div
                 key={date.format('YYYY-MM-DD')}
@@ -54,9 +45,6 @@ const renderDays = (
                     >
                         {date.date()}
                     </div>
-                    <div className="text-xs text-[#E74949]">
-                        {price !== null && `${price}`}
-                    </div>
                 </div>
             </div>
         );
@@ -65,26 +53,16 @@ const renderDays = (
     return days;
 };
 
-const renderMonth = (
-    month: Dayjs,
-    handleDayClick: (day: Dayjs) => void,
-    data: AvailableDate[]
-) => (
+const renderMonth = (month: Dayjs, handleDayClick: (day: Dayjs) => void) => (
     <div key={month.format('YYYY-MM')} className="mb-5">
         <div className="my-4 flex items-center justify-center text-2xl font-bold capitalize text-[#E74949]">
             {month.format('MMMM')}
         </div>
         <div className="grid grid-cols-7 gap-y-1">
-            {renderDays(month, handleDayClick, data)}
+            {renderDays(month, handleDayClick)}
         </div>
     </div>
 );
-
-const getPriceForDate = (date: Dayjs, data: AvailableDate[]) => {
-    const dateString = date.format('YYYY-MM-DD');
-    const dateData = data?.find((item) => item.date === dateString);
-    return dateData ? dateData.price : null;
-};
 
 type Props = {
     handleSelectDate: (date: Date) => void;
@@ -93,21 +71,6 @@ type Props = {
 const DatePicker: React.FC<Props> = (props) => {
     const { handleSelectDate } = props;
     const months = generateMonths();
-
-    const today = dayjsExt();
-    const dateRange = {
-        from: today.startOf('day').valueOf(),
-        to: today.add(2, 'months').endOf('day').valueOf(),
-    };
-
-    const { data } = useServerActionQuery(getDatesAction, {
-        input: dateRange,
-        queryKey: ['getDates', dateRange],
-    });
-
-    const searchParams = useSearchParams();
-    const pathname = usePathname();
-    const router = useRouter();
 
     const handleDayClick = (day: Dayjs) => {
         handleSelectDate(day.toDate());
@@ -125,9 +88,7 @@ const DatePicker: React.FC<Props> = (props) => {
                 <div className="text-base font-medium">Вс</div>
             </div>
             <div className="h-full">
-                {months.map((month) =>
-                    renderMonth(month, handleDayClick, data || [])
-                )}
+                {months.map((month) => renderMonth(month, handleDayClick))}
             </div>
         </div>
     );

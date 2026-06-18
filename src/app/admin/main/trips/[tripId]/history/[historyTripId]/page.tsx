@@ -4,10 +4,7 @@ import type { Trips } from '@/data/types';
 import { adminFetch } from '@/lib/admin-api';
 
 import TripDetailsView from '../../../_components/trip-details-view';
-import type {
-    AdminTripRunDetails,
-    AdminTripSummary,
-} from '../../../_data/trip-details';
+import type { AdminTripRunDetails } from '../../../_data/trip-details';
 
 type Props = {
     params: {
@@ -46,63 +43,15 @@ async function getHistoryRun(tripId: string, historyTripId: string) {
     return (await response.json()) as AdminTripRunDetails;
 }
 
-async function getHistoryRuns(tripId: string) {
-    const response = await adminFetch(`/trip/trips/${tripId}/runs/`);
-
-    if (!response.ok) {
-        return [];
-    }
-
-    return (await response.json()) as AdminTripRunDetails[];
-}
-
-function getSummary(
-    trip: Trips,
-    historyRuns: AdminTripRunDetails[]
-): AdminTripSummary {
-    const capacity = trip.bus?.count_of_seats || 0;
-    const totalPassengers = historyRuns.reduce(
-        (sum, run) => sum + run.passengers.length,
-        0
-    );
-    const averageOccupancy =
-        capacity > 0 && historyRuns.length > 0
-            ? Math.round(
-                  historyRuns.reduce(
-                      (sum, run) =>
-                          sum + (run.passengers.length / capacity) * 100,
-                      0
-                  ) / historyRuns.length
-              )
-            : 0;
-    const revenue =
-        totalPassengers * (Number(trip.ticket_price) || 0);
-
-    return {
-        total_passengers: totalPassengers,
-        average_occupancy: averageOccupancy,
-        revenue: revenue.toFixed(2),
-    };
-}
-
 export default async function AdminTripHistoryDetailsPage({ params }: Props) {
-    const [trip, historyRun, historyRuns] = await Promise.all([
+    const [trip, historyRun] = await Promise.all([
         getTrip(params.tripId),
         getHistoryRun(params.tripId, params.historyTripId),
-        getHistoryRuns(params.tripId),
     ]);
 
     if (!trip || !historyRun) {
         notFound();
     }
 
-    return (
-        <TripDetailsView
-            trip={trip}
-            run={historyRun}
-            historyRuns={historyRuns}
-            summary={getSummary(trip, historyRuns)}
-            mode="history"
-        />
-    );
+    return <TripDetailsView trip={trip} run={historyRun} mode="history" />;
 }
