@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { InputMask } from '@react-input/mask';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -61,7 +62,7 @@ const defaultValues: RouteFormValues = {
     end_address: '',
     end_latitude: '',
     end_longitude: '',
-    total_travel_time: '00:00:00',
+    total_travel_time: '',
     stops: [],
 };
 
@@ -75,6 +76,14 @@ const emptyStop = {
 };
 
 const formString = (value: unknown) => (typeof value === 'string' ? value : '');
+
+const durationToTimeInputValue = (value: unknown) => {
+    const duration = formString(value);
+    return duration.length >= 5 ? duration.slice(0, 5) : duration;
+};
+
+const timeInputValueToDuration = (value: string) =>
+    value.length === 5 ? `${value}:00` : value;
 
 type AddressGeocodingComboboxProps = {
     id: string;
@@ -514,34 +523,15 @@ const RouteForm = ({ routeId }: Props) => {
                                 longitude={watch('start_longitude')}
                             />
                         </Field>
-                        <Field data-invalid={Boolean(errors.start_latitude)}>
-                            <FieldLabel htmlFor="start_latitude">
-                                Широта отправления
-                            </FieldLabel>
-                            <Input
-                                id="start_latitude"
-                                placeholder="43.237221"
-                                readOnly
-                                aria-readonly="true"
-                                aria-invalid={Boolean(errors.start_latitude)}
-                                {...register('start_latitude')}
-                            />
-                            <FieldError errors={[errors.start_latitude]} />
-                        </Field>
-                        <Field data-invalid={Boolean(errors.start_longitude)}>
-                            <FieldLabel htmlFor="start_longitude">
-                                Долгота отправления
-                            </FieldLabel>
-                            <Input
-                                id="start_longitude"
-                                placeholder="76.857969"
-                                readOnly
-                                aria-readonly="true"
-                                aria-invalid={Boolean(errors.start_longitude)}
-                                {...register('start_longitude')}
-                            />
-                            <FieldError errors={[errors.start_longitude]} />
-                        </Field>
+                        <input type="hidden" {...register('start_latitude')} />
+                        <input type="hidden" {...register('start_longitude')} />
+                        <FieldError
+                            className="col-span-2"
+                            errors={[
+                                errors.start_latitude,
+                                errors.start_longitude,
+                            ]}
+                        />
                     </div>
 
                     <div className="grid grid-cols-2 gap-6">
@@ -630,34 +620,12 @@ const RouteForm = ({ routeId }: Props) => {
                                 longitude={watch('end_longitude')}
                             />
                         </Field>
-                        <Field data-invalid={Boolean(errors.end_latitude)}>
-                            <FieldLabel htmlFor="end_latitude">
-                                Широта прибытия
-                            </FieldLabel>
-                            <Input
-                                id="end_latitude"
-                                placeholder="51.195685"
-                                readOnly
-                                aria-readonly="true"
-                                aria-invalid={Boolean(errors.end_latitude)}
-                                {...register('end_latitude')}
-                            />
-                            <FieldError errors={[errors.end_latitude]} />
-                        </Field>
-                        <Field data-invalid={Boolean(errors.end_longitude)}>
-                            <FieldLabel htmlFor="end_longitude">
-                                Долгота прибытия
-                            </FieldLabel>
-                            <Input
-                                id="end_longitude"
-                                placeholder="71.409019"
-                                readOnly
-                                aria-readonly="true"
-                                aria-invalid={Boolean(errors.end_longitude)}
-                                {...register('end_longitude')}
-                            />
-                            <FieldError errors={[errors.end_longitude]} />
-                        </Field>
+                        <input type="hidden" {...register('end_latitude')} />
+                        <input type="hidden" {...register('end_longitude')} />
+                        <FieldError
+                            className="col-span-2"
+                            errors={[errors.end_latitude, errors.end_longitude]}
+                        />
                     </div>
 
                     <Field
@@ -670,11 +638,36 @@ const RouteForm = ({ routeId }: Props) => {
                         >
                             Общее время в пути
                         </FieldLabel>
-                        <Input
-                            id="total_travel_time"
-                            placeholder="08:30:00"
-                            aria-invalid={Boolean(errors.total_travel_time)}
-                            {...register('total_travel_time')}
+                        <Controller
+                            control={control}
+                            name="total_travel_time"
+                            render={({ field }) => (
+                                <InputMask
+                                    component={Input}
+                                    id="total_travel_time"
+                                    type="text"
+                                    inputMode="numeric"
+                                    mask="__:__"
+                                    replacement={{ _: /\d/ }}
+                                    placeholder="24:00"
+                                    value={durationToTimeInputValue(
+                                        field.value
+                                    )}
+                                    aria-invalid={Boolean(
+                                        errors.total_travel_time
+                                    )}
+                                    onChange={(event) =>
+                                        field.onChange(
+                                            timeInputValueToDuration(
+                                                event.target.value
+                                            )
+                                        )
+                                    }
+                                    onBlur={field.onBlur}
+                                    name={field.name}
+                                    ref={field.ref}
+                                />
+                            )}
                         />
                         <FieldError errors={[errors.total_travel_time]} />
                     </Field>
@@ -707,7 +700,7 @@ const RouteForm = ({ routeId }: Props) => {
                             {fields.map((field, index) => (
                                 <div
                                     key={field.fieldId}
-                                    className="grid grid-cols-[minmax(180px,1fr)_minmax(240px,1.4fr)_150px_150px_auto] items-start gap-4 rounded-[14px] bg-[#F8FAFC] p-4"
+                                    className="grid grid-cols-[minmax(180px,1fr)_minmax(280px,1.6fr)_auto] items-start gap-4 rounded-[14px] bg-[#F8FAFC] p-4"
                                 >
                                     {typeof field.id === 'number' ? (
                                         <input
@@ -825,63 +818,18 @@ const RouteForm = ({ routeId }: Props) => {
                                             )}
                                         />
                                     </Field>
-                                    <Field
-                                        data-invalid={Boolean(
-                                            errors.stops?.[index]?.latitude
+                                    <input
+                                        type="hidden"
+                                        {...register(
+                                            `stops.${index}.latitude`
                                         )}
-                                    >
-                                        <FieldLabel
-                                            htmlFor={`stop_${index}_latitude`}
-                                        >
-                                            Широта
-                                        </FieldLabel>
-                                        <Input
-                                            id={`stop_${index}_latitude`}
-                                            placeholder="49.788954"
-                                            readOnly
-                                            aria-readonly="true"
-                                            aria-invalid={Boolean(
-                                                errors.stops?.[index]?.latitude
-                                            )}
-                                            {...register(
-                                                `stops.${index}.latitude`
-                                            )}
-                                        />
-                                        <FieldError
-                                            errors={[
-                                                errors.stops?.[index]?.latitude,
-                                            ]}
-                                        />
-                                    </Field>
-                                    <Field
-                                        data-invalid={Boolean(
-                                            errors.stops?.[index]?.longitude
+                                    />
+                                    <input
+                                        type="hidden"
+                                        {...register(
+                                            `stops.${index}.longitude`
                                         )}
-                                    >
-                                        <FieldLabel
-                                            htmlFor={`stop_${index}_longitude`}
-                                        >
-                                            Долгота
-                                        </FieldLabel>
-                                        <Input
-                                            id={`stop_${index}_longitude`}
-                                            placeholder="73.089084"
-                                            readOnly
-                                            aria-readonly="true"
-                                            aria-invalid={Boolean(
-                                                errors.stops?.[index]?.longitude
-                                            )}
-                                            {...register(
-                                                `stops.${index}.longitude`
-                                            )}
-                                        />
-                                        <FieldError
-                                            errors={[
-                                                errors.stops?.[index]
-                                                    ?.longitude,
-                                            ]}
-                                        />
-                                    </Field>
+                                    />
                                     <Button
                                         type="button"
                                         variant="ghost"
@@ -893,8 +841,14 @@ const RouteForm = ({ routeId }: Props) => {
                                     >
                                         <Trash2 />
                                     </Button>
+                                    <FieldError
+                                        className="col-span-full"
+                                        errors={[
+                                            errors.stops?.[index]?.latitude,
+                                            errors.stops?.[index]?.longitude,
+                                        ]}
+                                    />
                                     <Field
-                                        className="col-span-2"
                                         data-invalid={Boolean(
                                             errors.stops?.[index]
                                                 ?.travel_time_from_start

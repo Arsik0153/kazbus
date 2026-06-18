@@ -1,7 +1,42 @@
+'use client';
+
+import { ExternalLink, MapPin } from 'lucide-react';
+import type { StyleSpecification } from 'maplibre-gl';
+
+import {
+    Map,
+    MapControls,
+    MapMarker,
+    MarkerContent,
+    MarkerPopup,
+} from '@/components/ui/map';
+
 type Props = {
     latitude?: string;
     longitude?: string;
     title: string;
+};
+
+const coordinateFormatter = new Intl.NumberFormat('ru-RU', {
+    maximumFractionDigits: 6,
+});
+
+const detailedStreetMapStyle: StyleSpecification = {
+    version: 8,
+    sources: {
+        osm: {
+            type: 'raster',
+            tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+            tileSize: 256,
+        },
+    },
+    layers: [
+        {
+            id: 'osm',
+            type: 'raster',
+            source: 'osm',
+        },
+    ],
 };
 
 const RoutePointMap = ({ latitude, longitude, title }: Props) => {
@@ -16,29 +51,48 @@ const RoutePointMap = ({ latitude, longitude, title }: Props) => {
         return null;
     }
 
-    const offset = 0.01;
-    const params = new URLSearchParams({
-        bbox: `${lon - offset},${lat - offset},${lon + offset},${lat + offset}`,
-        layer: 'mapnik',
-        marker: `${lat},${lon}`,
-    });
+    const osmUrl = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=16/${lat}/${lon}`;
 
     return (
         <div className="mt-3 flex flex-col gap-2">
-            <iframe
-                title={title}
-                src={`https://www.openstreetmap.org/export/embed.html?${params}`}
-                className="h-48 w-full rounded-lg border"
-                loading="lazy"
-            />
-            <a
-                href={`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=16/${lat}/${lon}`}
-                target="_blank"
-                rel="noreferrer"
-                className="text-muted-foreground text-xs underline underline-offset-4"
-            >
-                © OpenStreetMap contributors
-            </a>
+            <div className="border-border bg-muted relative h-56 overflow-hidden rounded-lg border">
+                <Map
+                    key={`${lat}:${lon}`}
+                    center={[lon, lat]}
+                    zoom={17}
+                    theme="light"
+                    styles={{
+                        light: detailedStreetMapStyle,
+                        dark: detailedStreetMapStyle,
+                    }}
+                    minZoom={4}
+                    maxZoom={19}
+                    className="h-full"
+                >
+                    <MapControls
+                        position="top-right"
+                        showZoom
+                        showCompass
+                        showFullscreen
+                    />
+                    <MapMarker longitude={lon} latitude={lat} anchor="bottom">
+                        <MarkerContent>
+                            <div className="bg-primary text-primary-foreground ring-background flex size-9 items-center justify-center rounded-full shadow-lg ring-2">
+                                <MapPin data-icon="inline-start" />
+                            </div>
+                        </MarkerContent>
+                        <MarkerPopup>
+                            <div className="flex flex-col gap-1 text-sm">
+                                <p className="font-medium">{title}</p>
+                                <p className="text-muted-foreground text-xs">
+                                    {coordinateFormatter.format(lat)},{' '}
+                                    {coordinateFormatter.format(lon)}
+                                </p>
+                            </div>
+                        </MarkerPopup>
+                    </MapMarker>
+                </Map>
+            </div>
         </div>
     );
 };

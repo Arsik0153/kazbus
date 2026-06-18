@@ -280,8 +280,8 @@ const durationSchema = z
     .string({ required_error: 'Введите время' })
     .trim()
     .regex(
-        /^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/,
-        'Введите время в формате ЧЧ:ММ:СС'
+        /^\d{1,3}:[0-5]\d:[0-5]\d$/,
+        'Введите длительность в формате ЧЧ:ММ'
     );
 
 const routeCitySchema = z.object({
