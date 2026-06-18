@@ -34,6 +34,7 @@ type Props = {
     trip: CargoTrip;
     steps: TripStep[];
     isTripCompleted?: boolean;
+    onSelectNextPoint?: (step: TripStep) => void;
 };
 
 const getNextPointStep = (steps: TripStep[], isTripCompleted: boolean) => {
@@ -66,7 +67,12 @@ const getNextPointActionLabel = (step: TripStep | null) => {
     return 'Ехать к точке';
 };
 
-const DriverTripCard = ({ trip, steps, isTripCompleted = false }: Props) => {
+const DriverTripCard = ({
+    trip,
+    steps,
+    isTripCompleted = false,
+    onSelectNextPoint,
+}: Props) => {
     const status = tripStatusMeta[trip.currentStatus];
     const nextPoint = getNextPointStep(steps, isTripCompleted);
     const actionLabel = getNextPointActionLabel(nextPoint);
@@ -74,9 +80,14 @@ const DriverTripCard = ({ trip, steps, isTripCompleted = false }: Props) => {
         ? (nextPoint.orderNumber ??
           (nextPoint.state === 'current' ? 'Текущая задача' : 'Далее'))
         : 'Завершено';
+    const canOpenDetails = !!nextPoint && !!onSelectNextPoint;
+    const cardClassName = cn(
+        'rounded-[0.625rem] border border-[#D1D1D1] bg-white p-5',
+        canOpenDetails && 'w-full text-left transition-colors active:bg-white'
+    );
 
-    return (
-        <div className="rounded-[0.625rem] border border-[#D1D1D1] bg-white p-5">
+    const content = (
+        <>
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                     <div className="flex items-center gap-2">
@@ -147,8 +158,23 @@ const DriverTripCard = ({ trip, steps, isTripCompleted = false }: Props) => {
                     </p>
                 </div>
             </div>
-        </div>
+        </>
     );
+
+    if (canOpenDetails) {
+        return (
+            <button
+                type="button"
+                onClick={() => nextPoint && onSelectNextPoint?.(nextPoint)}
+                className={cardClassName}
+                aria-label={`Открыть детали заказа ${pointBadgeLabel}`}
+            >
+                {content}
+            </button>
+        );
+    }
+
+    return <div className={cardClassName}>{content}</div>;
 };
 
 export default DriverTripCard;
