@@ -97,7 +97,7 @@ const ShipperContactsCard = ({
                             className="w-full rounded-[0.625rem] bg-[#F8F8F8] p-4 text-left active:bg-[#F0F0F0]"
                         >
                             <div className="flex items-start justify-between gap-3">
-                                <div className="min-w-0 flex flex-row items-center gap-2">
+                                <div className="flex min-w-0 flex-row items-center gap-2">
                                     <p className="text-base font-bold leading-5 text-[#4A4A4A]">
                                         {contact.companyName}
                                     </p>
@@ -208,14 +208,14 @@ const ShipperOrderDetails = ({ order }: { order: CargoShipperContact }) => {
                     target="_blank"
                     rel="noreferrer"
                     aria-label={`Открыть адрес доставки ${order.dropoffAddress} в 2GIS`}
-                    className="flex "
+                    className="flex"
                 >
                     <Image
                         src="/2gis.webp"
                         alt=""
                         width={64}
                         height={64}
-                        className="size-14 min-h-14 min-w-14 w-full object-contain scale-105"
+                        className="size-14 min-h-14 w-full min-w-14 scale-105 object-contain"
                     />
                 </a>
             </div>
@@ -299,7 +299,11 @@ const CargoTripPage = () => {
                     <EmptyTripState />
                 ) : (
                     <div className="flex flex-col gap-4">
-                        <DriverTripCard trip={activeTrip} />
+                        <DriverTripCard
+                            trip={activeTrip}
+                            steps={steps}
+                            isTripCompleted={isTripCompleted}
+                        />
                         <CargoInfoCard trip={activeTrip} />
                         <ShipperContactsCard
                             contacts={cargoShipperContactsMock}

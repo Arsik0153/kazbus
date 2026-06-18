@@ -7,6 +7,7 @@ import {
     activeTripMock,
     documentsMock,
     driverMock,
+    tripStatuses,
     vehicleMock,
 } from './_data/cargo-driver.mock';
 
@@ -46,7 +47,13 @@ const CargoPage = () => {
                 </h2>
                 <div className="mt-3">
                     {activeTrip ? (
-                        <DriverTripCard trip={activeTrip} />
+                        <DriverTripCard
+                            trip={activeTrip}
+                            steps={tripStatuses}
+                            isTripCompleted={
+                                activeTrip.currentStatus === 'completed'
+                            }
+                        />
                     ) : (
                         <EmptyTripState />
                     )}
