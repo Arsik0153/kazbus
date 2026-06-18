@@ -66,7 +66,7 @@ const TripStatusStepper = ({
                                 }
                             )}
                         >
-                            <div className="flex gap-3 px-1 py-1.5">
+                            <div className="flex gap-3 py-1.5">
                                 <div className="flex flex-col items-center">
                                     <div
                                         className={cn(
@@ -160,7 +160,7 @@ const TripStatusStepper = ({
             </div>
 
             {onStepChange && (
-                <div className="mt-5 rounded-[0.875rem] bg-[#F8F8F8] p-4">
+                <div className="mt-5">
                     {isTripCompleted ? (
                         <>
                             <p className="text-sm font-semibold text-[#4A4A4A]">

@@ -33,30 +33,6 @@ const CargoInfoCard = ({ trip }: Props) => {
                     </p>
                 </div>
             </div>
-
-            <div className="mt-4 rounded-[0.625rem] bg-[#F8F8F8] p-3">
-                <p className="text-xs font-medium text-[#A0A0A0]">
-                    Откуда отправить груз
-                </p>
-                <p className="mt-1 text-sm font-semibold text-[#4A4A4A]">
-                    {trip.pickupPoint}
-                </p>
-                <p className="mt-2 text-sm font-medium leading-5 text-[#4A4A4A]">
-                    {trip.pickupAddress}
-                </p>
-            </div>
-
-            <div className="mt-3 rounded-[0.625rem] bg-[#F8F8F8] p-3">
-                <p className="text-xs font-medium text-[#A0A0A0]">
-                    Куда доставить груз
-                </p>
-                <p className="mt-1 text-sm font-semibold text-[#4A4A4A]">
-                    {trip.dropoffPoint}
-                </p>
-                <p className="mt-2 text-sm font-medium leading-5 text-[#4A4A4A]">
-                    {trip.dropoffAddress}
-                </p>
-            </div>
         </div>
     );
 };

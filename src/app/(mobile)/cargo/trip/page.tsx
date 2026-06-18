@@ -1,6 +1,7 @@
 'use client';
 
 import Topbar from '@/components/topbar';
+import Image from 'next/image';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
 import { Drawer } from 'vaul';
@@ -138,6 +139,9 @@ const OrderDetailRow = ({ label, value }: { label: string; value: string }) => (
 
 const ShipperOrderDetails = ({ order }: { order: CargoShipperContact }) => {
     const status = shipperContactStatusMeta[order.status];
+    const deliveryMapUrl = `https://2gis.kz/search/${encodeURIComponent(
+        `${order.dropoffPoint}, ${order.dropoffAddress}`
+    )}`;
 
     return (
         <div className="space-y-5">
@@ -192,12 +196,29 @@ const ShipperOrderDetails = ({ order }: { order: CargoShipperContact }) => {
                 />
             </div>
 
-            <a
-                href={`tel:${order.phone.replaceAll(' ', '')}`}
-                className="flex w-full items-center justify-center rounded-[0.625rem] bg-[#E23333] px-4 py-4 text-sm font-semibold text-white active:bg-[#D92727]"
-            >
-                Позвонить shipper
-            </a>
+            <div className="flex flex-row items-center justify-between gap-1.5">
+                <a
+                    href={`tel:${order.phone.replaceAll(' ', '')}`}
+                    className="flex min-h-14 w-full items-center justify-center rounded-[0.625rem] bg-[#E23333] px-4 py-4 text-sm font-semibold text-white active:bg-[#D92727]"
+                >
+                    Позвонить shipper
+                </a>
+                <a
+                    href={deliveryMapUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`Открыть адрес доставки ${order.dropoffAddress} в 2GIS`}
+                    className="flex "
+                >
+                    <Image
+                        src="/2gis.webp"
+                        alt=""
+                        width={64}
+                        height={64}
+                        className="size-14 min-h-14 min-w-14 w-full object-contain scale-105"
+                    />
+                </a>
+            </div>
         </div>
     );
 };
