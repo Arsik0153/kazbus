@@ -36,6 +36,7 @@ const CargoPage = () => {
     return (
         <>
             <div className="bg-(--gray) pt-18.75 min-h-full px-5 pb-28">
+                
                 <h1 className="text-[2.625rem] font-semibold leading-[2.8875rem] tracking-[-0.03em] text-[#4A4A4A]">
                     Joool Cargo
                 </h1>
@@ -49,10 +50,10 @@ const CargoPage = () => {
                             <p className="mt-1 text-[1.75rem] font-bold leading-[1.925rem] text-[#4A4A4A]">
                                 {driverName}
                             </p>
-                            <p className="leading-4.4 mt-2 text-sm text-[#A0A0A0]">
+                            {/* <p className="leading-4.4 mt-2 text-sm text-[#A0A0A0]">
                                 Ваша cargo-часть работает в том же мобильном
                                 shell, что и основное приложение.
-                            </p>
+                            </p> */}
                         </div>
                         <div className="text-nowrap rounded-full border border-[#F3CDCD] bg-[#FFF2F2] px-3 py-1.5 text-xs font-semibold text-[#E74949]">
                             В рейсе
@@ -80,7 +81,7 @@ const CargoPage = () => {
                     </div>
                 </div>
 
-                <div className="mt-5">
+                {/* <div className="mt-5">
                     <h2 className="leading-5.5 text-xl font-bold text-[#4A4A4A]">
                         Машина
                     </h2>
@@ -106,7 +107,7 @@ const CargoPage = () => {
                             />
                         ))}
                     </div>
-                </div>
+                </div> */}
 
                 {/* <div className="mt-5 rounded-[0.625rem] border border-[#D1D1D1] bg-white px-4 pt-5">
                     <h2 className="leading-5.5 text-xl font-bold text-[#4A4A4A]">
