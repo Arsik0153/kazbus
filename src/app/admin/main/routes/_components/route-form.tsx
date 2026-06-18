@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 import {
     ArrowLeft,
@@ -17,6 +17,10 @@ import toast from 'react-hot-toast';
 import { useServerAction } from 'zsa-react';
 import { z } from 'zod';
 
+import {
+    BaseCombobox,
+    type ComboboxOption,
+} from '@/components/base/combobox';
 import Spinner from '@/components/spinner';
 import { Button } from '@/components/ui/button';
 import {
@@ -26,12 +30,6 @@ import {
     FieldLabel,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import {
-    InputGroup,
-    InputGroupAddon,
-    InputGroupButton,
-    InputGroupInput,
-} from '@/components/ui/input-group';
 import { routeSchema } from '@/data/schemas';
 
 import {
@@ -78,40 +76,92 @@ const emptyStop = {
 
 const formString = (value: unknown) => (typeof value === 'string' ? value : '');
 
-type GeocodingResultsProps = {
+type AddressGeocodingComboboxProps = {
+    id: string;
+    value: string;
+    placeholder: string;
     results: GeocodingResult[];
+    isActive: boolean;
+    isLoading: boolean;
+    isInvalid: boolean;
+    searchLabel: string;
+    onChange: (value: string) => void;
+    onSearch: () => void;
     onSelect: (result: GeocodingResult) => void;
 };
 
-const GeocodingResults = ({ results, onSelect }: GeocodingResultsProps) => (
-    <div
-        role="listbox"
-        aria-label="Варианты адреса"
-        className="bg-popover text-popover-foreground ring-foreground/10 absolute inset-x-0 top-full z-20 mt-1 max-h-80 overflow-y-auto rounded-lg p-2.5 text-sm shadow-md ring-1"
-    >
-        <div className="mb-2 flex flex-col gap-0.5">
-            <p className="font-medium">Выберите подходящий адрес</p>
-            <p className="text-muted-foreground">
-                Координаты и карта обновятся после выбора.
-            </p>
-        </div>
-        <div className="flex flex-col gap-1">
-            {results.map((result) => (
+const getGeocodingOptionValue = (result: GeocodingResult) =>
+    `${result.latitude}:${result.longitude}`;
+
+const AddressGeocodingCombobox = ({
+    id,
+    value,
+    placeholder,
+    results,
+    isActive,
+    isLoading,
+    isInvalid,
+    searchLabel,
+    onChange,
+    onSearch,
+    onSelect,
+}: AddressGeocodingComboboxProps) => {
+    const options: ComboboxOption[] = isActive
+        ? results.map((result) => ({
+              value: getGeocodingOptionValue(result),
+              label: result.display_name,
+          }))
+        : [];
+
+    return (
+        <BaseCombobox
+            id={id}
+            options={options}
+            value={null}
+            inputValue={value}
+            onInputValueChange={onChange}
+            onValueChange={(_, option) => {
+                if (!option) {
+                    return;
+                }
+
+                const selectedResult = results.find(
+                    (result) => getGeocodingOptionValue(result) === option.value
+                );
+
+                if (selectedResult) {
+                    onSelect(selectedResult);
+                }
+            }}
+            placeholder={placeholder}
+            emptyText={
+                isActive
+                    ? 'Ничего не найдено'
+                    : 'Нажмите поиск, чтобы загрузить варианты'
+            }
+            ariaInvalid={isInvalid}
+            endAddon={
                 <Button
-                    key={`${result.latitude}:${result.longitude}`}
                     type="button"
-                    role="option"
-                    aria-selected="false"
                     variant="ghost"
-                    className="h-auto justify-start whitespace-normal px-2 py-2 text-left"
-                    onClick={() => onSelect(result)}
+                    size="icon-xs"
+                    aria-label={searchLabel}
+                    disabled={isLoading}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={onSearch}
                 >
-                    {result.display_name}
+                    {isLoading ? (
+                        <LoaderCircle className="animate-spin" />
+                    ) : (
+                        <Search />
+                    )}
                 </Button>
-            ))}
-        </div>
-    </div>
-);
+            }
+            contentClassName="max-h-80"
+            listClassName="[&_button]:whitespace-normal [&_button]:pr-8"
+        />
+    );
+};
 
 const RouteForm = ({ routeId }: Props) => {
     const router = useRouter();
@@ -232,6 +282,10 @@ const RouteForm = ({ routeId }: Props) => {
     const handleSelectGeocodingResult = (result: GeocodingResult) => {
         const target = geocodingTargetRef.current;
         if (target === 'start') {
+            setValue('start_address', result.display_name, {
+                shouldDirty: true,
+                shouldValidate: true,
+            });
             setValue('start_latitude', result.latitude, {
                 shouldDirty: true,
                 shouldValidate: true,
@@ -241,6 +295,10 @@ const RouteForm = ({ routeId }: Props) => {
                 shouldValidate: true,
             });
         } else if (target === 'end') {
+            setValue('end_address', result.display_name, {
+                shouldDirty: true,
+                shouldValidate: true,
+            });
             setValue('end_latitude', result.latitude, {
                 shouldDirty: true,
                 shouldValidate: true,
@@ -251,6 +309,10 @@ const RouteForm = ({ routeId }: Props) => {
             });
         } else if (target?.startsWith('stop-')) {
             const index = Number(target.slice(5));
+            setValue(`stops.${index}.address`, result.display_name, {
+                shouldDirty: true,
+                shouldValidate: true,
+            });
             setValue(`stops.${index}.latitude`, result.latitude, {
                 shouldDirty: true,
                 shouldValidate: true,
@@ -283,7 +345,6 @@ const RouteForm = ({ routeId }: Props) => {
             geocodeAddress({
                 address,
                 city: formString(getValues('start_city.name')),
-                region: formString(getValues('start_city.region')),
             });
             return;
         }
@@ -416,50 +477,36 @@ const RouteForm = ({ routeId }: Props) => {
                             <FieldLabel htmlFor="start_address">
                                 Адрес отправления
                             </FieldLabel>
-                            <div className="relative">
-                                <InputGroup>
-                                    <InputGroupInput
+                            <Controller
+                                control={control}
+                                name="start_address"
+                                render={({ field }) => (
+                                    <AddressGeocodingCombobox
                                         id="start_address"
+                                        value={formString(field.value)}
                                         placeholder="Например, Автовокзал Сайран"
-                                        aria-invalid={Boolean(
+                                        results={geocodingResults}
+                                        isActive={geocodingTarget === 'start'}
+                                        isLoading={
+                                            isGeocoding &&
+                                            geocodingTarget === 'start'
+                                        }
+                                        isInvalid={Boolean(
                                             errors.start_address
                                         )}
-                                        {...register('start_address', {
-                                            onChange: () => {
-                                                setValue('start_latitude', '');
-                                                setValue('start_longitude', '');
-                                            },
-                                        })}
+                                        searchLabel="Найти координаты адреса отправления"
+                                        onChange={(value) => {
+                                            field.onChange(value);
+                                            setValue('start_latitude', '');
+                                            setValue('start_longitude', '');
+                                        }}
+                                        onSearch={() => handleGeocode('start')}
+                                        onSelect={
+                                            handleSelectGeocodingResult
+                                        }
                                     />
-                                    <InputGroupAddon align="inline-end">
-                                        <InputGroupButton
-                                            size="icon-xs"
-                                            aria-label="Найти координаты адреса отправления"
-                                            disabled={isGeocoding}
-                                            onClick={() =>
-                                                handleGeocode('start')
-                                            }
-                                        >
-                                            {isGeocoding &&
-                                            geocodingTarget === 'start' ? (
-                                                <LoaderCircle
-                                                    data-icon="inline-start"
-                                                    className="animate-spin"
-                                                />
-                                            ) : (
-                                                <Search data-icon="inline-start" />
-                                            )}
-                                        </InputGroupButton>
-                                    </InputGroupAddon>
-                                </InputGroup>
-                                {geocodingTarget === 'start' &&
-                                geocodingResults.length > 0 ? (
-                                    <GeocodingResults
-                                        results={geocodingResults}
-                                        onSelect={handleSelectGeocodingResult}
-                                    />
-                                ) : null}
-                            </div>
+                                )}
+                            />
                             <FieldError errors={[errors.start_address]} />
                             <RoutePointMap
                                 title="Точка отправления на карте"
@@ -548,48 +595,34 @@ const RouteForm = ({ routeId }: Props) => {
                             <FieldLabel htmlFor="end_address">
                                 Адрес прибытия
                             </FieldLabel>
-                            <div className="relative">
-                                <InputGroup>
-                                    <InputGroupInput
+                            <Controller
+                                control={control}
+                                name="end_address"
+                                render={({ field }) => (
+                                    <AddressGeocodingCombobox
                                         id="end_address"
+                                        value={formString(field.value)}
                                         placeholder="Например, Автовокзал Сапаржай"
-                                        aria-invalid={Boolean(
-                                            errors.end_address
-                                        )}
-                                        {...register('end_address', {
-                                            onChange: () => {
-                                                setValue('end_latitude', '');
-                                                setValue('end_longitude', '');
-                                            },
-                                        })}
-                                    />
-                                    <InputGroupAddon align="inline-end">
-                                        <InputGroupButton
-                                            size="icon-xs"
-                                            aria-label="Найти координаты адреса прибытия"
-                                            disabled={isGeocoding}
-                                            onClick={() => handleGeocode('end')}
-                                        >
-                                            {isGeocoding &&
-                                            geocodingTarget === 'end' ? (
-                                                <LoaderCircle
-                                                    data-icon="inline-start"
-                                                    className="animate-spin"
-                                                />
-                                            ) : (
-                                                <Search data-icon="inline-start" />
-                                            )}
-                                        </InputGroupButton>
-                                    </InputGroupAddon>
-                                </InputGroup>
-                                {geocodingTarget === 'end' &&
-                                geocodingResults.length > 0 ? (
-                                    <GeocodingResults
                                         results={geocodingResults}
-                                        onSelect={handleSelectGeocodingResult}
+                                        isActive={geocodingTarget === 'end'}
+                                        isLoading={
+                                            isGeocoding &&
+                                            geocodingTarget === 'end'
+                                        }
+                                        isInvalid={Boolean(errors.end_address)}
+                                        searchLabel="Найти координаты адреса прибытия"
+                                        onChange={(value) => {
+                                            field.onChange(value);
+                                            setValue('end_latitude', '');
+                                            setValue('end_longitude', '');
+                                        }}
+                                        onSearch={() => handleGeocode('end')}
+                                        onSelect={
+                                            handleSelectGeocodingResult
+                                        }
                                     />
-                                ) : null}
-                            </div>
+                                )}
+                            />
                             <FieldError errors={[errors.end_address]} />
                             <RoutePointMap
                                 title="Точка прибытия на карте"
@@ -732,64 +765,51 @@ const RouteForm = ({ routeId }: Props) => {
                                         >
                                             Адрес
                                         </FieldLabel>
-                                        <div className="relative">
-                                            <InputGroup>
-                                                <InputGroupInput
+                                        <Controller
+                                            control={control}
+                                            name={`stops.${index}.address`}
+                                            render={({ field }) => (
+                                                <AddressGeocodingCombobox
                                                     id={`stop_${index}_address`}
+                                                    value={formString(
+                                                        field.value
+                                                    )}
                                                     placeholder="Например, Автовокзал Караганда"
-                                                    aria-invalid={Boolean(
+                                                    results={geocodingResults}
+                                                    isActive={
+                                                        geocodingTarget ===
+                                                        `stop-${index}`
+                                                    }
+                                                    isLoading={
+                                                        isGeocoding &&
+                                                        geocodingTarget ===
+                                                            `stop-${index}`
+                                                    }
+                                                    isInvalid={Boolean(
                                                         errors.stops?.[index]
                                                             ?.address
                                                     )}
-                                                    {...register(
-                                                        `stops.${index}.address`,
-                                                        {
-                                                            onChange: () => {
-                                                                setValue(
-                                                                    `stops.${index}.latitude`,
-                                                                    ''
-                                                                );
-                                                                setValue(
-                                                                    `stops.${index}.longitude`,
-                                                                    ''
-                                                                );
-                                                            },
-                                                        }
-                                                    )}
-                                                />
-                                                <InputGroupAddon align="inline-end">
-                                                    <InputGroupButton
-                                                        size="icon-xs"
-                                                        aria-label={`Найти координаты остановки ${index + 1}`}
-                                                        disabled={isGeocoding}
-                                                        onClick={() =>
-                                                            handleGeocode(index)
-                                                        }
-                                                    >
-                                                        {isGeocoding &&
-                                                        geocodingTarget ===
-                                                            `stop-${index}` ? (
-                                                            <LoaderCircle
-                                                                data-icon="inline-start"
-                                                                className="animate-spin"
-                                                            />
-                                                        ) : (
-                                                            <Search data-icon="inline-start" />
-                                                        )}
-                                                    </InputGroupButton>
-                                                </InputGroupAddon>
-                                            </InputGroup>
-                                            {geocodingTarget ===
-                                                `stop-${index}` &&
-                                            geocodingResults.length > 0 ? (
-                                                <GeocodingResults
-                                                    results={geocodingResults}
+                                                    searchLabel={`Найти координаты остановки ${index + 1}`}
+                                                    onChange={(value) => {
+                                                        field.onChange(value);
+                                                        setValue(
+                                                            `stops.${index}.latitude`,
+                                                            ''
+                                                        );
+                                                        setValue(
+                                                            `stops.${index}.longitude`,
+                                                            ''
+                                                        );
+                                                    }}
+                                                    onSearch={() =>
+                                                        handleGeocode(index)
+                                                    }
                                                     onSelect={
                                                         handleSelectGeocodingResult
                                                     }
                                                 />
-                                            ) : null}
-                                        </div>
+                                            )}
+                                        />
                                         <FieldError
                                             errors={[
                                                 errors.stops?.[index]?.address,
