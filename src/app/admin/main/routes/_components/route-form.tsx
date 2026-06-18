@@ -71,8 +71,8 @@ const emptyStop = {
     address: '',
     latitude: '',
     longitude: '',
-    travel_time_from_start: '00:00:00',
-    stop_time: '00:05:00',
+    travel_time_from_start: '',
+    stop_time: '',
 };
 
 const formString = (value: unknown) => (typeof value === 'string' ? value : '');
@@ -859,15 +859,37 @@ const RouteForm = ({ routeId }: Props) => {
                                         >
                                             От старта
                                         </FieldLabel>
-                                        <Input
-                                            id={`stop_${index}_travel`}
-                                            placeholder="02:15:00"
-                                            aria-invalid={Boolean(
-                                                errors.stops?.[index]
-                                                    ?.travel_time_from_start
-                                            )}
-                                            {...register(
-                                                `stops.${index}.travel_time_from_start`
+                                        <Controller
+                                            control={control}
+                                            name={`stops.${index}.travel_time_from_start`}
+                                            render={({ field }) => (
+                                                <InputMask
+                                                    component={Input}
+                                                    id={`stop_${index}_travel`}
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    mask="__:__"
+                                                    replacement={{ _: /\d/ }}
+                                                    placeholder="02:15"
+                                                    value={durationToTimeInputValue(
+                                                        field.value
+                                                    )}
+                                                    aria-invalid={Boolean(
+                                                        errors.stops?.[index]
+                                                            ?.travel_time_from_start
+                                                    )}
+                                                    onChange={(event) =>
+                                                        field.onChange(
+                                                            timeInputValueToDuration(
+                                                                event.target
+                                                                    .value
+                                                            )
+                                                        )
+                                                    }
+                                                    onBlur={field.onBlur}
+                                                    name={field.name}
+                                                    ref={field.ref}
+                                                />
                                             )}
                                         />
                                         <FieldError
@@ -887,14 +909,37 @@ const RouteForm = ({ routeId }: Props) => {
                                         >
                                             Стоянка
                                         </FieldLabel>
-                                        <Input
-                                            id={`stop_${index}_parking`}
-                                            placeholder="00:10:00"
-                                            aria-invalid={Boolean(
-                                                errors.stops?.[index]?.stop_time
-                                            )}
-                                            {...register(
-                                                `stops.${index}.stop_time`
+                                        <Controller
+                                            control={control}
+                                            name={`stops.${index}.stop_time`}
+                                            render={({ field }) => (
+                                                <InputMask
+                                                    component={Input}
+                                                    id={`stop_${index}_parking`}
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    mask="__:__"
+                                                    replacement={{ _: /\d/ }}
+                                                    placeholder="00:10"
+                                                    value={durationToTimeInputValue(
+                                                        field.value
+                                                    )}
+                                                    aria-invalid={Boolean(
+                                                        errors.stops?.[index]
+                                                            ?.stop_time
+                                                    )}
+                                                    onChange={(event) =>
+                                                        field.onChange(
+                                                            timeInputValueToDuration(
+                                                                event.target
+                                                                    .value
+                                                            )
+                                                        )
+                                                    }
+                                                    onBlur={field.onBlur}
+                                                    name={field.name}
+                                                    ref={field.ref}
+                                                />
                                             )}
                                         />
                                         <FieldError
