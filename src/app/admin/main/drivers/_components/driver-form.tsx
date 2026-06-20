@@ -14,6 +14,7 @@ import { useServerAction } from 'zsa-react';
 import { driverSchema } from '@/data/schemas';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { PhoneInput } from '@/components/ui/phone-input';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { DatePicker } from '@/components/ui/date-picker';
 import Spinner from '@/components/spinner';
@@ -27,6 +28,7 @@ type Props = {
 
 const defaultValues: DriverFormValues = {
     full_name: '',
+    phone_number: '',
     date_of_birth: '',
     license_number: '',
     license_issue_date: '',
@@ -58,6 +60,9 @@ const DriverForm = ({ driverId }: Props) => {
             onSuccess: ({ data }) => {
                 reset({
                     full_name: data.full_name,
+                    phone_number: data.phone_number
+                        ? `+7 (${data.phone_number.slice(1, 4)}) ${data.phone_number.slice(4, 7)}-${data.phone_number.slice(7, 9)}-${data.phone_number.slice(9, 11)}`
+                        : '',
                     date_of_birth: data.date_of_birth,
                     license_number: data.license_number,
                     license_issue_date: data.license_issue_date,
@@ -125,6 +130,7 @@ const DriverForm = ({ driverId }: Props) => {
     const onSubmit = handleSubmit((data) => {
         const formData = new FormData();
         formData.set('full_name', data.full_name);
+        formData.set('phone_number', data.phone_number);
         formData.set('date_of_birth', data.date_of_birth);
         formData.set('license_number', data.license_number);
         formData.set('license_issue_date', data.license_issue_date);
@@ -259,6 +265,25 @@ const DriverForm = ({ driverId }: Props) => {
                                 {...register('full_name')}
                             />
                             <FieldError errors={[errors.full_name]} />
+                        </Field>
+                        <Field
+                            className="gap-2"
+                            data-invalid={Boolean(errors.phone_number)}
+                        >
+                            <FieldLabel
+                                htmlFor="phone_number"
+                                className="text-lg font-semibold text-[#4A4A4A]"
+                            >
+                                Номер телефона
+                            </FieldLabel>
+                            <PhoneInput
+                                id="phone_number"
+                                aria-invalid={Boolean(errors.phone_number)}
+                                placeholder="+7 (___) ___-__-__"
+                                autoComplete="tel"
+                                {...register('phone_number')}
+                            />
+                            <FieldError errors={[errors.phone_number]} />
                         </Field>
                         <Field
                             className="gap-2"

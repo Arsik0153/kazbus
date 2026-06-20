@@ -119,6 +119,8 @@ export type Driver = {
     id: number;
     picture: string | null;
     full_name: string;
+    phone_number: string | null;
+    account_status: 'pending' | 'active' | 'disabled';
     date_of_birth: string;
     license_number: string;
     license_issue_date: string;

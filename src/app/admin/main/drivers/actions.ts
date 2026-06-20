@@ -43,10 +43,7 @@ export const getDriverAction = createServerAction()
 
         if (!response.ok) {
             throw new Error(
-                await getAdminApiError(
-                    response,
-                    'Не удалось получить водителя'
-                )
+                await getAdminApiError(response, 'Не удалось получить водителя')
             );
         }
 
@@ -58,6 +55,7 @@ export const saveDriverAction = createServerAction()
     .handler(async ({ input }) => {
         const formData = new FormData();
         formData.set('full_name', input.full_name);
+        formData.set('phone_number', input.phone_number.replace(/\D/g, ''));
         formData.set('date_of_birth', input.date_of_birth);
         formData.set('license_number', input.license_number);
         formData.set('license_issue_date', input.license_issue_date);
