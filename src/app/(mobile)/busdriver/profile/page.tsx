@@ -2,6 +2,7 @@ import Menu from '@/components/menu';
 import BusDriverProfileCard from '../_components/BusDriverProfileCard';
 import { busDriverProfileMock, busVehicleMock } from '../_data/bus-driver.mock';
 import Link from 'next/link';
+import BusDriverLogoutMenu from '../_components/BusDriverLogoutMenu';
 
 const BusDriverProfilePage = () => {
     return (
@@ -25,7 +26,7 @@ const BusDriverProfilePage = () => {
                 <div className="h-px w-full border-t border-[#E9E9E9]" />
                 <Menu link="/busdriver/issues" text="Нештатные ситуации" />
                 <div className="h-px w-full border-t border-[#E9E9E9]" />
-                <Menu link="/busdriver/login" text="Сменить аккаунт" />
+                <BusDriverLogoutMenu />
             </div>
 
             <div className="mt-5 rounded-[0.625rem] border border-[#D1D1D1] bg-white p-5">

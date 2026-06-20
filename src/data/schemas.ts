@@ -125,6 +125,12 @@ export const driverSchema = z
             .trim()
             .min(5, 'Введите полное ФИО')
             .max(150, 'ФИО слишком длинное'),
+        phone_number: z
+            .string({ required_error: 'Введите номер телефона' })
+            .refine(
+                (value) => /^7\d{10}$/.test(value.replace(/\D/g, '')),
+                'Введите корректный номер телефона'
+            ),
         date_of_birth: z
             .string({
                 required_error: 'Выберите дату рождения',
@@ -279,10 +285,7 @@ export const busSchema = z
 const durationSchema = z
     .string({ required_error: 'Введите время' })
     .trim()
-    .regex(
-        /^\d{1,3}:[0-5]\d:[0-5]\d$/,
-        'Введите длительность в формате ЧЧ:ММ'
-    );
+    .regex(/^\d{1,3}:[0-5]\d:[0-5]\d$/, 'Введите длительность в формате ЧЧ:ММ');
 
 const routeCitySchema = z.object({
     name: z
