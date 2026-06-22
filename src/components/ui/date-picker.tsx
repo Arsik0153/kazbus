@@ -138,6 +138,7 @@ export const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
                     <Calendar
                         locale={locale}
                         mode="single"
+                        captionLayout="dropdown"
                         selected={date}
                         onSelect={handleSelect}
                         {...calendarProps}

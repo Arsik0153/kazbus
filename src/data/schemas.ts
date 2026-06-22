@@ -250,7 +250,7 @@ export const busSchema = z
                 invalid_type_error: 'Введите количество мест',
             })
             .int('Количество мест должно быть целым числом')
-            .positive('Количество мест должно быть больше 0'),
+            .nonnegative('Количество мест не может быть отрицательным'),
         floors: z.coerce
             .number({
                 required_error: 'Выберите количество этажей',
@@ -271,6 +271,14 @@ export const busSchema = z
         const passengerSeats = data.seats.filter(
             (seat) => seat.seat_type === 'passenger'
         ).length;
+
+        if (passengerSeats < 1) {
+            context.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['seats'],
+                message: 'Добавьте хотя бы одно пассажирское место',
+            });
+        }
 
         if (passengerSeats !== data.count_of_seats) {
             context.addIssue({

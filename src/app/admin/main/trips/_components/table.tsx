@@ -95,7 +95,7 @@ const TripsTable = ({ trips }: Props) => {
                             <td className="text-[#4A4A4A]">
                                 {renderWeekdays(trip.weekdays)}
                             </td>
-                            <td className="rounded-r-[10px] py-4 pr-6">
+                            <td className=" py-4 pr-6">
                                 <div className="flex items-center gap-2 font-semibold text-[#4A4A4A]">
                                     <Pulse
                                         color={
@@ -111,7 +111,7 @@ const TripsTable = ({ trips }: Props) => {
                                     </span>
                                 </div>
                             </td>
-                            <td className="py-4 pr-6">
+                            <td className="py-4 pr-6 rounded-r-[10px]">
                                 <div className="flex items-center justify-end gap-2">
                                     <Button asChild variant="outline">
                                         <Link

@@ -30,7 +30,7 @@ const defaultValues: BusFormValues = {
     model: '',
     state_number: '',
     VIN: '',
-    count_of_seats: 36,
+    count_of_seats: 0,
     floors: 1,
     have_toilet: false,
     have_wifi: false,
@@ -88,19 +88,25 @@ const BusForm = ({ busId }: Props) => {
         }
     );
 
-    const { execute: saveBus, isPending: isSaving } = useServerAction(saveBusAction, {
-        onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ['getBuses'] });
-            toast.success(isEditing ? 'Автобус обновлен' : 'Автобус сохранен');
-            router.push('/admin/main/buses');
-            router.refresh();
-        },
-        onError: ({ err }) => {
-            toast.error(err.message || 'Не удалось сохранить автобус');
-        },
-    });
+    const { execute: saveBus, isPending: isSaving } = useServerAction(
+        saveBusAction,
+        {
+            onSuccess: async () => {
+                await queryClient.invalidateQueries({ queryKey: ['getBuses'] });
+                toast.success(
+                    isEditing ? 'Автобус обновлен' : 'Автобус сохранен'
+                );
+                router.push('/admin/main/buses');
+                router.refresh();
+            },
+            onError: ({ err }) => {
+                toast.error(err.message || 'Не удалось сохранить автобус');
+            },
+        }
+    );
 
     useEffect(() => {
+        register('count_of_seats');
         register('floors');
         register('have_toilet');
         register('have_wifi');
@@ -117,14 +123,9 @@ const BusForm = ({ busId }: Props) => {
     }, [busId, loadBus]);
 
     const floorCount: 1 | 2 = watch('floors') === 2 ? 2 : 1;
-    const countOfSeats = Number(watch('count_of_seats')) || 0;
     const haveWifi = watch('have_wifi');
     const haveToilet = watch('have_toilet');
     const isRecumbent = watch('is_recumbent');
-    const seats = watch('seats');
-    const passengerSeatCount = seats.filter(
-        (seat) => seat.seat_type === 'passenger'
-    ).length;
 
     const onSubmit = handleSubmit((data) => {
         saveBus(busId ? { ...data, bus_id: busId } : data);
@@ -132,7 +133,15 @@ const BusForm = ({ busId }: Props) => {
 
     const handleSchemeChange = useCallback(
         (seats: BusFormValues['seats']) => {
+            const passengerSeatCount = seats.filter(
+                (seat) => seat.seat_type === 'passenger'
+            ).length;
+
             setValue('seats', seats, {
+                shouldValidate: true,
+                shouldDirty: true,
+            });
+            setValue('count_of_seats', passengerSeatCount, {
                 shouldValidate: true,
                 shouldDirty: true,
             });
@@ -167,7 +176,10 @@ const BusForm = ({ busId }: Props) => {
 
             <div className="mb-28 mt-[14px] flex flex-col rounded-[20px] bg-white px-8 py-10">
                 <div className="grid w-full max-w-[980px] grid-cols-2 gap-5">
-                    <Field className="gap-2" data-invalid={Boolean(errors.name)}>
+                    <Field
+                        className="gap-2"
+                        data-invalid={Boolean(errors.name)}
+                    >
                         <FieldLabel
                             htmlFor="name"
                             className="text-lg font-semibold text-[#4A4A4A]"
@@ -183,7 +195,10 @@ const BusForm = ({ busId }: Props) => {
                         <FieldError errors={[errors.name]} />
                     </Field>
 
-                    <Field className="gap-2" data-invalid={Boolean(errors.stamp)}>
+                    <Field
+                        className="gap-2"
+                        data-invalid={Boolean(errors.stamp)}
+                    >
                         <FieldLabel
                             htmlFor="stamp"
                             className="text-lg font-semibold text-[#4A4A4A]"
@@ -199,7 +214,10 @@ const BusForm = ({ busId }: Props) => {
                         <FieldError errors={[errors.stamp]} />
                     </Field>
 
-                    <Field className="gap-2" data-invalid={Boolean(errors.model)}>
+                    <Field
+                        className="gap-2"
+                        data-invalid={Boolean(errors.model)}
+                    >
                         <FieldLabel
                             htmlFor="model"
                             className="text-lg font-semibold text-[#4A4A4A]"
@@ -249,30 +267,13 @@ const BusForm = ({ busId }: Props) => {
                         />
                         <FieldError errors={[errors.VIN]} />
                     </Field>
-
-                    <Field
-                        className="gap-2"
-                        data-invalid={Boolean(errors.count_of_seats)}
-                    >
-                        <FieldLabel
-                            htmlFor="count_of_seats"
-                            className="text-lg font-semibold text-[#4A4A4A]"
-                        >
-                            Количество пассажирских мест
-                        </FieldLabel>
-                        <Input
-                            id="count_of_seats"
-                            type="number"
-                            min={1}
-                            aria-invalid={Boolean(errors.count_of_seats)}
-                            {...register('count_of_seats')}
-                        />
-                        <FieldError errors={[errors.count_of_seats]} />
-                    </Field>
                 </div>
 
                 <div className="mt-10 max-w-[980px]">
-                    <Field className="gap-3" data-invalid={Boolean(errors.floors)}>
+                    <Field
+                        className="gap-3"
+                        data-invalid={Boolean(errors.floors)}
+                    >
                         <FieldLabel className="text-lg font-semibold text-[#4A4A4A]">
                             Количество этажей
                         </FieldLabel>
@@ -299,9 +300,13 @@ const BusForm = ({ busId }: Props) => {
                                 type="checkbox"
                                 checked={haveWifi}
                                 onChange={(event) =>
-                                    setValue('have_wifi', event.target.checked, {
-                                        shouldDirty: true,
-                                    })
+                                    setValue(
+                                        'have_wifi',
+                                        event.target.checked,
+                                        {
+                                            shouldDirty: true,
+                                        }
+                                    )
                                 }
                             />
                             <span className="font-medium text-[#4A4A4A]">
@@ -355,11 +360,6 @@ const BusForm = ({ busId }: Props) => {
                         onChange={handleSchemeChange}
                         errorMessage={errors.seats?.message}
                     />
-                    <p className="mt-3 text-sm text-[#A0A0A0]">
-                        Пассажирских мест в схеме: {passengerSeatCount} из{' '}
-                        {countOfSeats}. Места водителя и проходы сохраняются в
-                        схеме, но не входят в продажу билетов.
-                    </p>
                 </div>
 
                 <div className="mt-14 flex max-w-[500px] gap-3">

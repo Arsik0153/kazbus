@@ -1,10 +1,9 @@
 'use client';
-import React, { useCallback } from 'react';
+import React from 'react';
 import Input from '@/components/input';
 import RadioInput from '@/components/radio-input';
-import Calendar from '@/assets/calendar';
 import Button from '@/components/button';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { profileSchema } from '@/data/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,7 +12,7 @@ import { updatePersonalInfoAction } from '../actions';
 import { useServerAction } from 'zsa-react';
 import { documentTypes } from '@/static/constants';
 import toast from 'react-hot-toast';
-import { InputMask, useMask } from '@react-input/mask';
+import BirthDatePicker from '@/components/calendar/birth-date-picker';
 
 const NewUser = () => {
     const { execute, isPending } = useServerAction(updatePersonalInfoAction, {
@@ -26,6 +25,7 @@ const NewUser = () => {
     });
     const {
         register,
+        control,
         formState: { errors },
         handleSubmit,
         watch,
@@ -88,15 +88,19 @@ const NewUser = () => {
                     />
                 </div>
                 <div>
-                    <InputMask
-                        component={Input}
-                        label="Дата рождения"
-                        id="birth_date"
-                        type="tel"
-                        iconLeft={<Calendar color="#E74949" />}
-                        mask="__.__.____"
-                        replacement="_"
-                        {...register('birth_date')}
+                    <Controller
+                        control={control}
+                        name="birth_date"
+                        render={({ field }) => (
+                            <BirthDatePicker
+                                id="birth_date"
+                                label="Дата рождения"
+                                value={field.value}
+                                onChange={field.onChange}
+                                onBlur={field.onBlur}
+                                invalid={Boolean(errors.birth_date)}
+                            />
+                        )}
                     />
                     <ErrorMessage message={errors.birth_date?.message} />
                 </div>

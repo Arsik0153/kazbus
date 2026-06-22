@@ -2,13 +2,13 @@ import React from 'react';
 import Handlebar from '@/assets/admin/Handlebar';
 
 const options = [
-    { label: 'Установка мест', value: 'seats' },
+    { label: 'Установка мест', value: 'seats', displayValue: '01' },
     {
         label: 'Установка места водителя',
         value: 'driver',
         icon: <Handlebar color="#A0A0A0" />,
     },
-    { label: 'Установка прохода', value: 'aisle' },
+    { label: 'Установка прохода', value: 'aisle', displayValue: '/' },
 ];
 
 type SeatConfiguratorProps = {
@@ -62,7 +62,7 @@ const SeatConfigurator: React.FC<SeatConfiguratorProps> = ({
                                                   : '#A0A0A0',
                                           }
                                       )
-                                    : option.value}
+                                    : option.displayValue}
                             </div>
                         </div>
                     </label>

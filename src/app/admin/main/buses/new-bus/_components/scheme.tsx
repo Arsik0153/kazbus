@@ -5,6 +5,8 @@ import React, { useEffect, useState } from 'react';
 import ChooseCol from '@/assets/admin/ChooseCol';
 import ChooseRow from '@/assets/admin/ChooseRow';
 import Cursor from '@/assets/admin/Cursor';
+import Handlebar from '@/assets/admin/Handlebar';
+import { cn } from '@/utils/cn';
 import SeatConfigurator from './seatConfigurator';
 
 export type BusSeatDraft = {
@@ -22,6 +24,35 @@ type SchemeProps = {
 };
 
 type CellContent = number | 'driver' | 'aisle' | null;
+
+const renderCellContent = (cell: CellContent) => {
+    if (typeof cell === 'number') {
+        return String(cell).padStart(2, '0');
+    }
+
+    if (cell === 'driver') {
+        return <Handlebar color="#A0A0A0" />;
+    }
+
+    if (cell === 'aisle') {
+        return '/';
+    }
+
+    return '';
+};
+
+const getPassengerSeatCount = (floors: CellContent[][][]) =>
+    floors.reduce(
+        (floorTotal, floor) =>
+            floorTotal +
+            floor.reduce(
+                (rowTotal, row) =>
+                    rowTotal +
+                    row.filter((cell) => typeof cell === 'number').length,
+                0
+            ),
+        0
+    );
 
 const createEmptyFloor = () =>
     Array(5)
@@ -121,6 +152,7 @@ const Scheme = ({
     const [floors, setFloors] = useState<CellContent[][][]>([
         initialSeats ? createFloorFromSeats(initialSeats) : createEmptyFloor(),
     ]);
+    const passengerSeatCount = getPassengerSeatCount(floors);
 
     useEffect(() => {
         setFloors((currentFloors) => {
@@ -235,12 +267,18 @@ const Scheme = ({
 
     return (
         <div className="flex flex-col">
-            <p className="mb-5 text-2xl font-semibold text-[#4A4A4A]">
-                Схема автобуса
-            </p>
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+                <p className="text-2xl font-semibold text-[#4A4A4A]">
+                    Схема автобуса
+                </p>
+                <div className="rounded-full bg-[#FFF2F2] px-4 py-2 text-sm font-semibold text-[#E23333]">
+                    Пассажирских мест: {passengerSeatCount}
+                </div>
+            </div>
             <p className="mb-5 max-w-3xl text-sm font-medium text-[#A0A0A0]">
                 Кликните по ячейкам, чтобы добавить пассажирские места, место
                 водителя или проход. Пустые ячейки не отправляются в backend.
+                Количество пассажирских мест считается автоматически по схеме.
             </p>
             <SeatConfigurator selectedValue={editMode} onChange={setEditMode} />
             <div className="my-5 flex w-full flex-col gap-4 rounded-[10px] bg-[#F1F5F9] px-6 pb-4 pt-6">
@@ -286,15 +324,19 @@ const Scheme = ({
                                     <button
                                         key={`${floorIndex}-${rowIndex}-${colIndex}`}
                                         type="button"
-                                        className={`flex h-[52px] w-[52px] items-center justify-center rounded-[10px] border border-[#B8B8B8] ${
-                                            cell === 'driver'
-                                                ? 'bg-blue-200'
-                                                : cell === 'aisle'
-                                                  ? 'bg-gray-200'
-                                                  : typeof cell === 'number'
-                                                    ? 'bg-green-200'
-                                                    : 'bg-white'
-                                        }`}
+                                        className={cn(
+                                            'flex h-[52px] w-[52px] items-center justify-center rounded-[10px] border bg-white text-xl font-bold',
+                                            {
+                                                'border-[#E23333] text-[#E23333]':
+                                                    typeof cell === 'number',
+                                                'border-[#C5B7FF] text-[#C5B7FF]':
+                                                    cell === 'aisle',
+                                                'border-[#B8B8B8] text-[#A0A0A0]':
+                                                    cell === 'driver',
+                                                'border-[#B8B8B8] text-[#4A4A4A]':
+                                                    cell === null,
+                                            }
+                                        )}
                                         onClick={() =>
                                             handleCellClick(
                                                 floorIndex,
@@ -303,13 +345,7 @@ const Scheme = ({
                                             )
                                         }
                                     >
-                                        {typeof cell === 'number'
-                                            ? cell
-                                            : cell === 'driver'
-                                              ? 'D'
-                                              : cell === 'aisle'
-                                                ? 'A'
-                                                : ''}
+                                        {renderCellContent(cell)}
                                     </button>
                                 ))
                             )}

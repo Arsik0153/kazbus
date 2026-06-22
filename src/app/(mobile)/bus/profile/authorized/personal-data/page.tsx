@@ -1,25 +1,22 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Topbar from '@/components/topbar';
-import NewUser from '../../registration/_components/new-user';
 import { editProfileSchema } from '@/data/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import Input from '@/components/input';
 import ErrorMessage from '@/components/error-message';
 import { documentTypes } from '@/static/constants';
 import Radio from '@/components/radio-input';
-import Calendar from '@/assets/calendar';
 import Button from '@/components/button';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
 import { getPersonalInfoAction, updatePersonalInfoAction } from './actions';
 import { dateToReadable } from '@/utils/helper.';
-import Spinner from '@/components/spinner';
 import { useServerAction } from 'zsa-react';
 import toast from 'react-hot-toast';
-import { InputMask } from '@react-input/mask';
 import PersonalDataSkeleton from './skeleton';
+import BirthDatePicker from '@/components/calendar/birth-date-picker';
 
 const PersonalDataPage = () => {
     const { data, isLoading, refetch } = useServerActionQuery(
@@ -42,6 +39,7 @@ const PersonalDataPage = () => {
 
     const {
         register,
+        control,
         formState: { errors },
         reset,
         handleSubmit,
@@ -102,15 +100,19 @@ const PersonalDataPage = () => {
                             />
                         </div>
                         <div>
-                            <InputMask
-                                component={Input}
-                                label="Дата рождения"
-                                id="birth_date"
-                                type="tel"
-                                iconLeft={<Calendar color="#E74949" />}
-                                mask="__.__.____"
-                                replacement="_"
-                                {...register('birth_date')}
+                            <Controller
+                                control={control}
+                                name="birth_date"
+                                render={({ field }) => (
+                                    <BirthDatePicker
+                                        id="birth_date"
+                                        label="Дата рождения"
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        onBlur={field.onBlur}
+                                        invalid={Boolean(errors.birth_date)}
+                                    />
+                                )}
                             />
                             <ErrorMessage
                                 message={errors.birth_date?.message}

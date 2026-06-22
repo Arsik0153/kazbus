@@ -1,10 +1,9 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import Input from '@/components/input';
 import RadioInput from '@/components/radio-input';
-import Calendar from '@/assets/calendar';
 import Button from '@/components/button';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { profileSchema } from '@/data/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,10 +13,9 @@ import { documentTypes } from '@/static/constants';
 import Topbar from '@/components/topbar';
 import { createPassenger } from '../actions';
 import toast from 'react-hot-toast';
-import { Profile } from '@/data/user';
 import { User } from './select-passengers';
-import { InputMask } from '@react-input/mask';
 import { useQueryClient } from '@tanstack/react-query';
+import BirthDatePicker from '@/components/calendar/birth-date-picker';
 
 type Props = {
     onBack: () => void;
@@ -42,6 +40,7 @@ const CreatePassenger = (props: Props) => {
     });
     const {
         register,
+        control,
         formState: { errors },
         handleSubmit,
         watch,
@@ -102,15 +101,19 @@ const CreatePassenger = (props: Props) => {
                             />
                         </div>
                         <div>
-                            <InputMask
-                                component={Input}
-                                label="Дата рождения"
-                                id="birth_date"
-                                type="tel"
-                                iconLeft={<Calendar color="#E74949" />}
-                                mask="__.__.____"
-                                replacement="_"
-                                {...register('birth_date')}
+                            <Controller
+                                control={control}
+                                name="birth_date"
+                                render={({ field }) => (
+                                    <BirthDatePicker
+                                        id="birth_date"
+                                        label="Дата рождения"
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        onBlur={field.onBlur}
+                                        invalid={Boolean(errors.birth_date)}
+                                    />
+                                )}
                             />
                             <ErrorMessage
                                 message={errors.birth_date?.message}
