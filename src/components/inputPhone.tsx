@@ -45,7 +45,7 @@ const InputPhone = forwardRef<HTMLInputElement, InputProps>(
         return (
             <div
                 className={clsx(
-                    'relative w-full rounded-[10px] border border-solid',
+                    'relative w-full rounded-[10px] border border-solid border-black/60',
                     {
                         'bg-[#ffffff] py-5': variant === 'primary',
                         'bg-none py-5': variant === 'secondary',
