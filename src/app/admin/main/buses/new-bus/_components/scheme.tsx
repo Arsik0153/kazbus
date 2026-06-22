@@ -325,7 +325,7 @@ const Scheme = ({
                                         key={`${floorIndex}-${rowIndex}-${colIndex}`}
                                         type="button"
                                         className={cn(
-                                            'flex h-[52px] w-[52px] items-center justify-center rounded-[10px] border bg-white text-xl font-bold',
+                                            'size-13 flex items-center justify-center rounded-[10px] border bg-white text-xl font-bold',
                                             {
                                                 'border-[#E23333] text-[#E23333]':
                                                     typeof cell === 'number',

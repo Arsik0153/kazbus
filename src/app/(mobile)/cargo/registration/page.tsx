@@ -34,6 +34,8 @@ type RegistrationFormData = {
     phone: string;
     city: string;
     birthDate: string;
+    password: string;
+    confirmPassword: string;
     experienceYears: string;
     photoFileName: string;
     licenseNumber: string;
@@ -96,6 +98,8 @@ const EMPTY_FORM: RegistrationFormData = {
     phone: '',
     city: '',
     birthDate: '',
+    password: '',
+    confirmPassword: '',
     experienceYears: '',
     photoFileName: '',
     licenseNumber: '',
@@ -154,6 +158,14 @@ const validateStep = (
         }
         if (!form.birthDate.trim()) {
             errors.birthDate = 'Укажите дату рождения';
+        }
+        if (!form.password.trim()) {
+            errors.password = 'Введите пароль';
+        }
+        if (!form.confirmPassword.trim()) {
+            errors.confirmPassword = 'Повторите пароль';
+        } else if (form.password !== form.confirmPassword) {
+            errors.confirmPassword = 'Пароли не совпадают';
         }
     }
 
@@ -225,7 +237,7 @@ const formatValue = (value: string, fallback = 'Не указано') =>
 const SummaryItem = ({ label, value }: { label: string; value: ReactNode }) => (
     <div className="min-w-0">
         <p className="text-xs font-medium text-[#A0A0A0]">{label}</p>
-        <p className="mt-1 break-words text-sm font-semibold text-[#4A4A4A]">
+        <p className="wrap-break-word mt-1 text-sm font-semibold text-[#4A4A4A]">
             {value}
         </p>
     </div>
@@ -391,7 +403,7 @@ const CargoRegistrationPage = () => {
     return (
         <div className="min-h-full px-5 pt-20">
             <div className="flex items-center justify-between gap-3">
-                <h1 className="text-[1.75rem] font-bold leading-[2rem] text-[#4A4A4A]">
+                <h1 className="text-[1.75rem] font-bold leading-8 text-[#4A4A4A]">
                     Регистрация
                 </h1>
                 <p className="text-sm font-medium text-[#A0A0A0]">
@@ -475,6 +487,30 @@ const CargoRegistrationPage = () => {
                     />
                     <ErrorMessage message={errors.birthDate} />
 
+                    <Input
+                        id="cargoPassword"
+                        label="Пароль"
+                        placeholder="Пароль"
+                        type="password"
+                        value={form.password}
+                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                            updateField('password', getInputValue(event))
+                        }
+                    />
+                    <ErrorMessage message={errors.password} />
+
+                    <Input
+                        id="cargoConfirmPassword"
+                        label="Повторите пароль"
+                        placeholder="Повторите пароль"
+                        type="password"
+                        value={form.confirmPassword}
+                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                            updateField('confirmPassword', getInputValue(event))
+                        }
+                    />
+                    <ErrorMessage message={errors.confirmPassword} />
+
                     <div>
                         <input
                             id="cargoPhoto"
@@ -485,7 +521,7 @@ const CargoRegistrationPage = () => {
                         />
                         <label
                             htmlFor="cargoPhoto"
-                            className="flex min-h-[4.5rem] w-full items-center gap-3 rounded-[0.625rem] border border-dashed border-[#D1D1D1] bg-white px-5 text-left"
+                            className="min-h-18 flex w-full items-center gap-3 rounded-[0.625rem] border border-dashed border-[#D1D1D1] bg-white px-5 text-left"
                         >
                             <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#FFF2F2] text-[#E74949]">
                                 <Upload className="size-5" />
@@ -661,7 +697,7 @@ const CargoRegistrationPage = () => {
                                     (current) => !current
                                 )
                             }
-                            className={`flex min-h-[4.5rem] w-full items-center justify-between rounded-[0.625rem] border bg-white px-5 text-left transition-colors ${
+                            className={`min-h-18 flex w-full items-center justify-between rounded-[0.625rem] border bg-white px-5 text-left transition-colors ${
                                 errors.type
                                     ? 'border-[#E23333]'
                                     : 'border-[#D1D1D1]'

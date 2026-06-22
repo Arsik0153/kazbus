@@ -12,7 +12,7 @@ const CargoLoginPage = () => {
     return (
         <div className="flex min-h-full items-center px-5 pb-28 pt-20">
             <div className="w-full">
-                <h1 className="text-[1.75rem] font-bold leading-[2rem] text-[#4A4A4A]">
+                <h1 className="text-[1.75rem] font-bold leading-8 text-[#4A4A4A]">
                     Вход
                 </h1>
                 <p className="mt-3 text-lg font-bold leading-5 text-[#4A4A4A]">
