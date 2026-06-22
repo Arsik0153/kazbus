@@ -1,6 +1,7 @@
 'use client';
 
-import { Copy } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Check, Copy } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Drawer } from 'vaul';
 import type {
@@ -30,12 +31,24 @@ const copyToClipboard = async (value: string) => {
     try {
         await navigator.clipboard.writeText(value);
         toast.success('Скопировано');
+        return true;
     } catch {
         toast.error('Не удалось скопировать');
+        return false;
     }
 };
 
-const OrderDetailRow = ({ label, value }: { label: string; value: string }) => (
+const OrderDetailRow = ({
+    label,
+    value,
+    copied,
+    onCopy,
+}: {
+    label: string;
+    value: string;
+    copied: boolean;
+    onCopy: () => void;
+}) => (
     <div className="flex items-start justify-between gap-3 border-t border-[#EFEFEF] py-3 first:border-t-0 first:pt-0 last:pb-0">
         <p className="text-sm font-medium text-[#A0A0A0]">{label}</p>
         <div className="flex max-w-[68%] items-start justify-end gap-2">
@@ -44,11 +57,21 @@ const OrderDetailRow = ({ label, value }: { label: string; value: string }) => (
             </p>
             <button
                 type="button"
-                onClick={() => void copyToClipboard(value)}
-                aria-label={`Скопировать ${label}`}
-                className="mt-[-0.1875rem] flex size-8 shrink-0 items-center justify-center rounded-full bg-[#F8F8F8] text-[#A0A0A0] active:bg-[#EFEFEF] active:text-[#E23333]"
+                onClick={onCopy}
+                aria-label={
+                    copied ? `${label} скопировано` : `Скопировать ${label}`
+                }
+                className={`mt-[-0.1875rem] flex size-8 shrink-0 items-center justify-center rounded-full bg-[#F8F8F8] transition-colors active:bg-[#EFEFEF] ${
+                    copied
+                        ? 'text-[#A0A0A0]'
+                        : 'text-[#A0A0A0] active:text-[#A0A0A0]'
+                }`}
             >
-                <Copy className="size-4" />
+                {copied ? (
+                    <Check className="size-4" strokeWidth={3} />
+                ) : (
+                    <Copy className="size-4" />
+                )}
             </button>
         </div>
     </div>
@@ -56,6 +79,38 @@ const OrderDetailRow = ({ label, value }: { label: string; value: string }) => (
 
 const ShipperOrderDetails = ({ order }: { order: CargoShipperContact }) => {
     const status = cargoOrderStatusMeta[order.status];
+    const [copiedKey, setCopiedKey] = useState<string | null>(null);
+    const copyResetTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    useEffect(() => {
+        setCopiedKey(null);
+    }, [order.id]);
+
+    useEffect(() => {
+        return () => {
+            if (copyResetTimeout.current) {
+                clearTimeout(copyResetTimeout.current);
+            }
+        };
+    }, []);
+
+    const handleCopy = async (key: string, value: string) => {
+        const copied = await copyToClipboard(value);
+
+        if (!copied) {
+            return;
+        }
+
+        setCopiedKey(key);
+
+        if (copyResetTimeout.current) {
+            clearTimeout(copyResetTimeout.current);
+        }
+
+        copyResetTimeout.current = setTimeout(() => {
+            setCopiedKey(null);
+        }, 1800);
+    };
 
     return (
         <div className="space-y-5">
@@ -97,16 +152,43 @@ const ShipperOrderDetails = ({ order }: { order: CargoShipperContact }) => {
             </div>
 
             <div className="rounded-[0.875rem] border border-[#E8E8E8] bg-white p-4">
-                <OrderDetailRow label="Телефон" value={order.phone} />
-                <OrderDetailRow label="Забрать" value={order.pickupPoint} />
+                <OrderDetailRow
+                    label="Телефон"
+                    value={order.phone}
+                    copied={copiedKey === 'phone'}
+                    onCopy={() => void handleCopy('phone', order.phone)}
+                />
+                <OrderDetailRow
+                    label="Забрать"
+                    value={order.pickupPoint}
+                    copied={copiedKey === 'pickupPoint'}
+                    onCopy={() =>
+                        void handleCopy('pickupPoint', order.pickupPoint)
+                    }
+                />
                 <OrderDetailRow
                     label="Адрес забора"
                     value={order.pickupAddress}
+                    copied={copiedKey === 'pickupAddress'}
+                    onCopy={() =>
+                        void handleCopy('pickupAddress', order.pickupAddress)
+                    }
                 />
-                <OrderDetailRow label="Доставить" value={order.dropoffPoint} />
+                <OrderDetailRow
+                    label="Доставить"
+                    value={order.dropoffPoint}
+                    copied={copiedKey === 'dropoffPoint'}
+                    onCopy={() =>
+                        void handleCopy('dropoffPoint', order.dropoffPoint)
+                    }
+                />
                 <OrderDetailRow
                     label="Адрес доставки"
                     value={order.dropoffAddress}
+                    copied={copiedKey === 'dropoffAddress'}
+                    onCopy={() =>
+                        void handleCopy('dropoffAddress', order.dropoffAddress)
+                    }
                 />
             </div>
 
