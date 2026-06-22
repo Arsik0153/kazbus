@@ -14,7 +14,7 @@ const CargoInfoCard = ({ trip }: Props) => {
                         {trip.cargoTitle}
                     </p>
                 </div>
-                <div className="rounded-full border border-[#F3CDCD] bg-[#FFF2F2] px-3 py-1.5 text-xs font-semibold text-[#E74949]">
+                <div className="text-nowrap rounded-full border border-[#F3CDCD] bg-[#FFF2F2] px-3 py-1.5 text-xs font-semibold text-[#E74949]">
                     {trip.referenceNumber}
                 </div>
             </div>
@@ -32,24 +32,6 @@ const CargoInfoCard = ({ trip }: Props) => {
                         {trip.cargoVolumeM3} м3
                     </p>
                 </div>
-            </div>
-
-            <div className="mt-4 rounded-[0.625rem] bg-[#F8F8F8] p-3">
-                <p className="text-xs font-medium text-[#A0A0A0]">
-                    Точка погрузки
-                </p>
-                <p className="mt-1 text-sm font-semibold text-[#4A4A4A]">
-                    {trip.pickupPoint}
-                </p>
-            </div>
-
-            <div className="mt-3 rounded-[0.625rem] bg-[#F8F8F8] p-3">
-                <p className="text-xs font-medium text-[#A0A0A0]">
-                    Точка разгрузки
-                </p>
-                <p className="mt-1 text-sm font-semibold text-[#4A4A4A]">
-                    {trip.dropoffPoint}
-                </p>
             </div>
         </div>
     );

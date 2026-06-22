@@ -13,6 +13,11 @@ export type DocumentFormMode = 'create' | 'edit';
 
 export type VehicleType = 'refrigerator' | 'tent' | 'van' | 'flatbed';
 
+export type CargoShipperContactStatus =
+    | 'loaded'
+    | 'inTransit'
+    | 'awaitingDelivery';
+
 export type Driver = {
     id: number;
     fullName: string;
@@ -46,7 +51,9 @@ export type CargoTrip = {
     cargoWeightTons: number;
     cargoVolumeM3: number;
     pickupPoint: string;
+    pickupAddress: string;
     dropoffPoint: string;
+    dropoffAddress: string;
     currentPoint: string;
     distanceKm: number;
     eta: string;
@@ -83,4 +90,24 @@ export type TripStep = {
     description: string;
     status: TripStatus;
     state: 'done' | 'current' | 'upcoming';
+    orderNumber?: string;
+    shipperName?: string;
+    contactName?: string;
+    contactPhone?: string;
+    address?: string;
+    timeLabel?: string;
+};
+
+export type CargoShipperContact = {
+    id: number;
+    orderNumber: string;
+    companyName: string;
+    contactName: string;
+    phone: string;
+    cargoTitle: string;
+    pickupPoint: string;
+    pickupAddress: string;
+    dropoffPoint: string;
+    dropoffAddress: string;
+    status: CargoShipperContactStatus;
 };
