@@ -7,10 +7,11 @@ import {
     Calendar as CalendarIcon,
     Check,
     ChevronDown,
+    User,
     Upload,
 } from 'lucide-react';
 import { ru } from 'react-day-picker/locale';
-import { useState, type ChangeEvent, type ReactNode } from 'react';
+import { useEffect, useState, type ChangeEvent, type ReactNode } from 'react';
 import Button from '@/components/button';
 import ErrorMessage from '@/components/error-message';
 import Input from '@/components/input';
@@ -154,14 +155,14 @@ const validateStep = (
         if (!form.birthDate.trim()) {
             errors.birthDate = 'Укажите дату рождения';
         }
+    }
+
+    if (step === 2) {
         if (!form.experienceYears.trim()) {
             errors.experienceYears = 'Укажите стаж';
         } else if (!isNonNegativeNumber(form.experienceYears)) {
             errors.experienceYears = 'Стаж должен быть числом от 0';
         }
-    }
-
-    if (step === 2) {
         if (!form.licenseNumber.trim()) {
             errors.licenseNumber = 'Укажите номер удостоверения';
         }
@@ -246,9 +247,10 @@ const CompactDatePicker = ({
     invalid?: boolean;
 }) => {
     const selectedDate = parseDateValue(value);
+    const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <Popover>
+        <Popover open={isOpen} onOpenChange={setIsOpen}>
             <PopoverTrigger asChild>
                 <button
                     id={id}
@@ -280,9 +282,10 @@ const CompactDatePicker = ({
                     mode="single"
                     captionLayout="dropdown"
                     selected={selectedDate ?? undefined}
-                    onSelect={(date) =>
-                        onChange(date ? format(date, 'dd.MM.yyyy') : '')
-                    }
+                    onSelect={(date) => {
+                        onChange(date ? format(date, 'dd.MM.yyyy') : '');
+                        setIsOpen(false);
+                    }}
                     startMonth={new Date(1900, 0)}
                     endMonth={new Date(currentYear, 11)}
                     disabled={{ after: new Date() }}
@@ -297,6 +300,7 @@ const CargoRegistrationPage = () => {
     const [step, setStep] = useState<RegistrationStep>(1);
     const [form, setForm] = useState<RegistrationFormData>(EMPTY_FORM);
     const [errors, setErrors] = useState<FormErrors>({});
+    const [photoPreviewUrl, setPhotoPreviewUrl] = useState('');
     const [isVehicleTypeSelectorOpen, setIsVehicleTypeSelectorOpen] =
         useState(false);
 
@@ -364,8 +368,25 @@ const CargoRegistrationPage = () => {
     };
 
     const handlePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
-        updateField('photoFileName', event.target.files?.[0]?.name ?? '');
+        const file = event.target.files?.[0];
+
+        updateField('photoFileName', file?.name ?? '');
+        setPhotoPreviewUrl((currentUrl) => {
+            if (currentUrl) {
+                URL.revokeObjectURL(currentUrl);
+            }
+
+            return file ? URL.createObjectURL(file) : '';
+        });
     };
+
+    useEffect(() => {
+        return () => {
+            if (photoPreviewUrl) {
+                URL.revokeObjectURL(photoPreviewUrl);
+            }
+        };
+    }, [photoPreviewUrl]);
 
     return (
         <div className="min-h-full px-5 pt-20">
@@ -454,19 +475,6 @@ const CargoRegistrationPage = () => {
                     />
                     <ErrorMessage message={errors.birthDate} />
 
-                    <Input
-                        id="cargoExperience"
-                        label="Стаж вождения"
-                        placeholder="Количество лет"
-                        type="number"
-                        min={0}
-                        value={form.experienceYears}
-                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                            updateField('experienceYears', getInputValue(event))
-                        }
-                    />
-                    <ErrorMessage message={errors.experienceYears} />
-
                     <div>
                         <input
                             id="cargoPhoto"
@@ -498,6 +506,19 @@ const CargoRegistrationPage = () => {
             {step === 2 && (
                 <div className="mt-4 flex flex-col gap-2">
                     <Input
+                        id="cargoExperience"
+                        label="Стаж вождения"
+                        placeholder="Количество лет"
+                        type="number"
+                        min={0}
+                        value={form.experienceYears}
+                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                            updateField('experienceYears', getInputValue(event))
+                        }
+                    />
+                    <ErrorMessage message={errors.experienceYears} />
+
+                    <Input
                         id="cargoLicenseNumber"
                         label="Номер водительского удостоверения"
                         placeholder="Номер водительского удостоверения"
@@ -508,14 +529,14 @@ const CargoRegistrationPage = () => {
                     />
                     <ErrorMessage message={errors.licenseNumber} />
 
-                    <Input
+                    <CompactDatePicker
                         id="cargoLicenseIssuedAt"
-                        label="Дата выдачи водительского удостоверения"
-                        placeholder="ДД.ММ.ГГГГ"
+                        label="Дата выдачи"
                         value={form.licenseIssuedAt}
-                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                            updateField('licenseIssuedAt', getInputValue(event))
+                        onChange={(value) =>
+                            updateField('licenseIssuedAt', value)
                         }
+                        invalid={Boolean(errors.licenseIssuedAt)}
                     />
                     <ErrorMessage message={errors.licenseIssuedAt} />
                 </div>
@@ -768,6 +789,23 @@ const CargoRegistrationPage = () => {
 
             {step === 6 && (
                 <div className="mt-4 flex flex-col gap-5">
+                    <div className="flex justify-center">
+                        <div className="flex size-24 items-center justify-center overflow-hidden rounded-full border border-[#E9E9E9] bg-white">
+                            {photoPreviewUrl ? (
+                                <Image
+                                    src={photoPreviewUrl}
+                                    alt="Фото профиля"
+                                    width={96}
+                                    height={96}
+                                    unoptimized
+                                    className="h-full w-full object-cover"
+                                />
+                            ) : (
+                                <User className="size-10 text-[#A0A0A0]" />
+                            )}
+                        </div>
+                    </div>
+
                     <div>
                         <p className="text-sm font-bold text-[#E74949]">
                             Водитель
@@ -794,13 +832,6 @@ const CargoRegistrationPage = () => {
                                 value={`${formatValue(
                                     form.experienceYears
                                 )} лет`}
-                            />
-                            <SummaryItem
-                                label="Фото"
-                                value={formatValue(
-                                    form.photoFileName,
-                                    'Не добавлено'
-                                )}
                             />
                         </div>
                     </div>
@@ -855,7 +886,7 @@ const CargoRegistrationPage = () => {
                                     }
                                 />
                                 <SummaryItem
-                                    label="Грузоподъемность"
+                                    label="Грузоподъемность, Т"
                                     value={`${formatValue(
                                         form.capacityTons
                                     )} т`}
