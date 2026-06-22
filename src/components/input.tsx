@@ -28,7 +28,7 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
     return (
         <div
             className={cn(
-                ' relative w-full rounded-[10px] border border-black/60 border-solid ',
+                'relative w-full rounded-[10px] border border-solid border-black/60',
                 {
                     'bg-[#ffffff]': variant === 'primary',
                     'bg-none': variant === 'secondary',
@@ -45,10 +45,10 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
             <input
                 id={id}
                 className={cn(
-                    `${hideKeyboardOnFocus ? 'hide-tabbar' : ''} peer xs:pb-4 xs:pt-5 pb-2.5 pt-6 w-full bg-transparent pr-8 font-medium text-(--black) placeholder-transparent outline-none transition-all duration-200`,
+                    `${hideKeyboardOnFocus ? 'hide-tabbar' : ''} text-(--black) peer w-full bg-transparent pb-2.5 pr-8 pt-6 font-medium tracking-wide placeholder-transparent outline-none transition-all duration-200 xs:pb-4 xs:pt-5`,
                     {
                         'pl-14': iconLeft,
-                        'pl-8': !iconLeft,
+                        'pl-6': !iconLeft,
                         'opacity-50': loading,
                     },
                     {
@@ -69,10 +69,10 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
             <label
                 htmlFor={id}
                 className={clsx(
-                    'xs:text-base pointer-events-none absolute top-1/2 origin-top-left -translate-y-1/2 transform text-[14px] font-medium transition-all duration-200 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-bold peer-focus:text-[#A0A0A0] peer-[:not(:placeholder-shown)]:-translate-y-6 peer-[:not(:placeholder-shown)]:scale-75 peer-[:not(:placeholder-shown)]:font-bold peer-[:not(:placeholder-shown)]:text-[#A0A0A0]',
+                    'pointer-events-none absolute top-1/2 origin-top-left -translate-y-1/2 transform text-[14px] font-medium transition-all duration-200 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-normal peer-focus:text-[#A0A0A0] peer-[:not(:placeholder-shown)]:-translate-y-6 peer-[:not(:placeholder-shown)]:scale-75 peer-[:not(:placeholder-shown)]:font-normal peer-[:not(:placeholder-shown)]:text-[#A0A0A0] xs:text-base',
                     {
                         'left-14': iconLeft,
-                        'left-8': !iconLeft,
+                        'left-6': !iconLeft,
                     },
                     {
                         'text-(--black)': variant === 'primary',
