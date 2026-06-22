@@ -3,11 +3,11 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ChangeEvent, useState } from 'react';
+import { Check, ChevronDown } from 'lucide-react';
 import Button from '@/components/button';
 import ErrorMessage from '@/components/error-message';
 import Input from '@/components/input';
 import InputPhone from '@/components/inputPhone';
-import RadioInput from '@/components/radio-input';
 import Topbar from '@/components/topbar';
 import type { VehicleType } from '../_types/cargo';
 
@@ -168,8 +168,13 @@ const CargoRegistrationPage = () => {
     const [step, setStep] = useState<RegistrationStep>(1);
     const [form, setForm] = useState<RegistrationFormData>(EMPTY_FORM);
     const [errors, setErrors] = useState<FormErrors>({});
+    const [isVehicleTypeSelectorOpen, setIsVehicleTypeSelectorOpen] =
+        useState(false);
 
     const stepCopy = STEP_COPY[step];
+    const selectedVehicleType = VEHICLE_TYPES.find(
+        (item) => item.value === form.type
+    );
 
     const updateField = <K extends keyof RegistrationFormData>(
         key: K,
@@ -209,6 +214,11 @@ const CargoRegistrationPage = () => {
 
         setErrors({});
         setStep((current) => (current - 1) as RegistrationStep);
+    };
+
+    const handleVehicleTypeSelect = (value: VehicleType) => {
+        updateField('type', value);
+        setIsVehicleTypeSelectorOpen(false);
     };
 
     return (
@@ -405,19 +415,81 @@ const CargoRegistrationPage = () => {
                             <p className="mb-3 text-sm font-medium text-[#A0A0A0]">
                                 Выберите тип машины
                             </p>
-                            <div className="flex flex-col gap-2">
-                                {VEHICLE_TYPES.map((item) => (
-                                    <RadioInput
-                                        key={item.value}
-                                        name="cargoVehicleType"
-                                        label={item.label}
-                                        value={item.value}
-                                        checked={form.type === item.value}
-                                        onChange={() =>
-                                            updateField('type', item.value)
-                                        }
+                            <div className="relative">
+                                <button
+                                    type="button"
+                                    aria-haspopup="listbox"
+                                    aria-expanded={isVehicleTypeSelectorOpen}
+                                    onClick={() =>
+                                        setIsVehicleTypeSelectorOpen(
+                                            (current) => !current
+                                        )
+                                    }
+                                    className={`flex min-h-[4.5rem] w-full items-center justify-between rounded-[0.625rem] border bg-white px-5 text-left transition-colors ${
+                                        errors.type
+                                            ? 'border-[#E23333]'
+                                            : 'border-[#D1D1D1]'
+                                    }`}
+                                >
+                                    <span className="flex flex-col">
+                                        <span className="text-xs font-medium text-[#A0A0A0]">
+                                            Тип машины
+                                        </span>
+                                        <span
+                                            className={`mt-1 text-base font-semibold ${
+                                                selectedVehicleType
+                                                    ? 'text-[#4A4A4A]'
+                                                    : 'text-[#A0A0A0]'
+                                            }`}
+                                        >
+                                            {selectedVehicleType?.label ??
+                                                'Выберите из списка'}
+                                        </span>
+                                    </span>
+                                    <ChevronDown
+                                        className={`size-5 shrink-0 text-[#A0A0A0] transition-transform ${
+                                            isVehicleTypeSelectorOpen
+                                                ? 'rotate-180'
+                                                : ''
+                                        }`}
                                     />
-                                ))}
+                                </button>
+
+                                {isVehicleTypeSelectorOpen && (
+                                    <div
+                                        role="listbox"
+                                        className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-20 overflow-hidden rounded-[0.625rem] border border-[#D1D1D1] bg-white shadow-[0_1rem_2rem_rgba(0,0,0,0.12)]"
+                                    >
+                                        {VEHICLE_TYPES.map((item) => {
+                                            const isSelected =
+                                                form.type === item.value;
+
+                                            return (
+                                                <button
+                                                    key={item.value}
+                                                    type="button"
+                                                    role="option"
+                                                    aria-selected={isSelected}
+                                                    onClick={() =>
+                                                        handleVehicleTypeSelect(
+                                                            item.value
+                                                        )
+                                                    }
+                                                    className={`flex w-full items-center justify-between border-b border-[#EFEFEF] px-5 py-4 text-left text-base font-semibold last:border-b-0 ${
+                                                        isSelected
+                                                            ? 'bg-[#FFF2F2] text-[#E23333]'
+                                                            : 'bg-white text-[#4A4A4A]'
+                                                    }`}
+                                                >
+                                                    {item.label}
+                                                    {isSelected && (
+                                                        <Check className="size-5" />
+                                                    )}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                )}
                             </div>
                             <ErrorMessage message={errors.type} />
 
