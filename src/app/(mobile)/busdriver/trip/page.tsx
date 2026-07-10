@@ -2,7 +2,7 @@
 
 import { useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import Topbar from '@/components/topbar';
 import BusDriverStatsCard from '../_components/BusDriverStatsCard';
 import BusDriverTripCard from '../_components/BusDriverTripCard';
@@ -85,7 +85,7 @@ const buildTripSteps = (
         };
     });
 
-const BusDriverTripPage = () => {
+const BusDriverTripPageContent = () => {
     const searchParams = useSearchParams();
     const tripId = searchParams.get('tripId');
     const selectedTrip = useMemo(
@@ -164,5 +164,19 @@ const BusDriverTripPage = () => {
         </>
     );
 };
+
+const BusDriverTripPage = () => (
+    <Suspense
+        fallback={
+            <div className="min-h-full" aria-busy="true">
+                <span className="sr-only" role="status">
+                    Загрузка рейса…
+                </span>
+            </div>
+        }
+    >
+        <BusDriverTripPageContent />
+    </Suspense>
+);
 
 export default BusDriverTripPage;

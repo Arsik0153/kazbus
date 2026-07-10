@@ -54,7 +54,13 @@ function ComboBox({ name, placeholder = 'Выберите нужный вари�
         <div className="relative">
             <Combobox
                 value={selectedPerson}
-                onChange={(person: Person) => {
+                onChange={(person: Person | null) => {
+                    if (person === null) {
+                        setSelectedPerson(null);
+                        onSelectionChange(name, null);
+                        return;
+                    }
+
                     if (person.id === -1) {
                         // Если пользователь выбрал опцию добавления нового города
                         const newPerson = { id: cruise.length + 1, name: query };
