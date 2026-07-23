@@ -160,29 +160,7 @@ const TripStatusStepper = ({
             </div>
 
             {onStepChange && (
-                <div className="mt-5">
-                    {isTripCompleted ? (
-                        <>
-                            <p className="text-sm font-semibold text-[#4A4A4A]">
-                                Рейс завершен
-                            </p>
-                            <p className="mt-1 text-sm text-[#A0A0A0]">
-                                Если статус нужно исправить, выберите этап выше
-                                или откатите рейс на предыдущий этап.
-                            </p>
-                        </>
-                    ) : (
-                        <>
-                            <p className="text-sm font-semibold text-[#4A4A4A]">
-                                Управление статусом
-                            </p>
-                            <p className="mt-1 text-sm text-[#A0A0A0]">
-                                Можно выбрать этап вручную, перейти вперед или
-                                откатить статус назад.
-                            </p>
-                        </>
-                    )}
-
+                <div>
                     <div className="mt-4 flex flex-col gap-3">
                         {previousStep && previousStepIndex !== null && (
                             <button
