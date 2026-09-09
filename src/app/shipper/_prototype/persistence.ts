@@ -101,6 +101,8 @@ const schema = z.object({
             companyId: text,
             from: text,
             to: text,
+            fromCity: text.optional(),
+            toCity: text.optional(),
             cargo: text,
             quantity: z.number().positive(),
             unit,

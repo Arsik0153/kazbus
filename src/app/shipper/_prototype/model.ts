@@ -75,6 +75,8 @@ export type Supply = {
     companyId: string;
     from: string;
     to: string;
+    fromCity?: string;
+    toCity?: string;
     cargo: string;
     quantity: number;
     unit: Unit;

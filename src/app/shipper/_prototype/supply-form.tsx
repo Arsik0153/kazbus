@@ -3,6 +3,11 @@ import { FormEvent, useState } from 'react';
 import { Supply, Unit, units } from './model';
 import { useStore } from './store';
 import { Field } from './ui';
+import {
+    fullSupplyLocation,
+    splitSupplyLocation,
+    supplyCities,
+} from './supply-location';
 export const week = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
 export default function SupplyForm({
     initial,
@@ -13,26 +18,38 @@ export default function SupplyForm({
 }) {
     const { state, act } = useStore();
     const [form, set] = useState<Supply>(
-        initial || {
-            id: crypto.randomUUID(),
-            title: '',
-            companyId:
-                state.companies.find((c) => c.relation === 'confirmed')?.id ||
-                '',
-            from: '',
-            to: '',
-            cargo: '',
-            quantity: 1,
-            unit: 'коробок',
-            mode: 'weekly',
-            weekdays: [1],
-            monthDay: 1,
-            automatic: false,
-            paused: false,
-            skipped: [],
-            price: 0,
-            approved: false,
-        }
+        initial
+            ? {
+                  ...initial,
+                  fromCity: splitSupplyLocation(initial.from, initial.fromCity)
+                      .city,
+                  from: splitSupplyLocation(initial.from, initial.fromCity)
+                      .address,
+                  toCity: splitSupplyLocation(initial.to, initial.toCity).city,
+                  to: splitSupplyLocation(initial.to, initial.toCity).address,
+              }
+            : {
+                  id: crypto.randomUUID(),
+                  title: '',
+                  companyId:
+                      state.companies.find((c) => c.relation === 'confirmed')
+                          ?.id || '',
+                  from: '',
+                  to: '',
+                  fromCity: '',
+                  toCity: '',
+                  cargo: '',
+                  quantity: 1,
+                  unit: 'коробок',
+                  mode: 'weekly',
+                  weekdays: [1],
+                  monthDay: 1,
+                  automatic: false,
+                  paused: false,
+                  skipped: [],
+                  price: 0,
+                  approved: false,
+              }
     );
     const [error, setError] = useState('');
     const update = <K extends keyof Supply>(key: K, value: Supply[K]) =>
@@ -40,26 +57,40 @@ export default function SupplyForm({
     function submit(e: FormEvent) {
         e.preventDefault();
         if (
-            ![form.title, form.from, form.to, form.cargo].every((v) =>
-                v.trim()
-            ) ||
+            ![
+                form.title,
+                form.fromCity || '',
+                form.from,
+                form.toCity || '',
+                form.to,
+                form.cargo,
+            ].every((v) => v.trim()) ||
             !form.quantity ||
             form.quantity < 0 ||
             (form.mode === 'weekly' && !form.weekdays.length)
         ) {
-            setError('Заполните данные и выберите хотя бы один день недели.');
+            setError(
+                'Укажите города, адреса и груз. Для недельного расписания выберите день отправления.'
+            );
             return;
         }
+        const supply = {
+            ...form,
+            fromCity: form.fromCity!.trim(),
+            toCity: form.toCity!.trim(),
+            from: fullSupplyLocation(form.fromCity!, form.from),
+            to: fullSupplyLocation(form.toCity!, form.to),
+        };
         const conditionsChanged =
             initial &&
             ['companyId', 'from', 'to', 'cargo', 'quantity', 'unit'].some(
-                (k) => form[k as keyof Supply] !== initial[k as keyof Supply]
+                (k) => supply[k as keyof Supply] !== initial[k as keyof Supply]
             );
         if (
             act({
                 type: 'supply',
                 supply: {
-                    ...form,
+                    ...supply,
                     approved: conditionsChanged ? false : form.approved,
                 },
             })
@@ -93,20 +124,49 @@ export default function SupplyForm({
                             ))}
                     </select>
                 </Field>
+                <Field label="Город забора">
+                    <input
+                        required
+                        list="supply-cities"
+                        placeholder="Например, Алматы"
+                        value={form.fromCity || ''}
+                        onChange={(e) => update('fromCity', e.target.value)}
+                    />
+                </Field>
                 <Field label="Адрес забора">
                     <input
                         required
+                        placeholder="Улица, дом, склад"
                         value={form.from}
                         onChange={(e) => update('from', e.target.value)}
+                    />
+                </Field>
+                <Field label="Город доставки">
+                    <input
+                        required
+                        list="supply-cities"
+                        placeholder="Например, Шымкент"
+                        value={form.toCity || ''}
+                        onChange={(e) => update('toCity', e.target.value)}
                     />
                 </Field>
                 <Field label="Адрес доставки">
                     <input
                         required
+                        placeholder="Улица, дом, магазин"
                         value={form.to}
                         onChange={(e) => update('to', e.target.value)}
                     />
                 </Field>
+                <datalist id="supply-cities">
+                    {supplyCities.map((city) => (
+                        <option key={city} value={city} />
+                    ))}
+                </datalist>
+                <p className="sp-caption sp-field-wide">
+                    Выберите город из подсказок или введите любой другой, в том
+                    числе за пределами Казахстана.
+                </p>
                 <Field label="Груз">
                     <input
                         required
