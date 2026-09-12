@@ -2,27 +2,30 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useStore } from './store';
-import { money, dateLabel } from './model';
-import { Heading, Status, Section, Back, Empty } from './ui';
+import { dateLabel, money } from './model';
+import { Back, Empty, Heading, Section, Status } from './ui';
 import { FileLink } from './files';
 import Proposal from './proposal';
 import IssueForm from './issue-form';
 import RouteProgress from './route-progress';
+import { selectDecisionTasks, selectOrderPrice } from './selectors';
+
 function download(text: string, filename: string) {
     const url = URL.createObjectURL(
         new Blob([text], { type: 'text/plain;charset=utf-8' })
     );
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+
 export default function OrderDetail({ id }: { id: string }) {
     const { state, act } = useStore();
     const [cancel, setCancel] = useState(false);
-    const o = state.orders.find((o) => o.id === id);
-    if (!o)
+    const order = state.orders.find((candidate) => candidate.id === id);
+    if (!order) {
         return (
             <>
                 <Back />
@@ -33,211 +36,241 @@ export default function OrderDetail({ id }: { id: string }) {
                 </Empty>
             </>
         );
-    const company = state.companies.find((c) => c.id === o.companyId);
+    }
+
+    const company = state.companies.find(
+        (candidate) => candidate.id === order.companyId
+    );
+    const decisions = selectDecisionTasks(state).filter(
+        (decision) => decision.order.id === order.id
+    );
+    const price = selectOrderPrice(order);
+    const priceText =
+        price.kind === 'pending'
+            ? 'Ожидаем расчёт'
+            : price.kind === 'proposal'
+              ? `${money(price.amount)} предварительно`
+              : money(price.amount);
+    const payment = order.invoice
+        ? order.invoice.paid
+            ? 'Оплачен'
+            : 'Ожидает оплаты'
+        : 'Счёт не выставлен';
+
     return (
         <>
             <Back />
             <Heading
-                eyebrow={`Заказ ${o.id} · ${company?.name}`}
-                title={`${o.from.split(',')[0]} → ${o.to.split(',')[0]}`}
-                action={<Status status={o.status} />}
+                eyebrow={`Заказ ${order.id} · ${company?.name ?? 'Компания'}`}
+                title={`${order.from.split(',')[0]} → ${order.to.split(',')[0]}`}
             >
-                {o.cargo} · {o.quantity} {o.unit}
+                {order.cargo} · {order.quantity} {order.unit}
             </Heading>
-            {o.delay && (
+            <section className="sp-order-summary" aria-label="Сводка заказа">
+                <dl>
+                    <div>
+                        <dt>Статус</dt>
+                        <dd>
+                            <Status status={order.status} />
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>Стоимость</dt>
+                        <dd>{priceText}</dd>
+                    </div>
+                    <div>
+                        <dt>Доставка</dt>
+                        <dd>{dateLabel(order.date)}</dd>
+                    </div>
+                    <div>
+                        <dt>Оплата</dt>
+                        <dd>{payment}</dd>
+                    </div>
+                </dl>
+            </section>
+            {decisions.map((decision) => (
+                <Proposal
+                    key={`${decision.order.id}-${decision.kind}`}
+                    decision={decision}
+                />
+            ))}
+            {order.delay && (
                 <div className="sp-alert">
                     <div>
                         <h2>
                             Доставка задерживается · новый срок{' '}
-                            {dateLabel(o.date)}
+                            {dateLabel(order.date)}
                         </h2>
-                        <p>{o.delay}</p>
-                        {o.originalEta && (
+                        <p>{order.delay}</p>
+                        {order.originalEta && (
                             <p>
-                                Ранее: {dateLabel(o.originalEta)}. Уведомление
-                                не означает согласие с изменением условий.
+                                Ранее: {dateLabel(order.originalEta)}.
+                                Уведомление не означает согласие с изменением
+                                условий.
                             </p>
                         )}
                     </div>
                 </div>
             )}
-            <div className="sp-detail-grid">
-                <div>
-                    {o.offer && <Proposal order={o} offer={o.offer} />}{' '}
-                    {o.extra && <Proposal order={o} offer={o.extra} extra />}
-                    <RouteProgress o={o} />
-                    <Section title="Груз и адреса">
-                        <dl className="sp-facts">
-                            <div>
-                                <dt>Забор груза</dt>
-                                <dd>
-                                    {o.from}
-                                    <p>{dateLabel(o.pickup)}</p>
-                                </dd>
-                            </div>
-                            <div>
-                                <dt>Получатель</dt>
-                                <dd>{o.to}</dd>
-                            </div>
-                            <div>
-                                <dt>Груз</dt>
-                                <dd>
-                                    {o.cargo} · {o.quantity} {o.unit}
-                                </dd>
-                            </div>
-                            <div>
-                                <dt>Вес и размеры</dt>
-                                <dd>
-                                    {o.weight
-                                        ? `${o.weight} кг`
-                                        : 'Компания уточнит'}
-                                    {o.dimensions && ` · ${o.dimensions}`}
-                                </dd>
-                            </div>
-                        </dl>
-                        {o.comment && <p>{o.comment}</p>}
-                        <div className="sp-file-list">
-                            {o.files.map((f) => (
-                                <FileLink key={f.id} file={f} />
-                            ))}
+            <div className="sp-detail-flow">
+                <RouteProgress o={order} />
+                <Section title="Груз и адреса">
+                    <dl className="sp-facts">
+                        <div>
+                            <dt>Забор груза</dt>
+                            <dd>
+                                {order.from}
+                                <p>{dateLabel(order.pickup)}</p>
+                            </dd>
                         </div>
-                        {o.supplyId && (
-                            <Link className="sp-link" href="/shipper/supplies">
-                                Из регулярной поставки →
-                            </Link>
-                        )}
-                        {o.batchId && (
-                            <Link className="sp-link" href="/shipper/storage">
-                                Из партии {o.batchId} на складе →
-                            </Link>
-                        )}
+                        <div>
+                            <dt>Получатель</dt>
+                            <dd>{order.to}</dd>
+                        </div>
+                        <div>
+                            <dt>Груз</dt>
+                            <dd>
+                                {order.cargo} · {order.quantity} {order.unit}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt>Вес и размеры</dt>
+                            <dd>
+                                {order.weight
+                                    ? `${order.weight} кг`
+                                    : 'Компания уточнит'}
+                                {order.dimensions && ` · ${order.dimensions}`}
+                            </dd>
+                        </div>
+                    </dl>
+                    {order.comment && <p>{order.comment}</p>}
+                    <div className="sp-file-list">
+                        {order.files.map((file) => (
+                            <FileLink key={file.id} file={file} />
+                        ))}
+                    </div>
+                    {order.supplyId && (
+                        <Link className="sp-link" href="/shipper/supplies">
+                            Из регулярной поставки →
+                        </Link>
+                    )}
+                    {order.batchId && (
+                        <Link className="sp-link" href="/shipper/storage">
+                            Из партии {order.batchId} на складе →
+                        </Link>
+                    )}
+                </Section>
+                {order.proof && (
+                    <Section title="Подтверждение доставки">
+                        <p>{order.proof}</p>
+                        <button
+                            className="sp-link"
+                            onClick={() =>
+                                download(
+                                    `ДЕМОНСТРАЦИОННЫЙ АКТ\n${order.proof}`,
+                                    `Акт-${order.id}.txt`
+                                )
+                            }
+                        >
+                            Скачать демоакт
+                        </button>
                     </Section>
-                    {o.proof && (
-                        <Section title="Подтверждение доставки">
-                            <p>{o.proof}</p>
+                )}
+                <IssueForm order={order} />
+            </div>
+            <div className="sp-secondary-grid">
+                <section className="sp-panel">
+                    <h2>Логистическая компания</h2>
+                    <strong>{company?.name ?? 'Компания не найдена'}</strong>
+                    <p className="sp-caption">
+                        Менеджер отвечает на вопросы по доставке.
+                    </p>
+                    {company && (
+                        <a className="sp-link" href={`tel:${company.phone}`}>
+                            {company.phone}
+                        </a>
+                    )}
+                    <p className="sp-caption">
+                        Телефоны в прототипе демонстрационные.
+                    </p>
+                </section>
+                <section className="sp-panel">
+                    <h2>Счёт</h2>
+                    {order.invoice ? (
+                        <>
+                            <p className="sp-amount">
+                                {money(order.invoice.amount)}
+                            </p>
+                            <p>
+                                {order.invoice.number} · {payment}
+                            </p>
                             <button
                                 className="sp-link"
-                                onClick={() =>
+                                onClick={() => {
+                                    const invoice = order.invoice;
+                                    if (!invoice) return;
                                     download(
-                                        `ДЕМОНСТРАЦИОННЫЙ АКТ\n${o.proof}`,
-                                        `Акт-${o.id}.txt`
-                                    )
-                                }
+                                        `ДЕМОНСТРАЦИОННЫЙ СЧЁТ, НЕ ДЛЯ ОПЛАТЫ\n${invoice.number}\n${company?.name ?? ''}\nЗаказ ${order.id}\n${money(invoice.amount)}`,
+                                        `${invoice.number}.txt`
+                                    );
+                                }}
                             >
-                                Скачать демоакт
+                                Скачать демосчёт
                             </button>
-                        </Section>
+                        </>
+                    ) : (
+                        <p>Счёт появится после согласования стоимости.</p>
                     )}
-                    <IssueForm order={o} />
-                </div>
-                <aside>
+                    <p className="sp-caption">
+                        Оплата проходит вне приложения. Статус отмечает
+                        логистическая компания.
+                    </p>
+                </section>
+                {['waiting', 'offer', 'planned'].includes(order.status) && (
                     <section className="sp-panel">
-                        <h2>Ваша компания</h2>
-                        <strong>{company?.name}</strong>
-                        <p className="sp-caption">
-                            Менеджер заказа · все вопросы по доставке
-                        </p>
-                        <a className="sp-link" href={`tel:${company?.phone}`}>
-                            {company?.phone}
-                        </a>
-                        <p className="sp-caption">
-                            Телефоны в прототипе — демонстрационные.
-                        </p>
-                    </section>
-                    <section className="sp-panel">
-                        <h2>Стоимость и оплата</h2>
-                        {o.agreedPrice !== undefined ? (
+                        <h2>Отмена заказа</h2>
+                        {cancel ? (
                             <>
-                                <p className="sp-amount">
-                                    {money(
-                                        o.agreedPrice +
-                                            (o.extra?.status === 'accepted'
-                                                ? o.extra.amount
-                                                : 0)
-                                    )}
+                                <p>
+                                    Отменить заказ {order.id}? Резерв груза
+                                    будет освобождён.
                                 </p>
-                                <p className="sp-caption">
-                                    Согласованная основа: {money(o.agreedPrice)}
-                                </p>
-                                {o.extra?.status === 'accepted' && (
-                                    <p>
-                                        Доплата согласована:{' '}
-                                        {money(o.extra.amount)}. Отдельный счёт
-                                        ожидается.
-                                    </p>
-                                )}
+                                <div className="sp-actions">
+                                    <button
+                                        className="sp-secondary"
+                                        onClick={() => {
+                                            const receipt = act(
+                                                {
+                                                    type: 'cancel',
+                                                    id: order.id,
+                                                },
+                                                {
+                                                    success: `Заказ ${order.id} отменён. Резерв освобождён.`,
+                                                }
+                                            );
+                                            if (receipt.ok) setCancel(false);
+                                        }}
+                                    >
+                                        Да, отменить
+                                    </button>
+                                    <button
+                                        className="sp-link"
+                                        onClick={() => setCancel(false)}
+                                    >
+                                        Оставить заказ
+                                    </button>
+                                </div>
                             </>
                         ) : (
-                            <p>Ожидаем согласования стоимости</p>
+                            <button
+                                className="sp-link"
+                                onClick={() => setCancel(true)}
+                            >
+                                Отменить заказ
+                            </button>
                         )}
-                        {o.invoice && (
-                            <>
-                                <p style={{ marginTop: 16 }}>
-                                    {o.invoice.number} ·{' '}
-                                    {money(o.invoice.amount)}
-                                </p>
-                                <p>
-                                    {o.invoice.paid
-                                        ? 'Оплачен'
-                                        : 'Ожидает оплаты'}
-                                </p>
-                                <button
-                                    className="sp-link"
-                                    onClick={() =>
-                                        download(
-                                            `ДЕМОНСТРАЦИОННЫЙ СЧЁТ — НЕ ДЛЯ ОПЛАТЫ\n${o.invoice!.number}\n${company?.name}\nЗаказ ${o.id}\n${money(o.invoice!.amount)}`,
-                                            `${o.invoice!.number}.txt`
-                                        )
-                                    }
-                                >
-                                    Скачать демосчёт
-                                </button>
-                            </>
-                        )}
-                        <p className="sp-caption">
-                            Оплата вне приложения. Статус отмечает логистическая
-                            компания.
-                        </p>
                     </section>
-                    {['waiting', 'offer', 'planned'].includes(o.status) && (
-                        <section className="sp-panel">
-                            {cancel ? (
-                                <>
-                                    <p>
-                                        Отменить заказ? Резерв груза будет
-                                        освобождён.
-                                    </p>
-                                    <div className="sp-actions">
-                                        <button
-                                            className="sp-secondary"
-                                            onClick={() =>
-                                                act({
-                                                    type: 'cancel',
-                                                    id: o.id,
-                                                })
-                                            }
-                                        >
-                                            Да, отменить
-                                        </button>
-                                        <button
-                                            className="sp-link"
-                                            onClick={() => setCancel(false)}
-                                        >
-                                            Оставить
-                                        </button>
-                                    </div>
-                                </>
-                            ) : (
-                                <button
-                                    className="sp-link"
-                                    onClick={() => setCancel(true)}
-                                >
-                                    Отменить заказ
-                                </button>
-                            )}
-                        </section>
-                    )}
-                </aside>
+                )}
             </div>
         </>
     );

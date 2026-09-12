@@ -86,16 +86,21 @@ export default function SupplyForm({
             ['companyId', 'from', 'to', 'cargo', 'quantity', 'unit'].some(
                 (k) => supply[k as keyof Supply] !== initial[k as keyof Supply]
             );
-        if (
-            act({
+        const receipt = act(
+            {
                 type: 'supply',
                 supply: {
                     ...supply,
                     approved: conditionsChanged ? false : form.approved,
                 },
-            })
-        )
-            close();
+            },
+            {
+                success: initial
+                    ? `Поставка «${form.title}» обновлена.`
+                    : `Поставка «${form.title}» создана.`,
+            }
+        );
+        if (receipt.ok) close();
     }
     return (
         <form className="sp-panel sp-form" onSubmit={submit}>

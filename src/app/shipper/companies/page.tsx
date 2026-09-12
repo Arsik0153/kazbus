@@ -28,7 +28,10 @@ export default function Companies() {
                         );
                         return;
                     }
-                    act({ type: 'connect', id: 'c3', invited: true });
+                    act(
+                        { type: 'connect', id: 'c3', invited: true },
+                        { success: 'Nomad Freight подключена.' }
+                    );
                     setCode('');
                     setError('');
                 }}
@@ -99,7 +102,12 @@ export default function Companies() {
                                 <button
                                     className="sp-secondary"
                                     onClick={() =>
-                                        act({ type: 'connect', id: c.id })
+                                        act(
+                                            { type: 'connect', id: c.id },
+                                            {
+                                                success: `Запрос компании ${c.name} отправлен.`,
+                                            }
+                                        )
                                     }
                                 >
                                     Запросить сотрудничество

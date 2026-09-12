@@ -1,6 +1,7 @@
 'use client';
 import { ReactNode } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { OrderStatus, statuses } from './model';
 export function Heading({
     eyebrow,
@@ -35,8 +36,13 @@ export function Empty({ children }: { children: ReactNode }) {
     return <div className="sp-empty">{children}</div>;
 }
 export function Back() {
+    const searchParams = useSearchParams();
+    const query = searchParams.toString();
     return (
-        <Link className="sp-back" href="/shipper/orders">
+        <Link
+            className="sp-back"
+            href={query ? `/shipper/orders?${query}` : '/shipper/orders'}
+        >
             ← Все заказы
         </Link>
     );

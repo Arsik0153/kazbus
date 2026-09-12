@@ -13,17 +13,52 @@ import { restore } from './persistence';
 import { seed } from './seed';
 import { Action, reducer } from './reducer';
 const KEY = 'jol-shipper-prototype-v1';
+export type Notice = {
+    kind: 'success' | 'warning' | 'error';
+    text: string;
+};
+export type ActionReceipt =
+    | { ok: true; state: State }
+    | { ok: false; error: string };
+type ActOptions = { success: string };
 const Context = createContext<{
     state: State;
-    act: (a: Action) => boolean;
-    message: string;
-    reset: () => void;
+    act: (a: Action, options?: ActOptions) => ActionReceipt;
+    notice: Notice | null;
+    dismissNotice: () => void;
+    reset: () => ActionReceipt;
 } | null>(null);
+
+function defaultSuccess(action: Action): string {
+    switch (action.type) {
+        case 'replace':
+            return 'Данные обновлены.';
+        case 'create':
+            return `Заказ ${action.order.id} создан.`;
+        case 'decision':
+            return 'Решение по предложению сохранено.';
+        case 'cancel':
+            return `Заказ ${action.id} отменён.`;
+        case 'issue':
+            return 'Обращение отправлено менеджеру.';
+        case 'supply':
+            return 'Поставка сохранена.';
+        case 'connect':
+            return 'Запрос компании обновлён.';
+        case 'profile':
+            return 'Профиль сохранён.';
+        default: {
+            const exhaustive: never = action;
+            return exhaustive;
+        }
+    }
+}
+
 export function Store({ children }: { children: ReactNode }) {
     const [state, dispatch] = useReducer(reducer, undefined, seed);
     const ref = useRef(state);
     const [ready, setReady] = useState(false);
-    const [message, setMessage] = useState('');
+    const [notice, setNotice] = useState<Notice | null>(null);
     useEffect(() => {
         try {
             const raw = localStorage.getItem(KEY);
@@ -33,33 +68,43 @@ export function Store({ children }: { children: ReactNode }) {
                 dispatch({ type: 'replace', state: data });
             }
         } catch {
-            setMessage(
-                'Не удалось восстановить сохранение. Загружены демоданные.'
-            );
+            setNotice({
+                kind: 'warning',
+                text: 'Не удалось восстановить сохранение. Загружены демоданные.',
+            });
         }
         setReady(true);
     }, []);
-    function act(a: Action) {
+    useEffect(() => {
+        if (!notice) return;
+        const timeout = window.setTimeout(() => setNotice(null), 4000);
+        return () => window.clearTimeout(timeout);
+    }, [notice]);
+    function act(a: Action, options?: ActOptions): ActionReceipt {
         try {
             const next = reducer(ref.current, a);
             ref.current = next;
             dispatch({ type: 'replace', state: next });
             try {
                 localStorage.setItem(KEY, JSON.stringify(next));
-                setMessage('Изменения сохранены в этом браузере.');
+                setNotice({
+                    kind: 'success',
+                    text: options?.success ?? defaultSuccess(a),
+                });
             } catch {
-                setMessage(
-                    'Изменения применены, но браузер не смог сохранить их после закрытия страницы.'
-                );
+                setNotice({
+                    kind: 'warning',
+                    text: 'Изменение применено, но оно действует только в этой вкладке или сессии.',
+                });
             }
-            return true;
+            return { ok: true, state: next };
         } catch (e) {
-            setMessage(
+            const error =
                 e instanceof Error
                     ? e.message
-                    : 'Не удалось выполнить действие.'
-            );
-            return false;
+                    : 'Не удалось выполнить действие.';
+            setNotice({ kind: 'error', text: error });
+            return { ok: false, error };
         }
     }
     if (!ready)
@@ -73,10 +118,13 @@ export function Store({ children }: { children: ReactNode }) {
             value={{
                 state,
                 act,
-                message,
-                reset: () => {
-                    act({ type: 'replace', state: seed() });
-                },
+                notice,
+                dismissNotice: () => setNotice(null),
+                reset: () =>
+                    act(
+                        { type: 'replace', state: seed() },
+                        { success: 'Демоданные восстановлены.' }
+                    ),
             }}
         >
             {children}

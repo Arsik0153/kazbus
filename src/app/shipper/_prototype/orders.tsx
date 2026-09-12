@@ -1,88 +1,322 @@
 'use client';
-import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowUpRight, Plus, Package } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { ArrowUpRight, Building2, Package, Plus } from 'lucide-react';
 import { useStore } from './store';
-import { statuses, dateLabel, money } from './model';
-import { Heading, Status, Empty } from './ui';
+import { dateLabel, money, Order, statuses } from './model';
+import { Empty, Heading, Status } from './ui';
+import {
+    emptyOrderFilters,
+    OrderFilters,
+    orderFiltersQuery,
+    parseOrderFilters,
+} from './order-filters';
+import {
+    OrderCollection,
+    selectCompanyConnection,
+    selectOrderCollection,
+    selectOrderPrice,
+} from './selectors';
+
+function priceLabel(order: Order): string {
+    const price = selectOrderPrice(order);
+    switch (price.kind) {
+        case 'agreed':
+            return money(price.amount);
+        case 'proposal':
+            return `${money(price.amount)} предварительно`;
+        case 'pending':
+            return 'Ожидаем расчёт';
+        default: {
+            const exhaustive: never = price;
+            return exhaustive;
+        }
+    }
+}
+
+function OrderTable({
+    orders,
+    detailsQuery,
+    companyName,
+}: {
+    orders: Order[];
+    detailsQuery: string;
+    companyName: (companyId: string) => string;
+}) {
+    return (
+        <div className="sp-orders-table">
+            <table className="sp-table">
+                <thead>
+                    <tr>
+                        <th>ЗАКАЗ / МАРШРУТ</th>
+                        <th>КОМПАНИЯ</th>
+                        <th>СТАТУС</th>
+                        <th>ДОСТАВКА</th>
+                        <th>СТОИМОСТЬ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {orders.map((order) => (
+                        <tr key={order.id}>
+                            <td>
+                                <span className="sp-order-id">{order.id}</span>
+                                <Link
+                                    className="sp-order-title"
+                                    href={`/shipper/orders/${order.id}${detailsQuery}`}
+                                >
+                                    {order.from.split(',')[0]} →{' '}
+                                    {order.to.split(',')[0]}{' '}
+                                    <ArrowUpRight
+                                        aria-hidden="true"
+                                        size={14}
+                                    />
+                                </Link>
+                                <small>
+                                    {order.cargo} · {order.quantity}{' '}
+                                    {order.unit}
+                                </small>
+                            </td>
+                            <td>
+                                {companyName(order.companyId)}
+                                <small>
+                                    {order.batchId
+                                        ? 'Со склада'
+                                        : order.supplyId
+                                          ? 'Регулярная поставка'
+                                          : 'Разовый заказ'}
+                                </small>
+                            </td>
+                            <td>
+                                <Status status={order.status} />
+                                {order.delay && <small>Срок изменён</small>}
+                                {order.extra?.status === 'pending' && (
+                                    <small>Доплата на согласовании</small>
+                                )}
+                            </td>
+                            <td>{dateLabel(order.date)}</td>
+                            <td>{priceLabel(order)}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
+}
+
+function OrderCards({
+    orders,
+    detailsQuery,
+    companyName,
+}: {
+    orders: Order[];
+    detailsQuery: string;
+    companyName: (companyId: string) => string;
+}) {
+    return (
+        <div className="sp-order-cards">
+            {orders.map((order) => (
+                <article className="sp-order-card" key={order.id}>
+                    <span className="sp-order-id">{order.id}</span>
+                    <Link
+                        className="sp-order-title"
+                        href={`/shipper/orders/${order.id}${detailsQuery}`}
+                    >
+                        {order.from.split(',')[0]} → {order.to.split(',')[0]}
+                        <ArrowUpRight aria-hidden="true" size={16} />
+                    </Link>
+                    <p className="sp-caption">
+                        {order.cargo} · {order.quantity} {order.unit}
+                    </p>
+                    <dl className="sp-card-facts">
+                        <div>
+                            <dt>Компания</dt>
+                            <dd>{companyName(order.companyId)}</dd>
+                        </div>
+                        <div>
+                            <dt>Статус</dt>
+                            <dd>
+                                <Status status={order.status} />
+                            </dd>
+                        </div>
+                        <div>
+                            <dt>Доставка</dt>
+                            <dd>{dateLabel(order.date)}</dd>
+                        </div>
+                        <div>
+                            <dt>Стоимость</dt>
+                            <dd>{priceLabel(order)}</dd>
+                        </div>
+                    </dl>
+                    {order.delay && (
+                        <p className="sp-warning-text">Срок доставки изменён</p>
+                    )}
+                    {order.extra?.status === 'pending' && (
+                        <p className="sp-warning-text">
+                            Доплата ждёт согласования
+                        </p>
+                    )}
+                </article>
+            ))}
+        </div>
+    );
+}
+
+function OrderResults({
+    collection,
+    detailsQuery,
+    companyName,
+    connected,
+    resetFilters,
+}: {
+    collection: OrderCollection;
+    detailsQuery: string;
+    companyName: (companyId: string) => string;
+    connected: boolean;
+    resetFilters: () => void;
+}) {
+    switch (collection.kind) {
+        case 'empty-account':
+            return (
+                <Empty>
+                    <Package aria-hidden="true" size={28} />
+                    <h2>Заказов пока нет</h2>
+                    <p>
+                        {connected
+                            ? 'Создайте первую заявку на перевозку.'
+                            : 'Сначала подключите логистическую компанию.'}
+                    </p>
+                    <Link
+                        className="sp-button"
+                        href={
+                            connected
+                                ? '/shipper/create-order'
+                                : '/shipper/companies'
+                        }
+                    >
+                        {connected ? 'Создать заказ' : 'Открыть компании'}
+                    </Link>
+                </Empty>
+            );
+        case 'no-matches':
+            return (
+                <Empty>
+                    <Package aria-hidden="true" size={28} />
+                    <h2>По этим фильтрам заказов нет</h2>
+                    <button className="sp-secondary" onClick={resetFilters}>
+                        Сбросить фильтры
+                    </button>
+                </Empty>
+            );
+        case 'results':
+            return (
+                <>
+                    <OrderTable
+                        orders={collection.orders}
+                        detailsQuery={detailsQuery}
+                        companyName={companyName}
+                    />
+                    <OrderCards
+                        orders={collection.orders}
+                        detailsQuery={detailsQuery}
+                        companyName={companyName}
+                    />
+                </>
+            );
+        default: {
+            const exhaustive: never = collection;
+            return exhaustive;
+        }
+    }
+}
+
 export default function Orders() {
     const { state } = useStore();
-    const [search, setSearch] = useState('');
-    const [company, setCompany] = useState('');
-    const [status, setStatus] = useState('');
-    const [attentionOnly, setAttentionOnly] = useState(false);
-    const needs = (o: (typeof state.orders)[number]) =>
-        !['cancelled', 'rejected', 'delivered'].includes(o.status) &&
-        (o.offer?.status === 'pending' || o.extra?.status === 'pending');
-    const attention = state.orders.filter(needs);
-    const orders = state.orders.filter(
-        (o) =>
-            `${o.id} ${o.from} ${o.to} ${o.cargo}`
-                .toLowerCase()
-                .includes(search.toLowerCase()) &&
-            (!company || o.companyId === company) &&
-            (!status || o.status === status) &&
-            (!attentionOnly || needs(o))
-    );
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const connection = selectCompanyConnection(state);
+    const knownCompanyIds =
+        connection.kind === 'connected'
+            ? connection.companies.map((company) => company.id)
+            : [];
+    const filters = parseOrderFilters(searchParams, knownCompanyIds);
+    const collection = selectOrderCollection(state, filters);
+    const query = orderFiltersQuery(filters);
+    const detailsQuery = query ? `?${query}` : '';
+
+    function updateFilters(next: Partial<OrderFilters>) {
+        const updated = { ...filters, ...next };
+        const nextQuery = orderFiltersQuery(updated);
+        router.replace(
+            nextQuery ? `/shipper/orders?${nextQuery}` : '/shipper/orders',
+            { scroll: false }
+        );
+    }
+
+    const resultCount =
+        collection.kind === 'results' ? collection.orders.length : 0;
     return (
         <>
             <Heading
                 eyebrow="Ваши перевозки"
                 title="Заказы"
                 action={
-                    <Link className="sp-button" href="/shipper/create-order">
-                        <Plus size={18} />
-                        Создать заказ
+                    <Link
+                        className="sp-button"
+                        href={
+                            connection.kind === 'connected'
+                                ? '/shipper/create-order'
+                                : '/shipper/companies'
+                        }
+                    >
+                        {connection.kind === 'connected' ? (
+                            <Plus aria-hidden="true" size={18} />
+                        ) : (
+                            <Building2 aria-hidden="true" size={18} />
+                        )}
+                        {connection.kind === 'connected'
+                            ? 'Создать заказ'
+                            : 'Подключить компанию'}
                     </Link>
                 }
             >
-                От поставщика до получателя — весь путь груза в одном месте.
+                Весь путь груза от поставщика до получателя.
             </Heading>
-            {attention.length > 0 && (
-                <section className="sp-alert">
-                    <div>
-                        <h2>Нужно ваше решение · {attention.length}</h2>
-                        <p>
-                            Компании подготовили предложения по доставке и
-                            изменению стоимости.
-                        </p>
-                    </div>
-                    <button
-                        className="sp-link"
-                        onClick={() => setAttentionOnly(!attentionOnly)}
-                    >
-                        {attentionOnly
-                            ? 'Показать все'
-                            : 'Посмотреть предложения'}{' '}
-                        →
-                    </button>
-                </section>
-            )}
             <div className="sp-toolbar">
                 <input
                     aria-label="Поиск заказов"
-                    placeholder="Поиск по номеру, грузу или адресу"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Номер, груз или адрес"
+                    value={filters.q}
+                    onChange={(event) =>
+                        updateFilters({ q: event.target.value })
+                    }
                 />
                 <select
                     aria-label="Логистическая компания"
-                    value={company}
-                    onChange={(e) => setCompany(e.target.value)}
+                    value={filters.companyId}
+                    onChange={(event) =>
+                        updateFilters({ companyId: event.target.value })
+                    }
                 >
                     <option value="">Все компании</option>
-                    {state.companies
-                        .filter((c) => c.relation === 'confirmed')
-                        .map((c) => (
-                            <option key={c.id} value={c.id}>
-                                {c.name}
+                    {connection.kind === 'connected' &&
+                        connection.companies.map((company) => (
+                            <option key={company.id} value={company.id}>
+                                {company.name}
                             </option>
                         ))}
                 </select>
                 <select
                     aria-label="Статус заказа"
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
+                    value={filters.status}
+                    onChange={(event) => {
+                        const status = parseOrderFilters(
+                            new URLSearchParams([
+                                ['status', event.target.value],
+                            ]),
+                            []
+                        ).status;
+                        updateFilters({ status });
+                    }}
                 >
                     <option value="">Все статусы</option>
                     {Object.entries(statuses).map(([key, text]) => (
@@ -91,110 +325,32 @@ export default function Orders() {
                         </option>
                     ))}
                 </select>
+                <label className="sp-filter-check">
+                    <input
+                        type="checkbox"
+                        checked={filters.attentionOnly}
+                        onChange={(event) =>
+                            updateFilters({
+                                attentionOnly: event.target.checked,
+                            })
+                        }
+                    />
+                    Ждут решения
+                </label>
             </div>
-            <p className="sp-caption" style={{ marginBottom: 12 }}>
-                Заказов: {orders.length}
-                {attentionOnly ? ' · Требуют согласования' : ''}
+            <p className="sp-caption sp-results-count">
+                Найдено заказов: {resultCount}
             </p>
-            {!orders.length ? (
-                <Empty>
-                    <Package size={28} style={{ margin: '0 auto 12px' }} />
-                    <p>Заказы не найдены</p>
-                    <button
-                        className="sp-link"
-                        onClick={() => {
-                            setSearch('');
-                            setCompany('');
-                            setStatus('');
-                            setAttentionOnly(false);
-                        }}
-                    >
-                        Сбросить фильтры
-                    </button>
-                </Empty>
-            ) : (
-                <table className="sp-table">
-                    <thead>
-                        <tr>
-                            <th>ЗАКАЗ / МАРШРУТ</th>
-                            <th>КОМПАНИЯ</th>
-                            <th>СТАТУС</th>
-                            <th>ДОСТАВКА</th>
-                            <th>СТОИМОСТЬ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {orders.map((o) => (
-                            <tr key={o.id}>
-                                <td>
-                                    <span className="sp-order-id">{o.id}</span>
-                                    <Link
-                                        className="sp-order-title"
-                                        href={`/shipper/orders/${o.id}`}
-                                    >
-                                        {o.from.split(',')[0]} →{' '}
-                                        {o.to.split(',')[0]}{' '}
-                                        <ArrowUpRight
-                                            size={14}
-                                            style={{ display: 'inline' }}
-                                        />
-                                    </Link>
-                                    <small>
-                                        {o.cargo} · {o.quantity} {o.unit}
-                                    </small>
-                                </td>
-                                <td>
-                                    {
-                                        state.companies.find(
-                                            (c) => c.id === o.companyId
-                                        )?.name
-                                    }
-                                    <small>
-                                        {o.batchId
-                                            ? 'Со склада'
-                                            : o.supplyId
-                                              ? 'Регулярная поставка'
-                                              : 'Разовый заказ'}
-                                    </small>
-                                </td>
-                                <td>
-                                    <Status status={o.status} />
-                                    {o.delay && <small>Срок изменён</small>}
-                                    {o.extra?.status === 'pending' && (
-                                        <small>Доплата на согласовании</small>
-                                    )}
-                                </td>
-                                <td>
-                                    <span className="sp-mobile-label">
-                                        Доставка
-                                    </span>
-                                    {dateLabel(o.date)}
-                                </td>
-                                <td>
-                                    {o.agreedPrice !== undefined
-                                        ? money(
-                                              o.agreedPrice +
-                                                  (o.extra?.status ===
-                                                  'accepted'
-                                                      ? o.extra.amount
-                                                      : 0)
-                                          )
-                                        : o.offer?.status === 'pending'
-                                          ? money(o.offer.amount)
-                                          : 'Ожидаем расчёт'}
-                                    {o.offer?.status === 'pending' && (
-                                        <small>Предварительно</small>
-                                    )}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            )}
-            <p className="sp-caption">
-                Здесь собраны только ваши заказы. За маршрут и исполнение
-                отвечает указанная компания.
-            </p>
+            <OrderResults
+                collection={collection}
+                detailsQuery={detailsQuery}
+                companyName={(companyId) =>
+                    state.companies.find((company) => company.id === companyId)
+                        ?.name ?? 'Компания не найдена'
+                }
+                connected={connection.kind === 'connected'}
+                resetFilters={() => updateFilters(emptyOrderFilters)}
+            />
         </>
     );
 }
