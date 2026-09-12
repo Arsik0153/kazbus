@@ -63,12 +63,12 @@
     color: var(--sp-muted);
     margin: 44px 16px 18px;
 }
-.sp-sidebar nav {
+.sp-sidebar .sp-desktop-nav {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
-.sp-sidebar nav a {
+.sp-sidebar .sp-desktop-nav a {
     display: flex;
     gap: 12px;
     padding: 13px 16px;
@@ -77,10 +77,10 @@
     color: var(--sp-muted);
     font-weight: 600;
 }
-.sp-sidebar nav a:hover {
+.sp-sidebar .sp-desktop-nav a:hover {
     background: var(--sp-soft);
 }
-.sp-sidebar nav a[aria-current] {
+.sp-sidebar .sp-desktop-nav a[aria-current] {
     background: #fceeea;
     color: var(--sp-red);
 }
@@ -628,19 +628,6 @@
     .sp-sidebar-label,
     .sp-account {
         display: none;
-    }
-    .sp-sidebar nav {
-        flex-direction: row;
-        gap: 2px;
-    }
-    .sp-sidebar nav a {
-        flex: 1;
-        flex-direction: column;
-        gap: 5px;
-        padding: 8px 2px;
-        font-size: 10px;
-        white-space: nowrap;
-        min-width: 0;
     }
     .sp-workspace {
         margin-left: 0;
