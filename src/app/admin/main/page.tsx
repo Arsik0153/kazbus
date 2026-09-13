@@ -8,7 +8,6 @@ import { adminFetch } from '@/lib/admin-api';
 type DashboardMetric = {
     label: string;
     value: string;
-    hint?: string;
 };
 
 async function readList<T>(path: string): Promise<T[]> {
@@ -108,70 +107,48 @@ export default async function AdminMainPage() {
             label: 'Активные водители',
             value: String(activeDrivers.length),
         },
-        {
-            label: 'Проданные билеты',
-            value: 'Нет данных',
-            hint: 'Отдельная метрика продаж пока не подключена',
-        },
-        {
-            label: 'Выручка',
-            value: 'Нет данных',
-            hint: 'Backend-метрика выручки пока не подключена',
-        },
-        {
-            label: 'Средняя загрузка',
-            value: 'Нет данных',
-            hint: 'Нужны данные по проданным местам на рейс',
-        },
     ];
 
     return (
-        <div className="mt-6 flex flex-col gap-5">
-            <div className="rounded-[20px] bg-white px-8 py-10">
-                <div className="flex items-start justify-between gap-6">
-                    <div className="max-w-2xl">
-                        <p className="text-4xl font-semibold text-[#4A4A4A]">
-                            Дашборд автопарка
-                        </p>
-                        <p className="mt-3 text-base font-medium text-[#A0A0A0]">
-                            Экран показывает только реальные данные, доступные в
-                            текущем backend-контуре. Для неподключенных метрик
-                            админка честно отображает отсутствие данных.
-                        </p>
-                    </div>
-                    <Button asChild size="lg" variant="outline">
-                        <Link href="/admin/main/trips">Перейти к рейсам</Link>
+        <div className="flex flex-col gap-5">
+            <section className="rounded-[20px] bg-white px-5 py-5 sm:px-6">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <h1 className="text-2xl font-semibold text-[#4A4A4A] sm:text-3xl">
+                        Обзор автопарка
+                    </h1>
+                    <Button asChild size="lg">
+                        <Link href="/admin/main/trips/new-trip">
+                            Создать рейс
+                        </Link>
                     </Button>
                 </div>
-            </div>
+            </section>
 
-            <div className="grid grid-cols-3 gap-5">
+            <section
+                aria-label="Основные показатели"
+                className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3"
+            >
                 {metrics.map((metric) => (
                     <div
                         key={metric.label}
-                        className="rounded-[20px] bg-white px-6 py-6"
+                        className="rounded-[20px] bg-white px-5 py-5 sm:px-6"
                     >
-                        <p className="text-sm font-bold uppercase text-[#A0A0A0]">
+                        <p className="text-sm font-bold text-[#6B7280] uppercase">
                             {metric.label}
                         </p>
-                        <p className="mt-3 text-3xl font-semibold text-[#E74949]">
+                        <p className="mt-2 text-3xl font-semibold text-[#E74949]">
                             {metric.value}
                         </p>
-                        {metric.hint ? (
-                            <p className="mt-3 text-sm text-[#A0A0A0]">
-                                {metric.hint}
-                            </p>
-                        ) : null}
                     </div>
                 ))}
-            </div>
+            </section>
 
-            <div className="grid grid-cols-[1.4fr_1fr] gap-5">
-                <div className="rounded-[20px] bg-white px-8 py-8">
-                    <div className="flex items-center justify-between">
-                        <p className="text-2xl font-semibold text-[#4A4A4A]">
+            <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1fr)_280px]">
+                <section className="min-w-0 rounded-[20px] bg-white px-5 py-6 sm:px-6">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                        <h2 className="text-xl font-semibold text-[#4A4A4A] sm:text-2xl">
                             Ближайшие рейсы
-                        </p>
+                        </h2>
                         <Button asChild variant="ghost">
                             <Link href="/admin/main/trips">Все рейсы</Link>
                         </Button>
@@ -185,23 +162,38 @@ export default async function AdminMainPage() {
                             />
                         </div>
                     ) : (
-                        <div className="mt-5 overflow-hidden rounded-[16px] border border-[#E5E7EB]">
-                            <table className="w-full border-separate border-spacing-0">
+                        <div className="mt-5 overflow-x-auto rounded-[16px] border border-[#E5E7EB]">
+                            <table className="w-full min-w-[640px] border-separate border-spacing-0">
                                 <thead>
                                     <tr className="bg-[#F8FAFC]">
-                                        <th className="px-4 py-3 text-left text-xs font-bold uppercase text-[#A0A0A0]">
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 text-left text-xs font-bold text-[#6B7280] uppercase"
+                                        >
                                             Маршрут
                                         </th>
-                                        <th className="px-4 py-3 text-left text-xs font-bold uppercase text-[#A0A0A0]">
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 text-left text-xs font-bold text-[#6B7280] uppercase"
+                                        >
                                             Отправление
                                         </th>
-                                        <th className="px-4 py-3 text-left text-xs font-bold uppercase text-[#A0A0A0]">
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 text-left text-xs font-bold text-[#6B7280] uppercase"
+                                        >
                                             Автобус
                                         </th>
-                                        <th className="px-4 py-3 text-left text-xs font-bold uppercase text-[#A0A0A0]">
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 text-left text-xs font-bold text-[#6B7280] uppercase"
+                                        >
                                             Водитель
                                         </th>
-                                        <th className="px-4 py-3 text-left text-xs font-bold uppercase text-[#A0A0A0]">
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 text-left text-xs font-bold text-[#6B7280] uppercase"
+                                        >
                                             Статус
                                         </th>
                                     </tr>
@@ -237,15 +229,15 @@ export default async function AdminMainPage() {
                             </table>
                         </div>
                     )}
-                </div>
+                </section>
 
-                <div className="rounded-[20px] bg-white px-8 py-8">
-                    <p className="text-2xl font-semibold text-[#4A4A4A]">
-                        Проблемы и предупреждения
-                    </p>
+                <section className="rounded-[20px] bg-white px-5 py-6 sm:px-6">
+                    <h2 className="text-xl font-semibold text-[#4A4A4A] sm:text-2xl">
+                        Требует внимания
+                    </h2>
                     <div className="mt-5 flex flex-col gap-3">
                         <div className="rounded-[16px] bg-[#F8FAFC] px-4 py-4">
-                            <p className="text-sm font-bold uppercase text-[#A0A0A0]">
+                            <p className="text-sm font-bold text-[#6B7280] uppercase">
                                 Рейсы без водителя
                             </p>
                             <p className="mt-2 text-2xl font-semibold text-[#E74949]">
@@ -253,7 +245,7 @@ export default async function AdminMainPage() {
                             </p>
                         </div>
                         <div className="rounded-[16px] bg-[#F8FAFC] px-4 py-4">
-                            <p className="text-sm font-bold uppercase text-[#A0A0A0]">
+                            <p className="text-sm font-bold text-[#6B7280] uppercase">
                                 Рейсы без автобуса
                             </p>
                             <p className="mt-2 text-2xl font-semibold text-[#E74949]">
@@ -261,25 +253,15 @@ export default async function AdminMainPage() {
                             </p>
                         </div>
                         <div className="rounded-[16px] bg-[#F8FAFC] px-4 py-4">
-                            <p className="text-sm font-bold uppercase text-[#A0A0A0]">
+                            <p className="text-sm font-bold text-[#6B7280] uppercase">
                                 Неактивные водители
                             </p>
                             <p className="mt-2 text-2xl font-semibold text-[#E74949]">
                                 {inactiveDrivers.length}
                             </p>
                         </div>
-                        <div className="rounded-[16px] bg-[#FFF4E5] px-4 py-4">
-                            <p className="text-sm font-bold uppercase text-[#A0A0A0]">
-                                Ограничение текущего API
-                            </p>
-                            <p className="mt-2 text-sm font-medium text-[#4A4A4A]">
-                                Метрики по выручке, проданным билетам,
-                                техосмотру и загрузке автобусов появятся после
-                                расширения backend-контракта.
-                            </p>
-                        </div>
                     </div>
-                </div>
+                </section>
             </div>
         </div>
     );
