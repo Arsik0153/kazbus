@@ -254,6 +254,12 @@ export default function Orders() {
 
     const resultCount =
         collection.kind === 'results' ? collection.orders.length : 0;
+    const activeFilterCount = [
+        filters.companyId,
+        filters.status,
+        filters.attentionOnly,
+    ].filter(Boolean).length;
+
     return (
         <>
             <Heading
@@ -281,8 +287,9 @@ export default function Orders() {
             >
                 Весь путь груза от поставщика до получателя.
             </Heading>
-            <div className="sp-toolbar">
+            <div className="sp-order-controls">
                 <input
+                    className="sp-order-search"
                     aria-label="Поиск заказов"
                     placeholder="Номер, груз или адрес"
                     value={filters.q}
@@ -290,53 +297,78 @@ export default function Orders() {
                         updateFilters({ q: event.target.value })
                     }
                 />
-                <select
-                    aria-label="Логистическая компания"
-                    value={filters.companyId}
-                    onChange={(event) =>
-                        updateFilters({ companyId: event.target.value })
-                    }
-                >
-                    <option value="">Все компании</option>
-                    {connection.kind === 'connected' &&
-                        connection.companies.map((company) => (
-                            <option key={company.id} value={company.id}>
-                                {company.name}
-                            </option>
-                        ))}
-                </select>
-                <select
-                    aria-label="Статус заказа"
-                    value={filters.status}
-                    onChange={(event) => {
-                        const status = parseOrderFilters(
-                            new URLSearchParams([
-                                ['status', event.target.value],
-                            ]),
-                            []
-                        ).status;
-                        updateFilters({ status });
-                    }}
-                >
-                    <option value="">Все статусы</option>
-                    {Object.entries(statuses).map(([key, text]) => (
-                        <option key={key} value={key}>
-                            {text}
-                        </option>
-                    ))}
-                </select>
-                <label className="sp-filter-check">
-                    <input
-                        type="checkbox"
-                        checked={filters.attentionOnly}
-                        onChange={(event) =>
-                            updateFilters({
-                                attentionOnly: event.target.checked,
-                            })
-                        }
-                    />
-                    Ждут решения
-                </label>
+                <details className="sp-filter-details">
+                    <summary>
+                        <span>Фильтры</span>
+                        <span
+                            className="sp-filter-count"
+                            aria-label={`Активных фильтров: ${activeFilterCount}`}
+                        >
+                            {activeFilterCount}
+                        </span>
+                    </summary>
+                    <div className="sp-filter-fields">
+                        <select
+                            aria-label="Логистическая компания"
+                            value={filters.companyId}
+                            onChange={(event) =>
+                                updateFilters({
+                                    companyId: event.target.value,
+                                })
+                            }
+                        >
+                            <option value="">Все компании</option>
+                            {connection.kind === 'connected' &&
+                                connection.companies.map((company) => (
+                                    <option
+                                        key={company.id}
+                                        value={company.id}
+                                    >
+                                        {company.name}
+                                    </option>
+                                ))}
+                        </select>
+                        <select
+                            aria-label="Статус заказа"
+                            value={filters.status}
+                            onChange={(event) => {
+                                const status = parseOrderFilters(
+                                    new URLSearchParams([
+                                        ['status', event.target.value],
+                                    ]),
+                                    []
+                                ).status;
+                                updateFilters({ status });
+                            }}
+                        >
+                            <option value="">Все статусы</option>
+                            {Object.entries(statuses).map(([key, text]) => (
+                                <option key={key} value={key}>
+                                    {text}
+                                </option>
+                            ))}
+                        </select>
+                        <label className="sp-filter-check">
+                            <input
+                                type="checkbox"
+                                checked={filters.attentionOnly}
+                                onChange={(event) =>
+                                    updateFilters({
+                                        attentionOnly: event.target.checked,
+                                    })
+                                }
+                            />
+                            Ждут решения
+                        </label>
+                        <button
+                            className="sp-secondary"
+                            type="button"
+                            onClick={() => updateFilters(emptyOrderFilters)}
+                        >
+                            Сбросить фильтры
+                        </button>
+                    </div>
+                </details>
             </div>
             <p className="sp-caption sp-results-count">
                 Найдено заказов: {resultCount}

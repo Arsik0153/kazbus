@@ -5,7 +5,6 @@ import {
     ArrowUpRight,
     Building2,
     CircleUserRound,
-    Home,
     MoreHorizontal,
     Package,
     Repeat2,
@@ -16,7 +15,6 @@ import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useStore } from './store';
 
 const links = [
-    ['/shipper', 'Обзор', Home],
     ['/shipper/orders', 'Заказы', Package],
     ['/shipper/supplies', 'Поставки', Repeat2],
     ['/shipper/storage', 'На хранении', Warehouse],
@@ -28,9 +26,9 @@ const mobilePrimary = links.slice(0, 3);
 const mobileMore = links.slice(3);
 
 function isActive(path: string, url: string): boolean {
-    if (url === '/shipper') return path === '/shipper';
     if (url === '/shipper/orders') {
         return (
+            path === '/shipper' ||
             path.startsWith('/shipper/orders') ||
             path === '/shipper/create-order' ||
             path === '/shipper/tracking'
@@ -51,6 +49,10 @@ export function Shell({ children }: { children: ReactNode }) {
     }, [moreOpen]);
 
     useEffect(() => {
+        setMoreOpen(false);
+    }, [path]);
+
+    useEffect(() => {
         if (!moreOpen) return;
         function closeOnEscape(event: KeyboardEvent) {
             if (event.key !== 'Escape') return;
@@ -66,6 +68,12 @@ export function Shell({ children }: { children: ReactNode }) {
             <a className="sp-skip" href="#shipper-main">
                 К содержимому
             </a>
+            <header className="sp-mobile-header">
+                <Link className="sp-mobile-brand" href="/shipper">
+                    jol<span>cargo</span>
+                </Link>
+                <span>Кабинет заказчика</span>
+            </header>
             <aside className="sp-sidebar">
                 <Link className="sp-brand" href="/shipper">
                     jol<span>cargo</span>
@@ -81,6 +89,7 @@ export function Shell({ children }: { children: ReactNode }) {
                             aria-current={
                                 isActive(path, url) ? 'page' : undefined
                             }
+                            onClick={() => setMoreOpen(false)}
                         >
                             <Icon aria-hidden="true" size={20} />
                             <span>{label}</span>
@@ -96,6 +105,7 @@ export function Shell({ children }: { children: ReactNode }) {
                             aria-current={
                                 isActive(path, url) ? 'page' : undefined
                             }
+                            onClick={() => setMoreOpen(false)}
                         >
                             <Icon aria-hidden="true" size={21} />
                             <span>{label}</span>
@@ -148,18 +158,11 @@ export function Shell({ children }: { children: ReactNode }) {
                         <strong>
                             {state.profile.company || state.profile.name}
                         </strong>
-                        <p>Личный кабинет</p>
+                        <p>Демо · данные в браузере</p>
                     </div>
                 </div>
             </aside>
             <div className="sp-workspace">
-                <div className="sp-topline">
-                    <span>
-                        Jol Cargo <span className="sp-divider">/</span>{' '}
-                        Клиентская логистика
-                    </span>
-                    <span className="sp-demo">Демо · данные в браузере</span>
-                </div>
                 <main id="shipper-main" className="sp-main">
                     {children}
                 </main>
