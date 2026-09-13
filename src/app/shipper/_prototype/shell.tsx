@@ -72,7 +72,7 @@ export function Shell({ children }: { children: ReactNode }) {
                 <Link className="sp-mobile-brand" href="/shipper">
                     jol<span>cargo</span>
                 </Link>
-                <span>Кабинет заказчика</span>
+                <span>Демо · данные в браузере</span>
             </header>
             <aside className="sp-sidebar">
                 <Link className="sp-brand" href="/shipper">
