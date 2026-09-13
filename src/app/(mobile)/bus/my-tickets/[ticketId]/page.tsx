@@ -3,7 +3,11 @@ import React, { useState } from 'react';
 import Button from '@/components/button';
 import Download from '@/assets/download';
 import Topbar from '@/components/topbar';
-import { downloadTicketPdfAction, getTicketByIdAction } from './actions';
+import {
+    downloadTicketPdfAction,
+    getTicketByIdAction,
+    refundTicketAction,
+} from './actions';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
 import Ticket from './ticket';
 import Spinner from '@/components/spinner';
@@ -12,13 +16,18 @@ import Skeleton from '@/components/skeleton';
 import Payment from '../../main/tickets/_components/payment';
 import { useServerAction } from 'zsa-react';
 import toast from 'react-hot-toast';
+import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 
 const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
+    const queryClient = useQueryClient();
+    const router = useRouter();
     const { data, isLoading } = useServerActionQuery(getTicketByIdAction, {
         input: { ticket_id: Number(params.ticketId) },
         queryKey: ['ticket', params.ticketId],
     });
     const [paymentWidgetOpen, setPaymentWidgetOpen] = useState(false);
+    const [refundConfirmationOpen, setRefundConfirmationOpen] = useState(false);
     const { execute: downloadTicket, isPending: isTicketDownloading } =
         useServerAction(downloadTicketPdfAction, {
             onSuccess: ({ data: pdf }) => {
@@ -41,7 +50,31 @@ const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
                 toast.error(error.err.message || 'Не удалось скачать билет');
             },
         });
-    console.log(data);
+    const { execute: refundTicket, isPending: isTicketRefunding } =
+        useServerAction(refundTicketAction, {
+            onSuccess: async () => {
+                await Promise.all(
+                    [
+                        ['tickets'],
+                        ['my-tickets'],
+                        ['ticket'],
+                        ['passengers'],
+                        ['bus-seats'],
+                    ].map((queryKey) =>
+                        queryClient.invalidateQueries({
+                            queryKey,
+                            refetchType: 'all',
+                        })
+                    )
+                );
+                setRefundConfirmationOpen(false);
+                toast.success('Возврат оформлен');
+                router.refresh();
+            },
+            onError: (error) => {
+                toast.error(error.err.message || 'Не удалось оформить возврат');
+            },
+        });
 
     if (isLoading || !data) {
         return <MyTicketPageSkeleton ticketId={params.ticketId} />;
@@ -127,8 +160,53 @@ const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
                                 <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
                             </>
                         )}
-                        <Menu link="#" text="Оформить возврат" />
-                        <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
+                        {data.status === 'Payed' && (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setRefundConfirmationOpen(true)
+                                    }
+                                    className="flex w-full flex-row items-center justify-between py-4 text-left"
+                                >
+                                    Оформить возврат
+                                </button>
+                                {refundConfirmationOpen && (
+                                    <div className="mb-4 rounded-[10px] border border-[#D1D1D1] bg-white p-4">
+                                        <p className="text-base font-medium text-[#4A4A4A]">
+                                            Подтвердить возврат билета?
+                                        </p>
+                                        <div className="mt-4 flex gap-3">
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                disabled={isTicketRefunding}
+                                                onClick={() =>
+                                                    setRefundConfirmationOpen(
+                                                        false
+                                                    )
+                                                }
+                                            >
+                                                Отмена
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                variant="secondary"
+                                                loading={isTicketRefunding}
+                                                onClick={() =>
+                                                    refundTicket({
+                                                        ticket_id: data.id,
+                                                    })
+                                                }
+                                            >
+                                                Подтвердить возврат
+                                            </Button>
+                                        </div>
+                                    </div>
+                                )}
+                                <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
+                            </>
+                        )}
                         <Menu link="#" text="Изменить данные пассажира" />
                     </div>
                 </div>

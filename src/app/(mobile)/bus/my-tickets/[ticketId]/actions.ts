@@ -5,6 +5,14 @@ import { getSession } from '@/lib/auth';
 import { z } from 'zod';
 import { createServerAction } from 'zsa';
 
+const refundResponseSchema = z.object({
+    message: z.string(),
+});
+
+const apiErrorSchema = z.object({
+    error: z.string(),
+});
+
 export const getTicketByIdAction = createServerAction()
     .input(
         z.object({
@@ -25,6 +33,7 @@ export const getTicketByIdAction = createServerAction()
                     'Content-Type': 'application/json',
                     Authorization: `Token ${session?.user.token}`,
                 },
+                cache: 'no-store',
             }
         );
 
@@ -38,6 +47,44 @@ export const getTicketByIdAction = createServerAction()
         const result = (await response.json()) as TicketDetailed;
 
         return result;
+    });
+
+export const refundTicketAction = createServerAction()
+    .input(
+        z.object({
+            ticket_id: z.number().int().positive(),
+        })
+    )
+    .handler(async ({ input }) => {
+        const session = await getSession();
+
+        if (!session) {
+            throw 'Необходимо авторизоваться';
+        }
+
+        const response = await fetch(
+            `${process.env.API_URL}/payments/refund-ticket/`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Token ${session.user.token}`,
+                },
+                body: JSON.stringify({ ticket_id: input.ticket_id }),
+            }
+        );
+        const result: unknown = await response.json();
+
+        if (!response.ok) {
+            const parsedError = apiErrorSchema.safeParse(result);
+            throw new Error(
+                parsedError.success
+                    ? parsedError.data.error
+                    : 'Не удалось оформить возврат'
+            );
+        }
+
+        return refundResponseSchema.parse(result);
     });
 
 export const downloadTicketPdfAction = createServerAction()

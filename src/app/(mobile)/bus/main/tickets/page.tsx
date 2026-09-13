@@ -14,11 +14,13 @@ import { createTicketAction } from './actions';
 import toast from 'react-hot-toast';
 import Payment from './_components/payment';
 import { useQueryClient } from '@tanstack/react-query';
+import { useSearchParams } from 'next/navigation';
 
-const TicketPageSuspended = () => {
+const TicketFlow = () => {
     const queryClient = useQueryClient();
     const [step, setStep] = useState<Steps>(Steps.SelectTicket);
     const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+    const [serviceDate, setServiceDate] = useState('');
     const [seats, setSeats] = useState<number[]>([]);
     const [passengers, setPassengers] = useState<User[]>([]);
     const [contacts, setContacts] = useState<z.output<
@@ -29,7 +31,6 @@ const TicketPageSuspended = () => {
     const { execute: createTicket, isPending: isTicketCreating } =
         useServerAction(createTicketAction, {
             onSuccess: (data) => {
-                console.log(data);
                 queryClient.invalidateQueries({
                     queryKey: ['tickets'],
                 });
@@ -50,9 +51,16 @@ const TicketPageSuspended = () => {
             },
         });
 
-    const handleTicketSelect = (ticket: Ticket) => {
+    const handleTicketSelect = (
+        ticket: Ticket,
+        selectedServiceDate: string
+    ) => {
         setSelectedTicket(ticket);
-        console.log(ticket);
+        setServiceDate(selectedServiceDate);
+        setSeats([]);
+        setPassengers([]);
+        setContacts(null);
+        setBookingTicketId(0);
         setStep(Steps.SelectPlace);
     };
 
@@ -64,10 +72,16 @@ const TicketPageSuspended = () => {
     const handleContactsSubmit = async (
         data: z.output<typeof contactsSchema>
     ) => {
+        if (!selectedTicket || !serviceDate) {
+            toast.error('Не удалось определить дату рейса');
+            return;
+        }
+
         setContacts(data);
 
         await createTicket({
-            direction: selectedTicket?.id || 1,
+            direction: selectedTicket.id,
+            service_date: serviceDate,
             tickets: passengers.map((passenger, i) => ({
                 place_num: seats[i],
                 place_floor: 1,
@@ -77,7 +91,7 @@ const TicketPageSuspended = () => {
     };
 
     return (
-        <Suspense>
+        <>
             {step === Steps.SelectTicket && (
                 <SelectTicket onTicketSelect={handleTicketSelect} />
             )}
@@ -85,6 +99,7 @@ const TicketPageSuspended = () => {
                 <SelectPlace
                     seats={seats}
                     setSeats={setSeats}
+                    serviceDate={serviceDate}
                     ticket={selectedTicket}
                     setStep={setStep}
                 />
@@ -116,8 +131,20 @@ const TicketPageSuspended = () => {
                     onBack={() => setStep(Steps.Booking)}
                 />
             )}
-        </Suspense>
+        </>
     );
 };
 
-export default TicketPageSuspended;
+const TicketPageSuspended = () => {
+    const searchParams = useSearchParams();
+
+    return <TicketFlow key={searchParams.toString()} />;
+};
+
+const TicketPage = () => (
+    <Suspense>
+        <TicketPageSuspended />
+    </Suspense>
+);
+
+export default TicketPage;

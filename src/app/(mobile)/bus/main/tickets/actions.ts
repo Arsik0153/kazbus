@@ -38,6 +38,7 @@ export const getTicketsAction = createServerAction()
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                cache: 'no-store',
             }
         );
 
@@ -63,6 +64,7 @@ export const getMyPassengersAction = createServerAction().handler(async () => {
                 'Content-Type': 'application/json',
                 Authorization: `Token ${session?.user.token}`,
             },
+            cache: 'no-store',
         }
     );
 
@@ -132,8 +134,6 @@ export const createTicketAction = createServerAction()
         if (!session) {
             throw 'Необходимо авторизоваться';
         }
-        console.log(JSON.stringify(input));
-
         const response = await fetch(
             `${process.env.API_URL}/books/create-ticket/`,
             {
@@ -155,7 +155,6 @@ export const createTicketAction = createServerAction()
         }
 
         const result = await response.json();
-        console.log(result);
 
         return result;
     });
@@ -209,10 +208,11 @@ export const getBusSeatsAction = createServerAction()
     .input(
         z.object({
             trip_id: z.number(),
+            service_date: z.string().date(),
         })
     )
     .handler(async ({ input }) => {
-        const { trip_id } = input;
+        const { trip_id, service_date } = input;
         const response = await fetch(`${process.env.API_URL}/bus-seats/`, {
             method: 'POST',
             headers: {
@@ -220,7 +220,9 @@ export const getBusSeatsAction = createServerAction()
             },
             body: JSON.stringify({
                 trip_id,
+                service_date,
             }),
+            cache: 'no-store',
         });
 
         if (!response.ok) {

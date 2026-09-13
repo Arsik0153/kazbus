@@ -18,6 +18,7 @@ export const getMyTicketsAction = createServerAction().handler(async () => {
                 'Content-Type': 'application/json',
                 Authorization: `Token ${session?.user.token}`,
             },
+            cache: 'no-store',
         }
     );
 
