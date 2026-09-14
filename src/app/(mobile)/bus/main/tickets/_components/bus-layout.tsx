@@ -12,10 +12,11 @@ import Skeleton from '@/components/skeleton';
 type Props = {
     onSeatsSelect: (seats: number[]) => void;
     trip_id: number;
+    serviceDate: string;
 };
 
 const BusLayout = (props: Props) => {
-    const { onSeatsSelect, trip_id } = props;
+    const { onSeatsSelect, serviceDate, trip_id } = props;
     const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
     const searchParams = useSearchParams();
     const {
@@ -25,8 +26,9 @@ const BusLayout = (props: Props) => {
     } = useServerActionQuery(getBusSeatsAction, {
         input: {
             trip_id,
+            service_date: serviceDate,
         },
-        queryKey: ['bus-seats', trip_id],
+        queryKey: ['bus-seats', trip_id, serviceDate],
     });
     const passengerCountParam =
         Number(searchParams.get('passenger_count')) || 0;

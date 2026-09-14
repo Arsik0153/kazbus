@@ -502,11 +502,13 @@ const PassengerSchema = z.object({
 
 const TicketsSchema = z.object({
     direction: z.number(),
+    service_date: z.string().date(),
     tickets: z.array(PassengerSchema),
 });
 
 const SingleTicketSchema = z.object({
     direction: z.number(),
+    service_date: z.string().date(),
     place_num: z.number(),
     place_floor: z.number(),
 });

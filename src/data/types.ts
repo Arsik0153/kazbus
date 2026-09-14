@@ -21,7 +21,7 @@ export type Ticket = {
         latitude: string;
         longitude: string;
     };
-    from_date: string;
+    from_date: string | null;
     from_time: string;
     to_point: {
         id: number;
@@ -33,8 +33,8 @@ export type Ticket = {
         latitude: string;
         longitude: string;
     };
-    to_date: string;
-    to_time: string;
+    to_date: string | null;
+    to_time: string | null;
     price: string;
     free_places_count: number;
     bus: {
@@ -241,11 +241,13 @@ export type DirectionNew = {
     from_city: string;
     to_city: string;
     status_description: string;
+    come_to_point: string | null;
 };
 
 export type TicketDetailed = {
     id: number;
     qr_code: string;
+    service_date: string | null;
     direction: DirectionNew;
     passengers: Passenger[];
     status: string;

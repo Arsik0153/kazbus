@@ -11,12 +11,13 @@ import { Ticket } from '@/data/types';
 type Props = {
     setStep: (step: Steps) => void;
     ticket: Ticket | null;
+    serviceDate: string;
     seats: number[];
     setSeats: (seats: number[]) => void;
 };
 
 const SelectPlace = (props: Props) => {
-    const { setStep, ticket, seats, setSeats } = props;
+    const { setStep, serviceDate, ticket, seats, setSeats } = props;
 
     const searchParams = useSearchParams();
 
@@ -51,7 +52,9 @@ const SelectPlace = (props: Props) => {
                     Выберите место
                 </h1>
                 <BusLayout
+                    key={`${ticket?.id || 0}:${serviceDate}`}
                     trip_id={ticket?.id || 0}
+                    serviceDate={serviceDate}
                     onSeatsSelect={handleSeatsSelect}
                 />
 

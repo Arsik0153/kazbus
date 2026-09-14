@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import BusMini from '@/assets/bus-mini';
 import { type Ticket as TicketT } from '@/data/types';
-import { dayjsExt } from '@/lib/dayjs';
+import { formatTicketDate } from '@/utils/ticket-date';
 
 const StatusBadge = ({ status }: { status?: string }) => {
     if (status === 'Payed') {
@@ -25,6 +25,13 @@ const StatusBadge = ({ status }: { status?: string }) => {
         return (
             <div className="rounded-[30px] bg-[#AEAEAE] px-2 py-1 text-[14px] font-medium leading-[15.4px] text-[#FFFFFF]">
                 Просрочен
+            </div>
+        );
+    }
+    if (status === 'Refunded') {
+        return (
+            <div className="rounded-[30px] bg-[#AEAEAE] px-2 py-1 text-[14px] font-medium leading-[15.4px] text-[#FFFFFF]">
+                Возвращён
             </div>
         );
     }
@@ -95,9 +102,7 @@ const Ticket = ({ ticket, status, selected = false, ...rest }: TicketProps) => {
                                 <div
                                     className={`text-sm font-normal leading-[17.6px] ${textColor}`}
                                 >
-                                    {dayjsExt(ticket.from_date).format(
-                                        'D MMMM'
-                                    )}
+                                    {formatTicketDate(ticket.from_date)}
                                 </div>
                             </div>
                             <div
@@ -116,13 +121,13 @@ const Ticket = ({ ticket, status, selected = false, ...rest }: TicketProps) => {
                                 <div
                                     className={`text-sm font-normal leading-[17.6px] ${textColor}`}
                                 >
-                                    {dayjsExt(ticket.to_date).format('D MMMM')}
+                                    {formatTicketDate(ticket.to_date)}
                                 </div>
                             </div>
                             <div
                                 className={`text-[24px] font-medium leading-[30.8px] ${textColor}`}
                             >
-                                {ticket.to_time}
+                                {ticket.to_time || '—'}
                             </div>
                         </div>
                     </div>

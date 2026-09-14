@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import BusMini from '@/assets/bus-mini';
 import { TicketDetailed } from '@/data/types';
-import { dayjsExt } from '@/lib/dayjs';
 import { getStringByNumber } from '@/utils/helper.';
+import { formatTicketDate } from '@/utils/ticket-date';
 
 const StatusBadge = ({ status }: { status?: string }) => {
     if (status === 'Payed') {
@@ -28,6 +28,13 @@ const StatusBadge = ({ status }: { status?: string }) => {
             </div>
         );
     }
+    if (status === 'Refunded') {
+        return (
+            <div className="rounded-[30px] bg-[#AEAEAE] px-2 py-1 text-[14px] font-medium leading-[15.4px] text-[#FFFFFF]">
+                Возвращён
+            </div>
+        );
+    }
     if (status === 'none') {
         return (
             <div className="rounded-[30px] bg-none px-2 py-1 text-[14px] font-medium leading-[15.4px] text-[#FFFFFF]"></div>
@@ -47,6 +54,9 @@ const Ticket = ({ ticket, selected = false, ...rest }: TicketProps) => {
     const borderColor = selected ? 'border-[#E23333]' : 'border-[#D1D1D1]';
     const bgColor = selected ? 'bg-[#E23333]' : 'bg-[#FFFFFF]';
     const textColor = selected ? 'text-white' : 'text-[#4A4A4A]';
+    const arrivalDate = ticket.service_date
+        ? ticket.direction.end_date
+        : null;
 
     return (
         <div className="py-2" {...rest}>
@@ -104,9 +114,7 @@ const Ticket = ({ ticket, selected = false, ...rest }: TicketProps) => {
                                 <div
                                     className={`text-sm font-normal leading-[17.6px] ${textColor} opacity-50`}
                                 >
-                                    {dayjsExt(
-                                        ticket.direction.start_date
-                                    ).format('D MMMM')}
+                                    {formatTicketDate(ticket.service_date)}
                                 </div>
                             </div>
                             <div
@@ -125,15 +133,14 @@ const Ticket = ({ ticket, selected = false, ...rest }: TicketProps) => {
                                 <div
                                     className={`text-sm font-normal leading-[17.6px] ${textColor} opacity-50`}
                                 >
-                                    {dayjsExt(ticket.direction.end_date).format(
-                                        'D MMMM'
-                                    )}
+                                    {formatTicketDate(arrivalDate)}
                                 </div>
                             </div>
                             <div
                                 className={`text-[24px] font-medium leading-[30.8px] ${textColor}`}
                             >
-                                {ticket.direction.departure_time.slice(0, 5)}
+                                {ticket.direction.come_to_point?.slice(0, 5) ||
+                                    '—'}
                             </div>
                         </div>
                     </div>

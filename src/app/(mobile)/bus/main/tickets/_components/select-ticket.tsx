@@ -15,7 +15,7 @@ import Link from 'next/link';
 import { SelectTicketSkeleton } from './skeleton';
 
 type Props = {
-    onTicketSelect: (ticket: TicketT) => void;
+    onTicketSelect: (ticket: TicketT, serviceDate: string) => void;
 };
 
 const SelectTicket = (props: Props) => {
@@ -163,7 +163,9 @@ const SelectTicket = (props: Props) => {
             {selectedTicket && (
                 <div className="fixed bottom-32 left-0 right-0 px-4">
                     <Button
-                        onClick={() => onTicketSelect(selectedTicket)}
+                        onClick={() =>
+                            onTicketSelect(selectedTicket, dateParam || '')
+                        }
                         variant="secondary"
                     >
                         Далее
