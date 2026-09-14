@@ -14,6 +14,9 @@ import { Heading, Empty, Field } from '../_prototype/ui';
 import SupplyForm, { week } from '../_prototype/supply-form';
 export default function Supplies() {
     const { state, act } = useStore();
+    const hasCompany = state.companies.some(
+        (company) => company.relation === 'confirmed'
+    );
     const [editing, setEditing] = useState<Supply | 'new' | null>(null);
     const [launch, setLaunch] = useState<{
         supply: Supply;
@@ -23,8 +26,8 @@ export default function Supplies() {
         const id = `JL-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
         const arrival = new Date(date + 'T12:00:00');
         arrival.setDate(arrival.getDate() + 2);
-        if (
-            act({
+        const receipt = act(
+            {
                 type: 'create',
                 order: {
                     id,
@@ -49,9 +52,10 @@ export default function Supplies() {
                         ? { number: `СЧ-${id}`, amount: s.price, paid: false }
                         : undefined,
                 },
-            })
-        )
-            setLaunch(null);
+            },
+            { success: `Заказ ${id} по поставке «${s.title}» создан.` }
+        );
+        if (receipt.ok) setLaunch(null);
     }
     return (
         <>
@@ -59,26 +63,46 @@ export default function Supplies() {
                 eyebrow="Регулярные отправления"
                 title="Поставки"
                 action={
-                    <button
-                        className="sp-button"
-                        onClick={() => setEditing('new')}
-                    >
-                        <Plus size={18} />
-                        Новая поставка
-                    </button>
+                    hasCompany ? (
+                        <button
+                            className="sp-button"
+                            onClick={() => setEditing('new')}
+                        >
+                            <Plus aria-hidden="true" size={18} />
+                            Новая поставка
+                        </button>
+                    ) : (
+                        <Link className="sp-button" href="/shipper/companies">
+                            Подключить компанию
+                        </Link>
+                    )
                 }
             >
                 Сохраните условия один раз. Повторяйте доставку, когда она
                 нужна.
             </Heading>
-            {editing && (
+            {!hasCompany && (
+                <div className="sp-alert">
+                    <div>
+                        <h2>Для поставки нужна логистическая компания</h2>
+                        <p>
+                            Подключите компанию, затем сохраните условия или
+                            создайте отправление.
+                        </p>
+                    </div>
+                    <Link className="sp-secondary" href="/shipper/companies">
+                        Открыть компании
+                    </Link>
+                </div>
+            )}
+            {hasCompany && editing && (
                 <SupplyForm
                     key={typeof editing === 'string' ? 'new' : editing.id}
                     initial={editing === 'new' ? undefined : editing}
                     close={() => setEditing(null)}
                 />
             )}
-            {launch && (
+            {hasCompany && launch && (
                 <form
                     className="sp-panel sp-form"
                     onSubmit={(e) => {
@@ -143,12 +167,14 @@ export default function Supplies() {
                                     · {s.quantity} {s.unit} · {s.cargo}
                                 </p>
                             </div>
-                            <button
-                                className="sp-secondary"
-                                onClick={() => setEditing(s)}
-                            >
-                                Настроить
-                            </button>
+                            {hasCompany && (
+                                <button
+                                    className="sp-secondary"
+                                    onClick={() => setEditing(s)}
+                                >
+                                    Настроить
+                                </button>
+                            )}
                         </div>
                         <div className="sp-pills">
                             <span>
@@ -207,76 +233,98 @@ export default function Supplies() {
                                 </div>
                             </div>
                         )}
-                        <div className="sp-actions">
-                            {s.mode === 'manual' ? (
-                                <button
-                                    className="sp-button"
-                                    onClick={() =>
-                                        setLaunch({
-                                            supply: s,
-                                            date: localDate(),
-                                        })
-                                    }
-                                >
-                                    Заказать доставку
-                                </button>
-                            ) : (
-                                <>
+                        {hasCompany ? (
+                            <div className="sp-actions">
+                                {s.mode === 'manual' ? (
                                     <button
-                                        className="sp-secondary"
+                                        className="sp-button"
                                         onClick={() =>
-                                            act({
-                                                type: 'supply',
-                                                supply: {
-                                                    ...s,
-                                                    paused: !s.paused,
-                                                },
+                                            setLaunch({
+                                                supply: s,
+                                                date: localDate(),
                                             })
                                         }
                                     >
-                                        {s.paused
-                                            ? 'Возобновить'
-                                            : 'Приостановить'}
+                                        Заказать доставку
                                     </button>
-                                    {!s.paused &&
-                                        dates[0] &&
-                                        !linked.some(
-                                            (o) => o.occurrence === dates[0]
-                                        ) && (
-                                            <>
-                                                <button
-                                                    className="sp-button"
-                                                    onClick={() =>
-                                                        create(s, dates[0])
+                                ) : (
+                                    <>
+                                        <button
+                                            className="sp-secondary"
+                                            onClick={() =>
+                                                act(
+                                                    {
+                                                        type: 'supply',
+                                                        supply: {
+                                                            ...s,
+                                                            paused: !s.paused,
+                                                        },
+                                                    },
+                                                    {
+                                                        success: s.paused
+                                                            ? `Поставка «${s.title}» возобновлена.`
+                                                            : `Поставка «${s.title}» приостановлена.`,
                                                     }
-                                                >
-                                                    {s.automatic
-                                                        ? 'Создать ближайшую · демо'
-                                                        : 'Подтвердить ближайшую'}
-                                                </button>
-                                                <button
-                                                    className="sp-secondary"
-                                                    onClick={() =>
-                                                        act({
-                                                            type: 'supply',
-                                                            supply: {
-                                                                ...s,
-                                                                skipped: [
-                                                                    ...s.skipped,
-                                                                    dates[0],
-                                                                ],
-                                                            },
-                                                        })
-                                                    }
-                                                >
-                                                    Пропустить{' '}
-                                                    {dateLabel(dates[0])}
-                                                </button>
-                                            </>
-                                        )}
-                                </>
-                            )}
-                        </div>
+                                                )
+                                            }
+                                        >
+                                            {s.paused
+                                                ? 'Возобновить'
+                                                : 'Приостановить'}
+                                        </button>
+                                        {!s.paused &&
+                                            dates[0] &&
+                                            !linked.some(
+                                                (o) => o.occurrence === dates[0]
+                                            ) && (
+                                                <>
+                                                    <button
+                                                        className="sp-button"
+                                                        onClick={() =>
+                                                            create(s, dates[0])
+                                                        }
+                                                    >
+                                                        {s.automatic
+                                                            ? 'Создать ближайшую · демо'
+                                                            : 'Подтвердить ближайшую'}
+                                                    </button>
+                                                    <button
+                                                        className="sp-secondary"
+                                                        onClick={() =>
+                                                            act(
+                                                                {
+                                                                    type: 'supply',
+                                                                    supply: {
+                                                                        ...s,
+                                                                        skipped:
+                                                                            [
+                                                                                ...s.skipped,
+                                                                                dates[0],
+                                                                            ],
+                                                                    },
+                                                                },
+                                                                {
+                                                                    success: `Отправление ${dateLabel(dates[0])} пропущено.`,
+                                                                }
+                                                            )
+                                                        }
+                                                    >
+                                                        Пропустить{' '}
+                                                        {dateLabel(dates[0])}
+                                                    </button>
+                                                </>
+                                            )}
+                                    </>
+                                )}
+                            </div>
+                        ) : (
+                            <Link
+                                className="sp-secondary"
+                                href="/shipper/companies"
+                            >
+                                Подключить компанию для отправления
+                            </Link>
+                        )}
                         {linked.length > 0 && (
                             <p className="sp-caption">
                                 Заказы этой поставки:{' '}

@@ -24,7 +24,11 @@ export default function Profile() {
             setConfirm(false);
             setError('');
         } catch (e) {
-            setError((e as Error).message);
+            setError(
+                e instanceof Error
+                    ? e.message
+                    : 'Не удалось сбросить демонстрационные данные.'
+            );
         }
     }
     return (
@@ -36,7 +40,10 @@ export default function Profile() {
                 className="sp-form"
                 onSubmit={(e) => {
                     e.preventDefault();
-                    act({ type: 'profile', profile: form });
+                    act(
+                        { type: 'profile', profile: form },
+                        { success: 'Профиль сохранён.' }
+                    );
                 }}
             >
                 <Section title="Данные клиента">

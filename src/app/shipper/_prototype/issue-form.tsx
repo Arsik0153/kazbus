@@ -18,8 +18,8 @@ export default function IssueForm({ order }: { order: Order }) {
         setError('');
         try {
             const refs = files.length ? await saveFiles(files) : [];
-            if (
-                act({
+            const receipt = act(
+                {
                     type: 'issue',
                     id: order.id,
                     issue: {
@@ -28,14 +28,20 @@ export default function IssueForm({ order }: { order: Order }) {
                         date: new Date().toISOString(),
                         files: refs,
                     },
-                })
-            ) {
+                },
+                { success: `Обращение по заказу ${order.id} отправлено.` }
+            );
+            if (receipt.ok) {
                 setText('');
                 setFiles([]);
                 setKey((k) => k + 1);
             }
         } catch (e) {
-            setError((e as Error).message);
+            setError(
+                e instanceof Error
+                    ? e.message
+                    : 'Не удалось сохранить вложения.'
+            );
         } finally {
             setBusy(false);
         }

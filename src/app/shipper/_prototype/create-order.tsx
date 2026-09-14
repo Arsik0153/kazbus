@@ -6,6 +6,20 @@ import { useStore } from './store';
 import { Unit, units, localDate, reserved } from './model';
 import { saveFiles } from './files';
 import { Heading, Field, Section, Back } from './ui';
+
+function parseUnit(value: string): Unit {
+    switch (value) {
+        case 'шт.':
+        case 'коробок':
+        case 'паллет':
+        case 'кг':
+        case 'т':
+            return value;
+        default:
+            return 'коробок';
+    }
+}
+
 export default function CreateOrder({ batchId }: { batchId?: string }) {
     const { state, act } = useStore();
     const router = useRouter();
@@ -43,8 +57,8 @@ export default function CreateOrder({ batchId }: { batchId?: string }) {
         try {
             const attachments = files.length ? await saveFiles(files) : [];
             const id = `JL-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
-            if (
-                act({
+            const receipt = act(
+                {
                     type: 'create',
                     order: {
                         id,
@@ -66,11 +80,16 @@ export default function CreateOrder({ batchId }: { batchId?: string }) {
                         issues: [],
                         batchId: batch?.id,
                     },
-                })
-            )
-                router.push(`/shipper/orders/${id}`);
+                },
+                { success: `Заказ ${id} создан и отправлен компании.` }
+            );
+            if (receipt.ok) router.push(`/shipper/orders/${id}`);
         } catch (e) {
-            setError((e as Error).message);
+            setError(
+                e instanceof Error
+                    ? e.message
+                    : 'Не удалось сохранить вложения.'
+            );
         } finally {
             setBusy(false);
         }
@@ -83,6 +102,27 @@ export default function CreateOrder({ batchId }: { batchId?: string }) {
                 <Link className="sp-link" href="/shipper/storage">
                     Открыть складские остатки
                 </Link>
+            </>
+        );
+    if (!companies.length)
+        return (
+            <>
+                <Back />
+                <Heading title="Сначала подключите компанию">
+                    Новый заказ можно отправить только подтверждённой
+                    логистической компании.
+                </Heading>
+                <div className="sp-panel sp-blocking-state">
+                    <h2>Создание заказа пока недоступно</h2>
+                    <p className="sp-muted">
+                        В разделе компаний введите код приглашения или запросите
+                        сотрудничество. После подтверждения здесь появится форма
+                        заказа.
+                    </p>
+                    <Link className="sp-button" href="/shipper/companies">
+                        Открыть компании
+                    </Link>
+                </div>
             </>
         );
     return (
@@ -186,7 +226,7 @@ export default function CreateOrder({ batchId }: { batchId?: string }) {
                             <select
                                 value={unit}
                                 onChange={(e) =>
-                                    setUnit(e.target.value as Unit)
+                                    setUnit(parseUnit(e.target.value))
                                 }
                                 disabled={!!batch}
                             >
@@ -195,51 +235,64 @@ export default function CreateOrder({ batchId }: { batchId?: string }) {
                                 ))}
                             </select>
                         </Field>
-                        <Field label="Общий вес, кг · если знаете">
-                            <input
-                                type="number"
-                                min="0.001"
-                                step="any"
-                                value={weight}
-                                onChange={(e) => setWeight(e.target.value)}
-                            />
-                        </Field>
-                        <Field label="Размеры · если знаете">
-                            <input
-                                value={dimensions}
-                                onChange={(e) => setDimensions(e.target.value)}
-                                placeholder="Коробка: 40 × 30 × 30 см"
-                            />
-                        </Field>
-                        <div className="sp-field-wide">
-                            <Field label="Фото груза · необязательно">
+                    </div>
+                    <details className="sp-optional-details">
+                        <summary>Дополнительные сведения</summary>
+                        <div className="sp-form-grid sp-optional-fields">
+                            <Field label="Общий вес, кг">
                                 <input
-                                    type="file"
-                                    accept="image/*"
-                                    multiple
+                                    type="number"
+                                    min="0.001"
+                                    step="any"
+                                    value={weight}
                                     onChange={(e) =>
-                                        setFiles(
-                                            Array.from(e.target.files || [])
-                                        )
+                                        setWeight(e.target.value)
                                     }
                                 />
                             </Field>
-                            <p className="sp-caption">
-                                Изображения до 10 МБ. Фотографии сохраняются
-                                только в этом браузере.
-                            </p>
+                            <Field label="Размеры">
+                                <input
+                                    value={dimensions}
+                                    onChange={(e) =>
+                                        setDimensions(e.target.value)
+                                    }
+                                    placeholder="Коробка: 40 × 30 × 30 см"
+                                />
+                            </Field>
+                            <div className="sp-field-wide">
+                                <Field label="Фото груза">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        multiple
+                                        onChange={(e) =>
+                                            setFiles(
+                                                Array.from(
+                                                    e.target.files || []
+                                                )
+                                            )
+                                        }
+                                    />
+                                </Field>
+                                <p className="sp-caption">
+                                    Изображения до 10 МБ. Фотографии
+                                    сохраняются только в этом браузере.
+                                </p>
+                            </div>
+                            <div className="sp-field-wide">
+                                <Field label="Контакты на адресах, условия хранения и перевозки">
+                                    <textarea
+                                        rows={3}
+                                        value={comment}
+                                        onChange={(e) =>
+                                            setComment(e.target.value)
+                                        }
+                                        placeholder="Хрупкий груз, температурный режим, время работы склада…"
+                                    />
+                                </Field>
+                            </div>
                         </div>
-                    </div>
-                </Section>
-                <Section title="03 · Дополнительные пожелания">
-                    <Field label="Контакты на адресах, условия хранения и перевозки">
-                        <textarea
-                            rows={3}
-                            value={comment}
-                            onChange={(e) => setComment(e.target.value)}
-                            placeholder="Хрупкий груз, температурный режим, время работы склада…"
-                        />
-                    </Field>
+                    </details>
                 </Section>
                 {error && (
                     <p className="sp-error" role="alert">
@@ -251,15 +304,9 @@ export default function CreateOrder({ batchId }: { batchId?: string }) {
                     отклонить предложение компании.
                 </p>
                 <div className="sp-actions">
-                    <button
-                        className="sp-button"
-                        disabled={busy || !companies.length}
-                    >
+                    <button className="sp-button" disabled={busy}>
                         {busy ? 'Сохраняем…' : 'Отправить заявку'}
                     </button>
-                    <Link className="sp-secondary" href="/shipper/orders">
-                        Отмена
-                    </Link>
                 </div>
             </form>
         </>
