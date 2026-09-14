@@ -1,9 +1,10 @@
 'use client';
-import React from 'react';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Building2, FileText, MapPinned } from 'lucide-react';
+import { Building2, FileText, LayoutDashboard, MapPinned } from 'lucide-react';
+
 import Anal from '@/assets/admin/anal';
 import BusFront from '@/assets/admin/BusFront';
 import Coin from '@/assets/admin/Coin';
@@ -11,160 +12,149 @@ import Direction from '@/assets/admin/Direction';
 import Route from '@/assets/admin/Route';
 import Support from '@/assets/admin/Support';
 import User from '@/assets/admin/User';
-import ArrowRight from '@/assets/admin/Arrow-right';
 
-const isActivePath = (pathname: string, url: string) => {
-    return pathname === url || pathname.startsWith(`${url}/`);
-};
-
-const getBackgroundColor = (pathname: string, url: string) => {
-    return isActivePath(pathname, url) ? 'bg-[#FF6868]' : 'bg-transparent';
-};
+const navigationGroups = [
+    {
+        label: 'Управление',
+        items: [
+            {
+                href: '/admin/main',
+                label: 'Обзор',
+                icon: <LayoutDashboard className="h-5 w-5" />,
+            },
+            {
+                href: '/admin/main/trips',
+                label: 'Рейсы',
+                icon: <Route color="#fff" width={20} height={20} />,
+            },
+            {
+                href: '/admin/main/buses',
+                label: 'Автобусы',
+                icon: <BusFront color="#fff" width={20} height={20} />,
+            },
+            {
+                href: '/admin/main/drivers',
+                label: 'Водители',
+                icon: <User color="#fff" width={20} height={20} />,
+            },
+            {
+                href: '/admin/main/routes',
+                label: 'Маршруты',
+                icon: <Direction color="#fff" width={20} height={20} />,
+            },
+        ],
+    },
+    {
+        label: 'Компания',
+        items: [
+            {
+                href: '/admin/main/company',
+                label: 'Профиль компании',
+                icon: <Building2 className="h-5 w-5" />,
+            },
+            {
+                href: '/admin/main/documents',
+                label: 'Документы',
+                icon: <FileText className="h-5 w-5" />,
+            },
+            {
+                href: '/admin/main/monitoring',
+                label: 'Мониторинг',
+                icon: <MapPinned className="h-5 w-5" />,
+            },
+        ],
+    },
+    {
+        label: 'Информация',
+        items: [
+            {
+                href: '/admin/main/analytics',
+                label: 'Аналитика',
+                icon: <Anal color="#fff" width={20} height={20} />,
+            },
+            {
+                href: '/admin/main/payouts',
+                label: 'Выплаты',
+                icon: <Coin color="#fff" width={20} height={20} />,
+            },
+        ],
+    },
+    {
+        label: 'Помощь',
+        items: [
+            {
+                href: '/admin/main/support',
+                label: 'Служба поддержки',
+                icon: <Support color="#fff" width={20} height={20} />,
+            },
+        ],
+    },
+];
 
 const Menu = () => {
     const pathname = usePathname();
 
     return (
-        <div className="flex flex-col fixed w-1/6 pr-5">
-            <Link href="/admin/main">
+        <aside className="w-full bg-[#E32B2B] px-4 pb-5 md:fixed md:inset-y-0 md:w-64 md:overflow-y-auto md:pr-5">
+            <Link
+                href="/admin/main"
+                className="inline-flex rounded-md focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#E32B2B] focus-visible:outline-none"
+            >
                 <Image
-                    src={'/logo.svg'}
+                    src="/logo.svg"
                     width={160}
                     height={160}
-                    alt={'Logo'}
-                    className='pl-3'
+                    alt="KazBus"
+                    className="h-20 w-28 object-contain pl-3 md:h-40 md:w-40"
                 />
             </Link>
 
-            <div className="flex flex-col pl-[14px] w-full">
-                <nav className='flex flex-col gap-5 w-full'>
-                    <ul className='w-full'>
-                        <p className="font-bold text-base text-[#FFFFFF] opacity-40">Управление</p>
+            <nav
+                aria-label="Навигация администратора"
+                className="grid grid-cols-2 gap-4 md:block md:space-y-5"
+            >
+                {navigationGroups.map((group) => (
+                    <section
+                        key={group.label}
+                        aria-labelledby={`menu-${group.label}`}
+                    >
+                        <h2
+                            id={`menu-${group.label}`}
+                            className="px-[14px] text-sm font-bold text-white/60"
+                        >
+                            {group.label}
+                        </h2>
+                        <ul className="mt-1 space-y-1">
+                            {group.items.map((item) => {
+                                const isActive =
+                                    pathname === item.href ||
+                                    (item.href !== '/admin/main' &&
+                                        pathname.startsWith(`${item.href}/`));
 
-                        <li className={`${getBackgroundColor(pathname, '/admin/main/trips')} rounded-lg`}>
-                            <Link href="/admin/main/trips" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
-                                <div className='flex items-center gap-3'>
-                                    <Route color="#fff" width={20} height={20} />
-                                    <span>Рейсы</span>
-                                </div>
-                                {isActivePath(pathname, '/admin/main/trips') && (
-                                    <ArrowRight color="#fff" width={12} height={12} />
-                                )}
-                            </Link>
-                        </li>
-                        <li className={`${getBackgroundColor(pathname, '/admin/main/buses')} rounded-lg`}>
-                            <Link href="/admin/main/buses" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
-                                <div className='flex items-center gap-3'>
-                                    <BusFront color="#fff" width={20} height={20} />
-                                    <span>Автобусы</span>
-                                </div>
-                                {isActivePath(pathname, '/admin/main/buses') && (
-                                    <ArrowRight color="#fff" width={12} height={12} />
-                                )}
-                            </Link>
-                        </li>
-                        <li className={`${getBackgroundColor(pathname, '/admin/main/drivers')} rounded-lg`}>
-                            <Link href="/admin/main/drivers" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
-                                <div className='flex items-center gap-3'>
-                                    <User color="#fff" width={20} height={20} />
-                                    <span>Водители</span>
-                                </div>
-                                {isActivePath(pathname, '/admin/main/drivers') && (
-                                    <ArrowRight color="#fff" width={12} height={12} />
-                                )}
-                            </Link>
-                        </li>
-                        <li className={`${getBackgroundColor(pathname, '/admin/main/routes')} rounded-lg`}>
-                            <Link href="/admin/main/routes" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
-                                <div className='flex items-center gap-3'>
-                                    <Direction color="#fff" width={20} height={20} />
-                                    <span>Маршруты</span>
-                                </div>
-                                {isActivePath(pathname, '/admin/main/routes') && (
-                                    <ArrowRight color="#fff" width={12} height={12} />
-                                )}
-                            </Link>
-                        </li>
-                    </ul>
-                    <ul>
-                        <p className="font-bold text-base text-[#FFFFFF] opacity-40">Компания</p>
-
-                        <li className={`${getBackgroundColor(pathname, '/admin/main/company')} rounded-lg`}>
-                            <Link href="/admin/main/company" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
-                                <div className='flex items-center gap-3'>
-                                    <Building2 className="h-5 w-5" />
-                                    <span>Профиль компании</span>
-                                </div>
-                                {isActivePath(pathname, '/admin/main/company') && (
-                                    <ArrowRight color="#fff" width={12} height={12} />
-                                )}
-                            </Link>
-                        </li>
-                        <li className={`${getBackgroundColor(pathname, '/admin/main/documents')} rounded-lg`}>
-                            <Link href="/admin/main/documents" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
-                                <div className='flex items-center gap-3'>
-                                    <FileText className="h-5 w-5" />
-                                    <span>Документы</span>
-                                </div>
-                                {isActivePath(pathname, '/admin/main/documents') && (
-                                    <ArrowRight color="#fff" width={12} height={12} />
-                                )}
-                            </Link>
-                        </li>
-                        <li className={`${getBackgroundColor(pathname, '/admin/main/monitoring')} rounded-lg`}>
-                            <Link href="/admin/main/monitoring" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
-                                <div className='flex items-center gap-3'>
-                                    <MapPinned className="h-5 w-5" />
-                                    <span>Мониторинг</span>
-                                </div>
-                                {isActivePath(pathname, '/admin/main/monitoring') && (
-                                    <ArrowRight color="#fff" width={12} height={12} />
-                                )}
-                            </Link>
-                        </li>
-                    </ul>
-                    <ul>
-                        <p className="font-bold text-base text-[#FFFFFF] opacity-40">Информация</p>
-
-                        <li className={`${getBackgroundColor(pathname, '/admin/main/analytics')} rounded-lg`}>
-                            <Link href="/admin/main/analytics" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
-                                <div className='flex items-center gap-3'>
-                                    <Anal color="#fff" width={20} height={20} />
-                                    <span>Аналитика</span>
-                                </div>
-                                {isActivePath(pathname, '/admin/main/analytics') && (
-                                    <ArrowRight color="#fff" width={12} height={12} />
-                                )}
-                            </Link>
-                        </li>
-                        <li className={`${getBackgroundColor(pathname, '/admin/main/payouts')} rounded-lg`}>
-                            <Link href="/admin/main/payouts" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
-                                <div className='flex items-center gap-3'>
-                                    <Coin color="#fff" width={20} height={20} />
-                                    <span>Выплаты</span>
-                                </div>
-                                {isActivePath(pathname, '/admin/main/payouts') && (
-                                    <ArrowRight color="#fff" width={12} height={12} />
-                                )}
-                            </Link>
-                        </li>
-                    </ul>
-                    <ul className='mt-8'>
-                        <li className={`${getBackgroundColor(pathname, '/admin/main/support')} rounded-lg`}>
-                            <Link href="/admin/main/support" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
-                                <div className='flex items-center gap-3'>
-                                    <Support color="#fff" width={20} height={20} />
-                                    <span>Служба поддержки</span>
-                                </div>
-                                {isActivePath(pathname, '/admin/main/support') && (
-                                    <ArrowRight color="#fff" width={12} height={12} />
-                                )}
-                            </Link>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
+                                return (
+                                    <li key={item.href}>
+                                        <Link
+                                            href={item.href}
+                                            aria-current={
+                                                isActive ? 'page' : undefined
+                                            }
+                                            className={`flex items-center gap-3 rounded-lg px-[14px] py-2 text-white duration-150 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#E32B2B] focus-visible:outline-none ${
+                                                isActive
+                                                    ? 'bg-[#FF6868]'
+                                                    : 'bg-transparent'
+                                            }`}
+                                        >
+                                            {item.icon}
+                                            <span>{item.label}</span>
+                                        </Link>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </section>
+                ))}
+            </nav>
+        </aside>
     );
 };
 
