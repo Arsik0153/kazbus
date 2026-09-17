@@ -7,7 +7,8 @@ import DriverWorkspace from './driver-workspace';
 export const dynamic = 'force-dynamic';
 
 export default async function CargoDriverPage() {
-    if (!(await getValidCargoSession('cargo_driver'))) {
+    const session = await getValidCargoSession('cargo_driver');
+    if (!session) {
         redirect('/cargo/login');
     }
 
@@ -18,5 +19,5 @@ export default async function CargoDriverPage() {
         redirect('/cargo/login?error=session');
     }
 
-    return <DriverWorkspace state={state} />;
+    return <DriverWorkspace state={state} currentUserId={session.user.id} />;
 }

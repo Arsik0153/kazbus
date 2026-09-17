@@ -3,9 +3,21 @@ import { test } from 'node:test';
 
 import {
     adminStateSchema,
+    cargoAttachmentSchema,
     driverStateSchema,
     shipperStateSchema,
 } from './cargo-contract';
+
+const deliveryProof = {
+    id: '12',
+    name: 'delivery.png',
+    kind: 'delivery_proof',
+    contentType: 'image/png',
+    size: 12345,
+    uploadedBy: { id: 3, name: 'Ерлан' },
+    createdAt: '2026-09-23T12:00:00Z',
+    downloadUrl: '/api_jol/cargo/attachments/12/download/',
+} as const;
 
 const baseOrder = {
     recordId: 1,
@@ -43,6 +55,8 @@ test('shipper state converts API decimal strings at the boundary', () => {
         orders: [
             {
                 ...baseOrder,
+                files: [deliveryProof],
+                deliveryProof,
                 offer: {
                     id: '7',
                     amount: '64000.00',
@@ -90,6 +104,7 @@ test('shipper state converts API decimal strings at the boundary', () => {
     assert.equal(state.orders[0].quantity, 20);
     assert.equal(state.orders[0].weight, 125.5);
     assert.equal(state.orders[0].offer?.amount, 64000);
+    assert.equal(state.orders[0].deliveryProof?.uploadedBy.id, 3);
     assert.equal(state.supplies[0].quantity, 20);
     assert.equal(state.batches[0].onHand, 100);
 });
@@ -184,10 +199,30 @@ test('admin and driver projections keep numeric record ids and convert capacity'
                 stages: [],
             },
         ],
+        documents: [
+            {
+                ...deliveryProof,
+                id: '13',
+                name: 'license.pdf',
+                kind: 'license',
+                contentType: 'application/pdf',
+                downloadUrl: '/api_jol/cargo/driver-documents/13/download/',
+            },
+        ],
     });
 
     assert.equal(admin.vehicles[0].capacity_tons, 20);
     assert.equal(admin.stock[0].on_hand, 100);
     assert.equal(driver.trips[0].order.recordId, 1);
     assert.equal(driver.trips[0].order.quantity, 20);
+    assert.equal(driver.documents[0].kind, 'license');
+});
+
+test('attachment metadata rejects unsupported public file types', () => {
+    assert.throws(() =>
+        cargoAttachmentSchema.parse({
+            ...deliveryProof,
+            contentType: 'text/html',
+        })
+    );
 });

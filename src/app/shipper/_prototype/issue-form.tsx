@@ -54,7 +54,6 @@ export default function IssueForm({ order }: { order: Order }) {
                         placeholder="Опишите, что произошло"
                     />
                 </Field>
-                <p className="sp-caption">Вложения пока недоступны.</p>
                 {error && (
                     <p role="alert" className="sp-error">
                         {error}

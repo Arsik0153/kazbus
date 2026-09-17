@@ -7,8 +7,9 @@ import { Heading, Status, Section, Back, Empty } from './ui';
 import Proposal from './proposal';
 import IssueForm from './issue-form';
 import RouteProgress from './route-progress';
+import CargoFileList from '@/components/cargo/cargo-file-list';
 export default function OrderDetail({ id }: { id: string }) {
-    const { state, act } = useStore();
+    const { state, act, currentUserId } = useStore();
     const [cancel, setCancel] = useState(false);
     const o = state.orders.find((o) => o.id === id);
     if (!o)
@@ -95,10 +96,18 @@ export default function OrderDetail({ id }: { id: string }) {
                             </Link>
                         )}
                     </Section>
-                    {o.proof && (
-                        <Section title="Подтверждение доставки">
-                            <p>{o.proof}</p>
-                        </Section>
+                    {o.recordId && (
+                        <CargoFileList
+                            title="Документы заказа"
+                            description="Файлы видяте вы и участники этой перевозки."
+                            endpoint={`/api/cargo/orders/${o.recordId}/attachments`}
+                            fileScope="order"
+                            initialFiles={o.files}
+                            currentUserId={currentUserId}
+                            uploadKinds={[
+                                { value: 'document', label: 'Документ' },
+                            ]}
+                        />
                     )}
                     <IssueForm order={o} />
                 </div>
