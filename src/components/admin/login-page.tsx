@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -108,6 +109,12 @@ const AdminLoginPage = ({ sessionIssue }: AdminLoginPageProps) => {
                             Войти в кабинет
                         </Button>
                     </form>
+                    <Link
+                        href="/admin/registration"
+                        className="text-center text-sm font-semibold text-[#E32B2B] underline"
+                    >
+                        Зарегистрировать компанию
+                    </Link>
                 </div>
             </div>
         </div>
