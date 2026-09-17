@@ -9,7 +9,7 @@ import {
 } from 'react';
 
 import { shipperCommandAction } from '@/actions/cargo';
-import type { Issue, Order, Profile, State } from './model';
+import type { Issue, Order, Profile, State, Supply } from './model';
 
 type Action =
     | { type: 'create'; order: Order }
@@ -17,7 +17,21 @@ type Action =
     | { type: 'cancel'; id: string }
     | { type: 'issue'; id: string; issue: Issue }
     | { type: 'connect'; id: string }
-    | { type: 'profile'; profile: Profile };
+    | { type: 'profile'; profile: Profile }
+    | { type: 'save-supply'; supply: Supply; creating: boolean }
+    | { type: 'toggle-supply'; id: string; paused: boolean }
+    | { type: 'skip-supply'; id: string; date: string }
+    | { type: 'launch-supply'; id: string; date: string }
+    | {
+          type: 'create-stock-order';
+          requestId: string;
+          lotId: string;
+          to: string;
+          pickup: string;
+          date: string;
+          quantity: number;
+          comment: string;
+      };
 
 const Context = createContext<{
     state: State;
@@ -49,8 +63,12 @@ export function Store({
                     companyId: Number(action.id),
                 });
             } else if (action.type === 'create') {
+                if (!action.order.requestId) {
+                    throw new Error('Не удалось подготовить номер запроса');
+                }
                 response = await shipperCommandAction({
                     type: 'create-order',
+                    requestId: action.order.requestId,
                     companyId: Number(action.order.companyId),
                     from: action.order.from,
                     to: action.order.to,
@@ -107,6 +125,57 @@ export function Store({
                     binIin: action.profile.bin,
                     city: action.profile.city,
                     notifications: action.profile.notifications,
+                });
+            } else if (action.type === 'save-supply') {
+                const supply = {
+                    title: action.supply.title,
+                    companyId: Number(action.supply.companyId),
+                    from: action.supply.from,
+                    to: action.supply.to,
+                    cargo: action.supply.cargo,
+                    quantity: action.supply.quantity,
+                    unit: action.supply.unit,
+                    mode: action.supply.mode,
+                    weekdays: action.supply.weekdays,
+                    monthDay: action.supply.monthDay,
+                };
+                response = action.creating
+                    ? await shipperCommandAction({
+                          type: 'create-supply',
+                          ...supply,
+                      })
+                    : await shipperCommandAction({
+                          type: 'update-supply',
+                          supplyId: Number(action.supply.id),
+                          ...supply,
+                      });
+            } else if (action.type === 'toggle-supply') {
+                response = await shipperCommandAction({
+                    type: action.paused ? 'pause-supply' : 'resume-supply',
+                    supplyId: Number(action.id),
+                });
+            } else if (action.type === 'skip-supply') {
+                response = await shipperCommandAction({
+                    type: 'skip-supply-date',
+                    supplyId: Number(action.id),
+                    date: action.date,
+                });
+            } else if (action.type === 'launch-supply') {
+                response = await shipperCommandAction({
+                    type: 'launch-supply',
+                    supplyId: Number(action.id),
+                    plannedFor: action.date,
+                });
+            } else if (action.type === 'create-stock-order') {
+                response = await shipperCommandAction({
+                    type: 'create-stock-order',
+                    requestId: action.requestId,
+                    lotId: Number(action.lotId),
+                    to: action.to,
+                    pickup: action.pickup,
+                    date: action.date,
+                    quantity: action.quantity,
+                    comment: action.comment,
                 });
             }
 

@@ -5,11 +5,15 @@ import { useState, type FormEvent, type ReactNode } from 'react';
 
 import {
     assignCargoOrderAction,
+    cargoLogoutAction,
     createCargoDriverAction,
     createCargoOfferAction,
+    createCargoStockAction,
     createCargoVehicleAction,
+    createCargoWarehouseAction,
     createDriverInviteAction,
     decideCargoRelationAction,
+    adjustCargoStockAction,
     rejectCargoOrderAction,
     updateCargoCompanyAction,
 } from '@/actions/cargo';
@@ -23,6 +27,26 @@ const statusNames: Record<string, string> = {
     delivered: 'Доставлен',
     cancelled: 'Отменен',
     rejected: 'Отклонен',
+};
+
+const relationStatusNames: Record<string, string> = {
+    requested: 'Ожидает решения',
+    confirmed: 'Сотрудничество подтверждено',
+    rejected: 'Запрос отклонен',
+    blocked: 'Клиент заблокирован',
+};
+
+const tripStatusNames: Record<string, string> = {
+    planned: 'Запланирован',
+    loading: 'Погрузка',
+    in_transit: 'В пути',
+    unloading: 'Разгрузка',
+    completed: 'Завершен',
+};
+
+const driverAccountStatusNames: Record<string, string> = {
+    active: 'Аккаунт активен',
+    pending: 'Ожидает регистрации',
 };
 
 function Panel({ title, children }: { title: string; children: ReactNode }) {
@@ -97,6 +121,38 @@ export default function AdminCargoDashboard({
         if (ok) formElement.reset();
     }
 
+    async function addWarehouse(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        const formElement = event.currentTarget;
+        const form = new FormData(formElement);
+        const ok = await run('warehouse-new', () =>
+            createCargoWarehouseAction({
+                name: String(form.get('name') ?? ''),
+                address: String(form.get('address') ?? ''),
+            })
+        );
+        if (ok) formElement.reset();
+    }
+
+    async function addStock(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        const formElement = event.currentTarget;
+        const form = new FormData(formElement);
+        const ok = await run('stock-new', () =>
+            createCargoStockAction({
+                warehouseId: Number(form.get('warehouse_id')),
+                shipperId: Number(form.get('shipper_id')),
+                cargo: String(form.get('cargo') ?? ''),
+                sku: String(form.get('sku') ?? ''),
+                unit: String(form.get('unit') ?? '') as
+                    'шт.' | 'коробок' | 'паллет' | 'кг' | 'т',
+                onHand: Number(form.get('on_hand')),
+                source: String(form.get('source') ?? ''),
+            })
+        );
+        if (ok) formElement.reset();
+    }
+
     return (
         <main className="mx-auto min-h-screen max-w-7xl bg-[#f8f8f8] px-5 py-10 text-[#4a4a4a]">
             <header className="mb-8">
@@ -105,6 +161,25 @@ export default function AdminCargoDashboard({
                 <p className="sp-muted">
                     {state.company.city} · {state.company.contactPhone}
                 </p>
+                <nav className="sp-actions" aria-label="Разделы диспетчерской">
+                    <a className="sp-secondary" href="#orders">
+                        Заказы
+                    </a>
+                    <a className="sp-secondary" href="#warehouse-stock">
+                        Складской учет
+                    </a>
+                    <button
+                        className="sp-link"
+                        type="button"
+                        onClick={async () => {
+                            await cargoLogoutAction();
+                            router.replace('/admin-cargo/login');
+                            router.refresh();
+                        }}
+                    >
+                        Выйти
+                    </button>
+                </nav>
             </header>
 
             {message && (
@@ -118,7 +193,7 @@ export default function AdminCargoDashboard({
                     Профиль и публикация компании
                 </summary>
                 <form
-                    className="sp-form mt-4"
+                    className="sp-form mt-4 space-y-3"
                     onSubmit={async (event) => {
                         event.preventDefault();
                         const form = new FormData(event.currentTarget);
@@ -207,7 +282,9 @@ export default function AdminCargoDashboard({
                                     {relation.shipper.city} ·{' '}
                                     {relation.shipper.phone}
                                 </p>
-                                <p className="sp-caption">{relation.status}</p>
+                                <p className="sp-caption">
+                                    {relationStatusNames[relation.status]}
+                                </p>
                                 {relation.status === 'requested' && (
                                     <div className="sp-actions">
                                         <button
@@ -268,7 +345,8 @@ export default function AdminCargoDashboard({
                         <div className="sp-list-row" key={trip.id}>
                             <strong>{trip.orderId}</strong>
                             <p>
-                                {trip.status} · доставка {trip.eta}
+                                {tripStatusNames[trip.status]} · доставка{' '}
+                                {trip.eta}
                             </p>
                         </div>
                     ))}
@@ -278,7 +356,7 @@ export default function AdminCargoDashboard({
                 </Panel>
             </div>
 
-            <section className="mt-6">
+            <section className="mt-6" id="orders">
                 <h2 className="mb-4 text-2xl font-bold">
                     Заказы · {state.orders.length}
                 </h2>
@@ -309,7 +387,7 @@ export default function AdminCargoDashboard({
                                     order.status
                                 ) && (
                                     <form
-                                        className="sp-form"
+                                        className="sp-form space-y-3"
                                         onSubmit={async (event) => {
                                             event.preventDefault();
                                             const form = new FormData(
@@ -370,7 +448,7 @@ export default function AdminCargoDashboard({
 
                                 {order.status === 'planned' && !assigned && (
                                     <form
-                                        className="sp-form"
+                                        className="sp-form space-y-3"
                                         onSubmit={async (event) => {
                                             event.preventDefault();
                                             const form = new FormData(
@@ -458,7 +536,7 @@ export default function AdminCargoDashboard({
                                     <details className="mt-4">
                                         <summary>Добавить доплату</summary>
                                         <form
-                                            className="sp-form"
+                                            className="sp-form space-y-3"
                                             onSubmit={async (event) => {
                                                 event.preventDefault();
                                                 const form = new FormData(
@@ -553,28 +631,37 @@ export default function AdminCargoDashboard({
                             <strong>{driver.full_name}</strong>
                             <p className="sp-muted">
                                 {driver.phone_number} · {driver.license_number}{' '}
-                                · {driver.account_status}
+                                ·{' '}
+                                {
+                                    driverAccountStatusNames[
+                                        driver.account_status
+                                    ]
+                                }
                             </p>
-                            <button
-                                className="sp-link"
-                                disabled={!!busy}
-                                onClick={async () => {
-                                    const response =
-                                        await createDriverInviteAction(
-                                            driver.id
-                                        );
-                                    if (response.ok) {
-                                        setInvite(response.data.invite_token);
-                                        setMessage(
-                                            `Приглашение для ${driver.full_name} создано.`
-                                        );
-                                    } else {
-                                        setMessage(response.error);
-                                    }
-                                }}
-                            >
-                                Создать приглашение
-                            </button>
+                            {driver.account_status === 'pending' && (
+                                <button
+                                    className="sp-link"
+                                    disabled={!!busy}
+                                    onClick={async () => {
+                                        const response =
+                                            await createDriverInviteAction(
+                                                driver.id
+                                            );
+                                        if (response.ok) {
+                                            setInvite(
+                                                response.data.invite_token
+                                            );
+                                            setMessage(
+                                                `Приглашение для ${driver.full_name} создано.`
+                                            );
+                                        } else {
+                                            setMessage(response.error);
+                                        }
+                                    }}
+                                >
+                                    Создать приглашение
+                                </button>
+                            )}
                         </div>
                     ))}
                     {invite && (
@@ -583,7 +670,7 @@ export default function AdminCargoDashboard({
                             <strong>{invite}</strong>
                         </p>
                     )}
-                    <form className="sp-form" onSubmit={addDriver}>
+                    <form className="sp-form space-y-3" onSubmit={addDriver}>
                         <h3>Добавить водителя</h3>
                         <input
                             name="full_name"
@@ -620,7 +707,7 @@ export default function AdminCargoDashboard({
                             </p>
                         </div>
                     ))}
-                    <form className="sp-form" onSubmit={addVehicle}>
+                    <form className="sp-form space-y-3" onSubmit={addVehicle}>
                         <h3>Добавить машину</h3>
                         <input
                             name="model"
@@ -656,6 +743,205 @@ export default function AdminCargoDashboard({
                         />
                         <button className="sp-button" disabled={!!busy}>
                             Добавить
+                        </button>
+                    </form>
+                </Panel>
+            </div>
+
+            <div
+                className="mt-6 grid gap-6 lg:grid-cols-2"
+                id="warehouse-stock"
+            >
+                <Panel title={`Склады · ${state.warehouses.length}`}>
+                    {state.warehouses.map((warehouse) => (
+                        <div className="sp-list-row" key={warehouse.id}>
+                            <strong>{warehouse.name}</strong>
+                            <p className="sp-muted">{warehouse.address}</p>
+                        </div>
+                    ))}
+                    {!state.warehouses.length && (
+                        <p className="sp-muted">Склады еще не добавлены.</p>
+                    )}
+                    <form className="sp-form space-y-3" onSubmit={addWarehouse}>
+                        <h3>Добавить склад</h3>
+                        <input
+                            name="name"
+                            aria-label="Название склада"
+                            placeholder="Название"
+                            required
+                        />
+                        <input
+                            name="address"
+                            aria-label="Адрес склада"
+                            placeholder="Город, улица, номер"
+                            required
+                        />
+                        <button className="sp-button" disabled={!!busy}>
+                            {busy === 'warehouse-new'
+                                ? 'Сохраняем…'
+                                : 'Добавить склад'}
+                        </button>
+                    </form>
+                </Panel>
+
+                <Panel title={`Остатки · ${state.stock.length}`}>
+                    {state.stock.map((lot) => {
+                        const shipper = state.relations.find(
+                            (relation) => relation.shipper.id === lot.shipper_id
+                        )?.shipper;
+                        return (
+                            <article className="sp-list-row" key={lot.id}>
+                                <strong>
+                                    {lot.cargo_description} · {lot.on_hand}{' '}
+                                    {lot.unit}
+                                </strong>
+                                <p className="sp-muted">
+                                    {lot.warehouse} ·{' '}
+                                    {shipper?.company ??
+                                        `Клиент #${lot.shipper_id}`}
+                                </p>
+                                <p className="sp-caption">
+                                    {lot.sku || 'Без SKU'} · {lot.source}
+                                </p>
+                                <form
+                                    className="sp-form space-y-3"
+                                    onSubmit={async (event) => {
+                                        event.preventDefault();
+                                        const formElement = event.currentTarget;
+                                        const form = new FormData(formElement);
+                                        const ok = await run(
+                                            `stock-adjust-${lot.id}`,
+                                            () =>
+                                                adjustCargoStockAction({
+                                                    lotId: lot.id,
+                                                    delta: Number(
+                                                        form.get('delta')
+                                                    ),
+                                                    reason: String(
+                                                        form.get('reason') ?? ''
+                                                    ),
+                                                })
+                                        );
+                                        if (ok) formElement.reset();
+                                    }}
+                                >
+                                    <h4>Корректировка</h4>
+                                    <input
+                                        name="delta"
+                                        aria-label={`Изменение остатка ${lot.cargo_description}`}
+                                        type="number"
+                                        step="0.001"
+                                        placeholder="+25 или -5"
+                                        required
+                                    />
+                                    <input
+                                        name="reason"
+                                        aria-label={`Причина корректировки ${lot.cargo_description}`}
+                                        placeholder="Приемка, инвентаризация…"
+                                        required
+                                    />
+                                    <button
+                                        className="sp-secondary"
+                                        disabled={!!busy}
+                                    >
+                                        {busy === `stock-adjust-${lot.id}`
+                                            ? 'Сохраняем…'
+                                            : 'Изменить остаток'}
+                                    </button>
+                                </form>
+                            </article>
+                        );
+                    })}
+                    {!state.stock.length && (
+                        <p className="sp-muted">Складских партий еще нет.</p>
+                    )}
+                    <form className="sp-form space-y-3" onSubmit={addStock}>
+                        <h3>Принять груз на склад</h3>
+                        <select
+                            name="warehouse_id"
+                            aria-label="Склад"
+                            defaultValue=""
+                            required
+                        >
+                            <option value="" disabled>
+                                Выберите склад
+                            </option>
+                            {state.warehouses.map((warehouse) => (
+                                <option key={warehouse.id} value={warehouse.id}>
+                                    {warehouse.name}
+                                </option>
+                            ))}
+                        </select>
+                        <select
+                            name="shipper_id"
+                            aria-label="Клиент"
+                            defaultValue=""
+                            required
+                        >
+                            <option value="" disabled>
+                                Выберите клиента
+                            </option>
+                            {state.relations
+                                .filter(
+                                    (relation) =>
+                                        relation.status === 'confirmed'
+                                )
+                                .map((relation) => (
+                                    <option
+                                        key={relation.shipper.id}
+                                        value={relation.shipper.id}
+                                    >
+                                        {relation.shipper.company}
+                                    </option>
+                                ))}
+                        </select>
+                        <input
+                            name="cargo"
+                            aria-label="Описание груза"
+                            placeholder="Груз"
+                            required
+                        />
+                        <input
+                            name="sku"
+                            aria-label="SKU груза"
+                            placeholder="SKU"
+                        />
+                        <select name="unit" aria-label="Единица измерения">
+                            {['шт.', 'коробок', 'паллет', 'кг', 'т'].map(
+                                (unit) => (
+                                    <option key={unit}>{unit}</option>
+                                )
+                            )}
+                        </select>
+                        <input
+                            name="on_hand"
+                            aria-label="Количество на складе"
+                            type="number"
+                            min="0"
+                            step="0.001"
+                            placeholder="Количество"
+                            required
+                        />
+                        <input
+                            name="source"
+                            aria-label="Источник поступления"
+                            placeholder="Приемка, накладная…"
+                            required
+                        />
+                        <button
+                            className="sp-button"
+                            disabled={
+                                !!busy ||
+                                !state.warehouses.length ||
+                                !state.relations.some(
+                                    (relation) =>
+                                        relation.status === 'confirmed'
+                                )
+                            }
+                        >
+                            {busy === 'stock-new'
+                                ? 'Сохраняем…'
+                                : 'Добавить партию'}
                         </button>
                     </form>
                 </Panel>

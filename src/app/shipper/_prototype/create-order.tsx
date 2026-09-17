@@ -1,5 +1,5 @@
 'use client';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useStore } from './store';
@@ -22,6 +22,7 @@ export default function CreateOrder() {
     const [comment, setComment] = useState('');
     const [error, setError] = useState('');
     const [busy, setBusy] = useState(false);
+    const requestId = useRef(crypto.randomUUID());
     async function submit(e: FormEvent) {
         e.preventDefault();
         if (busy) return;
@@ -37,6 +38,7 @@ export default function CreateOrder() {
                     type: 'create',
                     order: {
                         id: '',
+                        requestId: requestId.current,
                         companyId,
                         from: from.trim(),
                         to: to.trim(),

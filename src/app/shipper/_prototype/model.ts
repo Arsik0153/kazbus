@@ -70,6 +70,7 @@ export type Order = {
     supplyId?: string;
     occurrence?: string;
     batchId?: string;
+    requestId?: string;
 };
 export type Supply = {
     id: string;
