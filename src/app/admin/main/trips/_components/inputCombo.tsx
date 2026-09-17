@@ -28,7 +28,11 @@ interface ComboBoxProps {
     onSelectionChange?: (name: string, selected: Person | null) => void;
 }
 
-function ComboBox({ name, placeholder = 'Выберите нужный вариант', onSelectionChange = () => {} }: ComboBoxProps) {
+function ComboBox({
+    name,
+    placeholder = 'Выберите нужный вариант',
+    onSelectionChange = () => {},
+}: ComboBoxProps) {
     const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
     const [query, setQuery] = useState('');
 
@@ -54,10 +58,17 @@ function ComboBox({ name, placeholder = 'Выберите нужный вари�
         <div className="relative">
             <Combobox
                 value={selectedPerson}
-                onChange={(person: Person) => {
+                onChange={(person: Person | null) => {
+                    if (!person) {
+                        return;
+                    }
+
                     if (person.id === -1) {
                         // Если пользователь выбрал опцию добавления нового города
-                        const newPerson = { id: cruise.length + 1, name: query };
+                        const newPerson = {
+                            id: cruise.length + 1,
+                            name: query,
+                        };
                         setSelectedPerson(newPerson);
                         onSelectionChange(name, newPerson);
                     } else {
@@ -77,7 +88,7 @@ function ComboBox({ name, placeholder = 'Выберите нужный вари�
                         placeholder={placeholder}
                         className="rounded-[10px] border border-[#A0A0A0] p-3 pl-4 text-base font-medium text-[#4A4A4A] focus:outline-none"
                     />
-                    <ComboboxButton className="absolute right-4 top-[30%] flex items-center p-2">
+                    <ComboboxButton className="absolute top-[30%] right-4 flex items-center p-2">
                         <DownBtn color="#4A4A4A" className="p-2" />
                     </ComboboxButton>
                 </div>
@@ -96,9 +107,10 @@ function ComboBox({ name, placeholder = 'Выберите нужный вари�
                                     </div>
                                 )}
                             </ComboboxOption>
-                            {index !== filteredPeople.length - 1 && person.id !== -1 && (
-                                <div className="my-2 h-[1px] w-full bg-[#CDCDCD]" />
-                            )}
+                            {index !== filteredPeople.length - 1 &&
+                                person.id !== -1 && (
+                                    <div className="my-2 h-[1px] w-full bg-[#CDCDCD]" />
+                                )}
                         </div>
                     ))}
                 </ComboboxOptions>
