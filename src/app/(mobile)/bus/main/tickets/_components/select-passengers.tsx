@@ -17,6 +17,7 @@ import Skeleton from '@/components/skeleton';
 
 export type User = Omit<Profile, 'phone_number' | 'email'> & {
     user_id: number;
+    is_profile_passenger?: boolean;
 };
 
 type Props = {
@@ -164,7 +165,7 @@ const SelectPassengers = (props: Props) => {
                 {selectedUsers.length === passengerCountParam && (
                     <Button
                         variant="secondary"
-                        className="mb-6 mt-4"
+                        className="mt-4 mb-6"
                         onClick={() => onPassengersSelect(selectedUsers)}
                     >
                         Продолжить
@@ -196,7 +197,7 @@ const SelectPassengersSkeleton = () => {
                 </div>
                 <Skeleton className="mt-6 h-12 w-full rounded-[10px]" />{' '}
                 {/* "Добавить другого пассажира" button */}
-                <Skeleton className="mb-6 mt-4 h-12 w-full rounded-[10px]" />{' '}
+                <Skeleton className="mt-4 mb-6 h-12 w-full rounded-[10px]" />{' '}
                 {/* "Продолжить" button */}
             </div>
         </>
