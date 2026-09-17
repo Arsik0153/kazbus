@@ -9,7 +9,8 @@ export async function GET(request: NextRequest) {
             : 'expired';
 
     await logoutAdmin();
-    return NextResponse.redirect(
-        new URL(`/admin?session=${reason}`, request.nextUrl.origin)
-    );
+    return new NextResponse(null, {
+        status: 303,
+        headers: { Location: `/admin?session=${reason}` },
+    });
 }
