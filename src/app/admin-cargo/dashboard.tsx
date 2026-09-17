@@ -79,15 +79,23 @@ export default function AdminCargoDashboard({
         if (busy) return false;
         setBusy(key);
         setMessage('');
-        const response = await operation();
-        setBusy('');
-        if (!response.ok) {
-            setMessage(response.error ?? 'Не удалось выполнить действие');
+        try {
+            const response = await operation();
+            if (!response.ok) {
+                setMessage(response.error ?? 'Не удалось выполнить действие');
+                return false;
+            }
+            setMessage('Изменения сохранены.');
+            router.refresh();
+            return true;
+        } catch {
+            setMessage(
+                'Не удалось получить ответ сервера. Попробуйте ещё раз.'
+            );
             return false;
+        } finally {
+            setBusy('');
         }
-        setMessage('Изменения сохранены.');
-        router.refresh();
-        return true;
     }
 
     async function addDriver(event: FormEvent<HTMLFormElement>) {

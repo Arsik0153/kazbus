@@ -41,42 +41,57 @@ export default function DriverWorkspace({
 
     async function advance(trip: DriverTrip) {
         const target = nextStatus[trip.status];
-        if (!target || trip.status === 'completed') return;
+        if (busy || !target || trip.status === 'completed') return;
         setBusy(`status-${trip.id}`);
         setMessage('');
-        const response = await updateDriverTripStatusAction({
-            tripId: trip.id,
-            expected: trip.status,
-            target,
-        });
-        setBusy('');
-        if (!response.ok) {
-            setMessage(response.error);
-            return;
+        try {
+            const response = await updateDriverTripStatusAction({
+                tripId: trip.id,
+                expected: trip.status,
+                target,
+            });
+            if (!response.ok) {
+                setMessage(response.error);
+                return;
+            }
+            setMessage('Статус рейса обновлен.');
+            router.refresh();
+        } catch {
+            setMessage(
+                'Не удалось получить ответ сервера. Попробуйте ещё раз.'
+            );
+        } finally {
+            setBusy('');
         }
-        setMessage('Статус рейса обновлен.');
-        router.refresh();
     }
 
     async function incident(event: FormEvent<HTMLFormElement>, tripId: number) {
         event.preventDefault();
+        if (busy) return;
         const formElement = event.currentTarget;
         const form = new FormData(formElement);
         setBusy(`incident-${tripId}`);
         setMessage('');
-        const response = await reportDriverIncidentAction({
-            tripId,
-            text: String(form.get('text') ?? ''),
-            newEta: String(form.get('new_eta') ?? '') || undefined,
-        });
-        setBusy('');
-        if (!response.ok) {
-            setMessage(response.error);
-            return;
+        try {
+            const response = await reportDriverIncidentAction({
+                tripId,
+                text: String(form.get('text') ?? ''),
+                newEta: String(form.get('new_eta') ?? '') || undefined,
+            });
+            if (!response.ok) {
+                setMessage(response.error);
+                return;
+            }
+            formElement.reset();
+            setMessage('Инцидент передан диспетчеру и грузоотправителю.');
+            router.refresh();
+        } catch {
+            setMessage(
+                'Не удалось получить ответ сервера. Попробуйте ещё раз.'
+            );
+        } finally {
+            setBusy('');
         }
-        formElement.reset();
-        setMessage('Инцидент передан диспетчеру и грузоотправителю.');
-        router.refresh();
     }
 
     return (
