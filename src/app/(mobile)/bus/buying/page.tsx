@@ -1,19 +1,7 @@
-import React from 'react';
-import BusMini from '@/assets/bus-mini';
-import Topbar from '@/components/topbar';
+import { redirect } from 'next/navigation';
 
-import StepFive from './_components/step-5';
-import StepSix from './_components/step-6';
-
-// here we will use any buying step from one to end
-
-const Directions = () => {
-    return (
-        <>
-            <StepSix />
-            {/* <StepFive /> */}
-        </>
-    );
+const LegacyBuyingPage = () => {
+    redirect('/bus/main?passenger_count=1');
 };
 
-export default Directions;
+export default LegacyBuyingPage;
