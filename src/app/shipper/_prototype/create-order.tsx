@@ -179,7 +179,8 @@ export default function CreateOrder() {
                             />
                         </Field>
                         <p className="sp-caption sp-field-wide">
-                            Вложения пока недоступны.
+                            Документы можно добавить на странице заказа сразу
+                            после его создания.
                         </p>
                     </div>
                 </Section>

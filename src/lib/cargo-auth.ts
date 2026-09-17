@@ -108,6 +108,16 @@ async function readApiError(response: Response) {
     return 'Сервис Jol Cargo временно недоступен';
 }
 
+export class CargoApiError extends Error {
+    constructor(
+        message: string,
+        readonly status: number
+    ) {
+        super(message);
+        this.name = 'CargoApiError';
+    }
+}
+
 async function authRequest(path: string, payload: Record<string, unknown>) {
     let response: Response;
     try {
@@ -121,7 +131,9 @@ async function authRequest(path: string, payload: Record<string, unknown>) {
         throw new Error('Не удалось подключиться к серверу Jol Cargo');
     }
 
-    if (!response.ok) throw new Error(await readApiError(response));
+    if (!response.ok) {
+        throw new CargoApiError(await readApiError(response), response.status);
+    }
     const parsed = cargoAuthResponseSchema.safeParse(await response.json());
     if (!parsed.success) throw new Error('Сервер вернул некорректный ответ');
 
@@ -168,13 +180,17 @@ export async function cargoFetch(
     if (!session || session.role !== role) throw new Error('Сессия истекла');
 
     let response: Response;
+    const isMultipart =
+        typeof FormData !== 'undefined' && options.body instanceof FormData;
     try {
         response = await fetch(getCargoApiUrl(path), {
             cache: 'no-store',
             ...options,
             headers: {
                 Authorization: `Token ${session.token}`,
-                ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+                ...(options.body && !isMultipart
+                    ? { 'Content-Type': 'application/json' }
+                    : {}),
                 ...options.headers,
             },
         });
@@ -182,6 +198,8 @@ export async function cargoFetch(
         throw new Error('Не удалось подключиться к серверу Jol Cargo');
     }
 
-    if (!response.ok) throw new Error(await readApiError(response));
+    if (!response.ok) {
+        throw new CargoApiError(await readApiError(response), response.status);
+    }
     return response;
 }

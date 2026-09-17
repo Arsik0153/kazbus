@@ -9,6 +9,7 @@ import {
     updateDriverTripStatusAction,
 } from '@/actions/cargo';
 import type { DriverState, DriverTrip } from '@/lib/cargo-contract';
+import CargoFileList from '@/components/cargo/cargo-file-list';
 
 const statusLabel: Record<DriverTrip['status'], string> = {
     planned: 'Назначен',
@@ -27,7 +28,13 @@ const nextStatus: Partial<
     unloading: 'completed',
 };
 
-export default function DriverWorkspace({ state }: { state: DriverState }) {
+export default function DriverWorkspace({
+    state,
+    currentUserId,
+}: {
+    state: DriverState;
+    currentUserId: number;
+}) {
     const router = useRouter();
     const [busy, setBusy] = useState('');
     const [message, setMessage] = useState('');
@@ -104,6 +111,32 @@ export default function DriverWorkspace({ state }: { state: DriverState }) {
                 </p>
             )}
 
+            <div className="mt-6">
+                <CargoFileList
+                    title="Личные документы"
+                    description="Вы и ваш диспетчер видите эти файлы."
+                    endpoint="/api/cargo/driver/documents"
+                    fileScope="driver"
+                    initialFiles={state.documents}
+                    currentUserId={currentUserId}
+                    uploadKinds={[
+                        {
+                            value: 'license',
+                            label: 'Водительское удостоверение',
+                        },
+                        {
+                            value: 'identity',
+                            label: 'Удостоверение личности',
+                        },
+                        {
+                            value: 'medical',
+                            label: 'Медицинская справка',
+                        },
+                        { value: 'other', label: 'Другой документ' },
+                    ]}
+                />
+            </div>
+
             <section className="mt-6 space-y-4">
                 <h2 className="text-xl font-bold">Назначенные рейсы</h2>
                 {!state.trips.length && (
@@ -165,6 +198,25 @@ export default function DriverWorkspace({ state }: { state: DriverState }) {
                                     <strong>Комментарий:</strong>{' '}
                                     {trip.order.comment}
                                 </p>
+                            )}
+
+                            {trip.status === 'completed' && (
+                                <div className="mt-4">
+                                    <CargoFileList
+                                        title="Подтверждение доставки"
+                                        description="После завершения рейса добавьте фото или PDF."
+                                        endpoint={`/api/cargo/orders/${trip.order.recordId}/attachments`}
+                                        fileScope="order"
+                                        initialFiles={trip.order.files}
+                                        currentUserId={currentUserId}
+                                        uploadKinds={[
+                                            {
+                                                value: 'delivery_proof',
+                                                label: 'Подтверждение доставки',
+                                            },
+                                        ]}
+                                    />
+                                </div>
                             )}
 
                             {target && (
