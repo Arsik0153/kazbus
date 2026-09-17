@@ -78,6 +78,7 @@ test('reserved quantity counts active orders and ignores terminal orders', () =>
     };
     const state = {
         version: 1,
+        capabilities: { supplyAutomaticEnabled: false },
         profile: {
             name: '',
             company: '',

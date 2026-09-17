@@ -127,6 +127,7 @@ export type Profile = {
 };
 export type State = {
     version: 1;
+    capabilities: { supplyAutomaticEnabled: boolean };
     orders: Order[];
     companies: Company[];
     supplies: Supply[];

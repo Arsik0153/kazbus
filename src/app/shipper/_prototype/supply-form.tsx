@@ -40,6 +40,7 @@ export default function SupplyForm({
             approved: false,
         }
     );
+    const automaticEnabled = state.capabilities.supplyAutomaticEnabled;
     const [error, setError] = useState('');
     const [busy, setBusy] = useState(false);
 
@@ -55,13 +56,16 @@ export default function SupplyForm({
         }
 
         setBusy(true);
-        const saved = await act({
-            type: 'save-supply',
-            supply: form,
-            creating: !initial,
-        });
-        setBusy(false);
-        if (saved) close();
+        try {
+            const saved = await act({
+                type: 'save-supply',
+                supply: form,
+                creating: !initial,
+            });
+            if (saved) close();
+        } finally {
+            setBusy(false);
+        }
     }
 
     const companies = state.companies.filter(
@@ -69,7 +73,7 @@ export default function SupplyForm({
     );
 
     return (
-        <form className="sp-panel sp-form" onSubmit={submit}>
+        <form method="post" className="sp-panel sp-form" onSubmit={submit}>
             <h2>{initial ? 'Настройки поставки' : 'Новая поставка'}</h2>
             <div className="sp-form-grid">
                 <Field label="Название">
@@ -150,9 +154,17 @@ export default function SupplyForm({
                 <Field label="Повторение">
                     <select
                         value={form.mode}
-                        onChange={(event) =>
-                            update('mode', event.target.value as Supply['mode'])
-                        }
+                        onChange={(event) => {
+                            const mode = event.target.value as Supply['mode'];
+                            setForm((current) => ({
+                                ...current,
+                                mode,
+                                automatic:
+                                    mode === 'manual'
+                                        ? false
+                                        : current.automatic,
+                            }));
+                        }}
                     >
                         <option value="manual">По потребности</option>
                         <option value="weekly">По дням недели</option>
@@ -205,8 +217,25 @@ export default function SupplyForm({
                     </Field>
                 )}
             </div>
+            {form.mode !== 'manual' && (automaticEnabled || form.automatic) && (
+                <label className="sp-check">
+                    <input
+                        type="checkbox"
+                        checked={form.automatic}
+                        disabled={!automaticEnabled && !form.automatic}
+                        onChange={(event) =>
+                            update('automatic', event.target.checked)
+                        }
+                    />
+                    Создавать заказы автоматически по расписанию
+                </label>
+            )}
             <p className="sp-caption">
-                Каждое отправление запускается вручную из расписания.
+                {form.automatic
+                    ? automaticEnabled
+                        ? 'В день отправления появится один заказ. Условия перевозки согласуются отдельно. Пауза и пропуск даты останавливают создание заказа.'
+                        : 'Автозапуск временно отключён. Доступен ручной запуск из расписания.'
+                    : 'Каждое отправление запускается вручную из расписания.'}
             </p>
             {error && (
                 <p className="sp-error" role="alert">

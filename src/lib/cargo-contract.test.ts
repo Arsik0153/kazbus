@@ -107,6 +107,14 @@ test('shipper state converts API decimal strings at the boundary', () => {
     assert.equal(state.orders[0].deliveryProof?.uploadedBy.id, 3);
     assert.equal(state.supplies[0].quantity, 20);
     assert.equal(state.batches[0].onHand, 100);
+    assert.equal(state.capabilities.supplyAutomaticEnabled, false);
+    const automaticState = shipperStateSchema.parse({
+        ...state,
+        capabilities: { supplyAutomaticEnabled: true },
+        supplies: [{ ...state.supplies[0], automatic: true }],
+    });
+    assert.equal(automaticState.capabilities.supplyAutomaticEnabled, true);
+    assert.equal(automaticState.supplies[0].automatic, true);
 });
 
 test('cargo projections reject malformed decimal values', () => {
