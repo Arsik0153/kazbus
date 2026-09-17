@@ -37,14 +37,17 @@ const Context = createContext<{
     state: State;
     act: (action: Action) => Promise<boolean>;
     message: string;
+    currentUserId: number;
 } | null>(null);
 
 export function Store({
     children,
     initialState,
+    currentUserId,
 }: {
     children: ReactNode;
     initialState: State;
+    currentUserId: number;
 }) {
     const [state, setState] = useState(initialState);
     const [message, setMessage] = useState('');
@@ -197,7 +200,7 @@ export function Store({
     }
 
     return (
-        <Context.Provider value={{ state, act, message }}>
+        <Context.Provider value={{ state, act, message, currentUserId }}>
             {children}
         </Context.Provider>
     );

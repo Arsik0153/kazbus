@@ -9,6 +9,7 @@ import {
     updateDriverTripStatusAction,
 } from '@/actions/cargo';
 import type { DriverState, DriverTrip } from '@/lib/cargo-contract';
+import CargoFileList from '@/components/cargo/cargo-file-list';
 
 const statusLabel: Record<DriverTrip['status'], string> = {
     planned: 'Назначен',
@@ -27,49 +28,70 @@ const nextStatus: Partial<
     unloading: 'completed',
 };
 
-export default function DriverWorkspace({ state }: { state: DriverState }) {
+export default function DriverWorkspace({
+    state,
+    currentUserId,
+}: {
+    state: DriverState;
+    currentUserId: number;
+}) {
     const router = useRouter();
     const [busy, setBusy] = useState('');
     const [message, setMessage] = useState('');
 
     async function advance(trip: DriverTrip) {
         const target = nextStatus[trip.status];
-        if (!target || trip.status === 'completed') return;
+        if (busy || !target || trip.status === 'completed') return;
         setBusy(`status-${trip.id}`);
         setMessage('');
-        const response = await updateDriverTripStatusAction({
-            tripId: trip.id,
-            expected: trip.status,
-            target,
-        });
-        setBusy('');
-        if (!response.ok) {
-            setMessage(response.error);
-            return;
+        try {
+            const response = await updateDriverTripStatusAction({
+                tripId: trip.id,
+                expected: trip.status,
+                target,
+            });
+            if (!response.ok) {
+                setMessage(response.error);
+                return;
+            }
+            setMessage('Статус рейса обновлен.');
+            router.refresh();
+        } catch {
+            setMessage(
+                'Не удалось получить ответ сервера. Попробуйте ещё раз.'
+            );
+        } finally {
+            setBusy('');
         }
-        setMessage('Статус рейса обновлен.');
-        router.refresh();
     }
 
     async function incident(event: FormEvent<HTMLFormElement>, tripId: number) {
         event.preventDefault();
+        if (busy) return;
         const formElement = event.currentTarget;
         const form = new FormData(formElement);
         setBusy(`incident-${tripId}`);
         setMessage('');
-        const response = await reportDriverIncidentAction({
-            tripId,
-            text: String(form.get('text') ?? ''),
-            newEta: String(form.get('new_eta') ?? '') || undefined,
-        });
-        setBusy('');
-        if (!response.ok) {
-            setMessage(response.error);
-            return;
+        try {
+            const response = await reportDriverIncidentAction({
+                tripId,
+                text: String(form.get('text') ?? ''),
+                newEta: String(form.get('new_eta') ?? '') || undefined,
+            });
+            if (!response.ok) {
+                setMessage(response.error);
+                return;
+            }
+            formElement.reset();
+            setMessage('Инцидент передан диспетчеру и грузоотправителю.');
+            router.refresh();
+        } catch {
+            setMessage(
+                'Не удалось получить ответ сервера. Попробуйте ещё раз.'
+            );
+        } finally {
+            setBusy('');
         }
-        formElement.reset();
-        setMessage('Инцидент передан диспетчеру и грузоотправителю.');
-        router.refresh();
     }
 
     return (
@@ -103,6 +125,32 @@ export default function DriverWorkspace({ state }: { state: DriverState }) {
                     {message}
                 </p>
             )}
+
+            <div className="mt-6">
+                <CargoFileList
+                    title="Личные документы"
+                    description="Вы и ваш диспетчер видите эти файлы."
+                    endpoint="/api/cargo/driver/documents"
+                    fileScope="driver"
+                    initialFiles={state.documents}
+                    currentUserId={currentUserId}
+                    uploadKinds={[
+                        {
+                            value: 'license',
+                            label: 'Водительское удостоверение',
+                        },
+                        {
+                            value: 'identity',
+                            label: 'Удостоверение личности',
+                        },
+                        {
+                            value: 'medical',
+                            label: 'Медицинская справка',
+                        },
+                        { value: 'other', label: 'Другой документ' },
+                    ]}
+                />
+            </div>
 
             <section className="mt-6 space-y-4">
                 <h2 className="text-xl font-bold">Назначенные рейсы</h2>
@@ -165,6 +213,25 @@ export default function DriverWorkspace({ state }: { state: DriverState }) {
                                     <strong>Комментарий:</strong>{' '}
                                     {trip.order.comment}
                                 </p>
+                            )}
+
+                            {trip.status === 'completed' && (
+                                <div className="mt-4">
+                                    <CargoFileList
+                                        title="Подтверждение доставки"
+                                        description="После завершения рейса добавьте фото или PDF."
+                                        endpoint={`/api/cargo/orders/${trip.order.recordId}/attachments`}
+                                        fileScope="order"
+                                        initialFiles={trip.order.files}
+                                        currentUserId={currentUserId}
+                                        uploadKinds={[
+                                            {
+                                                value: 'delivery_proof',
+                                                label: 'Подтверждение доставки',
+                                            },
+                                        ]}
+                                    />
+                                </div>
                             )}
 
                             {target && (

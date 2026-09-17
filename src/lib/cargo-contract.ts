@@ -64,6 +64,27 @@ const issueSchema = z.object({
     files: z.array(z.object({ id: z.string(), name: z.string() })),
 });
 
+export const cargoAttachmentSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    kind: z.enum([
+        'document',
+        'delivery_proof',
+        'license',
+        'identity',
+        'medical',
+        'other',
+    ]),
+    contentType: z.enum(['application/pdf', 'image/jpeg', 'image/png']),
+    size: z.number().int().nonnegative(),
+    uploadedBy: z.object({
+        id: z.number().int().positive(),
+        name: z.string(),
+    }),
+    createdAt: z.string(),
+    downloadUrl: z.string(),
+});
+
 const orderStatusSchema = z.enum([
     'waiting',
     'offer',
@@ -91,7 +112,7 @@ export const shipperOrderSchema = z.object({
     status: orderStatusSchema,
     stages: z.array(stageSchema),
     updated: z.string(),
-    files: z.array(z.object({ id: z.string(), name: z.string() })),
+    files: z.array(cargoAttachmentSchema),
     issues: z.array(issueSchema),
     offer: offerSchema.optional(),
     extra: offerSchema.optional(),
@@ -105,7 +126,7 @@ export const shipperOrderSchema = z.object({
             paid: z.boolean(),
         })
         .optional(),
-    proof: z.string().optional(),
+    deliveryProof: cargoAttachmentSchema.optional(),
     requestId: z.string().uuid().optional(),
     supplyId: z.string().optional(),
     occurrence: z.string().optional(),
@@ -297,6 +318,7 @@ export const driverTripSchema = z.object({
         quantity: decimal,
         unit: z.string(),
         comment: z.string(),
+        files: z.array(cargoAttachmentSchema),
     }),
     vehicle: z.object({
         id: z.number().int().positive(),
@@ -316,9 +338,11 @@ export const driverStateSchema = z.object({
         company: z.object({ id: z.number(), name: z.string() }),
     }),
     trips: z.array(driverTripSchema),
+    documents: z.array(cargoAttachmentSchema),
 });
 
 export type ShipperState = z.infer<typeof shipperStateSchema>;
 export type AdminCargoState = z.infer<typeof adminStateSchema>;
 export type DriverState = z.infer<typeof driverStateSchema>;
 export type DriverTrip = z.infer<typeof driverTripSchema>;
+export type CargoAttachment = z.infer<typeof cargoAttachmentSchema>;

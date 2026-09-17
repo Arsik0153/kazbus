@@ -12,7 +12,8 @@ export default async function ShipperWorkspaceLayout({
 }: {
     children: React.ReactNode;
 }) {
-    if (!(await getValidCargoSession('shipper'))) {
+    const session = await getValidCargoSession('shipper');
+    if (!session) {
         redirect('/shipper/login');
     }
 
@@ -24,7 +25,7 @@ export default async function ShipperWorkspaceLayout({
     }
 
     return (
-        <Store initialState={state}>
+        <Store initialState={state} currentUserId={session.user.id}>
             <Shell>{children}</Shell>
         </Store>
     );

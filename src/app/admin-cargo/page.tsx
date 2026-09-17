@@ -7,7 +7,8 @@ import AdminCargoDashboard from './dashboard';
 export const dynamic = 'force-dynamic';
 
 export default async function AdminCargoPage() {
-    if (!(await getValidCargoSession('admin_cargo'))) {
+    const session = await getValidCargoSession('admin_cargo');
+    if (!session) {
         redirect('/admin-cargo/login');
     }
 
@@ -18,5 +19,7 @@ export default async function AdminCargoPage() {
         redirect('/admin-cargo/login?error=session');
     }
 
-    return <AdminCargoDashboard state={state} />;
+    return (
+        <AdminCargoDashboard state={state} currentUserId={session.user.id} />
+    );
 }

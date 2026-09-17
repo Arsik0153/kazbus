@@ -18,6 +18,7 @@ import {
     updateCargoCompanyAction,
 } from '@/actions/cargo';
 import type { AdminCargoState } from '@/lib/cargo-contract';
+import CargoFileList from '@/components/cargo/cargo-file-list';
 
 const statusNames: Record<string, string> = {
     waiting: 'Ждет предложения',
@@ -60,13 +61,16 @@ function Panel({ title, children }: { title: string; children: ReactNode }) {
 
 export default function AdminCargoDashboard({
     state,
+    currentUserId,
 }: {
     state: AdminCargoState;
+    currentUserId: number;
 }) {
     const router = useRouter();
     const [busy, setBusy] = useState('');
     const [message, setMessage] = useState('');
     const [invite, setInvite] = useState('');
+    const [documentsDriver, setDocumentsDriver] = useState<number | null>(null);
 
     async function run(
         key: string,
@@ -75,15 +79,23 @@ export default function AdminCargoDashboard({
         if (busy) return false;
         setBusy(key);
         setMessage('');
-        const response = await operation();
-        setBusy('');
-        if (!response.ok) {
-            setMessage(response.error ?? 'Не удалось выполнить действие');
+        try {
+            const response = await operation();
+            if (!response.ok) {
+                setMessage(response.error ?? 'Не удалось выполнить действие');
+                return false;
+            }
+            setMessage('Изменения сохранены.');
+            router.refresh();
+            return true;
+        } catch {
+            setMessage(
+                'Не удалось получить ответ сервера. Попробуйте ещё раз.'
+            );
             return false;
+        } finally {
+            setBusy('');
         }
-        setMessage('Изменения сохранены.');
-        router.refresh();
-        return true;
     }
 
     async function addDriver(event: FormEvent<HTMLFormElement>) {
@@ -383,6 +395,33 @@ export default function AdminCargoDashboard({
                                     {order.quantity} {order.unit}
                                 </p>
 
+                                <CargoFileList
+                                    title="Документы заказа"
+                                    endpoint={`/api/cargo/orders/${order.recordId}/attachments`}
+                                    fileScope="order"
+                                    initialFiles={order.files}
+                                    currentUserId={currentUserId}
+                                    uploadKinds={
+                                        order.status === 'delivered'
+                                            ? [
+                                                  {
+                                                      value: 'document',
+                                                      label: 'Документ',
+                                                  },
+                                                  {
+                                                      value: 'delivery_proof',
+                                                      label: 'Подтверждение доставки',
+                                                  },
+                                              ]
+                                            : [
+                                                  {
+                                                      value: 'document',
+                                                      label: 'Документ',
+                                                  },
+                                              ]
+                                    }
+                                />
+
                                 {['waiting', 'offer'].includes(
                                     order.status
                                 ) && (
@@ -662,6 +701,54 @@ export default function AdminCargoDashboard({
                                     Создать приглашение
                                 </button>
                             )}
+                            {driver.account_status === 'active' &&
+                                driver.status === 'active' && (
+                                    <>
+                                        <button
+                                            className="sp-link"
+                                            type="button"
+                                            onClick={() =>
+                                                setDocumentsDriver((current) =>
+                                                    current === driver.id
+                                                        ? null
+                                                        : driver.id
+                                                )
+                                            }
+                                        >
+                                            {documentsDriver === driver.id
+                                                ? 'Скрыть документы'
+                                                : 'Документы водителя'}
+                                        </button>
+                                        {documentsDriver === driver.id && (
+                                            <CargoFileList
+                                                title="Личные документы"
+                                                endpoint={`/api/cargo/admin/drivers/${driver.id}/documents`}
+                                                fileScope="driver"
+                                                initialFiles={[]}
+                                                currentUserId={currentUserId}
+                                                loadOnMount
+                                                uploadKinds={[
+                                                    {
+                                                        value: 'license',
+                                                        label: 'Водительское удостоверение',
+                                                    },
+                                                    {
+                                                        value: 'identity',
+                                                        label: 'Удостоверение личности',
+                                                    },
+                                                    {
+                                                        value: 'medical',
+                                                        label: 'Медицинская справка',
+                                                    },
+                                                    {
+                                                        value: 'other',
+                                                        label: 'Другой документ',
+                                                    },
+                                                ]}
+                                            />
+                                        )}
+                                    </>
+                                )}
                         </div>
                     ))}
                     {invite && (
