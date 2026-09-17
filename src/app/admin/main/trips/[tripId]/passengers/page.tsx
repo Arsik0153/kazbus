@@ -5,9 +5,9 @@ import AdminSectionCard from '@/components/admin/section-card';
 import { Button } from '@/components/ui/button';
 
 type Props = {
-    params: {
+    params: Promise<{
         tripId: string;
-    };
+    }>;
 };
 
 const manifestBlocks = [
@@ -31,14 +31,16 @@ const manifestBlocks = [
     },
 ];
 
-export default function AdminTripPassengersPage({ params }: Props) {
+export default async function AdminTripPassengersPage({ params }: Props) {
+    const { tripId } = await params;
+
     return (
         <div className="mt-6 flex flex-col gap-5">
             <div className="rounded-[20px] bg-white px-8 py-10">
                 <div className="flex items-start justify-between gap-6">
                     <div className="max-w-3xl">
                         <h1 className="text-[42px] font-semibold text-[#4A4A4A]">
-                            Пассажиры рейса #{params.tripId}
+                            Пассажиры рейса #{tripId}
                         </h1>
                         <p className="mt-3 text-base font-medium text-[#A0A0A0]">
                             Экран подготовлен под список пассажиров, статусы

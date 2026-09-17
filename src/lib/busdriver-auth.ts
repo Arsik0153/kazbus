@@ -49,7 +49,7 @@ export async function getBusDriverSessionFromRequest(request: NextRequest) {
 
 export async function getBusDriverSession() {
     return decryptBusDriverSession(
-        cookies().get(BUSDRIVER_SESSION_COOKIE)?.value
+        (await cookies()).get(BUSDRIVER_SESSION_COOKIE)?.value
     );
 }
 
@@ -60,7 +60,7 @@ export async function createBusDriverSession(session: BusDriverSession) {
         .setIssuedAt()
         .setExpirationTime(`${SESSION_SECONDS}s`)
         .sign(key());
-    cookies().set(BUSDRIVER_SESSION_COOKIE, value, {
+    (await cookies()).set(BUSDRIVER_SESSION_COOKIE, value, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
@@ -69,8 +69,8 @@ export async function createBusDriverSession(session: BusDriverSession) {
     });
 }
 
-export function clearBusDriverSession() {
-    cookies().set(BUSDRIVER_SESSION_COOKIE, '', {
+export async function clearBusDriverSession() {
+    (await cookies()).set(BUSDRIVER_SESSION_COOKIE, '', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',

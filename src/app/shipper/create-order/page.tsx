@@ -1,13 +1,15 @@
 import CreateOrder from '../_prototype/create-order';
-export default function Page({
+export default async function Page({
     searchParams,
 }: {
-    searchParams: { batch?: string };
+    searchParams: Promise<{ batch?: string }>;
 }) {
+    const { batch } = await searchParams;
+
     return (
         <CreateOrder
-            key={searchParams.batch || 'new'}
-            batchId={searchParams.batch}
+            key={batch || 'new'}
+            batchId={batch}
         />
     );
 }

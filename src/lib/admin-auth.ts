@@ -77,7 +77,9 @@ export async function decryptAdminSession(
 }
 
 export async function getAdminSession() {
-    return decryptAdminSession(cookies().get(ADMIN_SESSION_COOKIE)?.value);
+    return decryptAdminSession(
+        (await cookies()).get(ADMIN_SESSION_COOKIE)?.value
+    );
 }
 
 export async function getAdminSessionFromRequest(request: NextRequest) {
@@ -174,7 +176,7 @@ export async function loginAdmin(credentials: AdminCredentials) {
         Date.now() + ADMIN_SESSION_DURATION_SECONDS * 1000
     );
 
-    cookies().set(
+    (await cookies()).set(
         ADMIN_SESSION_COOKIE,
         await createAdminSessionToken(session),
         {
@@ -193,7 +195,7 @@ export async function logoutAdmin() {
     // TODO: Switch to a dedicated backend logout endpoint when the contract is available.
     // We intentionally do not call delete-user here because logout must not remove accounts.
 
-    cookies().set(ADMIN_SESSION_COOKIE, '', {
+    (await cookies()).set(ADMIN_SESSION_COOKIE, '', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',

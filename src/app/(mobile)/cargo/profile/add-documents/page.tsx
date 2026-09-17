@@ -46,13 +46,14 @@ const buildDocumentCards = (
     });
 };
 
-const AddCargoDocumentsPage = ({
+const AddCargoDocumentsPage = async ({
     searchParams,
 }: {
-    searchParams?: SearchParams;
+    searchParams?: Promise<SearchParams>;
 }) => {
-    const selectedDocumentId = getSingleParam(searchParams?.document);
-    const requestedMode = getSingleParam(searchParams?.mode) as
+    const query = (await searchParams) ?? {};
+    const selectedDocumentId = getSingleParam(query.document);
+    const requestedMode = getSingleParam(query.mode) as
         | DocumentFormMode
         | undefined;
 

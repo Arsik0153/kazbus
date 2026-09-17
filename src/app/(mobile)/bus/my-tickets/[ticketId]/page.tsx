@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
 import Button from '@/components/button';
 import Download from '@/assets/download';
 import Topbar from '@/components/topbar';
@@ -19,12 +19,13 @@ import toast from 'react-hot-toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
-const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
+const MyTicketPage = ({ params }: { params: Promise<{ ticketId: string }> }) => {
+    const { ticketId } = use(params);
     const queryClient = useQueryClient();
     const router = useRouter();
     const { data, isLoading } = useServerActionQuery(getTicketByIdAction, {
-        input: { ticket_id: Number(params.ticketId) },
-        queryKey: ['ticket', params.ticketId],
+        input: { ticket_id: Number(ticketId) },
+        queryKey: ['ticket', ticketId],
     });
     const [paymentWidgetOpen, setPaymentWidgetOpen] = useState(false);
     const [refundConfirmationOpen, setRefundConfirmationOpen] = useState(false);
@@ -77,7 +78,7 @@ const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
         });
 
     if (isLoading || !data) {
-        return <MyTicketPageSkeleton ticketId={params.ticketId} />;
+        return <MyTicketPageSkeleton ticketId={ticketId} />;
     }
 
     if (paymentWidgetOpen) {
@@ -92,7 +93,7 @@ const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
 
     return (
         <>
-            <Topbar backHref="/bus/my-tickets">Билет №{params.ticketId}</Topbar>
+            <Topbar backHref="/bus/my-tickets">Билет №{ticketId}</Topbar>
             <div className="fade-in p-5">
                 <Ticket ticket={data} />
                 <div className="mb-2 flex flex-row justify-between gap-3 rounded-lg border border-[#D1D1D1] bg-none p-5">
