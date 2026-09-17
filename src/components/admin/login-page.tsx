@@ -15,7 +15,11 @@ import { adminLoginSchema } from '@/data/schemas';
 
 import { loginAction } from '@/app/admin/action';
 
-const AdminLoginPage = () => {
+type AdminLoginPageProps = {
+    sessionIssue?: 'expired' | 'forbidden';
+};
+
+const AdminLoginPage = ({ sessionIssue }: AdminLoginPageProps) => {
     const [ready, setReady] = React.useState(false);
     React.useEffect(() => setReady(true), []);
     const { execute, isPending } = useServerAction(loginAction, {
@@ -63,6 +67,16 @@ const AdminLoginPage = () => {
                     <h2 className="text-center text-4xl font-bold text-[#E32B2B]">
                         Авторизация автопарка
                     </h2>
+                    {sessionIssue && (
+                        <p
+                            role="alert"
+                            className="rounded-lg bg-[#FEE2E2] px-4 py-3 text-center text-sm font-medium text-[#B42318]"
+                        >
+                            {sessionIssue === 'expired'
+                                ? 'Сессия истекла. Войдите снова.'
+                                : 'Доступ администратора отозван. Войдите под другой учётной записью.'}
+                        </p>
+                    )}
                     <form
                         method="post"
                         onSubmit={onSubmit}
