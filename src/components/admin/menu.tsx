@@ -154,9 +154,20 @@ const Menu = () => {
                             <Link href="/admin/main/support" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
                                 <div className='flex items-center gap-3'>
                                     <Support color="#fff" width={20} height={20} />
-                                    <span>Служба поддержки</span>
+                                    <span>Обращения водителей</span>
                                 </div>
                                 {isActivePath(pathname, '/admin/main/support') && (
+                                    <ArrowRight color="#fff" width={12} height={12} />
+                                )}
+                            </Link>
+                        </li>
+                        <li className={`${getBackgroundColor(pathname, '/admin/main/passenger-support')} rounded-lg`}>
+                            <Link href="/admin/main/passenger-support" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
+                                <div className='flex items-center gap-3'>
+                                    <Support color="#fff" width={20} height={20} />
+                                    <span>Обращения пассажиров</span>
+                                </div>
+                                {isActivePath(pathname, '/admin/main/passenger-support') && (
                                     <ArrowRight color="#fff" width={12} height={12} />
                                 )}
                             </Link>
