@@ -11,7 +11,6 @@ import {
 import { useServerActionQuery } from '@/lib/server-action-hooks';
 import Ticket from './ticket';
 import Spinner from '@/components/spinner';
-import Menu from '@/components/menu';
 import Skeleton from '@/components/skeleton';
 import Payment from '../../main/tickets/_components/payment';
 import { useServerAction } from 'zsa-react';
@@ -108,7 +107,7 @@ const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
                         key={passenger.passenger}
                         className="mb-2 flex flex-col justify-between gap-2 rounded-lg border border-[#D1D1D1] bg-none p-5"
                     >
-                        <p className="text-xs font-bold uppercase text-[#A0A0A0]">
+                        <p className="text-xs font-bold text-[#A0A0A0] uppercase">
                             Пассажир
                         </p>
                         <p className="text-base font-medium text-[#4A4A4A]">
@@ -133,8 +132,8 @@ const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
                         Оплатить банковской картой
                     </Button>
                 )}
-                <div className="mt-8 w-full rounded-[10px] bg-[#F9F9F9] px-4 pb-1 pt-6">
-                    <div className="pb-[20px] text-[20px] font-bold leading-[22px]">
+                <div className="mt-8 w-full rounded-[10px] bg-[#F9F9F9] px-4 pt-6 pb-1">
+                    <div className="pb-[20px] text-[20px] leading-[22px] font-bold">
                         Действия
                     </div>
                     <div className="flex flex-col">
@@ -150,7 +149,7 @@ const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
                                     }
                                     className="flex flex-row items-center justify-between py-4 text-left disabled:opacity-50"
                                 >
-                                    <span className="flex items-center gap-3 text-[16px] font-normal leading-[17.6px]">
+                                    <span className="flex items-center gap-3 text-[16px] leading-[17.6px] font-normal">
                                         Скачать билет
                                     </span>
                                     {isTicketDownloading && (
@@ -207,7 +206,6 @@ const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
                                 <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
                             </>
                         )}
-                        <Menu link="#" text="Изменить данные пассажира" />
                     </div>
                 </div>
             </div>
@@ -220,13 +218,13 @@ const MyTicketPageSkeleton = ({ ticketId }: { ticketId: string }) => {
         <>
             <Topbar backHref="/bus/my-tickets">Билет №{ticketId}</Topbar>
             <div className="p-5">
-                <Skeleton className="mb-2 mt-2 h-[174px] w-full rounded-lg" />{' '}
+                <Skeleton className="mt-2 mb-2 h-[174px] w-full rounded-lg" />{' '}
                 {/* Ticket component placeholder */}
                 <Skeleton className="mb-2 h-[60px] w-full rounded-lg" />{' '}
                 {/* Bus number placeholder */}
                 <Skeleton className="mb-2 h-[120px] w-full rounded-lg" />
-                <div className="mt-8 w-full rounded-[10px] bg-[#F9F9F9] px-4 pb-1 pt-6">
-                    <div className="pb-[20px] text-[20px] font-bold leading-[22px]">
+                <div className="mt-8 w-full rounded-[10px] bg-[#F9F9F9] px-4 pt-6 pb-1">
+                    <div className="pb-[20px] text-[20px] leading-[22px] font-bold">
                         Действия
                     </div>
                     <div className="flex flex-col">
