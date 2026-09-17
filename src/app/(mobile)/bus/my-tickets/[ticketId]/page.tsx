@@ -17,6 +17,7 @@ import { useServerAction } from 'zsa-react';
 import toast from 'react-hot-toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const MyTicketPage = ({ params }: { params: Promise<{ ticketId: string }> }) => {
     const { ticketId } = use(params);
@@ -207,6 +208,12 @@ const MyTicketPage = ({ params }: { params: Promise<{ ticketId: string }> }) => 
                                 <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
                             </>
                         )}
+                        <Link
+                            href={`/bus/support/new?ticketId=${data.id}`}
+                            className="flex w-full flex-row items-center justify-between py-4 text-left"
+                        >
+                            Задать вопрос по билету
+                        </Link>
                     </div>
                 </div>
             </div>
