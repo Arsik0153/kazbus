@@ -141,6 +141,7 @@ export function Store({
                     mode: action.supply.mode,
                     weekdays: action.supply.weekdays,
                     monthDay: action.supply.monthDay,
+                    automatic: action.supply.automatic,
                 };
                 response = action.creating
                     ? await shipperCommandAction({

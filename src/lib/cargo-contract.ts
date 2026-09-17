@@ -145,7 +145,7 @@ export const supplySchema = z.object({
     mode: z.enum(['manual', 'weekly', 'monthly']),
     weekdays: z.array(z.number().int().min(0).max(6)),
     monthDay: z.number().int().min(1).max(31),
-    automatic: z.literal(false),
+    automatic: z.boolean(),
     paused: z.boolean(),
     skipped: z.array(z.string()),
     price: decimal,
@@ -165,6 +165,9 @@ export const stockBatchSchema = z.object({
 
 export const shipperStateSchema = z.object({
     version: z.literal(1),
+    capabilities: z
+        .object({ supplyAutomaticEnabled: z.boolean() })
+        .default({ supplyAutomaticEnabled: false }),
     profile: z.object({
         name: z.string(),
         company: z.string(),

@@ -179,6 +179,7 @@ const shipperCommandSchema = z.discriminatedUnion('type', [
         mode: z.enum(['manual', 'weekly', 'monthly']),
         weekdays: z.array(z.number().int().min(0).max(6)),
         monthDay: z.number().int().min(1).max(31),
+        automatic: z.boolean().default(false),
     }),
     z.object({
         type: z.literal('update-supply'),
@@ -193,6 +194,7 @@ const shipperCommandSchema = z.discriminatedUnion('type', [
         mode: z.enum(['manual', 'weekly', 'monthly']),
         weekdays: z.array(z.number().int().min(0).max(6)),
         monthDay: z.number().int().min(1).max(31),
+        automatic: z.boolean().default(false),
     }),
     z.object({
         type: z.literal('pause-supply'),
@@ -292,7 +294,7 @@ export async function shipperCommandAction(input: ShipperCommand) {
                     weekdays: command.mode === 'weekly' ? command.weekdays : [],
                     month_day:
                         command.mode === 'monthly' ? command.monthDay : 1,
-                    automatic: false,
+                    automatic: command.automatic,
                 };
                 break;
             case 'pause-supply':

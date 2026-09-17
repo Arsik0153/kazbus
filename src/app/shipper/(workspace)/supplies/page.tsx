@@ -163,6 +163,13 @@ export default function SuppliesPage() {
                                             .join(', ')
                                       : `${supply.monthDay}-го числа`}
                             </span>
+                            {supply.automatic && (
+                                <span>
+                                    {state.capabilities.supplyAutomaticEnabled
+                                        ? 'Автозапуск'
+                                        : 'Автозапуск отключён'}
+                                </span>
+                            )}
                             {supply.paused && <span>Приостановлена</span>}
                         </div>
 
