@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, type FormEvent } from 'react';
+import Link from 'next/link';
 import Topbar from '@/components/topbar';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
 import {
@@ -220,56 +221,72 @@ export default function PassengerDataPage() {
                     passengers.map((passenger) => (
                         <section key={passenger.user_id} className="space-y-2">
                             <PassengerCard user={passenger} />
-                            <button
-                                disabled={busy}
-                                onClick={() => {
-                                    setEditingId(passenger.user_id);
-                                    setShowForm(true);
-                                    window.scrollTo({
-                                        top: 0,
-                                        behavior: 'smooth',
-                                    });
-                                }}
-                                className="mr-4 text-sm text-[#E23333] underline"
-                            >
-                                Изменить данные
-                            </button>
-                            {confirmation === passenger.user_id ? (
-                                <div className="rounded-lg border p-3">
-                                    <p>
-                                        Удалить пассажира «{passenger.full_name}
-                                        »?
-                                    </p>
-                                    <div className="mt-3 flex gap-5">
-                                        <button
-                                            disabled={busy}
-                                            onClick={() =>
-                                                remove(passenger.user_id)
-                                            }
-                                            className="text-[#E23333] underline"
-                                        >
-                                            Да, удалить
-                                        </button>
-                                        <button
-                                            disabled={busy}
-                                            onClick={() =>
-                                                setConfirmation(null)
-                                            }
-                                        >
-                                            Отмена
-                                        </button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <button
-                                    disabled={busy}
-                                    onClick={() =>
-                                        setConfirmation(passenger.user_id)
-                                    }
+                            {passenger.is_profile_passenger ? (
+                                <Link
+                                    href="/bus/profile/authorized/personal-data"
                                     className="text-sm text-[#E23333] underline"
                                 >
-                                    Удалить пассажира
-                                </button>
+                                    Изменить мои личные данные
+                                </Link>
+                            ) : (
+                                <>
+                                    <button
+                                        disabled={busy}
+                                        onClick={() => {
+                                            setEditingId(passenger.user_id);
+                                            setShowForm(true);
+                                            window.scrollTo({
+                                                top: 0,
+                                                behavior: 'smooth',
+                                            });
+                                        }}
+                                        className="mr-4 text-sm text-[#E23333] underline"
+                                    >
+                                        Изменить данные
+                                    </button>
+                                    {confirmation === passenger.user_id ? (
+                                        <div className="rounded-lg border p-3">
+                                            <p>
+                                                Удалить пассажира «
+                                                {passenger.full_name}
+                                                »?
+                                            </p>
+                                            <div className="mt-3 flex gap-5">
+                                                <button
+                                                    disabled={busy}
+                                                    onClick={() =>
+                                                        remove(
+                                                            passenger.user_id
+                                                        )
+                                                    }
+                                                    className="text-[#E23333] underline"
+                                                >
+                                                    Да, удалить
+                                                </button>
+                                                <button
+                                                    disabled={busy}
+                                                    onClick={() =>
+                                                        setConfirmation(null)
+                                                    }
+                                                >
+                                                    Отмена
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <button
+                                            disabled={busy}
+                                            onClick={() =>
+                                                setConfirmation(
+                                                    passenger.user_id
+                                                )
+                                            }
+                                            className="text-sm text-[#E23333] underline"
+                                        >
+                                            Удалить пассажира
+                                        </button>
+                                    )}
+                                </>
                             )}
                         </section>
                     ))

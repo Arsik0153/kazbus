@@ -78,6 +78,7 @@ export const getMyPassengersAction = createServerAction().handler(async () => {
         document_type: string;
         document_number_or_iin: string;
         birth_date: string;
+        is_profile_passenger?: boolean;
     }[];
 
     const passengers: User[] = result.map((passenger) => ({
