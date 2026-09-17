@@ -12,7 +12,7 @@ const getTimestamp = (date: string | null, time: string | null) => {
         return null;
     }
 
-    const timestamp = new Date(`${date}T${time}`).getTime();
+    const timestamp = new Date(`${date}T${time}+05:00`).getTime();
     return Number.isNaN(timestamp) ? null : timestamp;
 };
 

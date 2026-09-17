@@ -10,7 +10,7 @@ import { partitionTickets } from '@/utils/ticket-list';
 import { getMyTicketsAction } from '../actions';
 
 const TicketHistoryPage = () => {
-    const { data, isPending } = useServerActionQuery(getMyTicketsAction, {
+    const { data, isPending, isError, refetch } = useServerActionQuery(getMyTicketsAction, {
         input: undefined,
         queryKey: ['my-tickets'],
         refetchOnMount: true,
@@ -30,6 +30,12 @@ const TicketHistoryPage = () => {
                                 className="h-[157px] w-full rounded-lg"
                             />
                         ))}
+                    </div>
+                ) : isError ? (
+                    <div role="alert" className="py-12 text-center">
+                        <p>Не удалось загрузить историю поездок.</p>
+                        <button className="mt-4 rounded-lg bg-[#E23333] px-5 py-3 text-white" onClick={() => refetch()}>Повторить</button>
+                        <Link className="mt-4 block underline" href="/bus/profile/login">Войти в аккаунт</Link>
                     </div>
                 ) : history.length > 0 ? (
                     <div className="fade-in flex flex-col">

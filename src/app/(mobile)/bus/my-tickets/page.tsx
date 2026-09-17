@@ -10,7 +10,7 @@ import Skeleton from '@/components/skeleton';
 import { partitionTickets } from '@/utils/ticket-list';
 
 const MyTicketsPage = () => {
-    const { data, isPending } = useServerActionQuery(getMyTicketsAction, {
+    const { data, isPending, isError, refetch } = useServerActionQuery(getMyTicketsAction, {
         input: undefined,
         queryKey: ['my-tickets'],
         refetchOnMount: true,
@@ -23,6 +23,15 @@ const MyTicketsPage = () => {
 
     if (isPending) {
         return <MyTicketsPageSkeleton />;
+    }
+
+    if (isError) {
+        return <div className="min-h-screen bg-[var(--gray)] px-5 pt-24">
+            <h1 className="text-3xl font-semibold">Мои билеты</h1>
+            <p role="alert" className="my-5">Не удалось загрузить билеты. Проверьте соединение или войдите в аккаунт.</p>
+            <Button onClick={() => refetch()}>Повторить</Button>
+            <Link className="mt-4 block text-center underline" href="/bus/profile/login">Войти</Link>
+        </div>;
     }
 
     if (!isPending && data?.length === 0) {
