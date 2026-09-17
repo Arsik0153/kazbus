@@ -212,6 +212,7 @@ export const driverSchema = z
     });
 
 export const busSeatSchema = z.object({
+    seat_floor: z.number().int().min(1).max(2),
     seat_id: z.number().int().nonnegative(),
     seat_col: z.number().int().nonnegative(),
     seat_row: z.number().int().nonnegative(),

@@ -6,14 +6,14 @@ import { useSearchParams } from 'next/navigation';
 import { dayjsExt } from '@/lib/dayjs';
 import { getStringByNumber } from '@/utils/helper.';
 import Button from '@/components/button';
-import { Ticket } from '@/data/types';
+import { SeatSelection, Ticket } from '@/data/types';
 
 type Props = {
     setStep: (step: Steps) => void;
     ticket: Ticket | null;
     serviceDate: string;
-    seats: number[];
-    setSeats: (seats: number[]) => void;
+    seats: SeatSelection[];
+    setSeats: (seats: SeatSelection[]) => void;
 };
 
 const SelectPlace = (props: Props) => {
@@ -27,7 +27,7 @@ const SelectPlace = (props: Props) => {
     const from = ticket?.from_point.name;
     const to = ticket?.to_point.name;
 
-    const handleSeatsSelect = (seats: number[]) => {
+    const handleSeatsSelect = (seats: SeatSelection[]) => {
         setSeats(seats);
     };
 
@@ -59,7 +59,7 @@ const SelectPlace = (props: Props) => {
                 />
 
                 {seats.length === passengerCountParam && (
-                    <div className="fixed bottom-32 left-0 right-0 px-4">
+                    <div className="fixed right-0 bottom-32 left-0 px-4">
                         <Button
                             onClick={() => setStep(Steps.Passengers)}
                             variant="secondary"

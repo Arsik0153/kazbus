@@ -6,18 +6,18 @@ import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { getBusSeatsAction } from '../actions';
 import Spinner from '@/components/spinner';
-import { BusSeat, BusSeats } from '@/data/types';
+import { BusSeat, SeatSelection } from '@/data/types';
 import Skeleton from '@/components/skeleton';
 
 type Props = {
-    onSeatsSelect: (seats: number[]) => void;
+    onSeatsSelect: (seats: SeatSelection[]) => void;
     trip_id: number;
     serviceDate: string;
 };
 
 const BusLayout = (props: Props) => {
     const { onSeatsSelect, serviceDate, trip_id } = props;
-    const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
+    const [selectedSeats, setSelectedSeats] = useState<SeatSelection[]>([]);
     const searchParams = useSearchParams();
     const {
         data: seats,
@@ -33,21 +33,30 @@ const BusLayout = (props: Props) => {
     const passengerCountParam =
         Number(searchParams.get('passenger_count')) || 0;
 
-    const isSeatTaken = (seatId: number) => {
-        const seat = seats?.seats.find((s) => s.seat_id === seatId);
-        return seat?.status === 'booked' || seat?.status === 'paid';
+    const sameSeat = (left: SeatSelection, right: SeatSelection) =>
+        left.seat_id === right.seat_id && left.seat_floor === right.seat_floor;
+
+    const isSeatTaken = (seat: BusSeat) => {
+        return seat.status === 'booked' || seat.status === 'paid';
     };
 
-    const handleSeatClick = (seatId: number) => {
-        if (isSeatTaken(seatId)) {
+    const handleSeatClick = (seat: BusSeat) => {
+        if (isSeatTaken(seat)) {
             return;
         }
 
+        const selection = {
+            seat_id: seat.seat_id,
+            seat_floor: seat.seat_floor,
+        };
+
         let result;
-        if (selectedSeats.includes(seatId)) {
-            result = selectedSeats.filter((seat) => seat !== seatId);
+        if (selectedSeats.some((selected) => sameSeat(selected, selection))) {
+            result = selectedSeats.filter(
+                (selected) => !sameSeat(selected, selection)
+            );
         } else if (selectedSeats.length < passengerCountParam) {
-            result = [...selectedSeats, seatId];
+            result = [...selectedSeats, selection];
         } else {
             toast.error('Вы уже выбрали желаемое количество мест');
             result = selectedSeats;
@@ -56,8 +65,8 @@ const BusLayout = (props: Props) => {
         setSelectedSeats(result);
     };
 
-    const isSeatSelected = (seatId: number) => {
-        return selectedSeats.includes(seatId);
+    const isSeatSelected = (seat: BusSeat) => {
+        return selectedSeats.some((selected) => sameSeat(selected, seat));
     };
 
     useEffect(() => {
@@ -77,8 +86,8 @@ const BusLayout = (props: Props) => {
         );
     }
 
-    const rows = Array.from(
-        new Set(seats.seats.map((seat) => seat.seat_row))
+    const floors = Array.from(
+        new Set(seats.seats.map((seat) => seat.seat_floor))
     ).sort((a, b) => a - b);
 
     const renderSeat = (seat: BusSeat) => {
@@ -102,14 +111,12 @@ const BusLayout = (props: Props) => {
         return (
             <button
                 type="button"
-                onClick={() => handleSeatClick(seat.seat_id)}
+                onClick={() => handleSeatClick(seat)}
                 className={cn(
                     'flex h-12 w-12 shrink-0 items-center justify-center rounded-[10px] border border-[#E74949] p-3 text-[20px] font-bold text-[#E74949]',
                     {
-                        'bg-[#E74949] text-white': isSeatSelected(seat.seat_id),
-                        'border-[#A0A0A0] text-[#A0A0A0]': isSeatTaken(
-                            seat.seat_id
-                        ),
+                        'bg-[#E74949] text-white': isSeatSelected(seat),
+                        'border-[#A0A0A0] text-[#A0A0A0]': isSeatTaken(seat),
                     }
                 )}
             >
@@ -118,14 +125,20 @@ const BusLayout = (props: Props) => {
         );
     };
 
-    const renderRow = (rowNum: number) => {
+    const renderRow = (floor: number, rowNum: number) => {
         return (
             <div key={rowNum} className="flex flex-row flex-nowrap gap-3">
                 {seats.seats
-                    .filter((seat) => seat.seat_row === rowNum)
+                    .filter(
+                        (seat) =>
+                            seat.seat_floor === floor &&
+                            seat.seat_row === rowNum
+                    )
                     .sort((a, b) => a.seat_col - b.seat_col)
                     .map((seat) => (
-                        <React.Fragment key={seat.seat_id}>
+                        <React.Fragment
+                            key={`${seat.seat_floor}-${seat.seat_id}`}
+                        >
                             {renderSeat(seat)}
                         </React.Fragment>
                     ))}
@@ -134,17 +147,32 @@ const BusLayout = (props: Props) => {
     };
 
     return (
-        <>
-            <p className="text-2xl font-medium text-[#4A4A4A]">1 этаж</p>
+        <div className="flex flex-col gap-6">
+            {floors.map((floor) => {
+                const rows = Array.from(
+                    new Set(
+                        seats.seats
+                            .filter((seat) => seat.seat_floor === floor)
+                            .map((seat) => seat.seat_row)
+                    )
+                ).sort((a, b) => a - b);
 
-            <div className="fade-in w-[calc(100vw-32px)] overflow-x-auto">
-                <div className="w-fit">
-                    <div className="mt-3 flex w-full flex-col gap-3 rounded-[10px] border border-[#A0A0A0] p-4">
-                        {rows.map(renderRow)}
+                return (
+                    <div key={floor}>
+                        <p className="text-2xl font-medium text-[#4A4A4A]">
+                            {floor} этаж
+                        </p>
+                        <div className="fade-in w-[calc(100vw-32px)] overflow-x-auto">
+                            <div className="w-fit">
+                                <div className="mt-3 flex w-full flex-col gap-3 rounded-[10px] border border-[#A0A0A0] p-4">
+                                    {rows.map((row) => renderRow(floor, row))}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </>
+                );
+            })}
+        </div>
     );
 };
 
