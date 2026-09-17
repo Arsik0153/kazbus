@@ -106,6 +106,40 @@ export const shipperOrderSchema = z.object({
         })
         .optional(),
     proof: z.string().optional(),
+    requestId: z.string().uuid().optional(),
+    supplyId: z.string().optional(),
+    occurrence: z.string().optional(),
+    batchId: z.string().optional(),
+});
+
+export const supplySchema = z.object({
+    id: z.string(),
+    title: z.string(),
+    companyId: z.string(),
+    from: z.string(),
+    to: z.string(),
+    cargo: z.string(),
+    quantity: decimal,
+    unit: z.enum(['шт.', 'коробок', 'паллет', 'кг', 'т']),
+    mode: z.enum(['manual', 'weekly', 'monthly']),
+    weekdays: z.array(z.number().int().min(0).max(6)),
+    monthDay: z.number().int().min(1).max(31),
+    automatic: z.literal(false),
+    paused: z.boolean(),
+    skipped: z.array(z.string()),
+    price: decimal,
+    approved: z.boolean(),
+});
+
+export const stockBatchSchema = z.object({
+    id: z.string(),
+    companyId: z.string(),
+    warehouse: z.string(),
+    cargo: z.string(),
+    unit: z.enum(['шт.', 'коробок', 'паллет', 'кг', 'т']),
+    onHand: decimal,
+    baseReserved: decimal,
+    source: z.string(),
 });
 
 export const shipperStateSchema = z.object({
@@ -129,8 +163,8 @@ export const shipperStateSchema = z.object({
         })
     ),
     orders: z.array(shipperOrderSchema),
-    supplies: z.array(z.never()),
-    batches: z.array(z.never()),
+    supplies: z.array(supplySchema),
+    batches: z.array(stockBatchSchema),
 });
 
 const adminOrderSchema = shipperOrderSchema
@@ -165,6 +199,25 @@ export const cargoVehicleSchema = z.object({
     status: z.enum(['active', 'inactive']),
     created_at: z.string(),
     updated_at: z.string(),
+});
+
+export const warehouseSchema = z.object({
+    id: z.number().int().positive(),
+    name: z.string(),
+    address: z.string(),
+});
+
+export const adminStockSchema = z.object({
+    id: z.number().int().positive(),
+    shipper_id: z.number().int().positive(),
+    warehouse_id: z.number().int().positive(),
+    warehouse: z.string(),
+    warehouse_address: z.string(),
+    cargo_description: z.string(),
+    sku: z.string(),
+    unit: z.enum(['шт.', 'коробок', 'паллет', 'кг', 'т']),
+    on_hand: decimal,
+    source: z.string(),
 });
 
 export const adminCompanySchema = z.object({
@@ -218,6 +271,8 @@ export const adminStateSchema = z.object({
             updated: z.string(),
         })
     ),
+    warehouses: z.array(warehouseSchema),
+    stock: z.array(adminStockSchema),
 });
 
 export const driverTripSchema = z.object({

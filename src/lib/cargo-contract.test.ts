@@ -53,13 +53,45 @@ test('shipper state converts API decimal strings at the boundary', () => {
                 },
             },
         ],
-        supplies: [],
-        batches: [],
+        supplies: [
+            {
+                id: '4',
+                title: 'Еженедельная посуда',
+                companyId: '2',
+                from: 'Алматы',
+                to: 'Шымкент',
+                cargo: 'Посуда',
+                quantity: '20.000',
+                unit: 'коробок',
+                mode: 'weekly',
+                weekdays: [1, 4],
+                monthDay: 1,
+                automatic: false,
+                paused: false,
+                skipped: [],
+                price: '0.00',
+                approved: false,
+            },
+        ],
+        batches: [
+            {
+                id: '8',
+                companyId: '2',
+                warehouse: 'Склад Алматы',
+                cargo: 'Посуда',
+                unit: 'коробок',
+                onHand: '100.000',
+                baseReserved: '0.000',
+                source: 'Приемка',
+            },
+        ],
     });
 
     assert.equal(state.orders[0].quantity, 20);
     assert.equal(state.orders[0].weight, 125.5);
     assert.equal(state.orders[0].offer?.amount, 64000);
+    assert.equal(state.supplies[0].quantity, 20);
+    assert.equal(state.batches[0].onHand, 100);
 });
 
 test('cargo projections reject malformed decimal values', () => {
@@ -112,6 +144,21 @@ test('admin and driver projections keep numeric record ids and convert capacity'
             },
         ],
         trips: [],
+        warehouses: [{ id: 3, name: 'Склад Алматы', address: 'Складская 1' }],
+        stock: [
+            {
+                id: 8,
+                shipper_id: 9,
+                warehouse_id: 3,
+                warehouse: 'Склад Алматы',
+                warehouse_address: 'Складская 1',
+                cargo_description: 'Посуда',
+                sku: 'P-10',
+                unit: 'коробок',
+                on_hand: '100.000',
+                source: 'Приемка',
+            },
+        ],
     });
     const driver = driverStateSchema.parse({
         profile: {
@@ -140,6 +187,7 @@ test('admin and driver projections keep numeric record ids and convert capacity'
     });
 
     assert.equal(admin.vehicles[0].capacity_tons, 20);
+    assert.equal(admin.stock[0].on_hand, 100);
     assert.equal(driver.trips[0].order.recordId, 1);
     assert.equal(driver.trips[0].order.quantity, 20);
 });

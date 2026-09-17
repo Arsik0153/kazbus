@@ -11,6 +11,8 @@ import {
     cargoVehicleSchema,
     driverStateSchema,
     shipperStateSchema,
+    adminStockSchema,
+    warehouseSchema,
 } from '@/lib/cargo-contract';
 import {
     cargoFetch,
@@ -152,6 +154,7 @@ const shipperCommandSchema = z.discriminatedUnion('type', [
     }),
     z.object({
         type: z.literal('create-order'),
+        requestId: z.string().uuid(),
         companyId: z.number().int(),
         from: z.string().min(1),
         to: z.string().min(1),
@@ -162,6 +165,61 @@ const shipperCommandSchema = z.discriminatedUnion('type', [
         unit: z.enum(['шт.', 'коробок', 'паллет', 'кг', 'т']),
         weight: z.string().optional(),
         dimensions: z.string().optional(),
+        comment: z.string().optional(),
+    }),
+    z.object({
+        type: z.literal('create-supply'),
+        title: z.string().min(1),
+        companyId: z.number().int().positive(),
+        from: z.string().min(1),
+        to: z.string().min(1),
+        cargo: z.string().min(1),
+        quantity: z.number().positive(),
+        unit: z.enum(['шт.', 'коробок', 'паллет', 'кг', 'т']),
+        mode: z.enum(['manual', 'weekly', 'monthly']),
+        weekdays: z.array(z.number().int().min(0).max(6)),
+        monthDay: z.number().int().min(1).max(31),
+    }),
+    z.object({
+        type: z.literal('update-supply'),
+        supplyId: z.number().int().positive(),
+        title: z.string().min(1),
+        companyId: z.number().int().positive(),
+        from: z.string().min(1),
+        to: z.string().min(1),
+        cargo: z.string().min(1),
+        quantity: z.number().positive(),
+        unit: z.enum(['шт.', 'коробок', 'паллет', 'кг', 'т']),
+        mode: z.enum(['manual', 'weekly', 'monthly']),
+        weekdays: z.array(z.number().int().min(0).max(6)),
+        monthDay: z.number().int().min(1).max(31),
+    }),
+    z.object({
+        type: z.literal('pause-supply'),
+        supplyId: z.number().int().positive(),
+    }),
+    z.object({
+        type: z.literal('resume-supply'),
+        supplyId: z.number().int().positive(),
+    }),
+    z.object({
+        type: z.literal('skip-supply-date'),
+        supplyId: z.number().int().positive(),
+        date: z.string().min(1),
+    }),
+    z.object({
+        type: z.literal('launch-supply'),
+        supplyId: z.number().int().positive(),
+        plannedFor: z.string().min(1),
+    }),
+    z.object({
+        type: z.literal('create-stock-order'),
+        requestId: z.string().uuid(),
+        lotId: z.number().int().positive(),
+        to: z.string().min(1),
+        pickup: z.string().min(1),
+        date: z.string().min(1),
+        quantity: z.number().positive(),
         comment: z.string().optional(),
     }),
     z.object({
@@ -202,6 +260,7 @@ export async function shipperCommandAction(input: ShipperCommand) {
             case 'create-order':
                 action = command.type;
                 payload = {
+                    request_id: command.requestId,
                     company_id: command.companyId,
                     from_address: command.from,
                     to_address: command.to,
@@ -212,6 +271,58 @@ export async function shipperCommandAction(input: ShipperCommand) {
                     unit: command.unit,
                     ...(command.weight ? { weight_kg: command.weight } : {}),
                     dimensions: command.dimensions ?? '',
+                    comment: command.comment ?? '',
+                };
+                break;
+            case 'create-supply':
+            case 'update-supply':
+                action = command.type;
+                payload = {
+                    ...(command.type === 'update-supply'
+                        ? { supply_id: command.supplyId }
+                        : {}),
+                    title: command.title,
+                    company_id: command.companyId,
+                    from_address: command.from,
+                    to_address: command.to,
+                    cargo_description: command.cargo,
+                    quantity: String(command.quantity),
+                    unit: command.unit,
+                    mode: command.mode,
+                    weekdays: command.mode === 'weekly' ? command.weekdays : [],
+                    month_day:
+                        command.mode === 'monthly' ? command.monthDay : 1,
+                    automatic: false,
+                };
+                break;
+            case 'pause-supply':
+            case 'resume-supply':
+                action = command.type;
+                payload = { supply_id: command.supplyId };
+                break;
+            case 'skip-supply-date':
+                action = command.type;
+                payload = {
+                    supply_id: command.supplyId,
+                    date: command.date,
+                };
+                break;
+            case 'launch-supply':
+                action = command.type;
+                payload = {
+                    supply_id: command.supplyId,
+                    planned_for: command.plannedFor,
+                };
+                break;
+            case 'create-stock-order':
+                action = command.type;
+                payload = {
+                    request_id: command.requestId,
+                    lot_id: command.lotId,
+                    to_address: command.to,
+                    pickup_date: command.pickup,
+                    delivery_date: command.date,
+                    quantity: String(command.quantity),
                     comment: command.comment ?? '',
                 };
                 break;
@@ -456,6 +567,84 @@ export async function createCargoVehicleAction(
         });
         revalidatePath('/admin-cargo');
         return cargoVehicleSchema.parse(await response.json());
+    });
+}
+
+export async function createCargoWarehouseAction(input: {
+    name: string;
+    address: string;
+}) {
+    return result(async () => {
+        const value = z
+            .object({ name: z.string().min(1), address: z.string().min(1) })
+            .parse(input);
+        const response = await cargoFetch('admin_cargo', 'admin/warehouses/', {
+            method: 'POST',
+            body: JSON.stringify(value),
+        });
+        revalidatePath('/admin-cargo');
+        return warehouseSchema.passthrough().parse(await response.json());
+    });
+}
+
+const stockInputSchema = z.object({
+    warehouseId: z.number().int().positive(),
+    shipperId: z.number().int().positive(),
+    cargo: z.string().min(1),
+    sku: z.string(),
+    unit: z.enum(['шт.', 'коробок', 'паллет', 'кг', 'т']),
+    onHand: z.number().nonnegative(),
+    source: z.string(),
+});
+
+export async function createCargoStockAction(
+    input: z.input<typeof stockInputSchema>
+) {
+    return result(async () => {
+        const value = stockInputSchema.parse(input);
+        const response = await cargoFetch('admin_cargo', 'admin/stock/', {
+            method: 'POST',
+            body: JSON.stringify({
+                warehouse_id: value.warehouseId,
+                shipper_id: value.shipperId,
+                cargo_description: value.cargo,
+                sku: value.sku,
+                unit: value.unit,
+                on_hand: String(value.onHand),
+                source: value.source,
+            }),
+        });
+        revalidatePath('/admin-cargo');
+        return adminStockSchema.passthrough().parse(await response.json());
+    });
+}
+
+export async function adjustCargoStockAction(input: {
+    lotId: number;
+    delta: number;
+    reason: string;
+}) {
+    return result(async () => {
+        const value = z
+            .object({
+                lotId: z.number().int().positive(),
+                delta: z.number().refine((number) => number !== 0),
+                reason: z.string().min(1),
+            })
+            .parse(input);
+        const response = await cargoFetch(
+            'admin_cargo',
+            `admin/stock/${value.lotId}/adjust/`,
+            {
+                method: 'POST',
+                body: JSON.stringify({
+                    delta: String(value.delta),
+                    reason: value.reason,
+                }),
+            }
+        );
+        revalidatePath('/admin-cargo');
+        return adminStockSchema.passthrough().parse(await response.json());
     });
 }
 

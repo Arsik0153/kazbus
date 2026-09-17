@@ -1,11 +1,20 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Package, Building2, UserRound, ArrowUpRight } from 'lucide-react';
+import {
+    Package,
+    Building2,
+    UserRound,
+    ArrowUpRight,
+    Repeat2,
+    Warehouse,
+} from 'lucide-react';
 import { ReactNode } from 'react';
 import { useStore } from './store';
 const links = [
     ['/shipper/orders', 'Заказы', Package],
+    ['/shipper/supplies', 'Поставки', Repeat2],
+    ['/shipper/storage', 'На хранении', Warehouse],
     ['/shipper/companies', 'Компании', Building2],
     ['/shipper/profile', 'Профиль', UserRound],
 ] as const;
@@ -24,24 +33,30 @@ export function Shell({ children }: { children: ReactNode }) {
                 </Link>
                 <p className="sp-sidebar-label">КАБИНЕТ ЗАКАЗЧИКА</p>
                 <nav aria-label="Основная навигация">
-                    {links.map(([url, label, Icon]) => (
-                        <Link
-                            key={url}
-                            href={url}
-                            aria-current={
-                                path === url ||
-                                (url === '/shipper/orders' &&
-                                    (path === '/shipper' ||
-                                        path.includes('/orders/') ||
-                                        path.includes('create-order')))
-                                    ? 'page'
-                                    : undefined
-                            }
-                        >
-                            <Icon size={20} />
-                            <span>{label}</span>
-                        </Link>
-                    ))}
+                    {links
+                        .filter(
+                            ([url]) =>
+                                url !== '/shipper/storage' ||
+                                state.batches.length > 0
+                        )
+                        .map(([url, label, Icon]) => (
+                            <Link
+                                key={url}
+                                href={url}
+                                aria-current={
+                                    path === url ||
+                                    (url === '/shipper/orders' &&
+                                        (path === '/shipper' ||
+                                            path.includes('/orders/') ||
+                                            path.includes('create-order')))
+                                        ? 'page'
+                                        : undefined
+                                }
+                            >
+                                <Icon size={20} />
+                                <span>{label}</span>
+                            </Link>
+                        ))}
                 </nav>
                 <div className="sp-account">
                     <span className="sp-avatar">
