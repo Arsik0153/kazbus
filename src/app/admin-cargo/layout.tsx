@@ -5,5 +5,5 @@ export default function AdminCargoLayout({
 }: {
     children: React.ReactNode;
 }) {
-    return children;
+    return <div className="shipper-app">{children}</div>;
 }

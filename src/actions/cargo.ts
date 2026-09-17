@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 import {
     adminStateSchema,
+    adminCompanySchema,
     cargoDriverSchema,
     cargoRoleSchema,
     cargoVehicleSchema,
@@ -259,6 +260,36 @@ export async function shipperCommandAction(input: ShipperCommand) {
 export async function loadAdminCargoState() {
     const response = await cargoFetch('admin_cargo', 'admin/state/');
     return adminStateSchema.parse(await response.json());
+}
+
+const companyUpdateSchema = z.object({
+    name: z.string().min(1),
+    city: z.string().min(1),
+    contactPhone: z.string().min(11),
+    email: z.string().email().or(z.literal('')),
+    description: z.string(),
+    isSearchable: z.boolean(),
+});
+
+export async function updateCargoCompanyAction(
+    input: z.input<typeof companyUpdateSchema>
+) {
+    return result(async () => {
+        const value = companyUpdateSchema.parse(input);
+        const response = await cargoFetch('admin_cargo', 'admin/company/', {
+            method: 'PATCH',
+            body: JSON.stringify({
+                name: value.name,
+                city: value.city,
+                contact_phone: value.contactPhone.replace(/\D/g, ''),
+                email: value.email,
+                description: value.description,
+                is_searchable: value.isSearchable,
+            }),
+        });
+        revalidatePath('/admin-cargo');
+        return adminCompanySchema.parse(await response.json());
+    });
 }
 
 const relationDecisionSchema = z.object({

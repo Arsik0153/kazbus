@@ -11,6 +11,7 @@ import {
     createDriverInviteAction,
     decideCargoRelationAction,
     rejectCargoOrderAction,
+    updateCargoCompanyAction,
 } from '@/actions/cargo';
 import type { AdminCargoState } from '@/lib/cargo-contract';
 
@@ -63,7 +64,8 @@ export default function AdminCargoDashboard({
 
     async function addDriver(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        const form = new FormData(event.currentTarget);
+        const formElement = event.currentTarget;
+        const form = new FormData(formElement);
         const ok = await run('driver-new', () =>
             createCargoDriverAction({
                 full_name: String(form.get('full_name') ?? ''),
@@ -75,12 +77,13 @@ export default function AdminCargoDashboard({
                 status: 'active',
             })
         );
-        if (ok) event.currentTarget.reset();
+        if (ok) formElement.reset();
     }
 
     async function addVehicle(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        const form = new FormData(event.currentTarget);
+        const formElement = event.currentTarget;
+        const form = new FormData(formElement);
         const ok = await run('vehicle-new', () =>
             createCargoVehicleAction({
                 model: String(form.get('model') ?? ''),
@@ -91,7 +94,7 @@ export default function AdminCargoDashboard({
                 status: 'active',
             })
         );
-        if (ok) event.currentTarget.reset();
+        if (ok) formElement.reset();
     }
 
     return (
@@ -109,6 +112,89 @@ export default function AdminCargoDashboard({
                     {message}
                 </p>
             )}
+
+            <details className="sp-panel mb-6">
+                <summary className="cursor-pointer text-lg font-bold">
+                    Профиль и публикация компании
+                </summary>
+                <form
+                    className="sp-form mt-4"
+                    onSubmit={async (event) => {
+                        event.preventDefault();
+                        const form = new FormData(event.currentTarget);
+                        await run('company-profile', () =>
+                            updateCargoCompanyAction({
+                                name: String(form.get('name') ?? ''),
+                                city: String(form.get('city') ?? ''),
+                                contactPhone: String(
+                                    form.get('contact_phone') ?? ''
+                                ),
+                                email: String(form.get('email') ?? ''),
+                                description: String(
+                                    form.get('description') ?? ''
+                                ),
+                                isSearchable:
+                                    form.get('is_searchable') === 'on',
+                            })
+                        );
+                    }}
+                >
+                    <input
+                        name="name"
+                        aria-label="Название компании"
+                        defaultValue={state.company.name}
+                        placeholder="Название"
+                        required
+                    />
+                    <input
+                        name="city"
+                        aria-label="Город компании"
+                        defaultValue={state.company.city}
+                        placeholder="Город"
+                        required
+                    />
+                    <input
+                        name="contact_phone"
+                        aria-label="Контактный телефон компании"
+                        type="tel"
+                        defaultValue={state.company.contactPhone}
+                        placeholder="Контактный телефон"
+                        required
+                    />
+                    <input
+                        name="email"
+                        aria-label="Email компании"
+                        type="email"
+                        defaultValue={state.company.email}
+                        placeholder="Email"
+                    />
+                    <textarea
+                        name="description"
+                        aria-label="Описание услуг компании"
+                        defaultValue={state.company.description}
+                        placeholder="Описание услуг"
+                        rows={3}
+                    />
+                    <label className="sp-check">
+                        <input
+                            name="is_searchable"
+                            aria-label="Показывать компанию грузоотправителям"
+                            type="checkbox"
+                            defaultChecked={state.company.isSearchable}
+                        />
+                        Показывать компанию грузоотправителям
+                    </label>
+                    <p className="sp-caption">
+                        Пока профиль скрыт, новые клиенты не смогут отправить
+                        запрос на сотрудничество.
+                    </p>
+                    <button className="sp-button" disabled={!!busy}>
+                        {busy === 'company-profile'
+                            ? 'Сохраняем…'
+                            : 'Сохранить профиль'}
+                    </button>
+                </form>
+            </details>
 
             <div className="grid gap-6 lg:grid-cols-2">
                 <Panel title={`Запросы клиентов · ${state.relations.length}`}>
@@ -204,7 +290,12 @@ export default function AdminCargoDashboard({
                         return (
                             <article className="sp-panel" key={order.recordId}>
                                 <p className="sp-eyebrow">
-                                    {order.id} · {statusNames[order.status]}
+                                    {order.id} ·{' '}
+                                    {order.status === 'planned'
+                                        ? assigned
+                                            ? 'Рейс назначен'
+                                            : 'Согласован'
+                                        : statusNames[order.status]}
                                 </p>
                                 <h3>
                                     {order.from} → {order.to}
@@ -494,14 +585,21 @@ export default function AdminCargoDashboard({
                     )}
                     <form className="sp-form" onSubmit={addDriver}>
                         <h3>Добавить водителя</h3>
-                        <input name="full_name" placeholder="ФИО" required />
+                        <input
+                            name="full_name"
+                            aria-label="ФИО водителя"
+                            placeholder="ФИО"
+                            required
+                        />
                         <input
                             name="phone_number"
+                            aria-label="Телефон водителя"
                             placeholder="77010000000"
                             required
                         />
                         <input
                             name="license_number"
+                            aria-label="Номер удостоверения водителя"
                             placeholder="Номер удостоверения"
                             required
                         />
@@ -524,19 +622,32 @@ export default function AdminCargoDashboard({
                     ))}
                     <form className="sp-form" onSubmit={addVehicle}>
                         <h3>Добавить машину</h3>
-                        <input name="model" placeholder="Модель" required />
+                        <input
+                            name="model"
+                            aria-label="Модель машины"
+                            placeholder="Модель"
+                            required
+                        />
                         <input
                             name="plate_number"
+                            aria-label="Государственный номер машины"
                             placeholder="Госномер"
                             required
                         />
                         <input
                             name="trailer_number"
+                            aria-label="Номер прицепа"
                             placeholder="Номер прицепа"
                         />
-                        <input name="kind" placeholder="Тип машины" required />
+                        <input
+                            name="kind"
+                            aria-label="Тип машины"
+                            placeholder="Тип машины"
+                            required
+                        />
                         <input
                             name="capacity_tons"
+                            aria-label="Грузоподъемность в тоннах"
                             type="number"
                             min="0.001"
                             step="0.001"

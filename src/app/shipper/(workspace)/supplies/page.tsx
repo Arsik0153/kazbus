@@ -7,8 +7,7 @@ export default function SuppliesPage() {
             <Heading title="Регулярные поставки" />
             <Section title="Раздел готовится">
                 <p className="sp-muted">
-                    Сервер пока не поддерживает расписания поставок. Создайте
-                    разовый заказ, чтобы он сохранился в общем кабинете.
+                    Расписания поставок пока недоступны. Создайте разовый заказ.
                 </p>
                 <Link className="sp-button" href="/shipper/create-order">
                     Создать разовый заказ

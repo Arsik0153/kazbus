@@ -177,8 +177,7 @@ export default function CreateOrder() {
                             />
                         </Field>
                         <p className="sp-caption sp-field-wide">
-                            Вложения будут доступны после подключения файлового
-                            API.
+                            Вложения пока недоступны.
                         </p>
                     </div>
                 </Section>

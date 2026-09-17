@@ -6,10 +6,7 @@ export default function StoragePage() {
         <>
             <Heading title="Складские остатки" />
             <Section title="Раздел готовится">
-                <p className="sp-muted">
-                    Складской учет пока не подключен к API. Локальное сохранение
-                    отключено, чтобы данные не расходились с сервером.
-                </p>
+                <p className="sp-muted">Складской учет пока недоступен.</p>
                 <Link className="sp-link" href="/shipper/orders">
                     Вернуться к заказам
                 </Link>

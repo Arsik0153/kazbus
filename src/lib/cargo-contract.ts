@@ -167,18 +167,20 @@ export const cargoVehicleSchema = z.object({
     updated_at: z.string(),
 });
 
+export const adminCompanySchema = z.object({
+    id: z.number().int().positive(),
+    name: z.string(),
+    bin: z.string(),
+    city: z.string(),
+    status: z.enum(['active', 'suspended']),
+    contactPhone: z.string(),
+    email: z.string(),
+    description: z.string(),
+    isSearchable: z.boolean(),
+});
+
 export const adminStateSchema = z.object({
-    company: z.object({
-        id: z.number().int().positive(),
-        name: z.string(),
-        bin: z.string(),
-        city: z.string(),
-        status: z.enum(['active', 'suspended']),
-        contactPhone: z.string(),
-        email: z.string(),
-        description: z.string(),
-        isSearchable: z.boolean(),
-    }),
+    company: adminCompanySchema,
     relations: z.array(
         z.object({
             id: z.number().int().positive(),

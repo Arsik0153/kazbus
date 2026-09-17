@@ -46,9 +46,6 @@ export default function Companies() {
                             <a className="sp-link" href={`tel:${c.phone}`}>
                                 {c.phone}
                             </a>
-                            <p className="sp-caption">
-                                Демонстрационный телефон.
-                            </p>
                         </details>
                         <div className="sp-actions">
                             {c.relation === 'confirmed' ? (
