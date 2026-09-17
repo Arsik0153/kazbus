@@ -181,13 +181,13 @@ export default function CargoFileList({
     }
 
     return (
-        <section className="sp-panel">
+        <section className="sp-panel min-w-0">
             <h3>{title}</h3>
             {description && <p className="sp-caption">{description}</p>}
             {files.map((file) => (
                 <div className="sp-list-row" key={file.id}>
                     <a
-                        className="sp-link"
+                        className="sp-link break-all"
                         href={`/api/cargo/files/${fileScope}/${file.id}`}
                     >
                         {file.name}
@@ -223,7 +223,11 @@ export default function CargoFileList({
                 ) : (
                     <label className="sp-field">
                         <span>Тип документа</span>
-                        <select name="kind" defaultValue={uploadKinds[0].value}>
+                        <select
+                            className="w-full min-w-0"
+                            name="kind"
+                            defaultValue={uploadKinds[0].value}
+                        >
                             {uploadKinds.map((kind) => (
                                 <option key={kind.value} value={kind.value}>
                                     {kind.label}
@@ -235,6 +239,7 @@ export default function CargoFileList({
                 <label className="sp-field">
                     <span>Файл PDF, JPEG или PNG до 10 МиБ</span>
                     <input
+                        className="w-full min-w-0"
                         name="file"
                         type="file"
                         accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
