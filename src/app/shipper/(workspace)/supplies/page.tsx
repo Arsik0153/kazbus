@@ -49,8 +49,9 @@ export default function SuppliesPage() {
                     </button>
                 }
             >
-                Сохраните маршрут и расписание, затем подтверждайте каждое
-                отправление.
+                {state.capabilities.supplyAutomaticEnabled
+                    ? 'Сохраните маршрут и расписание, затем выберите ручной или автоматический запуск.'
+                    : 'Сохраните маршрут и расписание, затем подтверждайте каждое отправление.'}
             </Heading>
 
             {message && (
@@ -76,7 +77,7 @@ export default function SuppliesPage() {
                     }}
                 >
                     <h2>Отправление · {manualLaunch.supply.title}</h2>
-                    <Field label="Дата забора и доставки">
+                    <Field label="Дата отправления">
                         <input
                             type="date"
                             min={localDate()}
