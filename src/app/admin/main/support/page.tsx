@@ -1,12 +1,11 @@
-import AdminPlaceholderPage from '@/components/admin/placeholder-page';
+import OperationsPage, { type OperationsParams } from '../_operations/page';
 
-const SupportPage = () => {
-    return (
-        <AdminPlaceholderPage
-            title="Служба поддержки"
-            description="Здесь будет внутренний контур обращений, инцидентов и помощи диспетчерам автопарка."
-        />
-    );
-};
+export const dynamic = 'force-dynamic';
 
-export default SupportPage;
+export default function Page({
+    searchParams,
+}: {
+    searchParams: OperationsParams;
+}) {
+    return <OperationsPage mode="support" searchParams={searchParams} />;
+}
