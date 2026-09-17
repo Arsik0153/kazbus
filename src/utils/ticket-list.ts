@@ -65,7 +65,11 @@ export const partitionTickets = (
         const arrival = getArrivalTimestamp(ticket);
         const isPast = arrival !== null && arrival < now.getTime();
 
-        if (ticket.status === 'Refunded' || isPast) {
+        if (
+            ticket.status === 'Refunded' ||
+            ticket.status === 'Expired' ||
+            isPast
+        ) {
             history.push(ticket);
         } else {
             current.push(ticket);

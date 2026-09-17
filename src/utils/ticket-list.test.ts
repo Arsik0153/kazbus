@@ -114,10 +114,16 @@ test('separates past and refunded tickets from current tickets', () => {
     );
 });
 
-
 test('classifies a completed Kazakhstan trip independently of the browser timezone', () => {
     const ticket = makeTicket({ to_date: '2026-09-20', to_time: '12:00' });
     const result = partitionTickets([ticket], new Date('2026-09-20T07:01:00Z'));
     assert.equal(result.history.length, 1);
     assert.equal(result.current.length, 0);
+});
+
+test('places an expired future reservation in history', () => {
+    const ticket = makeTicket({ status: 'Expired' });
+    const result = partitionTickets([ticket], new Date('2026-09-17T12:00:00Z'));
+    assert.deepEqual(result.current, []);
+    assert.deepEqual(result.history, [ticket]);
 });

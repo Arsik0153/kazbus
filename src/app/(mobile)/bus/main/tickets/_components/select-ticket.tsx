@@ -157,18 +157,21 @@ const SelectTicket = (props: Props) => {
                 </div>
             </div>
 
-            {selectedTicket && (
-                <div className="fixed right-0 bottom-32 left-0 px-4">
-                    <Button
-                        onClick={() =>
-                            onTicketSelect(selectedTicket, dateParam || '')
-                        }
-                        variant="secondary"
-                    >
-                        Далее
-                    </Button>
-                </div>
-            )}
+            {selectedTicket &&
+                visibleTickets.some(
+                    (ticket) => ticket.id === selectedTicket.id
+                ) && (
+                    <div className="fixed right-0 bottom-32 left-0 px-4">
+                        <Button
+                            onClick={() =>
+                                onTicketSelect(selectedTicket, dateParam || '')
+                            }
+                            variant="secondary"
+                        >
+                            Далее
+                        </Button>
+                    </div>
+                )}
         </>
     );
 };
