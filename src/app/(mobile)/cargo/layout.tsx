@@ -1,4 +1,5 @@
 import NavBar from '@/components/nav-bar';
+import '../../shipper/shipper.css';
 
 export default function CargoLayout({
     children,
