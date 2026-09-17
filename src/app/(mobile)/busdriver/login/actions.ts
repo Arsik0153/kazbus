@@ -1,5 +1,8 @@
 'use server';
 
+import { headers } from 'next/headers';
+import { clientIpHeaders } from '@/lib/client-ip';
+
 import { z } from 'zod';
 import { createServerAction } from 'zsa';
 import { busDriverSchema, createBusDriverSession } from '@/lib/busdriver-auth';
@@ -14,7 +17,13 @@ const apiUrl = () => {
 async function api(path: string, body: object) {
     const response = await fetch(`${apiUrl()}${path}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            ...clientIpHeaders(
+                (await headers()).get('x-real-ip'),
+                process.env.TRUST_PROXY_CLIENT_IP === 'true'
+            ),
+        },
         body: JSON.stringify(body),
         cache: 'no-store',
     });
