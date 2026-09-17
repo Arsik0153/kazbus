@@ -3,28 +3,23 @@ import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useStore } from './store';
-import { Unit, units, localDate, reserved } from './model';
-import { saveFiles } from './files';
+import { Unit, units, localDate } from './model';
 import { Heading, Field, Section, Back } from './ui';
-export default function CreateOrder({ batchId }: { batchId?: string }) {
+export default function CreateOrder() {
     const { state, act } = useStore();
     const router = useRouter();
-    const batch = state.batches.find((b) => b.id === batchId);
     const companies = state.companies.filter((c) => c.relation === 'confirmed');
-    const [companyId, setCompany] = useState(
-        batch?.companyId || companies[0]?.id || ''
-    );
-    const [from, setFrom] = useState(batch?.warehouse || '');
+    const [companyId, setCompany] = useState(companies[0]?.id || '');
+    const [from, setFrom] = useState('');
     const [to, setTo] = useState('');
     const [pickup, setPickup] = useState(localDate());
     const [date, setDate] = useState('');
-    const [cargo, setCargo] = useState(batch?.cargo || '');
+    const [cargo, setCargo] = useState('');
     const [quantity, setQuantity] = useState('');
-    const [unit, setUnit] = useState<Unit>(batch?.unit || 'коробок');
+    const [unit, setUnit] = useState<Unit>('коробок');
     const [weight, setWeight] = useState('');
     const [dimensions, setDimensions] = useState('');
     const [comment, setComment] = useState('');
-    const [files, setFiles] = useState<File[]>([]);
     const [error, setError] = useState('');
     const [busy, setBusy] = useState(false);
     async function submit(e: FormEvent) {
@@ -35,19 +30,13 @@ export default function CreateOrder({ batchId }: { batchId?: string }) {
             setError('Дата доставки не может быть раньше забора груза.');
             return;
         }
-        if (batch && Number(quantity) > batch.onHand - reserved(state, batch)) {
-            setError('Количество превышает доступный остаток.');
-            return;
-        }
         setBusy(true);
         try {
-            const attachments = files.length ? await saveFiles(files) : [];
-            const id = `JL-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
             if (
-                act({
+                await act({
                     type: 'create',
                     order: {
-                        id,
+                        id: '',
                         companyId,
                         from: from.trim(),
                         to: to.trim(),
@@ -56,42 +45,28 @@ export default function CreateOrder({ batchId }: { batchId?: string }) {
                         cargo: cargo.trim(),
                         quantity: Number(quantity),
                         unit,
-                        weight,
+                        weight: weight ? Number(weight) : undefined,
                         dimensions,
                         comment,
                         status: 'waiting',
                         stages: [],
-                        updated: new Date().toISOString(),
-                        files: attachments,
+                        updated: '',
+                        files: [],
                         issues: [],
-                        batchId: batch?.id,
                     },
                 })
             )
-                router.push(`/shipper/orders/${id}`);
+                router.push('/shipper/orders');
         } catch (e) {
             setError((e as Error).message);
         } finally {
             setBusy(false);
         }
     }
-    if (batchId && !batch)
-        return (
-            <>
-                <Back />
-                <Heading title="Партия не найдена" />
-                <Link className="sp-link" href="/shipper/storage">
-                    Открыть складские остатки
-                </Link>
-            </>
-        );
     return (
         <>
             <Back />
-            <Heading
-                eyebrow={batch ? 'Отправка со склада' : 'Новая доставка'}
-                title={batch ? 'Куда отправить груз?' : 'Создать заказ'}
-            >
+            <Heading eyebrow="Новая доставка" title="Создать заказ">
                 Укажите груз и адреса. Компания подберёт транспорт и предложит
                 стоимость.
             </Heading>
@@ -103,7 +78,6 @@ export default function CreateOrder({ batchId }: { batchId?: string }) {
                                 value={companyId}
                                 onChange={(e) => setCompany(e.target.value)}
                                 required
-                                disabled={!!batch}
                             >
                                 {companies.map((c) => (
                                     <option key={c.id} value={c.id}>
@@ -113,16 +87,14 @@ export default function CreateOrder({ batchId }: { batchId?: string }) {
                             </select>
                         </Field>
                         <div className="sp-muted">
-                            {batch
-                                ? `Доступно: ${batch.onHand - reserved(state, batch)} ${batch.unit}`
-                                : 'Заказ получит выбранная компания. Начало перевозки — после согласования предложения.'}
+                            Заказ получит выбранная компания. Начало перевозки —
+                            после согласования предложения.
                         </div>
                         <Field label="Откуда забрать · город и адрес">
                             <input
                                 required
                                 value={from}
                                 onChange={(e) => setFrom(e.target.value)}
-                                readOnly={!!batch}
                                 placeholder="Москва, ул. Складская, 12"
                             />
                         </Field>
@@ -162,7 +134,6 @@ export default function CreateOrder({ batchId }: { batchId?: string }) {
                                     required
                                     value={cargo}
                                     onChange={(e) => setCargo(e.target.value)}
-                                    readOnly={!!batch}
                                     placeholder="Например, посуда в коробках"
                                 />
                             </Field>
@@ -172,11 +143,6 @@ export default function CreateOrder({ batchId }: { batchId?: string }) {
                                 type="number"
                                 min="0.001"
                                 step="any"
-                                max={
-                                    batch
-                                        ? batch.onHand - reserved(state, batch)
-                                        : undefined
-                                }
                                 required
                                 value={quantity}
                                 onChange={(e) => setQuantity(e.target.value)}
@@ -188,7 +154,6 @@ export default function CreateOrder({ batchId }: { batchId?: string }) {
                                 onChange={(e) =>
                                     setUnit(e.target.value as Unit)
                                 }
-                                disabled={!!batch}
                             >
                                 {units.map((u) => (
                                     <option key={u}>{u}</option>
@@ -211,24 +176,9 @@ export default function CreateOrder({ batchId }: { batchId?: string }) {
                                 placeholder="Коробка: 40 × 30 × 30 см"
                             />
                         </Field>
-                        <div className="sp-field-wide">
-                            <Field label="Фото груза · необязательно">
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    multiple
-                                    onChange={(e) =>
-                                        setFiles(
-                                            Array.from(e.target.files || [])
-                                        )
-                                    }
-                                />
-                            </Field>
-                            <p className="sp-caption">
-                                Изображения до 10 МБ. Фотографии сохраняются
-                                только в этом браузере.
-                            </p>
-                        </div>
+                        <p className="sp-caption sp-field-wide">
+                            Вложения пока недоступны.
+                        </p>
                     </div>
                 </Section>
                 <Section title="03 · Дополнительные пожелания">

@@ -18,6 +18,7 @@ export type Stage = {
     contacts: Contact[];
 };
 export type Offer = {
+    id?: string;
     amount: number;
     eta: string;
     reason: string;
@@ -41,6 +42,7 @@ export type OrderStatus =
     | 'cancelled'
     | 'rejected';
 export type Order = {
+    recordId?: number;
     id: string;
     companyId: string;
     from: string;
@@ -50,7 +52,7 @@ export type Order = {
     cargo: string;
     quantity: number;
     unit: Unit;
-    weight?: string;
+    weight?: number;
     dimensions?: string;
     comment: string;
     status: OrderStatus;

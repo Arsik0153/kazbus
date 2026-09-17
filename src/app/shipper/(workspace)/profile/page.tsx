@@ -1,32 +1,11 @@
 'use client';
 import { useState } from 'react';
-import { useStore } from '../_prototype/store';
-import { Heading, Field, Section } from '../_prototype/ui';
-import { clearFiles } from '../_prototype/files';
+import { useStore } from '../../_prototype/store';
+import { Heading, Field, Section } from '../../_prototype/ui';
 export default function Profile() {
-    const { state, act, reset } = useStore();
+    const { state, act } = useStore();
     const [form, setForm] = useState(state.profile);
-    const [confirm, setConfirm] = useState(false);
-    const [error, setError] = useState('');
-    async function clear() {
-        try {
-            await clearFiles();
-            reset();
-            setForm({
-                ...state.profile,
-                name: 'Анна Смирнова',
-                company: 'Магазин «Дом»',
-                phone: '+70000000000',
-                city: 'Шымкент',
-                bin: '',
-                notifications: true,
-            });
-            setConfirm(false);
-            setError('');
-        } catch (e) {
-            setError((e as Error).message);
-        }
-    }
+    const [busy, setBusy] = useState(false);
     return (
         <>
             <Heading eyebrow="Личный кабинет" title="Профиль">
@@ -34,9 +13,11 @@ export default function Profile() {
             </Heading>
             <form
                 className="sp-form"
-                onSubmit={(e) => {
+                onSubmit={async (e) => {
                     e.preventDefault();
-                    act({ type: 'profile', profile: form });
+                    setBusy(true);
+                    await act({ type: 'profile', profile: form });
+                    setBusy(false);
                 }}
             >
                 <Section title="Данные клиента">
@@ -50,8 +31,9 @@ export default function Profile() {
                                 }
                             />
                         </Field>
-                        <Field label="Компания или магазин · если есть">
+                        <Field label="Компания или магазин">
                             <input
+                                required
                                 value={form.company}
                                 onChange={(e) =>
                                     setForm({
@@ -65,6 +47,7 @@ export default function Profile() {
                             <input
                                 type="tel"
                                 required
+                                readOnly
                                 value={form.phone}
                                 onChange={(e) =>
                                     setForm({ ...form, phone: e.target.value })
@@ -110,41 +93,10 @@ export default function Profile() {
                         уведомлений.
                     </p>
                 </Section>
-                <button className="sp-button">Сохранить изменения</button>
+                <button className="sp-button" disabled={busy}>
+                    {busy ? 'Сохраняем…' : 'Сохранить изменения'}
+                </button>
             </form>
-            <section className="sp-section" style={{ marginTop: 40 }}>
-                <h2>Демонстрационные данные</h2>
-                <p className="sp-muted">
-                    Заказы и настройки хранятся в этом браузере. Сброс удалит
-                    ваши изменения и фотографии и восстановит примеры.
-                </p>
-                {confirm ? (
-                    <div className="sp-actions">
-                        <button className="sp-secondary" onClick={clear}>
-                            Подтвердить сброс
-                        </button>
-                        <button
-                            className="sp-link"
-                            onClick={() => setConfirm(false)}
-                        >
-                            Оставить данные
-                        </button>
-                    </div>
-                ) : (
-                    <button
-                        className="sp-secondary"
-                        style={{ marginTop: 16 }}
-                        onClick={() => setConfirm(true)}
-                    >
-                        Сбросить демоданные
-                    </button>
-                )}
-                {error && (
-                    <p className="sp-error" role="alert">
-                        {error}
-                    </p>
-                )}
-            </section>
         </>
     );
 }
