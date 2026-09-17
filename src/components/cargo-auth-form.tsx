@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 
 import { cargoLoginAction, cargoRegisterAction } from '@/actions/cargo';
 import type { CargoRole } from '@/lib/cargo-contract';
@@ -23,7 +23,9 @@ export default function CargoAuthForm({
     alternateHref,
 }: Props) {
     const router = useRouter();
+    const [ready, setReady] = useState(false);
     const [busy, setBusy] = useState(false);
+    useEffect(() => setReady(true), []);
     const [error, setError] = useState('');
 
     async function submit(event: FormEvent<HTMLFormElement>) {
@@ -72,7 +74,7 @@ export default function CargoAuthForm({
     const isDriver = role === 'cargo_driver';
 
     return (
-        <form className="sp-form" onSubmit={submit}>
+        <form className="sp-form" method="post" onSubmit={submit}>
             <h1>{title}</h1>
             {mode === 'register' && (
                 <>
@@ -156,7 +158,7 @@ export default function CargoAuthForm({
                     {error}
                 </p>
             )}
-            <button className="sp-button" disabled={busy}>
+            <button className="sp-button" disabled={!ready || busy}>
                 {busy
                     ? 'Отправляем…'
                     : mode === 'login'
