@@ -72,7 +72,9 @@ export default function CargoFileList({
     } | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
 
-    useEffect(() => setFiles(initialFiles), [initialFiles]);
+    useEffect(() => {
+        if (!loadOnMount) setFiles(initialFiles);
+    }, [initialFiles, loadOnMount]);
     useEffect(() => {
         if (!loadOnMount) return;
         let active = true;
