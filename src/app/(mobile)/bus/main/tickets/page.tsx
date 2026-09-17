@@ -2,7 +2,7 @@
 import { Suspense, useState } from 'react';
 import SelectTicket from './_components/select-ticket';
 import SelectPlace from './_components/select-place';
-import { Ticket } from '@/data/types';
+import { SeatSelection, Ticket } from '@/data/types';
 import SelectPassengers, { User } from './_components/select-passengers';
 import Contacts from './_components/contacts';
 import { z } from 'zod';
@@ -21,7 +21,7 @@ const TicketFlow = () => {
     const [step, setStep] = useState<Steps>(Steps.SelectTicket);
     const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
     const [serviceDate, setServiceDate] = useState('');
-    const [seats, setSeats] = useState<number[]>([]);
+    const [seats, setSeats] = useState<SeatSelection[]>([]);
     const [passengers, setPassengers] = useState<User[]>([]);
     const [contacts, setContacts] = useState<z.output<
         typeof contactsSchema
@@ -86,8 +86,8 @@ const TicketFlow = () => {
             direction: selectedTicket.id,
             service_date: serviceDate,
             tickets: passengers.map((passenger, i) => ({
-                place_num: seats[i],
-                place_floor: 1,
+                place_num: seats[i].seat_id,
+                place_floor: seats[i].seat_floor,
                 passenger: passenger.user_id,
             })),
         });

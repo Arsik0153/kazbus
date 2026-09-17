@@ -3,7 +3,7 @@ import Button from '@/components/button';
 import Topbar from '@/components/topbar';
 import Clock from '@/assets/red-clock';
 import { Steps } from '../types';
-import { Ticket as TicketT } from '@/data/types';
+import { SeatSelection, Ticket as TicketT } from '@/data/types';
 import Ticket from '@/components/ticket';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
 import { getUserAction } from '../actions';
@@ -13,7 +13,7 @@ type Props = {
     expiresAt?: string;
     setStep: (step: Steps) => void;
     selectedTicket: TicketT | null;
-    seats: number[];
+    seats: SeatSelection[];
     passengers: User[];
 };
 
@@ -98,7 +98,12 @@ const Booking = (props: Props) => {
                         Место
                     </p>
                     <p className="text-base font-bold text-[#E74949]">
-                        {seats.join(', ')}
+                        {seats
+                            .map(
+                                (seat) =>
+                                    `${seat.seat_id} (${seat.seat_floor} этаж)`
+                            )
+                            .join(', ')}
                     </p>
                 </div>
 
