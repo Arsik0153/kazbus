@@ -1,33 +1,63 @@
-## Getting Started
+# Jol: пассажирские и грузовые перевозки
 
-Run the development server:
+Frontend на Next.js 15 и React 19. Требуются Node.js 22, npm 10 и запущенный
+`jol_backend` с изменениями Sapar, Cargo и операционного кабинета.
 
-```bash
+## Локальный запуск
+
+```sh
+cp .env.example .env.local
 npm ci
 npm run dev
 ```
 
-## Shipper prototype
+В `.env.local` задайте `API_URL` с окончанием `/api_jol` и собственный случайный
+`SESSION_SECRET`. API вызывается серверной частью Next.js; токены сессий не нужно
+передавать в клиентский JavaScript. Для production нужны HTTPS и постоянный
+`SESSION_SECRET`, одинаковый для всех экземпляров frontend.
 
-Open `/shipper` for the responsive customer cabinet. It uses local demo data;
-no backend, live GPS, payment processing or background scheduler is connected.
-`/cargo` and the bus interfaces retain their existing layouts.
+Подготовка базы, Redis, SMS и принадлежности старых автобусов/маршрутов описана в
+`RUNTIME.md` и `OWNERSHIP_MIGRATION.md` репозитория backend. Не присваивайте старые
+записи перевозчику автоматически: сначала проверьте отчёт аудита и явный манифест.
 
-Demo scenarios include `JL-2049` (proposal), `JL-2045` (delay and surcharge),
-`JL-2042` (delivery confirmation), and `JL-2047` (warehouse shipment).
-Use invitation `NOMAD-DEMO` to connect the third company.
-Reset data and locally stored photos in **Профиль → Сбросить демоданные**.
+## Кабинеты
 
-Checks:
+| Адрес | Возможности |
+| --- | --- |
+| `/bus/main` | Поиск рейсов, фильтры, бронирование и история билетов |
+| `/busdriver` | Рейсы водителя, пассажиры, подписанный QR, посадка, статусы и обращения |
+| `/admin/main` | Управление перевозками, ведомость и CSV, мониторинг, операционная аналитика, обработка обращений |
+| `/shipper` | Компании, согласование перевозки, заказы, поставки, склад, профиль |
+| `/admin-cargo` | Компания, клиенты, предложения и доплаты, водители, транспорт, назначения и склад |
+| `/cargo` | Назначенные грузовые рейсы и этапы исполнения |
 
-```bash
+Cargo-клиент и перевозчик регистрируются отдельно. Водитель регистрируется по
+одноразовому приглашению своей компании. До создания заказа клиент запрашивает
+связь с компанией, а перевозчик подтверждает её. Затем перевозчик предлагает
+условия, клиент принимает их, перевозчик назначает водителя и транспорт.
+
+Поставки сохраняют расписание, паузы и пропущенные даты; запуск выполняется
+пользователем. Складские заказы резервируют доступный остаток на backend, отмена
+освобождает резерв, завершение рейса списывает его один раз.
+
+## Проверки
+
+```sh
 npm test
 npm run typecheck
 npm run lint
 npm run build
+npm start
 ```
 
-Browser acceptance: create an order without weight/dimensions, accept a proposal,
-decline a surcharge, attach/reopen an issue photo after reload, reserve warehouse
-stock and cancel the shipment, launch/pause a recurring supply, connect a company,
-and edit the profile. Check all pages at 320, 768, 1024 and 1440 px.
+Те же проверки выполняются в GitHub Actions. Для проверки ролей используйте
+отдельные аккаунты и изолированную базу. Браузерные сценарии должны подтверждать
+сохранение после перезагрузки, ошибки API и запрет доступа к чужим данным.
+
+## Границы реализации
+
+Платёжный провайдер не подключён. GPS/телематика и фоновый автоматический запуск
+поставок не реализованы. Мониторинг показывает сохранённые статусы рейсов;
+операционная аналитика считает рейсы, пассажиров, брони и обращения. Финансовая
+отчётность не заявлена. Реальную отправку SMS необходимо проверить после настройки
+аккаунта провайдера и отзыва старых ключей.
