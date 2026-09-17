@@ -3,7 +3,8 @@
 Run the development server:
 
 ```bash
-bun dev
+npm ci
+npm run dev
 ```
 
 ## Shipper prototype
@@ -20,10 +21,10 @@ Reset data and locally stored photos in **Профиль → Сбросить д
 Checks:
 
 ```bash
-bun test src/app/shipper/_prototype/reducer.test.ts
-bunx tsc --noEmit
-bun run lint
-bun run build
+npm test
+npm run typecheck
+npm run lint
+npm run build
 ```
 
 Browser acceptance: create an order without weight/dimensions, accept a proposal,

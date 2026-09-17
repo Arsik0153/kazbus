@@ -1,6 +1,5 @@
 import React from 'react';
 import Input from '@/components/input';
-import kzFlagUrl from '@/assets/shared/🇰🇿.svg';
 import Button from '@/components/button';
 import Topbar from '@/components/topbar';
 import FlagKz from '@/assets/flag-kz';

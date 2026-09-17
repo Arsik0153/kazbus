@@ -3,6 +3,7 @@
 import { z } from 'zod';
 import { createServerAction } from 'zsa';
 import { busDriverSchema, createBusDriverSession } from '@/lib/busdriver-auth';
+import { setBusDriverPasswordSchema } from './schema';
 
 const apiUrl = () => {
     const value = process.env.API_URL?.replace(/\/$/, '');
@@ -86,18 +87,7 @@ export const loginBusDriverAction = createServerAction()
     );
 
 export const setBusDriverPasswordAction = createServerAction()
-    .input(
-        phoneSchema
-            .extend({
-                password: z.string().min(8),
-                repeat_password: z.string().min(8),
-                onboarding_token: z.string().min(1),
-            })
-            .refine((value) => value.password === value.repeat_password, {
-                path: ['repeat_password'],
-                message: 'Пароли не совпадают',
-            })
-    )
+    .input(setBusDriverPasswordSchema)
     .handler(async ({ input }) =>
         saveAuth(
             await api('/accounts/busdriver/set-password/', {

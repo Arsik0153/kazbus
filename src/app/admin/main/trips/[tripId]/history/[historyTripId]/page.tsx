@@ -7,10 +7,10 @@ import TripDetailsView from '../../../_components/trip-details-view';
 import type { AdminTripRunDetails } from '../../../_data/trip-details';
 
 type Props = {
-    params: {
+    params: Promise<{
         tripId: string;
         historyTripId: string;
-    };
+    }>;
 };
 
 async function getTrip(tripId: string) {
@@ -44,9 +44,10 @@ async function getHistoryRun(tripId: string, historyTripId: string) {
 }
 
 export default async function AdminTripHistoryDetailsPage({ params }: Props) {
+    const { tripId, historyTripId } = await params;
     const [trip, historyRun] = await Promise.all([
-        getTrip(params.tripId),
-        getHistoryRun(params.tripId, params.historyTripId),
+        getTrip(tripId),
+        getHistoryRun(tripId, historyTripId),
     ]);
 
     if (!trip || !historyRun) {

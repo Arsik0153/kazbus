@@ -90,7 +90,7 @@ export async function signUp(data: SignUpCredentials) {
     const session = await encrypt({ user, expires });
 
     // Save the session in a cookie
-    cookies().set('session', session, { expires, httpOnly: true });
+    (await cookies()).set('session', session, { expires, httpOnly: true });
 }
 
 type LoginCredentials = {
@@ -143,16 +143,16 @@ export async function login(data: LoginCredentials) {
     const session = await encrypt({ user, expires });
 
     // Save the session in a cookie
-    cookies().set('session', session, { expires, httpOnly: true });
+    (await cookies()).set('session', session, { expires, httpOnly: true });
 }
 
 export async function logout() {
     // Destroy the session
-    cookies().set('session', '', { expires: new Date(0) });
+    (await cookies()).set('session', '', { expires: new Date(0) });
 }
 
 export async function getSession(): Promise<Session | null> {
-    const session = cookies().get('session')?.value;
+    const session = (await cookies()).get('session')?.value;
     if (!session) return null;
 
     const parsed = await decrypt(session);

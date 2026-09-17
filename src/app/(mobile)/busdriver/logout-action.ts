@@ -15,5 +15,5 @@ export async function logoutBusDriverAction() {
             cache: 'no-store',
         }).catch(() => undefined);
     }
-    clearBusDriverSession();
+    await clearBusDriverSession();
 }
