@@ -19,12 +19,12 @@ export default async function RootLayout({
     }
 
     return (
-        <div className="flex min-h-screen w-full bg-[#E32B2B]">
-            <div className="w-1/5">
+        <div className="flex min-h-screen w-full flex-col bg-[#E32B2B] lg:flex-row">
+            <div className="w-full lg:w-1/5">
                 <Menu />
             </div>
-            <div className="flex w-full flex-col">
-                <div className="flex flex-row justify-between px-7 py-4">
+            <div className="flex w-full min-w-0 flex-col">
+                <div className="flex flex-wrap justify-between gap-4 px-4 py-4 md:px-7">
                     <div className="flex flex-row items-center gap-4">
                         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white">
                             <BusFront color="#E74949" width={20} height={20} />
@@ -41,10 +41,10 @@ export default async function RootLayout({
                             </div>
                         </div>
                     </div>
-                    <div className="flex flex-row items-center gap-6">
+                    <div className="flex flex-row items-center gap-4 md:gap-6">
                         <Link
                             href="/admin/main/company"
-                            className="text-base font-medium text-white underline-offset-4 hover:underline"
+                            className="hidden text-base font-medium text-white underline-offset-4 hover:underline sm:block"
                         >
                             Редактировать данные
                         </Link>
@@ -59,7 +59,7 @@ export default async function RootLayout({
                         </form>
                     </div>
                 </div>
-                <div className="h-full w-full rounded-tl-[40px] bg-[#F1F5F9] px-7 pt-7">
+                <div className="h-full w-full min-w-0 rounded-t-[28px] bg-[#F1F5F9] px-3 pt-4 md:px-7 md:pt-7 lg:rounded-tl-[40px] lg:rounded-tr-none">
                     {children}
                 </div>
             </div>
