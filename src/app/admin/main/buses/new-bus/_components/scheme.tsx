@@ -10,6 +10,7 @@ import { cn } from '@/utils/cn';
 import SeatConfigurator from './seatConfigurator';
 
 export type BusSeatDraft = {
+    seat_floor: number;
     seat_id: number;
     seat_col: number;
     seat_row: number;
@@ -82,16 +83,27 @@ const createFloorFromSeats = (seats: BusSeatDraft[]) => {
     return floor;
 };
 
+const createFloorsFromSeats = (
+    seats: BusSeatDraft[] | undefined,
+    floorCount: 1 | 2
+) =>
+    Array.from({ length: floorCount }, (_, floorIndex) =>
+        createFloorFromSeats(
+            (seats ?? []).filter((seat) => seat.seat_floor === floorIndex + 1)
+        )
+    );
+
 const toSeatDrafts = (floors: CellContent[][][]) => {
     const result: BusSeatDraft[] = [];
 
-    floors.forEach((floor) => {
+    floors.forEach((floor, floorIndex) => {
         for (let col = 0; col < floor[0].length; col += 1) {
             for (let row = 0; row < floor.length; row += 1) {
                 const cell = floor[row][col];
 
                 if (cell !== null) {
                     result.push({
+                        seat_floor: floorIndex + 1,
                         seat_id: typeof cell === 'number' ? cell : 0,
                         seat_col: col + 1,
                         seat_row: row + 1,
@@ -149,9 +161,9 @@ const Scheme = ({
     const [editMode, setEditMode] = useState<'seats' | 'driver' | 'aisle'>(
         'seats'
     );
-    const [floors, setFloors] = useState<CellContent[][][]>([
-        initialSeats ? createFloorFromSeats(initialSeats) : createEmptyFloor(),
-    ]);
+    const [floors, setFloors] = useState<CellContent[][][]>(() =>
+        createFloorsFromSeats(initialSeats, floorCount)
+    );
     const passengerSeatCount = getPassengerSeatCount(floors);
 
     useEffect(() => {
@@ -281,7 +293,7 @@ const Scheme = ({
                 Количество пассажирских мест считается автоматически по схеме.
             </p>
             <SeatConfigurator selectedValue={editMode} onChange={setEditMode} />
-            <div className="my-5 flex w-full flex-col gap-4 rounded-[10px] bg-[#F1F5F9] px-6 pb-4 pt-6">
+            <div className="my-5 flex w-full flex-col gap-4 rounded-[10px] bg-[#F1F5F9] px-6 pt-6 pb-4">
                 <div className="flex flex-row justify-between">
                     <div className="flex flex-row items-center gap-9">
                         <p className="flex flex-row items-center gap-4 text-base font-medium text-[#4A4A4A]">
@@ -325,7 +337,7 @@ const Scheme = ({
                                         key={`${floorIndex}-${rowIndex}-${colIndex}`}
                                         type="button"
                                         className={cn(
-                                            'size-13 flex items-center justify-center rounded-[10px] border bg-white text-xl font-bold',
+                                            'flex size-13 items-center justify-center rounded-[10px] border bg-white text-xl font-bold',
                                             {
                                                 'border-[#E23333] text-[#E23333]':
                                                     typeof cell === 'number',
@@ -350,7 +362,7 @@ const Scheme = ({
                                 ))
                             )}
 
-                            <div className="absolute -right-8 top-1/2 flex -translate-y-1/2 transform flex-col gap-2">
+                            <div className="absolute top-1/2 -right-8 flex -translate-y-1/2 transform flex-col gap-2">
                                 <button
                                     type="button"
                                     onClick={() => addColumn(floorIndex)}

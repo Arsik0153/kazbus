@@ -1,4 +1,5 @@
 'use client';
+import { useState } from 'react';
 import { useStore } from './store';
 import { Order, Offer, money, dateLabel } from './model';
 export default function Proposal({
@@ -11,6 +12,7 @@ export default function Proposal({
     extra?: boolean;
 }) {
     const { act } = useStore();
+    const [busy, setBusy] = useState(false);
     const closed = ['cancelled', 'rejected', 'delivered'].includes(
         order.status
     );
@@ -33,27 +35,33 @@ export default function Proposal({
                 <div className="sp-actions">
                     <button
                         className="sp-button"
-                        onClick={() =>
-                            act({
+                        disabled={busy}
+                        onClick={async () => {
+                            setBusy(true);
+                            await act({
                                 type: 'decision',
                                 id: order.id,
                                 extra,
                                 accept: true,
-                            })
-                        }
+                            });
+                            setBusy(false);
+                        }}
                     >
                         {extra ? 'Согласовать доплату' : 'Принять предложение'}
                     </button>
                     <button
                         className="sp-secondary"
-                        onClick={() =>
-                            act({
+                        disabled={busy}
+                        onClick={async () => {
+                            setBusy(true);
+                            await act({
                                 type: 'decision',
                                 id: order.id,
                                 extra,
                                 accept: false,
-                            })
-                        }
+                            });
+                            setBusy(false);
+                        }}
                     >
                         Отклонить
                     </button>

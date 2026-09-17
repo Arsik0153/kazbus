@@ -7,9 +7,9 @@ import TripForm from '../../new-trip/_components/trip-form';
 import type { TripFormValues } from '../../action';
 
 type Props = {
-    params: {
+    params: Promise<{
         tripId: string;
-    };
+    }>;
 };
 
 async function getTrip(tripId: string) {
@@ -52,7 +52,8 @@ function mapTripToFormValues(trip: Trips): TripFormValues {
 }
 
 export default async function EditTripPage({ params }: Props) {
-    const trip = await getTrip(params.tripId);
+    const { tripId } = await params;
+    const trip = await getTrip(tripId);
 
     if (!trip) {
         notFound();

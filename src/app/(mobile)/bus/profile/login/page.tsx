@@ -16,6 +16,8 @@ import toast from 'react-hot-toast';
 import { sanitizePhone } from '@/utils/helper.';
 
 const LoginPage = () => {
+    const [ready, setReady] = React.useState(false);
+    React.useEffect(() => setReady(true), []);
     const { execute, isPending } = useServerAction(loginAction, {
         onSuccess: () => {
             console.log('success');
@@ -41,8 +43,8 @@ const LoginPage = () => {
     return (
         <>
             <Topbar backHref="/bus/profile">Войти</Topbar>
-            <form className="px-5" onSubmit={onSubmit}>
-                <h1 className="mb-4 mt-16 text-balance text-center text-[42px] font-semibold leading-tight text-[#4A4A4A]">
+            <form method="post" className="px-5" onSubmit={onSubmit}>
+                <h1 className="mt-16 mb-4 text-center text-[42px] leading-tight font-semibold text-balance text-[#4A4A4A]">
                     Давайте войдем на ваш аккаунт
                 </h1>
                 <InputPhone
@@ -75,6 +77,7 @@ const LoginPage = () => {
                 <Button
                     variant="secondary"
                     className="mt-4"
+                    disabled={!ready}
                     loading={isPending}
                 >
                     Войти

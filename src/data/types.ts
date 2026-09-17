@@ -145,6 +145,7 @@ export type Bus = {
     floors?: number | null;
     scheme?: string | null;
     seats?: Array<{
+        seat_floor: number;
         seat_id: number;
         seat_col: number;
         seat_row: number;
@@ -254,11 +255,17 @@ export type TicketDetailed = {
 };
 
 export type BusSeat = {
+    seat_floor: number;
     seat_id: number;
     seat_col: number;
     seat_row: number;
     seat_type: 'aisle' | 'passenger' | 'driver';
     status: 'free' | 'booked' | 'paid';
+};
+
+export type SeatSelection = {
+    seat_floor: number;
+    seat_id: number;
 };
 
 export type BusSeats = {

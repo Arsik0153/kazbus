@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
 import Button from '@/components/button';
 import Download from '@/assets/download';
 import Topbar from '@/components/topbar';
@@ -11,20 +11,21 @@ import {
 import { useServerActionQuery } from '@/lib/server-action-hooks';
 import Ticket from './ticket';
 import Spinner from '@/components/spinner';
-import Menu from '@/components/menu';
 import Skeleton from '@/components/skeleton';
 import Payment from '../../main/tickets/_components/payment';
 import { useServerAction } from 'zsa-react';
 import toast from 'react-hot-toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
-const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
+const MyTicketPage = ({ params }: { params: Promise<{ ticketId: string }> }) => {
+    const { ticketId } = use(params);
     const queryClient = useQueryClient();
     const router = useRouter();
     const { data, isLoading } = useServerActionQuery(getTicketByIdAction, {
-        input: { ticket_id: Number(params.ticketId) },
-        queryKey: ['ticket', params.ticketId],
+        input: { ticket_id: Number(ticketId) },
+        queryKey: ['ticket', ticketId],
     });
     const [paymentWidgetOpen, setPaymentWidgetOpen] = useState(false);
     const [refundConfirmationOpen, setRefundConfirmationOpen] = useState(false);
@@ -77,7 +78,7 @@ const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
         });
 
     if (isLoading || !data) {
-        return <MyTicketPageSkeleton ticketId={params.ticketId} />;
+        return <MyTicketPageSkeleton ticketId={ticketId} />;
     }
 
     if (paymentWidgetOpen) {
@@ -92,7 +93,7 @@ const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
 
     return (
         <>
-            <Topbar backHref="/bus/my-tickets">Билет №{params.ticketId}</Topbar>
+            <Topbar backHref="/bus/my-tickets">Билет №{ticketId}</Topbar>
             <div className="fade-in p-5">
                 <Ticket ticket={data} />
                 <div className="mb-2 flex flex-row justify-between gap-3 rounded-lg border border-[#D1D1D1] bg-none p-5">
@@ -108,7 +109,7 @@ const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
                         key={passenger.passenger}
                         className="mb-2 flex flex-col justify-between gap-2 rounded-lg border border-[#D1D1D1] bg-none p-5"
                     >
-                        <p className="text-xs font-bold uppercase text-[#A0A0A0]">
+                        <p className="text-xs font-bold text-[#A0A0A0] uppercase">
                             Пассажир
                         </p>
                         <p className="text-base font-medium text-[#4A4A4A]">
@@ -133,8 +134,8 @@ const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
                         Оплатить банковской картой
                     </Button>
                 )}
-                <div className="mt-8 w-full rounded-[10px] bg-[#F9F9F9] px-4 pb-1 pt-6">
-                    <div className="pb-[20px] text-[20px] font-bold leading-[22px]">
+                <div className="mt-8 w-full rounded-[10px] bg-[#F9F9F9] px-4 pt-6 pb-1">
+                    <div className="pb-[20px] text-[20px] leading-[22px] font-bold">
                         Действия
                     </div>
                     <div className="flex flex-col">
@@ -150,7 +151,7 @@ const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
                                     }
                                     className="flex flex-row items-center justify-between py-4 text-left disabled:opacity-50"
                                 >
-                                    <span className="flex items-center gap-3 text-[16px] font-normal leading-[17.6px]">
+                                    <span className="flex items-center gap-3 text-[16px] leading-[17.6px] font-normal">
                                         Скачать билет
                                     </span>
                                     {isTicketDownloading && (
@@ -207,7 +208,12 @@ const MyTicketPage = ({ params }: { params: { ticketId: string } }) => {
                                 <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
                             </>
                         )}
-                        <Menu link="#" text="Изменить данные пассажира" />
+                        <Link
+                            href={`/bus/support/new?ticketId=${data.id}`}
+                            className="flex w-full flex-row items-center justify-between py-4 text-left"
+                        >
+                            Задать вопрос по билету
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -220,13 +226,13 @@ const MyTicketPageSkeleton = ({ ticketId }: { ticketId: string }) => {
         <>
             <Topbar backHref="/bus/my-tickets">Билет №{ticketId}</Topbar>
             <div className="p-5">
-                <Skeleton className="mb-2 mt-2 h-[174px] w-full rounded-lg" />{' '}
+                <Skeleton className="mt-2 mb-2 h-[174px] w-full rounded-lg" />{' '}
                 {/* Ticket component placeholder */}
                 <Skeleton className="mb-2 h-[60px] w-full rounded-lg" />{' '}
                 {/* Bus number placeholder */}
                 <Skeleton className="mb-2 h-[120px] w-full rounded-lg" />
-                <div className="mt-8 w-full rounded-[10px] bg-[#F9F9F9] px-4 pb-1 pt-6">
-                    <div className="pb-[20px] text-[20px] font-bold leading-[22px]">
+                <div className="mt-8 w-full rounded-[10px] bg-[#F9F9F9] px-4 pt-6 pb-1">
+                    <div className="pb-[20px] text-[20px] leading-[22px] font-bold">
                         Действия
                     </div>
                     <div className="flex flex-col">

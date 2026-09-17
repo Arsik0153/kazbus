@@ -18,18 +18,34 @@ export type Stage = {
     contacts: Contact[];
 };
 export type Offer = {
+    id?: string;
     amount: number;
     eta: string;
     reason: string;
     status: 'pending' | 'accepted' | 'declined';
     kind: 'initial' | 'extra';
 };
-export type Attachment = { id: string; name: string };
+export type Attachment = {
+    id: string;
+    name: string;
+    kind:
+        | 'document'
+        | 'delivery_proof'
+        | 'license'
+        | 'identity'
+        | 'medical'
+        | 'other';
+    contentType: 'application/pdf' | 'image/jpeg' | 'image/png';
+    size: number;
+    uploadedBy: { id: number; name: string };
+    createdAt: string;
+    downloadUrl: string;
+};
 export type Issue = {
     id: string;
     text: string;
     date: string;
-    files: Attachment[];
+    files: Pick<Attachment, 'id' | 'name'>[];
 };
 export type Invoice = { number: string; amount: number; paid: boolean };
 export type OrderStatus =
@@ -41,6 +57,7 @@ export type OrderStatus =
     | 'cancelled'
     | 'rejected';
 export type Order = {
+    recordId?: number;
     id: string;
     companyId: string;
     from: string;
@@ -50,7 +67,7 @@ export type Order = {
     cargo: string;
     quantity: number;
     unit: Unit;
-    weight?: string;
+    weight?: number;
     dimensions?: string;
     comment: string;
     status: OrderStatus;
@@ -62,12 +79,13 @@ export type Order = {
     delay?: string;
     originalEta?: string;
     updated: string;
-    proof?: string;
+    deliveryProof?: Attachment;
     files: Attachment[];
     issues: Issue[];
     supplyId?: string;
     occurrence?: string;
     batchId?: string;
+    requestId?: string;
 };
 export type Supply = {
     id: string;
@@ -109,6 +127,7 @@ export type Profile = {
 };
 export type State = {
     version: 1;
+    capabilities: { supplyAutomaticEnabled: boolean };
     orders: Order[];
     companies: Company[];
     supplies: Supply[];
