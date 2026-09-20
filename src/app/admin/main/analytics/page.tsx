@@ -1,12 +1,11 @@
-import AdminPlaceholderPage from '@/components/admin/placeholder-page';
+import OperationsPage, { type OperationsParams } from '../_operations/page';
 
-const AnalyticsPage = () => {
-    return (
-        <AdminPlaceholderPage
-            title="Аналитика"
-            description="Здесь появятся отчеты по продажам, загрузке рейсов и ключевым операционным показателям автобусного направления."
-        />
-    );
-};
+export const dynamic = 'force-dynamic';
 
-export default AnalyticsPage;
+export default function Page({
+    searchParams,
+}: {
+    searchParams: OperationsParams;
+}) {
+    return <OperationsPage mode="analytics" searchParams={searchParams} />;
+}

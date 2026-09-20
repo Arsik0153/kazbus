@@ -17,6 +17,8 @@ type Props = {
 };
 
 const SetPassword = (props: Props) => {
+    const [ready, setReady] = React.useState(false);
+    React.useEffect(() => setReady(true), []);
     const { setStep } = props;
 
     const { execute, isPending } = useServerAction(setPasswordAction, {
@@ -41,7 +43,11 @@ const SetPassword = (props: Props) => {
     });
 
     return (
-        <form className="mt-24 flex flex-col gap-2" onSubmit={onSubmit}>
+        <form
+            method="post"
+            className="mt-24 flex flex-col gap-2"
+            onSubmit={onSubmit}
+        >
             <p className="mb-3 text-4xl font-semibold text-[#4A4A4A]">
                 Придумайте <br /> пароль
             </p>
@@ -68,7 +74,8 @@ const SetPassword = (props: Props) => {
 
             <Button
                 variant="secondary"
-                className="mb-3 mt-4"
+                className="mt-4 mb-3"
+                disabled={!ready}
                 loading={isPending}
             >
                 Закончить регистрацию

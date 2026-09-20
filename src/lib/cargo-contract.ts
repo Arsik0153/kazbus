@@ -1,0 +1,351 @@
+import { z } from 'zod';
+
+const decimal = z
+    .union([z.string(), z.number()])
+    .transform(Number)
+    .refine(Number.isFinite, 'Ожидалось десятичное число');
+
+export const cargoRoleSchema = z.enum([
+    'shipper',
+    'admin_cargo',
+    'cargo_driver',
+]);
+export type CargoRole = z.infer<typeof cargoRoleSchema>;
+
+export const cargoUserSchema = z.object({
+    id: z.number().int().positive(),
+    phone_number: z.string(),
+    full_name: z.string(),
+});
+
+export const cargoAuthResponseSchema = z.object({
+    token: z.string().min(1),
+    role: cargoRoleSchema,
+    user: cargoUserSchema,
+});
+
+export const cargoMeSchema = z.object({
+    user: cargoUserSchema,
+    roles: z.array(cargoRoleSchema),
+    shipper_profile: z.unknown().nullable(),
+    cargo_company: z.unknown().nullable(),
+    cargo_driver: z.unknown().nullable(),
+});
+
+const contactSchema = z.object({
+    name: z.string(),
+    role: z.string(),
+    phone: z.string(),
+});
+
+const stageSchema = z.object({
+    id: z.string(),
+    from: z.string(),
+    to: z.string(),
+    transport: z.string(),
+    status: z.enum(['done', 'current', 'next']),
+    date: z.string(),
+    contacts: z.array(contactSchema),
+});
+
+const offerSchema = z.object({
+    id: z.string(),
+    amount: decimal,
+    eta: z.string(),
+    reason: z.string(),
+    status: z.enum(['pending', 'accepted', 'declined']),
+    kind: z.enum(['initial', 'extra']),
+});
+
+const issueSchema = z.object({
+    id: z.string(),
+    text: z.string(),
+    date: z.string(),
+    files: z.array(z.object({ id: z.string(), name: z.string() })),
+});
+
+export const cargoAttachmentSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    kind: z.enum([
+        'document',
+        'delivery_proof',
+        'license',
+        'identity',
+        'medical',
+        'other',
+    ]),
+    contentType: z.enum(['application/pdf', 'image/jpeg', 'image/png']),
+    size: z.number().int().nonnegative(),
+    uploadedBy: z.object({
+        id: z.number().int().positive(),
+        name: z.string(),
+    }),
+    createdAt: z.string(),
+    downloadUrl: z.string(),
+});
+
+const orderStatusSchema = z.enum([
+    'waiting',
+    'offer',
+    'planned',
+    'transit',
+    'delivered',
+    'cancelled',
+    'rejected',
+]);
+
+export const shipperOrderSchema = z.object({
+    recordId: z.number().int().positive(),
+    id: z.string(),
+    companyId: z.string(),
+    from: z.string(),
+    to: z.string(),
+    pickup: z.string(),
+    date: z.string(),
+    cargo: z.string(),
+    quantity: decimal,
+    unit: z.enum(['шт.', 'коробок', 'паллет', 'кг', 'т']),
+    weight: decimal.optional(),
+    dimensions: z.string().optional().default(''),
+    comment: z.string().default(''),
+    status: orderStatusSchema,
+    stages: z.array(stageSchema),
+    updated: z.string(),
+    files: z.array(cargoAttachmentSchema),
+    issues: z.array(issueSchema),
+    offer: offerSchema.optional(),
+    extra: offerSchema.optional(),
+    agreedPrice: decimal.optional(),
+    delay: z.string().optional(),
+    originalEta: z.string().optional(),
+    invoice: z
+        .object({
+            number: z.string(),
+            amount: decimal,
+            paid: z.boolean(),
+        })
+        .optional(),
+    deliveryProof: cargoAttachmentSchema.optional(),
+    requestId: z.string().uuid().optional(),
+    supplyId: z.string().optional(),
+    occurrence: z.string().optional(),
+    batchId: z.string().optional(),
+});
+
+export const supplySchema = z.object({
+    id: z.string(),
+    title: z.string(),
+    companyId: z.string(),
+    from: z.string(),
+    to: z.string(),
+    cargo: z.string(),
+    quantity: decimal,
+    unit: z.enum(['шт.', 'коробок', 'паллет', 'кг', 'т']),
+    mode: z.enum(['manual', 'weekly', 'monthly']),
+    weekdays: z.array(z.number().int().min(0).max(6)),
+    monthDay: z.number().int().min(1).max(31),
+    automatic: z.boolean(),
+    paused: z.boolean(),
+    skipped: z.array(z.string()),
+    price: decimal,
+    approved: z.boolean(),
+});
+
+export const stockBatchSchema = z.object({
+    id: z.string(),
+    companyId: z.string(),
+    warehouse: z.string(),
+    cargo: z.string(),
+    unit: z.enum(['шт.', 'коробок', 'паллет', 'кг', 'т']),
+    onHand: decimal,
+    baseReserved: decimal,
+    source: z.string(),
+});
+
+export const shipperStateSchema = z.object({
+    version: z.literal(1),
+    capabilities: z
+        .object({ supplyAutomaticEnabled: z.boolean() })
+        .default({ supplyAutomaticEnabled: false }),
+    profile: z.object({
+        name: z.string(),
+        company: z.string(),
+        phone: z.string(),
+        city: z.string(),
+        bin: z.string(),
+        notifications: z.boolean(),
+    }),
+    companies: z.array(
+        z.object({
+            id: z.string(),
+            name: z.string(),
+            city: z.string(),
+            description: z.string(),
+            relation: z.enum(['confirmed', 'requested', 'available']),
+            phone: z.string(),
+        })
+    ),
+    orders: z.array(shipperOrderSchema),
+    supplies: z.array(supplySchema),
+    batches: z.array(stockBatchSchema),
+});
+
+const adminOrderSchema = shipperOrderSchema
+    .omit({ offer: true, extra: true, agreedPrice: true })
+    .extend({
+        shipper: z.object({
+            id: z.number().int().positive(),
+            name: z.string(),
+            company: z.string(),
+            phone: z.string(),
+        }),
+    });
+
+export const cargoDriverSchema = z.object({
+    id: z.number().int().positive(),
+    full_name: z.string(),
+    phone_number: z.string(),
+    license_number: z.string(),
+    status: z.enum(['active', 'inactive']),
+    account_status: z.enum(['active', 'pending']),
+    created_at: z.string(),
+    updated_at: z.string(),
+});
+
+export const cargoVehicleSchema = z.object({
+    id: z.number().int().positive(),
+    model: z.string(),
+    plate_number: z.string(),
+    trailer_number: z.string(),
+    kind: z.string(),
+    capacity_tons: decimal,
+    status: z.enum(['active', 'inactive']),
+    created_at: z.string(),
+    updated_at: z.string(),
+});
+
+export const warehouseSchema = z.object({
+    id: z.number().int().positive(),
+    name: z.string(),
+    address: z.string(),
+});
+
+export const adminStockSchema = z.object({
+    id: z.number().int().positive(),
+    shipper_id: z.number().int().positive(),
+    warehouse_id: z.number().int().positive(),
+    warehouse: z.string(),
+    warehouse_address: z.string(),
+    cargo_description: z.string(),
+    sku: z.string(),
+    unit: z.enum(['шт.', 'коробок', 'паллет', 'кг', 'т']),
+    on_hand: decimal,
+    source: z.string(),
+});
+
+export const adminCompanySchema = z.object({
+    id: z.number().int().positive(),
+    name: z.string(),
+    bin: z.string(),
+    city: z.string(),
+    status: z.enum(['active', 'suspended']),
+    contactPhone: z.string(),
+    email: z.string(),
+    description: z.string(),
+    isSearchable: z.boolean(),
+});
+
+export const adminStateSchema = z.object({
+    company: adminCompanySchema,
+    relations: z.array(
+        z.object({
+            id: z.number().int().positive(),
+            status: z.enum(['requested', 'confirmed', 'rejected', 'blocked']),
+            comment: z.string(),
+            requestedAt: z.string(),
+            handledAt: z.string().nullable(),
+            shipper: z.object({
+                id: z.number().int().positive(),
+                name: z.string(),
+                company: z.string(),
+                phone: z.string(),
+                city: z.string(),
+            }),
+        })
+    ),
+    orders: z.array(adminOrderSchema),
+    drivers: z.array(cargoDriverSchema),
+    vehicles: z.array(cargoVehicleSchema),
+    trips: z.array(
+        z.object({
+            id: z.number().int().positive(),
+            orderRecordId: z.number().int().positive(),
+            orderId: z.string(),
+            status: z.enum([
+                'planned',
+                'loading',
+                'in_transit',
+                'unloading',
+                'completed',
+            ]),
+            eta: z.string(),
+            driverId: z.number().int().positive(),
+            vehicleId: z.number().int().positive(),
+            updated: z.string(),
+        })
+    ),
+    warehouses: z.array(warehouseSchema),
+    stock: z.array(adminStockSchema),
+});
+
+export const driverTripSchema = z.object({
+    id: z.number().int().positive(),
+    status: z.enum([
+        'planned',
+        'loading',
+        'in_transit',
+        'unloading',
+        'completed',
+    ]),
+    eta: z.string(),
+    updated: z.string(),
+    order: z.object({
+        recordId: z.number().int().positive(),
+        id: z.string(),
+        from: z.string(),
+        to: z.string(),
+        pickup: z.string(),
+        date: z.string(),
+        cargo: z.string(),
+        quantity: decimal,
+        unit: z.string(),
+        comment: z.string(),
+        files: z.array(cargoAttachmentSchema),
+    }),
+    vehicle: z.object({
+        id: z.number().int().positive(),
+        model: z.string(),
+        plateNumber: z.string(),
+        trailerNumber: z.string(),
+        kind: z.string(),
+    }),
+    stages: z.array(stageSchema),
+});
+
+export const driverStateSchema = z.object({
+    profile: z.object({
+        id: z.number().int().positive(),
+        fullName: z.string(),
+        phone: z.string(),
+        company: z.object({ id: z.number(), name: z.string() }),
+    }),
+    trips: z.array(driverTripSchema),
+    documents: z.array(cargoAttachmentSchema),
+});
+
+export type ShipperState = z.infer<typeof shipperStateSchema>;
+export type AdminCargoState = z.infer<typeof adminStateSchema>;
+export type DriverState = z.infer<typeof driverStateSchema>;
+export type DriverTrip = z.infer<typeof driverTripSchema>;
+export type CargoAttachment = z.infer<typeof cargoAttachmentSchema>;

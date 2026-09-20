@@ -16,7 +16,7 @@ const StartSettings = () => {
                     <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
                     <Menu link="/bus/profile/authorized/faq" text="FAQ" />
                     <div className="color-[#E9E9E9] h-1 w-full border-t"></div>
-                    <Menu link="#" text="Служба поддержки" />
+                    <Menu link="/bus/support" text="Служба поддержки" />
                 </div>
             </div>
         </>

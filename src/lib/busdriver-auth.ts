@@ -6,13 +6,8 @@ import { z } from 'zod';
 export const BUSDRIVER_SESSION_COOKIE = 'busdriver_session';
 const SESSION_SECONDS = 60 * 60 * 8;
 
-export const busDriverSchema = z.object({
-    id: z.number().int().positive(),
-    full_name: z.string(),
-    phone_number: z.string(),
-    owner_id: z.number().int().positive(),
-    is_active: z.boolean(),
-});
+import { busDriverSchema } from './busdriver-schema';
+export { busDriverSchema } from './busdriver-schema';
 
 const sessionSchema = z.object({
     type: z.literal('busdriver'),
@@ -49,7 +44,7 @@ export async function getBusDriverSessionFromRequest(request: NextRequest) {
 
 export async function getBusDriverSession() {
     return decryptBusDriverSession(
-        cookies().get(BUSDRIVER_SESSION_COOKIE)?.value
+        (await cookies()).get(BUSDRIVER_SESSION_COOKIE)?.value
     );
 }
 
@@ -60,7 +55,7 @@ export async function createBusDriverSession(session: BusDriverSession) {
         .setIssuedAt()
         .setExpirationTime(`${SESSION_SECONDS}s`)
         .sign(key());
-    cookies().set(BUSDRIVER_SESSION_COOKIE, value, {
+    (await cookies()).set(BUSDRIVER_SESSION_COOKIE, value, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
@@ -69,8 +64,8 @@ export async function createBusDriverSession(session: BusDriverSession) {
     });
 }
 
-export function clearBusDriverSession() {
-    cookies().set(BUSDRIVER_SESSION_COOKIE, '', {
+export async function clearBusDriverSession() {
+    (await cookies()).set(BUSDRIVER_SESSION_COOKIE, '', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',

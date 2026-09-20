@@ -46,7 +46,7 @@ export default function RouteProgress({ o }: { o: Order }) {
                         )}
                     </div>
                     <p className="sp-caption">
-                        Схема маршрута · демонстрационные данные, не GPS.
+                        Данные этапов предоставляет логистическая компания.
                         Обновлено {dateLabel(o.updated)},{' '}
                         {new Date(o.updated).toLocaleTimeString('ru-RU', {
                             hour: '2-digit',
@@ -96,8 +96,8 @@ export default function RouteProgress({ o }: { o: Order }) {
                 </>
             ) : (
                 <Empty>
-                    Компания подготовит маршрут и стоимость. Новые события
-                    компании представлены в готовых демозаказах.
+                    Компания подготовит маршрут после согласования стоимости и
+                    назначения рейса.
                 </Empty>
             )}
         </Section>

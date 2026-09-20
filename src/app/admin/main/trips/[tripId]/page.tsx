@@ -6,9 +6,9 @@ import TripDetailsView from '../_components/trip-details-view';
 import type { AdminTripDetailsResponse } from '../_data/trip-details';
 
 type Props = {
-    params: {
+    params: Promise<{
         tripId: string;
-    };
+    }>;
 };
 
 async function getTripDetails(tripId: string) {
@@ -26,7 +26,8 @@ async function getTripDetails(tripId: string) {
 }
 
 export default async function AdminTripDetailsPage({ params }: Props) {
-    const details = await getTripDetails(params.tripId);
+    const { tripId } = await params;
+    const details = await getTripDetails(tripId);
 
     if (!details) {
         notFound();

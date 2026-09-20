@@ -1,14 +1,14 @@
 'use client';
-import { FormEvent, useState } from 'react';
-import { Supply, Unit, units } from './model';
+
+import { useState, type FormEvent } from 'react';
+
+import type { Supply, Unit } from './model';
+import { units } from './model';
 import { useStore } from './store';
 import { Field } from './ui';
-import {
-    fullSupplyLocation,
-    splitSupplyLocation,
-    supplyCities,
-} from './supply-location';
+
 export const week = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+
 export default function SupplyForm({
     initial,
     close,
@@ -17,88 +17,63 @@ export default function SupplyForm({
     close: () => void;
 }) {
     const { state, act } = useStore();
-    const [form, set] = useState<Supply>(
-        initial
-            ? {
-                  ...initial,
-                  fromCity: splitSupplyLocation(initial.from, initial.fromCity)
-                      .city,
-                  from: splitSupplyLocation(initial.from, initial.fromCity)
-                      .address,
-                  toCity: splitSupplyLocation(initial.to, initial.toCity).city,
-                  to: splitSupplyLocation(initial.to, initial.toCity).address,
-              }
-            : {
-                  id: crypto.randomUUID(),
-                  title: '',
-                  companyId:
-                      state.companies.find((c) => c.relation === 'confirmed')
-                          ?.id || '',
-                  from: '',
-                  to: '',
-                  fromCity: '',
-                  toCity: '',
-                  cargo: '',
-                  quantity: 1,
-                  unit: 'коробок',
-                  mode: 'weekly',
-                  weekdays: [1],
-                  monthDay: 1,
-                  automatic: false,
-                  paused: false,
-                  skipped: [],
-                  price: 0,
-                  approved: false,
-              }
+    const [form, setForm] = useState<Supply>(
+        initial ?? {
+            id: '',
+            title: '',
+            companyId:
+                state.companies.find(
+                    (company) => company.relation === 'confirmed'
+                )?.id ?? '',
+            from: '',
+            to: '',
+            cargo: '',
+            quantity: 1,
+            unit: 'коробок',
+            mode: 'weekly',
+            weekdays: [1],
+            monthDay: 1,
+            automatic: false,
+            paused: false,
+            skipped: [],
+            price: 0,
+            approved: false,
+        }
     );
+    const automaticEnabled = state.capabilities.supplyAutomaticEnabled;
     const [error, setError] = useState('');
-    const update = <K extends keyof Supply>(key: K, value: Supply[K]) =>
-        set((s) => ({ ...s, [key]: value }));
-    function submit(e: FormEvent) {
-        e.preventDefault();
-        if (
-            ![
-                form.title,
-                form.fromCity || '',
-                form.from,
-                form.toCity || '',
-                form.to,
-                form.cargo,
-            ].every((v) => v.trim()) ||
-            !form.quantity ||
-            form.quantity < 0 ||
-            (form.mode === 'weekly' && !form.weekdays.length)
-        ) {
-            setError(
-                'Укажите города, адреса и груз. Для недельного расписания выберите день отправления.'
-            );
+    const [busy, setBusy] = useState(false);
+
+    const update = <Key extends keyof Supply>(key: Key, value: Supply[Key]) =>
+        setForm((current) => ({ ...current, [key]: value }));
+
+    async function submit(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        setError('');
+        if (form.mode === 'weekly' && form.weekdays.length === 0) {
+            setError('Выберите хотя бы один день недели.');
             return;
         }
-        const supply = {
-            ...form,
-            fromCity: form.fromCity!.trim(),
-            toCity: form.toCity!.trim(),
-            from: fullSupplyLocation(form.fromCity!, form.from),
-            to: fullSupplyLocation(form.toCity!, form.to),
-        };
-        const conditionsChanged =
-            initial &&
-            ['companyId', 'from', 'to', 'cargo', 'quantity', 'unit'].some(
-                (k) => supply[k as keyof Supply] !== initial[k as keyof Supply]
-            );
-        if (
-            act({
-                type: 'supply',
-                supply: {
-                    ...supply,
-                    approved: conditionsChanged ? false : form.approved,
-                },
-            })
-        )
-            close();
+
+        setBusy(true);
+        try {
+            const saved = await act({
+                type: 'save-supply',
+                supply: form,
+                creating: !initial,
+            });
+            if (saved) close();
+        } finally {
+            setBusy(false);
+        }
     }
+
+    const companies = state.companies.filter(
+        (company) => company.relation === 'confirmed'
+    );
+
     return (
-        <form className="sp-panel sp-form" onSubmit={submit}>
+        <form method="post" className="sp-panel sp-form" onSubmit={submit}>
             <h2>{initial ? 'Настройки поставки' : 'Новая поставка'}</h2>
             <div className="sp-form-grid">
                 <Field label="Название">
@@ -106,102 +81,90 @@ export default function SupplyForm({
                         autoFocus
                         required
                         value={form.title}
-                        onChange={(e) => update('title', e.target.value)}
+                        onChange={(event) =>
+                            update('title', event.target.value)
+                        }
                     />
                 </Field>
-                <Field label="Компания">
+                <Field label="Логистическая компания">
                     <select
-                        value={form.companyId}
                         required
-                        onChange={(e) => update('companyId', e.target.value)}
+                        value={form.companyId}
+                        onChange={(event) =>
+                            update('companyId', event.target.value)
+                        }
                     >
-                        {state.companies
-                            .filter((c) => c.relation === 'confirmed')
-                            .map((c) => (
-                                <option key={c.id} value={c.id}>
-                                    {c.name}
-                                </option>
-                            ))}
+                        <option value="">Выберите компанию</option>
+                        {companies.map((company) => (
+                            <option key={company.id} value={company.id}>
+                                {company.name}
+                            </option>
+                        ))}
                     </select>
                 </Field>
-                <Field label="Город забора">
+                <Field label="Откуда забирать">
                     <input
                         required
-                        list="supply-cities"
-                        placeholder="Например, Алматы"
-                        value={form.fromCity || ''}
-                        onChange={(e) => update('fromCity', e.target.value)}
-                    />
-                </Field>
-                <Field label="Адрес забора">
-                    <input
-                        required
-                        placeholder="Улица, дом, склад"
+                        placeholder="Город, улица, склад"
                         value={form.from}
-                        onChange={(e) => update('from', e.target.value)}
+                        onChange={(event) => update('from', event.target.value)}
                     />
                 </Field>
-                <Field label="Город доставки">
+                <Field label="Куда доставлять">
                     <input
                         required
-                        list="supply-cities"
-                        placeholder="Например, Шымкент"
-                        value={form.toCity || ''}
-                        onChange={(e) => update('toCity', e.target.value)}
-                    />
-                </Field>
-                <Field label="Адрес доставки">
-                    <input
-                        required
-                        placeholder="Улица, дом, магазин"
+                        placeholder="Город, улица, получатель"
                         value={form.to}
-                        onChange={(e) => update('to', e.target.value)}
+                        onChange={(event) => update('to', event.target.value)}
                     />
                 </Field>
-                <datalist id="supply-cities">
-                    {supplyCities.map((city) => (
-                        <option key={city} value={city} />
-                    ))}
-                </datalist>
-                <p className="sp-caption sp-field-wide">
-                    Выберите город из подсказок или введите любой другой, в том
-                    числе за пределами Казахстана.
-                </p>
                 <Field label="Груз">
                     <input
                         required
                         value={form.cargo}
-                        onChange={(e) => update('cargo', e.target.value)}
+                        onChange={(event) =>
+                            update('cargo', event.target.value)
+                        }
                     />
                 </Field>
                 <Field label="Количество">
                     <input
                         type="number"
-                        step="any"
+                        step="0.001"
                         min="0.001"
                         required
                         value={form.quantity}
-                        onChange={(e) =>
-                            update('quantity', Number(e.target.value))
+                        onChange={(event) =>
+                            update('quantity', Number(event.target.value))
                         }
                     />
                 </Field>
                 <Field label="Единица">
                     <select
                         value={form.unit}
-                        onChange={(e) => update('unit', e.target.value as Unit)}
+                        onChange={(event) =>
+                            update('unit', event.target.value as Unit)
+                        }
                     >
-                        {units.map((u) => (
-                            <option key={u}>{u}</option>
+                        {units.map((unit) => (
+                            <option key={unit}>{unit}</option>
                         ))}
                     </select>
                 </Field>
                 <Field label="Повторение">
                     <select
                         value={form.mode}
-                        onChange={(e) =>
-                            update('mode', e.target.value as Supply['mode'])
-                        }
+                        onChange={(event) => {
+                            const mode = event.target.value as Supply['mode'];
+                            setForm((current) => ({
+                                ...current,
+                                mode,
+                                automatic:
+                                    mode === 'manual'
+                                        ? false
+                                        : current.automatic,
+                            }));
+                        }}
                     >
                         <option value="manual">По потребности</option>
                         <option value="weekly">По дням недели</option>
@@ -212,23 +175,24 @@ export default function SupplyForm({
                     <fieldset className="sp-field-wide">
                         <legend>Дни отправления</legend>
                         <div className="sp-actions">
-                            {[1, 2, 3, 4, 5, 6, 0].map((d) => (
-                                <label className="sp-check" key={d}>
+                            {[1, 2, 3, 4, 5, 6, 0].map((day) => (
+                                <label className="sp-check" key={day}>
                                     <input
                                         type="checkbox"
-                                        checked={form.weekdays.includes(d)}
-                                        onChange={(e) =>
+                                        checked={form.weekdays.includes(day)}
+                                        onChange={(event) =>
                                             update(
                                                 'weekdays',
-                                                e.target.checked
-                                                    ? [...form.weekdays, d]
+                                                event.target.checked
+                                                    ? [...form.weekdays, day]
                                                     : form.weekdays.filter(
-                                                          (x) => x !== d
+                                                          (value) =>
+                                                              value !== day
                                                       )
                                             )
                                         }
                                     />
-                                    {week[d]}
+                                    {week[day]}
                                 </label>
                             ))}
                         </div>
@@ -242,46 +206,49 @@ export default function SupplyForm({
                             min={1}
                             max={31}
                             value={form.monthDay}
-                            onChange={(e) =>
-                                update('monthDay', Number(e.target.value))
+                            onChange={(event) =>
+                                update('monthDay', Number(event.target.value))
                             }
                         />
                         <small>
-                            Если такого дня нет, отправление в последний день
-                            месяца.
+                            В коротком месяце отправление придется на последний
+                            день.
                         </small>
                     </Field>
                 )}
-                {form.mode !== 'manual' && (
-                    <Field label="Запуск отправлений">
-                        <select
-                            value={form.automatic ? 'auto' : 'confirm'}
-                            onChange={(e) =>
-                                update('automatic', e.target.value === 'auto')
-                            }
-                        >
-                            <option value="confirm">
-                                Подтверждать каждую доставку
-                            </option>
-                            <option value="auto">
-                                Автоматически после согласования условий
-                            </option>
-                        </select>
-                    </Field>
-                )}
             </div>
+            {form.mode !== 'manual' && (automaticEnabled || form.automatic) && (
+                <label className="sp-check">
+                    <input
+                        type="checkbox"
+                        checked={form.automatic}
+                        disabled={!automaticEnabled && !form.automatic}
+                        onChange={(event) =>
+                            update('automatic', event.target.checked)
+                        }
+                    />
+                    Создавать заказы автоматически по расписанию
+                </label>
+            )}
             <p className="sp-caption">
-                Новые условия согласует компания. В демо можно отправить
-                отдельную заявку; согласованные поставки уже представлены в
-                примерах.
+                {form.automatic
+                    ? automaticEnabled
+                        ? 'В день отправления появится один заказ. Условия перевозки согласуются отдельно. Пауза и пропуск даты останавливают создание заказа.'
+                        : 'Автозапуск временно отключён. Доступен ручной запуск из расписания.'
+                    : 'Каждое отправление запускается вручную из расписания.'}
             </p>
             {error && (
-                <p role="alert" className="sp-error">
+                <p className="sp-error" role="alert">
                     {error}
                 </p>
             )}
             <div className="sp-actions">
-                <button className="sp-button">Сохранить поставку</button>
+                <button
+                    className="sp-button"
+                    disabled={busy || companies.length === 0}
+                >
+                    {busy ? 'Сохраняем…' : 'Сохранить поставку'}
+                </button>
                 <button type="button" className="sp-secondary" onClick={close}>
                     Отмена
                 </button>

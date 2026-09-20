@@ -3,11 +3,11 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
     Package,
-    Repeat2,
-    Warehouse,
     Building2,
     UserRound,
     ArrowUpRight,
+    Repeat2,
+    Warehouse,
 } from 'lucide-react';
 import { ReactNode } from 'react';
 import { useStore } from './store';
@@ -76,7 +76,7 @@ export function Shell({ children }: { children: ReactNode }) {
                         Jol Cargo <span className="sp-divider">/</span>{' '}
                         Клиентская логистика
                     </span>
-                    <span className="sp-demo">Демо · данные в браузере</span>
+                    <span className="sp-demo">Данные синхронизированы</span>
                 </div>
                 <main id="shipper-main" className="sp-main">
                     {children}

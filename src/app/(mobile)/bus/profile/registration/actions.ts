@@ -1,5 +1,8 @@
 'use server';
 
+import { headers } from 'next/headers';
+import { clientIpHeaders } from '@/lib/client-ip';
+
 import { authedProcedure } from '@/actions';
 import { passwordSchema, profileSchema } from '@/data/schemas';
 import { getSession, signUp, logout } from '@/lib/auth';
@@ -57,6 +60,10 @@ export const sendOtpAction = createServerAction()
                 body: JSON.stringify({ phone_number: input.phone }),
                 headers: {
                     'Content-Type': 'application/json',
+                    ...clientIpHeaders(
+                        (await headers()).get('x-real-ip'),
+                        process.env.TRUST_PROXY_CLIENT_IP === 'true'
+                    ),
                 },
             }
         );

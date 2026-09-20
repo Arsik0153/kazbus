@@ -1,7 +1,7 @@
-import { redirect } from 'next/navigation';
+import DriverPage from '../_components/DriverPage';
 
-const BusDriverScannerPage = () => {
-    redirect('/busdriver/passengers');
-};
-
-export default BusDriverScannerPage;
+export default function Page({ searchParams }: {
+    searchParams: Promise<{ date?: string; tripId?: string; runId?: string }>;
+}) {
+    return <DriverPage mode="passengers" searchParams={searchParams} />;
+}

@@ -4,6 +4,13 @@ type AdminFetchOptions = RequestInit & {
     requireAuth?: boolean;
 };
 
+export class AdminSessionError extends Error {
+    constructor() {
+        super('Сессия администратора истекла');
+        this.name = 'AdminSessionError';
+    }
+}
+
 export function getAdminApiUrl(path: string) {
     const apiUrl = process.env.API_URL?.replace(/\/$/, '');
 
@@ -18,7 +25,7 @@ export async function getAdminAuthHeaders() {
     const session = await getAdminSession();
 
     if (!session) {
-        throw new Error('Сессия администратора истекла');
+        throw new AdminSessionError();
     }
 
     return {
@@ -26,7 +33,10 @@ export async function getAdminAuthHeaders() {
     };
 }
 
-export async function adminFetch(path: string, options: AdminFetchOptions = {}) {
+export async function adminFetch(
+    path: string,
+    options: AdminFetchOptions = {}
+) {
     const { requireAuth = true, headers, ...restOptions } = options;
     const authHeaders = requireAuth ? await getAdminAuthHeaders() : {};
 

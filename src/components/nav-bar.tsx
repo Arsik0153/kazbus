@@ -8,7 +8,6 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import clsx from 'clsx';
 import { cn } from '@/utils/cn';
-import RouteFill from '@/assets/route-fill';
 
 type NavSection = 'bus' | 'cargo';
 
@@ -46,26 +45,6 @@ const CARGO_LINKS: NavItem[] = [
         href: '/cargo',
         icon: Bus,
         text: 'Главная',
-    },
-    {
-        href: '/cargo/trip',
-        icon: RouteFill,
-        text: 'Рейс',
-    },
-    {
-        href: '/cargo/map',
-        icon: Building,
-        text: 'Карта',
-    },
-    {
-        href: '/cargo/documents',
-        icon: Coupon,
-        text: 'Документы',
-    },
-    {
-        href: '/cargo/profile',
-        icon: User,
-        text: 'Профиль',
     },
 ];
 
@@ -135,10 +114,10 @@ const NavBar = ({ section }: { section: NavSection }) => {
         >
             <div
                 className={cn(
-                    'flex w-full items-center justify-between px-2 xs:px-3.75',
+                    'xs:px-3.75 flex w-full items-center justify-between px-2',
                     {
-                        'pb-1.25 pt-1.25 xs:pb-2.5 xs:pt-2': hideGap,
-                        'pb-5 pt-2.5': !hideGap,
+                        'xs:pb-2.5 xs:pt-2 pt-1.25 pb-1.25': hideGap,
+                        'pt-2.5 pb-5': !hideGap,
                     }
                 )}
             >
@@ -153,12 +132,12 @@ const NavBar = ({ section }: { section: NavSection }) => {
                         <Link
                             key={link.href}
                             href={targetHref}
-                            className="flex min-w-0 flex-1 flex-col items-center gap-2 rounded-[10px] px-1.5 pb-3 pt-2 xs:px-3 xs:pb-3.75 xs:pt-2.5"
+                            className="xs:px-3 xs:pb-3.75 xs:pt-2.5 flex min-w-0 flex-1 flex-col items-center gap-2 rounded-[10px] px-1.5 pt-2 pb-3"
                         >
                             <link.icon color={getColor(isActive)} />
                             <div
                                 className={clsx(
-                                    'text-center text-[10px] font-medium leading-2.75 xs:text-[12px] xs:leading-[13.2px]',
+                                    'xs:text-[12px] xs:leading-[13.2px] text-center text-[10px] leading-2.75 font-medium',
                                     {
                                         'text-[#E23333]': isActive,
                                         'text-[#C8C8C8]': !isActive,

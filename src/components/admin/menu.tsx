@@ -25,21 +25,21 @@ const Menu = () => {
     const pathname = usePathname();
 
     return (
-        <div className="flex flex-col fixed w-1/6 pr-5">
+        <div className="relative flex w-full flex-col lg:fixed lg:w-1/6 lg:pr-5">
             <Link href="/admin/main">
                 <Image
                     src={'/logo.svg'}
                     width={160}
                     height={160}
                     alt={'Logo'}
-                    className='pl-3'
+                    className='h-20 w-20 pl-3 lg:h-40 lg:w-40'
                 />
             </Link>
 
-            <div className="flex flex-col pl-[14px] w-full">
-                <nav className='flex flex-col gap-5 w-full'>
-                    <ul className='w-full'>
-                        <p className="font-bold text-base text-[#FFFFFF] opacity-40">Управление</p>
+            <div className="flex w-full flex-col px-3 lg:pl-[14px] lg:pr-0">
+                <nav className='flex w-full gap-3 overflow-x-auto pb-3 lg:flex-col lg:gap-5 lg:overflow-visible lg:pb-0'>
+                    <ul className='flex shrink-0 gap-2 lg:block lg:w-full'>
+                        <li className="hidden font-bold text-base text-[#FFFFFF] opacity-40 lg:block">Управление</li>
 
                         <li className={`${getBackgroundColor(pathname, '/admin/main/trips')} rounded-lg`}>
                             <Link href="/admin/main/trips" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
@@ -86,8 +86,8 @@ const Menu = () => {
                             </Link>
                         </li>
                     </ul>
-                    <ul>
-                        <p className="font-bold text-base text-[#FFFFFF] opacity-40">Компания</p>
+                    <ul className='flex shrink-0 gap-2 lg:block'>
+                        <li className="hidden font-bold text-base text-[#FFFFFF] opacity-40 lg:block">Компания</li>
 
                         <li className={`${getBackgroundColor(pathname, '/admin/main/company')} rounded-lg`}>
                             <Link href="/admin/main/company" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
@@ -123,8 +123,8 @@ const Menu = () => {
                             </Link>
                         </li>
                     </ul>
-                    <ul>
-                        <p className="font-bold text-base text-[#FFFFFF] opacity-40">Информация</p>
+                    <ul className='flex shrink-0 gap-2 lg:block'>
+                        <li className="hidden font-bold text-base text-[#FFFFFF] opacity-40 lg:block">Информация</li>
 
                         <li className={`${getBackgroundColor(pathname, '/admin/main/analytics')} rounded-lg`}>
                             <Link href="/admin/main/analytics" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
@@ -149,14 +149,25 @@ const Menu = () => {
                             </Link>
                         </li>
                     </ul>
-                    <ul className='mt-8'>
+                    <ul className='flex shrink-0 gap-2 lg:mt-8 lg:block'>
                         <li className={`${getBackgroundColor(pathname, '/admin/main/support')} rounded-lg`}>
                             <Link href="/admin/main/support" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
                                 <div className='flex items-center gap-3'>
                                     <Support color="#fff" width={20} height={20} />
-                                    <span>Служба поддержки</span>
+                                    <span>Обращения водителей</span>
                                 </div>
                                 {isActivePath(pathname, '/admin/main/support') && (
+                                    <ArrowRight color="#fff" width={12} height={12} />
+                                )}
+                            </Link>
+                        </li>
+                        <li className={`${getBackgroundColor(pathname, '/admin/main/passenger-support')} rounded-lg`}>
+                            <Link href="/admin/main/passenger-support" className='flex justify-between items-center pr-4 pl-[14px] duration-150 py-2 text-white'>
+                                <div className='flex items-center gap-3'>
+                                    <Support color="#fff" width={20} height={20} />
+                                    <span>Обращения пассажиров</span>
+                                </div>
+                                {isActivePath(pathname, '/admin/main/passenger-support') && (
                                     <ArrowRight color="#fff" width={12} height={12} />
                                 )}
                             </Link>

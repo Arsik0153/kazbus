@@ -14,12 +14,12 @@ import type {
 } from '../../_data/trip-details';
 
 type Props = {
-    params: {
+    params: Promise<{
         tripId: string;
-    };
-    searchParams?: {
+    }>;
+    searchParams?: Promise<{
         date?: string;
-    };
+    }>;
 };
 
 async function getTrip(tripId: string) {
@@ -92,11 +92,15 @@ export default async function AdminTripHistoryPage({
     params,
     searchParams,
 }: Props) {
-    const allHistoryRunsPromise = getHistoryRuns(params.tripId);
+    const [{ tripId }, query] = await Promise.all([
+        params,
+        searchParams ?? Promise.resolve<{ date?: string }>({}),
+    ]);
+    const allHistoryRunsPromise = getHistoryRuns(tripId);
     const [trip, historyRuns, allHistoryRuns] = await Promise.all([
-        getTrip(params.tripId),
-        searchParams?.date
-            ? getHistoryRuns(params.tripId, searchParams.date)
+        getTrip(tripId),
+        query.date
+            ? getHistoryRuns(tripId, query.date)
             : allHistoryRunsPromise,
         allHistoryRunsPromise,
     ]);
@@ -127,7 +131,7 @@ export default async function AdminTripHistoryPage({
             <TripHistoryRuns
                 tripId={trip.id}
                 historyRuns={historyRuns}
-                selectedDateIso={searchParams?.date}
+                selectedDateIso={query.date}
             />
         </div>
     );

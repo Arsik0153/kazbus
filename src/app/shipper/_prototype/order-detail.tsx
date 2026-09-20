@@ -4,22 +4,12 @@ import Link from 'next/link';
 import { useStore } from './store';
 import { money, dateLabel } from './model';
 import { Heading, Status, Section, Back, Empty } from './ui';
-import { FileLink } from './files';
 import Proposal from './proposal';
 import IssueForm from './issue-form';
 import RouteProgress from './route-progress';
-function download(text: string, filename: string) {
-    const url = URL.createObjectURL(
-        new Blob([text], { type: 'text/plain;charset=utf-8' })
-    );
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
+import CargoFileList from '@/components/cargo/cargo-file-list';
 export default function OrderDetail({ id }: { id: string }) {
-    const { state, act } = useStore();
+    const { state, act, currentUserId } = useStore();
     const [cancel, setCancel] = useState(false);
     const o = state.orders.find((o) => o.id === id);
     if (!o)
@@ -28,8 +18,7 @@ export default function OrderDetail({ id }: { id: string }) {
                 <Back />
                 <Heading title="Заказ не найден" />
                 <Empty>
-                    Возможно, демоданные были сброшены. Вернитесь к списку
-                    заказов.
+                    Заказ отсутствует или больше недоступен. Вернитесь к списку.
                 </Empty>
             </>
         );
@@ -96,11 +85,6 @@ export default function OrderDetail({ id }: { id: string }) {
                             </div>
                         </dl>
                         {o.comment && <p>{o.comment}</p>}
-                        <div className="sp-file-list">
-                            {o.files.map((f) => (
-                                <FileLink key={f.id} file={f} />
-                            ))}
-                        </div>
                         {o.supplyId && (
                             <Link className="sp-link" href="/shipper/supplies">
                                 Из регулярной поставки →
@@ -112,21 +96,18 @@ export default function OrderDetail({ id }: { id: string }) {
                             </Link>
                         )}
                     </Section>
-                    {o.proof && (
-                        <Section title="Подтверждение доставки">
-                            <p>{o.proof}</p>
-                            <button
-                                className="sp-link"
-                                onClick={() =>
-                                    download(
-                                        `ДЕМОНСТРАЦИОННЫЙ АКТ\n${o.proof}`,
-                                        `Акт-${o.id}.txt`
-                                    )
-                                }
-                            >
-                                Скачать демоакт
-                            </button>
-                        </Section>
+                    {o.recordId && (
+                        <CargoFileList
+                            title="Документы заказа"
+                            description="Файлы видяте вы и участники этой перевозки."
+                            endpoint={`/api/cargo/orders/${o.recordId}/attachments`}
+                            fileScope="order"
+                            initialFiles={o.files}
+                            currentUserId={currentUserId}
+                            uploadKinds={[
+                                { value: 'document', label: 'Документ' },
+                            ]}
+                        />
                     )}
                     <IssueForm order={o} />
                 </div>
@@ -140,12 +121,9 @@ export default function OrderDetail({ id }: { id: string }) {
                         <a className="sp-link" href={`tel:${company?.phone}`}>
                             {company?.phone}
                         </a>
-                        <p className="sp-caption">
-                            Телефоны в прототипе — демонстрационные.
-                        </p>
                     </section>
                     <section className="sp-panel">
-                        <h2>Стоимость и оплата</h2>
+                        <h2>Согласованная стоимость</h2>
                         {o.agreedPrice !== undefined ? (
                             <>
                                 <p className="sp-amount">
@@ -170,33 +148,8 @@ export default function OrderDetail({ id }: { id: string }) {
                         ) : (
                             <p>Ожидаем согласования стоимости</p>
                         )}
-                        {o.invoice && (
-                            <>
-                                <p style={{ marginTop: 16 }}>
-                                    {o.invoice.number} ·{' '}
-                                    {money(o.invoice.amount)}
-                                </p>
-                                <p>
-                                    {o.invoice.paid
-                                        ? 'Оплачен'
-                                        : 'Ожидает оплаты'}
-                                </p>
-                                <button
-                                    className="sp-link"
-                                    onClick={() =>
-                                        download(
-                                            `ДЕМОНСТРАЦИОННЫЙ СЧЁТ — НЕ ДЛЯ ОПЛАТЫ\n${o.invoice!.number}\n${company?.name}\nЗаказ ${o.id}\n${money(o.invoice!.amount)}`,
-                                            `${o.invoice!.number}.txt`
-                                        )
-                                    }
-                                >
-                                    Скачать демосчёт
-                                </button>
-                            </>
-                        )}
                         <p className="sp-caption">
-                            Оплата вне приложения. Статус отмечает логистическая
-                            компания.
+                            Оплата в приложении пока недоступна.
                         </p>
                     </section>
                     {['waiting', 'offer', 'planned'].includes(o.status) && (
@@ -210,12 +163,16 @@ export default function OrderDetail({ id }: { id: string }) {
                                     <div className="sp-actions">
                                         <button
                                             className="sp-secondary"
-                                            onClick={() =>
-                                                act({
-                                                    type: 'cancel',
-                                                    id: o.id,
-                                                })
-                                            }
+                                            onClick={async () => {
+                                                if (
+                                                    await act({
+                                                        type: 'cancel',
+                                                        id: o.id,
+                                                    })
+                                                ) {
+                                                    setCancel(false);
+                                                }
+                                            }}
                                         >
                                             Да, отменить
                                         </button>

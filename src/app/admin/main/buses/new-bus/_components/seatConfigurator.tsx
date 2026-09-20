@@ -55,7 +55,9 @@ const SeatConfigurator: React.FC<SeatConfiguratorProps> = ({
                             >
                                 {option.icon
                                     ? React.cloneElement(
-                                          option.icon as React.ReactElement,
+                                          option.icon as React.ReactElement<{
+                                              color?: string;
+                                          }>,
                                           {
                                               color: isActive
                                                   ? '#FFFFFF'

@@ -78,6 +78,7 @@ export const getMyPassengersAction = createServerAction().handler(async () => {
         document_type: string;
         document_number_or_iin: string;
         birth_date: string;
+        is_profile_passenger?: boolean;
     }[];
 
     const passengers: User[] = result.map((passenger) => ({
@@ -154,9 +155,10 @@ export const createTicketAction = createServerAction()
             throw 'Произошла ошибка при бронировании билета';
         }
 
-        const result = await response.json();
-
-        return result;
+        return z.object({
+            ticket_id: z.number().int().positive(),
+            expires_at: z.string().datetime({ offset: true }),
+        }).parse(await response.json());
     });
 
 export const payTicketAction = createServerAction()

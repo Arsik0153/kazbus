@@ -1,11 +1,13 @@
 import BusForm from '../../_components/bus-form';
 
 type Props = {
-    params: {
+    params: Promise<{
         busId: string;
-    };
+    }>;
 };
 
-export default function EditBusPage({ params }: Props) {
-    return <BusForm busId={params.busId} />;
+export default async function EditBusPage({ params }: Props) {
+    const { busId } = await params;
+
+    return <BusForm busId={busId} />;
 }

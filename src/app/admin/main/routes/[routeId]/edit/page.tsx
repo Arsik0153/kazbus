@@ -1,11 +1,13 @@
 import RouteForm from '../../_components/route-form';
 
 type Props = {
-    params: {
+    params: Promise<{
         routeId: string;
-    };
+    }>;
 };
 
-export default function EditRoutePage({ params }: Props) {
-    return <RouteForm routeId={Number(params.routeId)} />;
+export default async function EditRoutePage({ params }: Props) {
+    const { routeId } = await params;
+
+    return <RouteForm routeId={Number(routeId)} />;
 }

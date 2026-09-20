@@ -1,25 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import Trip from '@/components/trip';
 import Button from '@/components/button';
 import Topbar from '@/components/topbar';
 import Clock from '@/assets/red-clock';
-import Kaspi from '@/assets/kaspi';
 import { Steps } from '../types';
-import { Ticket as TicketT } from '@/data/types';
+import { SeatSelection, Ticket as TicketT } from '@/data/types';
 import Ticket from '@/components/ticket';
 import { useServerActionQuery } from '@/lib/server-action-hooks';
 import { getUserAction } from '../actions';
 import { User } from './select-passengers';
 
 type Props = {
+    expiresAt?: string;
     setStep: (step: Steps) => void;
     selectedTicket: TicketT | null;
-    seats: number[];
+    seats: SeatSelection[];
     passengers: User[];
 };
 
 const Booking = (props: Props) => {
-    const { setStep, selectedTicket, seats, passengers } = props;
+    const { setStep, selectedTicket, seats, passengers, expiresAt } = props;
     const { data: user, isPending: isUserPending } = useServerActionQuery(
         getUserAction,
         {
@@ -28,19 +27,17 @@ const Booking = (props: Props) => {
         }
     );
 
-    // Set initial time for countdown (e.g., 30 minutes)
-    const countdownTime = 30 * 60; // 30 minutes in seconds
-    const [timeLeft, setTimeLeft] = useState(countdownTime);
-
+    const [timeLeft, setTimeLeft] = useState<number | null>(null);
     useEffect(() => {
-        if (timeLeft > 0) {
-            const timerId = setInterval(() => {
-                setTimeLeft((prevTime) => prevTime - 1);
-            }, 1000);
-
-            return () => clearInterval(timerId);
-        }
-    }, [timeLeft]);
+        if (!expiresAt) return;
+        const expires = new Date(expiresAt).getTime();
+        if (!Number.isFinite(expires)) return;
+        const update = () =>
+            setTimeLeft(Math.max(0, Math.ceil((expires - Date.now()) / 1000)));
+        update();
+        const timer = setInterval(update, 1000);
+        return () => clearInterval(timer);
+    }, [expiresAt]);
 
     if (!selectedTicket) {
         return null;
@@ -62,14 +59,16 @@ const Booking = (props: Props) => {
                     <Clock color="#E74949" />
                     <div className="flex flex-col gap-1">
                         <p className="text-2xl font-semibold text-[#4A4A4A]">
-                            Ваш билет забронирован
+                            {timeLeft === 0
+                                ? 'Срок бронирования истёк'
+                                : 'Ваш билет забронирован'}
                         </p>
                         <p className="text-sm font-normal text-[#4A4A4A]">
-                            У вас есть 30 минут для оплаты билета
+                            Бронь действует 15 минут с момента создания билета
                         </p>
                     </div>
                     <p className="text-4xl font-semibold text-[#E74949]">
-                        {formatTime(timeLeft)}
+                        {timeLeft === null ? '15 минут' : formatTime(timeLeft)}
                     </p>
                 </div>
                 <Ticket
@@ -83,7 +82,7 @@ const Booking = (props: Props) => {
                         key={passenger.user_id}
                         className="mb-2 flex flex-col justify-between gap-2 rounded-lg border border-[#D1D1D1] bg-none p-5"
                     >
-                        <p className="text-xs font-bold uppercase text-[#A0A0A0]">
+                        <p className="text-xs font-bold text-[#A0A0A0] uppercase">
                             Пассажир
                         </p>
                         <p className="text-base font-medium text-[#4A4A4A]">
@@ -99,20 +98,20 @@ const Booking = (props: Props) => {
                         Место
                     </p>
                     <p className="text-base font-bold text-[#E74949]">
-                        {seats.join(', ')}
+                        {seats
+                            .map(
+                                (seat) =>
+                                    `${seat.seat_id} (${seat.seat_floor} этаж)`
+                            )
+                            .join(', ')}
                     </p>
                 </div>
 
                 <div className="mt-11 flex flex-col gap-2">
-                    {/* <Button
-                        variant="secondary"
-                        className="flex justify-start gap-5 bg-[#EF4836] pl-5"
-                    >
-                        <Kaspi /> Оплатить через Kaspi.kz
-                    </Button> */}
                     <Button
                         variant="ghost"
                         className="border border-[#D21F1F]"
+                        disabled={timeLeft === 0}
                         onClick={() => setStep(Steps.Payment)}
                     >
                         Оплатить банковской картой

@@ -15,12 +15,10 @@ type Props = React.HTMLAttributes<HTMLDivElement> & {
 
 const PassengerCard = (props: Props) => {
     const { user, selected, ...rest } = props;
-    console.log('PassengerCard user:', user);
-
     return (
         <div
             className={cn(
-                'flex flex-col rounded-[10px] border border-[#D1D1D1] pb-7 pl-4 pr-6 pt-6',
+                'flex flex-col rounded-[10px] border border-[#D1D1D1] pt-6 pr-6 pb-7 pl-4',
                 {
                     'border-[#E74949]': selected,
                 }
@@ -42,7 +40,7 @@ const PassengerCard = (props: Props) => {
             </p>
             <div className="mt-[30px] flex flex-row items-start justify-between">
                 <div className="flex flex-col gap-2">
-                    <p className="text-xs font-bold uppercase text-[#A0A0A0]">
+                    <p className="text-xs font-bold text-[#A0A0A0] uppercase">
                         Номер документа или ИИН
                     </p>
                     <p className="text-base font-medium text-[#4A4A4A]">
@@ -50,7 +48,7 @@ const PassengerCard = (props: Props) => {
                     </p>
                 </div>
                 <div className="flex flex-col gap-2">
-                    <p className="text-xs font-bold uppercase text-[#A0A0A0]">
+                    <p className="text-xs font-bold text-[#A0A0A0] uppercase">
                         Дата рождения
                     </p>
                     <p className="text-base font-medium text-[#4A4A4A]">
