@@ -34,7 +34,7 @@ const passengerStatusMeta: Record<
         className: 'bg-[#F3F8EB] text-[#6A9F32]',
     },
     waiting: {
-        label: 'Не пришел',
+        label: 'Ожидает посадку',
         className: 'bg-[#FFF7E6] text-[#B7791F]',
     },
     missed: {

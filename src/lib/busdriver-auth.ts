@@ -6,13 +6,8 @@ import { z } from 'zod';
 export const BUSDRIVER_SESSION_COOKIE = 'busdriver_session';
 const SESSION_SECONDS = 60 * 60 * 8;
 
-export const busDriverSchema = z.object({
-    id: z.number().int().positive(),
-    full_name: z.string(),
-    phone_number: z.string(),
-    owner_id: z.number().int().positive(),
-    is_active: z.boolean(),
-});
+import { busDriverSchema } from './busdriver-schema';
+export { busDriverSchema } from './busdriver-schema';
 
 const sessionSchema = z.object({
     type: z.literal('busdriver'),

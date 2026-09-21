@@ -27,6 +27,7 @@ const TicketFlow = () => {
         typeof contactsSchema
     > | null>(null);
     const [bookingTicketId, setBookingTicketId] = useState<number>(0);
+    const [expiresAt, setExpiresAt] = useState<string>();
 
     const { execute: createTicket, isPending: isTicketCreating } =
         useServerAction(createTicketAction, {
@@ -44,6 +45,7 @@ const TicketFlow = () => {
                     queryKey: ['ticket', data.data.ticket_id],
                 });
                 setBookingTicketId(data.data.ticket_id);
+                setExpiresAt(data.data.expires_at);
                 setStep(Steps.Booking);
             },
             onError: (data) => {
@@ -61,6 +63,7 @@ const TicketFlow = () => {
         setPassengers([]);
         setContacts(null);
         setBookingTicketId(0);
+        setExpiresAt(undefined);
         setStep(Steps.SelectPlace);
     };
 
@@ -119,6 +122,7 @@ const TicketFlow = () => {
             )}
             {step === Steps.Booking && (
                 <Booking
+                    expiresAt={expiresAt}
                     seats={seats}
                     setStep={setStep}
                     selectedTicket={selectedTicket}
