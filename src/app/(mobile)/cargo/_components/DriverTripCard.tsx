@@ -31,7 +31,10 @@ const tripStatusMeta: Record<
 };
 
 type Props = {
-    trip: CargoTrip;
+    trip: Pick<
+        CargoTrip,
+        'currentStatus' | 'routeLabel' | 'referenceNumber' | 'eta'
+    >;
     steps: TripStep[];
     isTripCompleted?: boolean;
     onSelectNextPoint?: (step: TripStep) => void;
@@ -116,7 +119,7 @@ const DriverTripCard = ({
                         <p className="text-xs font-semibold text-[#E23333]">
                             {actionLabel}
                         </p>
-                        <p className="mt-2 text-lg font-bold leading-6 text-[#4A4A4A]">
+                        <p className="mt-2 text-lg leading-6 font-bold text-[#4A4A4A]">
                             {nextPoint?.shipperName ??
                                 nextPoint?.title ??
                                 'Рейс завершен'}
@@ -130,10 +133,10 @@ const DriverTripCard = ({
                 <div className="mt-4 flex gap-2">
                     <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#E23333]" />
                     <div className="min-w-0">
-                        <p className="text-sm font-semibold leading-5 text-[#4A4A4A]">
+                        <p className="text-sm leading-5 font-semibold text-[#4A4A4A]">
                             {nextPoint?.title ?? 'Все точки пройдены'}
                         </p>
-                        <p className="mt-1 text-sm font-medium leading-5 text-[#4A4A4A]">
+                        <p className="mt-1 text-sm leading-5 font-medium text-[#4A4A4A]">
                             {nextPoint?.address ??
                                 'Следующих адресов по этому рейсу нет'}
                         </p>
@@ -153,7 +156,7 @@ const DriverTripCard = ({
                     <p className="text-xs font-medium text-[#A0A0A0]">
                         Контакт
                     </p>
-                    <p className="mt-2 text-sm font-semibold leading-5 text-[#4A4A4A]">
+                    <p className="mt-2 text-sm leading-5 font-semibold text-[#4A4A4A]">
                         {nextPoint?.contactName ?? 'Joool Cargo'}
                     </p>
                 </div>

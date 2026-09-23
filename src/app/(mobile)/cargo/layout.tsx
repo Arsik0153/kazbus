@@ -1,5 +1,4 @@
 import NavBar from '@/components/nav-bar';
-import '../../shipper/shipper.css';
 
 export default function CargoLayout({
     children,
@@ -8,7 +7,9 @@ export default function CargoLayout({
 }>) {
     return (
         <>
-            <div className="shipper-app xs:mb-22.5 flex-1">{children}</div>
+            <div className="xs:mb-22.5 min-w-0 flex-1 text-[#4a4a4a] [&_button:disabled]:cursor-not-allowed [&_button:disabled]:opacity-50">
+                {children}
+            </div>
             <NavBar section="cargo" />
         </>
     );

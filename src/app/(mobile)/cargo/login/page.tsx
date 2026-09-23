@@ -2,7 +2,7 @@ import CargoAuthForm from '@/components/cargo-auth-form';
 
 export default function CargoDriverLoginPage() {
     return (
-        <main className="mx-auto min-h-screen max-w-lg px-5 py-16">
+        <main className="flex min-h-full items-center px-5 pt-20 pb-28">
             <CargoAuthForm
                 role="cargo_driver"
                 mode="login"

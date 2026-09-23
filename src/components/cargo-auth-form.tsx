@@ -1,6 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
+import Button from '@/components/button';
+import Input from '@/components/input';
+import InputPhone from '@/components/inputPhone';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, type FormEvent } from 'react';
 
@@ -37,41 +41,144 @@ export default function CargoAuthForm({
         const form = new FormData(event.currentTarget);
         const phone = String(form.get('phone_number') ?? '').replace(/\D/g, '');
         const password = String(form.get('password') ?? '');
-        const response =
-            mode === 'login'
-                ? await cargoLoginAction({
-                      role,
-                      phone_number: phone,
-                      password,
-                  })
-                : await cargoRegisterAction({
-                      role,
-                      phone_number: phone,
-                      password,
-                      full_name: String(form.get('full_name') ?? ''),
-                      company_name: String(form.get('company_name') ?? ''),
-                      bin_iin: String(form.get('bin_iin') ?? ''),
-                      city: String(form.get('city') ?? ''),
-                      contact_phone: String(
-                          form.get('contact_phone') ?? phone
-                      ).replace(/\D/g, ''),
-                      email: String(form.get('email') ?? ''),
-                      description: String(form.get('description') ?? ''),
-                      invite_token: String(form.get('invite_token') ?? ''),
-                  });
+        try {
+            const response =
+                mode === 'login'
+                    ? await cargoLoginAction({
+                          role,
+                          phone_number: phone,
+                          password,
+                      })
+                    : await cargoRegisterAction({
+                          role,
+                          phone_number: phone,
+                          password,
+                          full_name: String(form.get('full_name') ?? ''),
+                          company_name: String(form.get('company_name') ?? ''),
+                          bin_iin: String(form.get('bin_iin') ?? ''),
+                          city: String(form.get('city') ?? ''),
+                          contact_phone: String(
+                              form.get('contact_phone') ?? phone
+                          ).replace(/\D/g, ''),
+                          email: String(form.get('email') ?? ''),
+                          description: String(form.get('description') ?? ''),
+                          invite_token: String(form.get('invite_token') ?? ''),
+                      });
 
-        if (!response.ok) {
-            setError(response.error);
+            if (!response.ok) {
+                setError(response.error);
+                return;
+            }
+
+            router.replace(destination);
+            router.refresh();
+        } catch {
+            setError('Не удалось получить ответ сервера. Попробуйте ещё раз.');
+        } finally {
             setBusy(false);
-            return;
         }
-
-        router.replace(destination);
-        router.refresh();
     }
 
     const isAdmin = role === 'admin_cargo';
     const isDriver = role === 'cargo_driver';
+
+    if (isDriver) {
+        return (
+            <form className="w-full" method="post" onSubmit={submit}>
+                <h1 className="text-[1.75rem] leading-8 font-bold text-[#4A4A4A]">
+                    {mode === 'login' ? 'Вход' : 'Регистрация'}
+                </h1>
+                <p className="mt-3 text-lg leading-5 font-bold text-[#4A4A4A]">
+                    {mode === 'login' ? 'Joool Cargo' : title}
+                </p>
+                <div className="mt-6 flex flex-col gap-2">
+                    {mode === 'register' && (
+                        <>
+                            <Input
+                                id="cargoFullName"
+                                name="full_name"
+                                label="ФИО"
+                                required
+                                autoComplete="name"
+                            />
+                            <Input
+                                id="cargoInvite"
+                                name="invite_token"
+                                label="Приглашение компании"
+                                required
+                                aria-describedby="cargoInviteHelp"
+                            />
+                            <p
+                                id="cargoInviteHelp"
+                                className="mb-2 text-sm text-[#A0A0A0]"
+                            >
+                                Одноразовый код выдаёт ваша логистическая
+                                компания.
+                            </p>
+                        </>
+                    )}
+                    <InputPhone
+                        id="cargoPhone"
+                        name="phone_number"
+                        label="Телефон"
+                        aria-label="Телефон"
+                        type="tel"
+                        inputMode="tel"
+                        required
+                        autoComplete="tel"
+                        mask="+7 (___) ___-__-__"
+                        iconLeft={
+                            <Image
+                                src="/assets/main/kz.png"
+                                width={24}
+                                height={26}
+                                alt="KZ"
+                                quality={100}
+                            />
+                        }
+                    />
+                    <Input
+                        id="cargoPassword"
+                        name="password"
+                        label="Пароль"
+                        type="password"
+                        minLength={8}
+                        required
+                        autoComplete={
+                            mode === 'login'
+                                ? 'current-password'
+                                : 'new-password'
+                        }
+                    />
+                </div>
+                {error && (
+                    <p className="mt-4 text-sm text-[#E23333]" role="alert">
+                        {error}
+                    </p>
+                )}
+                <Button
+                    variant="secondary"
+                    type="submit"
+                    className="mt-6"
+                    disabled={!ready || busy}
+                >
+                    {busy
+                        ? 'Отправляем…'
+                        : mode === 'login'
+                          ? 'Войти'
+                          : 'Создать аккаунт'}
+                </Button>
+                <Link
+                    className="mt-4 block w-full text-center text-base font-medium text-[#E23333] underline"
+                    href={alternateHref}
+                >
+                    {mode === 'login'
+                        ? 'Зарегистрироваться'
+                        : 'Уже есть аккаунт'}
+                </Link>
+            </form>
+        );
+    }
 
     return (
         <form className="sp-form" method="post" onSubmit={submit}>
