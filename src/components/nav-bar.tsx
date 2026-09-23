@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import RouteFill from '@/assets/route-fill';
 import Bus from '../assets/bus';
 import Building from '../assets/building';
 import Coupon from '../assets/coupon';
@@ -45,6 +46,26 @@ const CARGO_LINKS: NavItem[] = [
         href: '/cargo',
         icon: Bus,
         text: 'Главная',
+    },
+    {
+        href: '/cargo/trip',
+        icon: RouteFill,
+        text: 'Рейс',
+    },
+    {
+        href: '/cargo/map',
+        icon: Building,
+        text: 'Карта',
+    },
+    {
+        href: '/cargo/documents',
+        icon: Coupon,
+        text: 'Документы',
+    },
+    {
+        href: '/cargo/profile',
+        icon: User,
+        text: 'Профиль',
     },
 ];
 

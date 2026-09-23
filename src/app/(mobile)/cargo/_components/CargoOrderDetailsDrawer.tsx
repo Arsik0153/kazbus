@@ -13,6 +13,10 @@ export const cargoOrderStatusMeta: Record<
     CargoShipperContactStatus,
     { className: string; label: string }
 > = {
+    delivered: {
+        label: 'Доставлен',
+        className: 'bg-[#E8F7D9] text-[#5E9F14]',
+    },
     loaded: {
         label: 'Загружен',
         className: 'bg-[#E8F7D9] text-[#5E9F14]',
@@ -52,7 +56,7 @@ const OrderDetailRow = ({
     <div className="flex items-start justify-between gap-3 border-t border-[#EFEFEF] py-3 first:border-t-0 first:pt-0 last:pb-0">
         <p className="text-sm font-medium text-[#A0A0A0]">{label}</p>
         <div className="flex max-w-[68%] items-start justify-end gap-2">
-            <p className="text-right text-sm font-semibold leading-5 text-[#4A4A4A]">
+            <p className="text-right text-sm leading-5 font-semibold text-[#4A4A4A]">
                 {value}
             </p>
             <button
@@ -117,7 +121,7 @@ const ShipperOrderDetails = ({ order }: { order: CargoShipperContact }) => {
             <div className="rounded-[0.875rem] border border-[#E8E8E8] bg-[#FBFBFB] p-4">
                 <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                        <p className="text-xl font-bold leading-[1.4rem] text-[#4A4A4A]">
+                        <p className="text-xl leading-[1.4rem] font-bold text-[#4A4A4A]">
                             {order.companyName}
                         </p>
                         <p className="mt-2 text-sm font-semibold text-[#A0A0A0]">
@@ -137,7 +141,7 @@ const ShipperOrderDetails = ({ order }: { order: CargoShipperContact }) => {
                     <p className="text-xs font-medium text-[#A0A0A0]">
                         Тип груза
                     </p>
-                    <p className="mt-1 text-sm font-bold leading-5 text-[#4A4A4A]">
+                    <p className="mt-1 text-sm leading-5 font-bold text-[#4A4A4A]">
                         {order.cargoTitle}
                     </p>
                 </div>
@@ -145,7 +149,7 @@ const ShipperOrderDetails = ({ order }: { order: CargoShipperContact }) => {
                     <p className="text-xs font-medium text-[#A0A0A0]">
                         Контакт
                     </p>
-                    <p className="mt-1 text-sm font-bold leading-5 text-[#4A4A4A]">
+                    <p className="mt-1 text-sm leading-5 font-bold text-[#4A4A4A]">
                         {order.contactName}
                     </p>
                 </div>
@@ -154,7 +158,7 @@ const ShipperOrderDetails = ({ order }: { order: CargoShipperContact }) => {
             <div className="rounded-[0.875rem] border border-[#E8E8E8] bg-white p-4">
                 <OrderDetailRow
                     label="Телефон"
-                    value={order.phone}
+                    value={order.phone || 'Не указан'}
                     copied={copiedKey === 'phone'}
                     onCopy={() => void handleCopy('phone', order.phone)}
                 />
@@ -192,14 +196,16 @@ const ShipperOrderDetails = ({ order }: { order: CargoShipperContact }) => {
                 />
             </div>
 
-            <div className="flex flex-row items-center justify-between gap-1.5">
-                <a
-                    href={`tel:${order.phone.replaceAll(' ', '')}`}
-                    className="flex min-h-14 w-full items-center justify-center rounded-[0.625rem] bg-[#E23333] px-4 py-4 text-sm font-semibold text-white active:bg-[#D92727]"
-                >
-                    Позвонить shipper
-                </a>
-            </div>
+            {order.phone && (
+                <div className="flex flex-row items-center justify-between gap-1.5">
+                    <a
+                        href={`tel:${order.phone.replaceAll(' ', '')}`}
+                        className="flex min-h-14 w-full items-center justify-center rounded-[0.625rem] bg-[#E23333] px-4 py-4 text-sm font-semibold text-white active:bg-[#D92727]"
+                    >
+                        Позвонить
+                    </a>
+                </div>
+            )}
         </div>
     );
 };
@@ -217,9 +223,9 @@ const CargoOrderDetailsDrawer = ({
         <Drawer.Root open={!!order} onOpenChange={onOpenChange}>
             <Drawer.Portal>
                 <Drawer.Overlay className="fixed inset-0 z-40 bg-black/40" />
-                <Drawer.Content className="fixed bottom-0 left-0 right-0 z-50 mt-24 flex max-h-[88vh] flex-col rounded-t-2xl bg-white">
+                <Drawer.Content className="fixed right-0 bottom-0 left-0 z-50 mt-24 flex max-h-[88vh] flex-col rounded-t-2xl bg-white">
                     {order && (
-                        <div className="overflow-y-auto px-5 pb-8 pt-4">
+                        <div className="overflow-y-auto px-5 pt-4 pb-8">
                             <div className="mx-auto mb-5 h-1.5 w-12 rounded-full bg-[#D6D6D6]" />
                             <Drawer.Title className="text-center text-xl font-bold text-[#4A4A4A]">
                                 Детали заказа

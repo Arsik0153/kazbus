@@ -1,5 +1,7 @@
-import { redirect } from 'next/navigation';
+import DriverPage from '../driver-page';
 
-export default function CargoDocumentsPage() {
-    redirect('/cargo');
+export const dynamic = 'force-dynamic';
+
+export default function Page() {
+    return <DriverPage view="documents" />;
 }

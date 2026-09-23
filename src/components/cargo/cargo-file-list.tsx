@@ -181,24 +181,29 @@ export default function CargoFileList({
     }
 
     return (
-        <section className="sp-panel min-w-0">
-            <h3>{title}</h3>
-            {description && <p className="sp-caption">{description}</p>}
+        <section className="m-0 min-w-0 rounded-[10px] border border-[#d1d1d1] bg-white p-5">
+            <h3 className="text-xl leading-[1.1] font-bold">{title}</h3>
+            {description && (
+                <p className="mt-2 text-sm text-[#a0a0a0]">{description}</p>
+            )}
             {files.map((file) => (
-                <div className="sp-list-row" key={file.id}>
+                <div
+                    className="mt-3 rounded-[10px] border border-[#e9e9e9] bg-white p-4"
+                    key={file.id}
+                >
                     <a
-                        className="sp-link break-all"
+                        className="font-semibold break-all text-[#e23333] underline"
                         href={`/api/cargo/files/${fileScope}/${file.id}`}
                     >
                         {file.name}
                     </a>
-                    <p className="sp-caption">
+                    <p className="mt-2 text-sm text-[#a0a0a0]">
                         {kindLabel[file.kind]} · {fileSize(file.size)} ·{' '}
                         {fileDate(file.createdAt)} · {file.uploadedBy.name}
                     </p>
                     {file.uploadedBy.id === currentUserId && (
                         <button
-                            className="sp-link"
+                            className="font-semibold text-[#e23333] underline disabled:cursor-not-allowed disabled:opacity-50"
                             type="button"
                             disabled={!!busy}
                             onClick={() => remove(file)}
@@ -211,9 +216,15 @@ export default function CargoFileList({
                 </div>
             ))}
             {!files.length && (
-                <p className="sp-muted">Загруженных файлов пока нет.</p>
+                <p className="mt-2 text-sm text-[#a0a0a0]">
+                    Загруженных файлов пока нет.
+                </p>
             )}
-            <form className="sp-form space-y-3" ref={formRef} onSubmit={upload}>
+            <form
+                className="mt-5 flex flex-col gap-3 space-y-3"
+                ref={formRef}
+                onSubmit={upload}
+            >
                 {uploadKinds.length === 1 ? (
                     <input
                         name="kind"
@@ -221,10 +232,10 @@ export default function CargoFileList({
                         value={uploadKinds[0].value}
                     />
                 ) : (
-                    <label className="sp-field">
+                    <label className="flex min-w-0 flex-col gap-2 text-sm font-medium">
                         <span>Тип документа</span>
                         <select
-                            className="w-full min-w-0"
+                            className="w-full min-w-0 rounded-[10px] border border-[#d1d1d1] bg-white p-4"
                             name="kind"
                             defaultValue={uploadKinds[0].value}
                         >
@@ -236,23 +247,30 @@ export default function CargoFileList({
                         </select>
                     </label>
                 )}
-                <label className="sp-field">
+                <label className="flex min-w-0 flex-col gap-2 text-sm font-medium">
                     <span>Файл PDF, JPEG или PNG до 10 МиБ</span>
                     <input
-                        className="w-full min-w-0"
+                        className="w-full min-w-0 rounded-[10px] border border-dashed border-[#d1d1d1] bg-[#fff7f7] p-4"
                         name="file"
                         type="file"
                         accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
                         required
                     />
                 </label>
-                <button className="sp-secondary" disabled={!!busy}>
+                <button
+                    className="w-full rounded-[10px] border border-[#e23333] bg-[#e23333] p-4 text-center font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled={!!busy}
+                >
                     {busy === 'upload' ? 'Загружаем…' : 'Загрузить'}
                 </button>
             </form>
             {notice && (
                 <p
-                    className={notice.error ? 'sp-error' : 'sp-caption'}
+                    className={
+                        notice.error
+                            ? 'mt-3 text-[#e23333]'
+                            : 'mt-2 text-sm text-[#a0a0a0]'
+                    }
                     role="status"
                 >
                     {notice.text}

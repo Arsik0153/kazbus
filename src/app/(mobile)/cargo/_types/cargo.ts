@@ -1,9 +1,5 @@
 export type TripStatus =
-    | 'planned'
-    | 'loading'
-    | 'inTransit'
-    | 'unloading'
-    | 'completed';
+    'planned' | 'loading' | 'inTransit' | 'unloading' | 'completed';
 
 export type DriverStatus = 'verified' | 'pending' | 'needsUpdate';
 
@@ -14,9 +10,7 @@ export type DocumentFormMode = 'create' | 'edit';
 export type VehicleType = 'refrigerator' | 'tent' | 'van' | 'flatbed';
 
 export type CargoShipperContactStatus =
-    | 'loaded'
-    | 'inTransit'
-    | 'awaitingDelivery';
+    'delivered' | 'loaded' | 'inTransit' | 'awaitingDelivery';
 
 export type Driver = {
     id: number;
