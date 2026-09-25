@@ -2,6 +2,22 @@
 
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import {
+    cargoPhoneSchema,
+    cargoEmailSchema,
+    cargoBinSchema,
+    requiredText,
+    cargoValidationErrors,
+    cargoFieldErrors,
+    companyUpdateSchema,
+    newDriverSchema,
+    newVehicleSchema,
+    warehouseInputSchema,
+    offerInputSchema,
+    assignmentSchema,
+    stockInputSchema,
+    adjustmentSchema,
+} from '@/lib/cargo-validation';
 
 import {
     adminStateSchema,
@@ -15,6 +31,7 @@ import {
     warehouseSchema,
 } from '@/lib/cargo-contract';
 import {
+    CargoApiError,
     cargoFetch,
     clearCargoSession,
     loginCargo,
@@ -22,7 +39,8 @@ import {
 } from '@/lib/cargo-auth';
 
 type ActionResult<T = undefined> =
-    { ok: true; data: T } | { ok: false; error: string };
+    | { ok: true; data: T }
+    | { ok: false; error: string; fieldErrors?: Record<string, string> };
 
 async function result<T>(
     operation: () => Promise<T>
@@ -30,6 +48,19 @@ async function result<T>(
     try {
         return { ok: true, data: await operation() };
     } catch (error) {
+        if (error instanceof CargoApiError)
+            return {
+                ok: false,
+                error: error.message,
+                fieldErrors: error.fieldErrors,
+            };
+        if (error instanceof z.ZodError) {
+            return {
+                ok: false,
+                error: error.issues[0]?.message ?? 'Проверьте заполненные поля',
+                fieldErrors: cargoFieldErrors(cargoValidationErrors(error)),
+            };
+        }
         return {
             ok: false,
             error:
@@ -42,8 +73,8 @@ async function result<T>(
 
 const credentialsSchema = z.object({
     role: cargoRoleSchema,
-    phone_number: z.string().min(11),
-    password: z.string().min(8),
+    phone_number: cargoPhoneSchema,
+    password: z.string().min(1, 'Введите пароль'),
 });
 
 export async function cargoLoginAction(
@@ -59,15 +90,20 @@ export async function cargoLoginAction(
 const registrationSchema = z
     .object({
         role: cargoRoleSchema,
-        phone_number: z.string().min(11),
-        password: z.string().min(8),
-        full_name: z.string().min(2),
-        company_name: z.string().optional(),
-        bin_iin: z.string().optional(),
-        city: z.string().optional(),
-        contact_phone: z.string().optional(),
-        email: z.string().email().or(z.literal('')).optional(),
-        description: z.string().optional(),
+        phone_number: cargoPhoneSchema,
+        password: z.string().min(8, 'Не меньше 8 символов'),
+        password_confirm: z.string().optional(),
+        full_name: requiredText(255),
+        company_name: z.string().trim().max(255).optional(),
+        bin_iin: cargoBinSchema.or(z.literal('')).optional(),
+        city: z.string().trim().max(120).optional(),
+        contact_phone: cargoPhoneSchema.or(z.literal('')).optional(),
+        email: cargoEmailSchema.optional(),
+        description: z
+            .string()
+            .trim()
+            .max(10000, 'Не больше 10000 символов')
+            .optional(),
         invite_token: z.string().optional(),
     })
     .superRefine((value, context) => {
@@ -90,6 +126,12 @@ const registrationSchema = z
             }
         }
         if (value.role === 'admin_cargo') {
+            if (value.password !== value.password_confirm)
+                context.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    path: ['password_confirm'],
+                    message: 'Пароли не совпадают',
+                });
             for (const field of ['bin_iin', 'contact_phone'] as const) {
                 if (!value[field]) {
                     context.addIssue({
@@ -375,15 +417,6 @@ export async function loadAdminCargoState() {
     return adminStateSchema.parse(await response.json());
 }
 
-const companyUpdateSchema = z.object({
-    name: z.string().min(1),
-    city: z.string().min(1),
-    contactPhone: z.string().min(11),
-    email: z.string().email().or(z.literal('')),
-    description: z.string(),
-    isSearchable: z.boolean(),
-});
-
 export async function updateCargoCompanyAction(
     input: z.input<typeof companyUpdateSchema>
 ) {
@@ -394,19 +427,19 @@ export async function updateCargoCompanyAction(
             body: JSON.stringify({
                 name: value.name,
                 city: value.city,
-                contact_phone: value.contactPhone.replace(/\D/g, ''),
+                contact_phone: value.contactPhone,
                 email: value.email,
                 description: value.description,
                 is_searchable: value.isSearchable,
             }),
         });
-        revalidatePath('/admin-cargo');
+        revalidatePath('/admin-cargo', 'layout');
         return adminCompanySchema.parse(await response.json());
     });
 }
 
 const relationDecisionSchema = z.object({
-    relationId: z.number().int(),
+    relationId: z.number().int().positive(),
     decision: z.enum(['confirm', 'reject', 'block']),
     comment: z.string(),
 });
@@ -427,18 +460,9 @@ export async function decideCargoRelationAction(
                 }),
             }
         );
-        revalidatePath('/admin-cargo');
+        revalidatePath('/admin-cargo', 'layout');
     });
 }
-
-const offerInputSchema = z.object({
-    orderId: z.number().int(),
-    kind: z.enum(['offer', 'surcharge']),
-    amount: z.string().min(1),
-    eta: z.string().min(1),
-    routeText: z.string(),
-    reason: z.string().min(1),
-});
 
 export async function createCargoOfferAction(
     input: z.input<typeof offerInputSchema>
@@ -460,16 +484,9 @@ export async function createCargoOfferAction(
                 }),
             }
         );
-        revalidatePath('/admin-cargo');
+        revalidatePath('/admin-cargo', 'layout');
     });
 }
-
-const assignmentSchema = z.object({
-    orderId: z.number().int(),
-    driverId: z.number().int(),
-    vehicleId: z.number().int(),
-    eta: z.string().min(1),
-});
 
 export async function assignCargoOrderAction(
     input: z.input<typeof assignmentSchema>
@@ -488,7 +505,7 @@ export async function assignCargoOrderAction(
                 }),
             }
         );
-        revalidatePath('/admin-cargo');
+        revalidatePath('/admin-cargo', 'layout');
     });
 }
 
@@ -508,16 +525,9 @@ export async function rejectCargoOrderAction(input: {
                 body: JSON.stringify({ reason: value.reason }),
             }
         );
-        revalidatePath('/admin-cargo');
+        revalidatePath('/admin-cargo', 'layout');
     });
 }
-
-const newDriverSchema = cargoDriverSchema.pick({
-    full_name: true,
-    phone_number: true,
-    license_number: true,
-    status: true,
-});
 
 export async function createCargoDriverAction(
     input: z.input<typeof newDriverSchema>
@@ -528,7 +538,7 @@ export async function createCargoDriverAction(
             method: 'POST',
             body: JSON.stringify(value),
         });
-        revalidatePath('/admin-cargo');
+        revalidatePath('/admin-cargo', 'layout');
         return cargoDriverSchema.parse(await response.json());
     });
 }
@@ -537,7 +547,7 @@ export async function createDriverInviteAction(driverId: number) {
     return result(async () => {
         const response = await cargoFetch(
             'admin_cargo',
-            `admin/drivers/${z.number().int().parse(driverId)}/invite/`,
+            `admin/drivers/${z.number().int().positive().parse(driverId)}/invite/`,
             { method: 'POST' }
         );
         return z
@@ -545,15 +555,6 @@ export async function createDriverInviteAction(driverId: number) {
             .parse(await response.json());
     });
 }
-
-const newVehicleSchema = cargoVehicleSchema.pick({
-    model: true,
-    plate_number: true,
-    trailer_number: true,
-    kind: true,
-    capacity_tons: true,
-    status: true,
-});
 
 export async function createCargoVehicleAction(
     input: z.input<typeof newVehicleSchema>
@@ -567,7 +568,7 @@ export async function createCargoVehicleAction(
                 capacity_tons: String(value.capacity_tons),
             }),
         });
-        revalidatePath('/admin-cargo');
+        revalidatePath('/admin-cargo', 'layout');
         return cargoVehicleSchema.parse(await response.json());
     });
 }
@@ -577,27 +578,15 @@ export async function createCargoWarehouseAction(input: {
     address: string;
 }) {
     return result(async () => {
-        const value = z
-            .object({ name: z.string().min(1), address: z.string().min(1) })
-            .parse(input);
+        const value = warehouseInputSchema.parse(input);
         const response = await cargoFetch('admin_cargo', 'admin/warehouses/', {
             method: 'POST',
             body: JSON.stringify(value),
         });
-        revalidatePath('/admin-cargo');
+        revalidatePath('/admin-cargo', 'layout');
         return warehouseSchema.passthrough().parse(await response.json());
     });
 }
-
-const stockInputSchema = z.object({
-    warehouseId: z.number().int().positive(),
-    shipperId: z.number().int().positive(),
-    cargo: z.string().min(1),
-    sku: z.string(),
-    unit: z.enum(['шт.', 'коробок', 'паллет', 'кг', 'т']),
-    onHand: z.number().nonnegative(),
-    source: z.string(),
-});
 
 export async function createCargoStockAction(
     input: z.input<typeof stockInputSchema>
@@ -616,7 +605,7 @@ export async function createCargoStockAction(
                 source: value.source,
             }),
         });
-        revalidatePath('/admin-cargo');
+        revalidatePath('/admin-cargo', 'layout');
         return adminStockSchema.passthrough().parse(await response.json());
     });
 }
@@ -627,13 +616,7 @@ export async function adjustCargoStockAction(input: {
     reason: string;
 }) {
     return result(async () => {
-        const value = z
-            .object({
-                lotId: z.number().int().positive(),
-                delta: z.number().refine((number) => number !== 0),
-                reason: z.string().min(1),
-            })
-            .parse(input);
+        const value = adjustmentSchema.parse(input);
         const response = await cargoFetch(
             'admin_cargo',
             `admin/stock/${value.lotId}/adjust/`,
@@ -645,7 +628,7 @@ export async function adjustCargoStockAction(input: {
                 }),
             }
         );
-        revalidatePath('/admin-cargo');
+        revalidatePath('/admin-cargo', 'layout');
         return adminStockSchema.passthrough().parse(await response.json());
     });
 }

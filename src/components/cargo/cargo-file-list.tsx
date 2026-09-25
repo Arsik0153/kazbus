@@ -1,6 +1,14 @@
 'use client';
 
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import {
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+    type FormEvent,
+} from 'react';
+
+import toast from 'react-hot-toast';
 
 import type { CargoAttachment } from '@/lib/cargo-contract';
 
@@ -18,6 +26,7 @@ type Props = {
     currentUserId: number;
     uploadKinds: [UploadKind, ...UploadKind[]];
     loadOnMount?: boolean;
+    feedback?: 'inline' | 'toast';
 };
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
@@ -63,13 +72,25 @@ export default function CargoFileList({
     currentUserId,
     uploadKinds,
     loadOnMount = false,
+    feedback = 'inline',
 }: Props) {
     const [files, setFiles] = useState(initialFiles);
     const [busy, setBusy] = useState('');
-    const [notice, setNotice] = useState<{
+    const [notice, setInlineNotice] = useState<{
         text: string;
         error: boolean;
     } | null>(null);
+    const setNotice = useCallback(
+        (notice: { text: string; error: boolean } | null) => {
+            if (feedback === 'toast') {
+                if (notice) {
+                    if (notice.error) toast.error(notice.text);
+                    else toast.success(notice.text);
+                }
+            } else setInlineNotice(notice);
+        },
+        [feedback]
+    );
     const formRef = useRef<HTMLFormElement>(null);
 
     useEffect(() => {
@@ -106,7 +127,7 @@ export default function CargoFileList({
         return () => {
             active = false;
         };
-    }, [endpoint, loadOnMount]);
+    }, [endpoint, loadOnMount, setNotice]);
 
     async function upload(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();

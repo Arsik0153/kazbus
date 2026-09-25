@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { z } from 'zod';
+import { parseCargoApiErrors } from './cargo-validation';
 
 import {
     cargoAuthResponseSchema,
@@ -52,7 +53,9 @@ export async function decryptCargoSession(value?: string) {
 }
 
 export async function getCargoSession() {
-    return decryptCargoSession((await cookies()).get(CARGO_SESSION_COOKIE)?.value);
+    return decryptCargoSession(
+        (await cookies()).get(CARGO_SESSION_COOKIE)?.value
+    );
 }
 
 async function saveCargoSession(session: CargoSession) {
@@ -83,35 +86,31 @@ export async function clearCargoSession() {
 }
 
 async function readApiError(response: Response) {
+    const fallback =
+        response.status === 401
+            ? 'Неверный телефон или сессия истекла'
+            : response.status === 403
+              ? 'Нет доступа для этой учётной записи'
+              : response.status === 409
+                ? 'Данные уже изменились или запись существует. Обновите страницу.'
+                : 'Сервис Jol Cargo временно недоступен';
     try {
-        const payload = (await response.json()) as Record<string, unknown>;
-        const detail = payload.detail;
-        if (typeof detail === 'string') return detail;
-
-        const first = Object.values(payload)[0];
-        if (typeof first === 'string') return first;
-        if (Array.isArray(first) && typeof first[0] === 'string')
-            return first[0];
-        if (first && typeof first === 'object') {
-            const nested = Object.values(first as Record<string, unknown>)[0];
-            if (Array.isArray(nested) && typeof nested[0] === 'string') {
-                return nested[0];
-            }
-        }
+        const parsed = parseCargoApiErrors(await response.json());
+        return new CargoApiError(
+            parsed.message ?? fallback,
+            response.status,
+            parsed.fieldErrors
+        );
     } catch {
-        // The status-specific fallback below is clearer than a parsing error.
+        return new CargoApiError(fallback, response.status);
     }
-
-    if (response.status === 401) return 'Неверный телефон или пароль';
-    if (response.status === 403) return 'У этой учетной записи другая роль';
-    if (response.status === 409) return 'Учетная запись уже существует';
-    return 'Сервис Jol Cargo временно недоступен';
 }
 
 export class CargoApiError extends Error {
     constructor(
         message: string,
-        readonly status: number
+        readonly status: number,
+        readonly fieldErrors: Record<string, string> = {}
     ) {
         super(message);
         this.name = 'CargoApiError';
@@ -132,7 +131,7 @@ async function authRequest(path: string, payload: Record<string, unknown>) {
     }
 
     if (!response.ok) {
-        throw new CargoApiError(await readApiError(response), response.status);
+        throw await readApiError(response);
     }
     const parsed = cargoAuthResponseSchema.safeParse(await response.json());
     if (!parsed.success) throw new Error('Сервер вернул некорректный ответ');
@@ -199,7 +198,7 @@ export async function cargoFetch(
     }
 
     if (!response.ok) {
-        throw new CargoApiError(await readApiError(response), response.status);
+        throw await readApiError(response);
     }
     return response;
 }
